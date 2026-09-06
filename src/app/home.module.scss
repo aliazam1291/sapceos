@@ -5,7 +5,10 @@
   // Ceiling raised from 980px: on a 2160-tall screen the hero was filling 45%
   // of the viewport and the fold landed halfway up nothing. Viewports up to
   // ~1042px tall are unaffected, since 94svh is still the binding term there.
-  min-height: clamp(640px, 94svh, 1500px);
+  // A hero should establish the site, not consume a whole monitor. The former
+  // 94svh / 1500px range left the dock sitting on top of content at common
+  // laptop sizes and made the first scroll feel as though it had stalled.
+  min-height: clamp(620px, 88svh, 980px);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -47,7 +50,9 @@
   // them.
   inset: -4% -12vw 6% 40%;
   z-index: 0;
-  pointer-events: auto;
+  // This is a visual field. Keeping a WebGL canvas interactive here made it
+  // compete with wheel/touch input before the visitor reached the work.
+  pointer-events: none;
   // Eased back, and faded out on its left edge where the headline crosses it.
   // Legibility of the h1 is the binding constraint here; the field is scenery.
   opacity: 0.72;
@@ -138,8 +143,11 @@
 .heroTitle {
   position: relative;
   z-index: 1;
-  font-size: clamp(2.75rem, 8.6vw, 10.5rem);
-  line-height: 0.94;
+  // The previous scale forced "with a point of view" onto two lines on wide
+  // desktops, creating a third headline line and pushing the whole foot band
+  // into the dock. This keeps the statement at two deliberate lines.
+  font-size: clamp(2.875rem, 7.2vw, 9rem);
+  line-height: 0.96;
   letter-spacing: -0.045em;
   font-weight: 500;
   max-width: none;

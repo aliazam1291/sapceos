@@ -54,6 +54,88 @@
   }
 }
 
+/* Native-scroll home edit -------------------------------------------------
+   The portfolio must work as a page before it tries to be a scene. Keep one
+   quiet orbital illustration as a section marker, then place four reports in
+   a stable grid. This removes the large empty column and gives every project
+   the same predictable reading position. */
+.sequence:not([data-live]) .screen {
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.sequence:not([data-live]) .stage {
+  position: relative;
+  top: auto;
+  order: 0;
+  width: min(100%, 54rem);
+  height: clamp(11rem, 20vw, 16rem);
+  max-height: none;
+  aspect-ratio: auto;
+  margin: 0 0 var(--space-2);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.sequence:not([data-live]) .cssOrbit {
+  inset: 8% auto auto 62%;
+  width: min(16rem, 30vw);
+  height: min(16rem, 30vw);
+}
+
+.sequence:not([data-live]) .copy {
+  grid-column: 1 / -1;
+  order: 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.sequence:not([data-live]) .beat {
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  background: color-mix(in srgb, var(--bg-secondary) 78%, transparent);
+  border: 0;
+}
+
+.sequence:not([data-live]) .beat + .beat {
+  margin-top: 0;
+}
+
+.sequence:not([data-live]) .beatLabel {
+  margin-bottom: var(--space-4);
+}
+
+.sequence:not([data-live]) .beatTitle {
+  margin-bottom: var(--space-4);
+}
+
+.sequence:not([data-live]) .beatLink {
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 700px) {
+  .sequence:not([data-live]) .stage {
+    height: 9rem;
+    margin-bottom: 0;
+  }
+
+  .sequence:not([data-live]) .cssOrbit {
+    left: auto;
+    right: 6%;
+    width: 9rem;
+    height: 9rem;
+  }
+
+  .sequence:not([data-live]) .copy {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── The viewport the 3D plays inside ─────────────────────────────────────── */
 
 .stage {

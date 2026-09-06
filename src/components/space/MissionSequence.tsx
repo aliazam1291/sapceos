@@ -1,22 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { activeStop, STOP_SCROLL, STOPS, sequence } from "@/lib/sequence";
+import { useState } from "react";
 import { missions } from "@/content/missions";
 import MissionSignature from "@/components/MissionSignature";
-
-type GsapModules = {
-  gsap: typeof import("gsap")["gsap"];
-  ScrollTrigger: typeof import("gsap/ScrollTrigger")["ScrollTrigger"];
-};
 import styles from "./MissionSequence.module.scss";
-
-const CardGallery = dynamic(() => import("./CardGallery"), {
-  ssr: false,
-  loading: () => null,
-});
 
 /**
  * The cinematic beat of the site: one pinned screen the reader scrubs through.
@@ -48,7 +36,10 @@ const CardGallery = dynamic(() => import("./CardGallery"), {
  * cannot catch, so tools/spiralfit.mjs and tools/beatfit.mjs both assert the
  * pinned track still fits after any change to either.
  */
-const beats = missions.map((m) => ({
+// The home page is an edit, not an exhaustive archive. The full project index
+// remains available from /missions; four strong examples keep this section
+// scannable and leave the reader in control of the page length.
+const beats = missions.slice(0, 4).map((m) => ({
   id: m.slug,
   label: m.org,
   title: m.title,
@@ -61,10 +52,12 @@ const beats = missions.map((m) => ({
 }));
 
 export default function MissionSequence() {
-  const section = useRef<HTMLElement>(null);
-  const screen = useRef<HTMLDivElement>(null);
-  const [beat, setBeat] = useState(0);
-  const [live, setLive] = useState(false);
+  // The old version turned this content into a 400vh ScrollTrigger pin with a
+  // second WebGL scene. In practice it made normal wheel scrolling feel stuck,
+  // caused content to jump while the pin measured itself, and obscured the
+  // actual portfolio work. This is intentionally an editorial, native-scroll
+  // section; the persistent sky already provides the site's sense of motion.
+  const live = false;
   // Which mission a click (or keyboard focus, via the sr-only nav below) has
   // pinned the camera on. Separate from `beat`, which is purely a function of
   // scroll — CardGallery owns the decision to stop following scroll while a
@@ -73,19 +66,7 @@ export default function MissionSequence() {
   // enough, so there is never a scroll-hijack state this component has to undo.
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const selectedIndex = selectedSlug ? beats.findIndex((b) => b.id === selectedSlug) : -1;
-  const activeIndex = selectedIndex >= 0 ? selectedIndex : beat;
-
-  const faces = useMemo(
-    () =>
-      beats.map((b) => ({
-        slug: b.id,
-        title: b.title,
-        org: b.label,
-        period: b.period,
-        signal: b.signals[0]?.value,
-      })),
-    [],
-  );
+  const activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
   /*
    * True only while ScrollTrigger actually has the screen pinned.
    *
@@ -96,111 +77,8 @@ export default function MissionSequence() {
    * waits for the pin; the flight itself stays visible throughout, so the
    * readout arrives over a scene that is already there.
    */
-  const [pinned, setPinned] = useState(false);
-
-  // Two effects on purpose.
-  //
-  // ScrollTrigger's pin freezes an INLINE height on the pinned element, taken
-  // at the moment it is created. If it is created in the same tick that flips
-  // `live`, React has not yet painted the live layout, so it measures the
-  // fallback (four stacked beats, ~2100px) and pins that height forever — the
-  // stage ends up far below the fold. Loading GSAP and creating the trigger are
-  // therefore split, so the second effect only runs once `live` is committed to
-  // the DOM and the one-screen layout is real.
-  const gsapRef = useRef<GsapModules | null>(null);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const el = section.current;
-    if (!el) return;
-
-    let disposed = false;
-
-    /*
-     * Gated by proximity, not by mount.
-     *
-     * This used to fire the moment the component mounted, with no regard for
-     * where the reader actually was — measured, GSAP and the MissionFlight
-     * WebGL chunk were both loading, and the flight's canvas had created its
-     * GL context, within ~3.7s of ANY page load, while the section itself sat
-     * 4000px below the viewport. DESIGN_DIRECTION.md is explicit that three.js
-     * must be "gated behind idle and/or intersection" and caps live WebGL
-     * contexts at two; this was quietly spending one on a section nobody had
-     * scrolled near yet.
-     *
-     * A wide rootMargin starts the load a full screen early, so it is still
-     * ready by the time the reader arrives — this is a proximity gate, not a
-     * lazy-render that would show a blank pin.
-     */
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-        (async () => {
-          const [{ gsap }, { ScrollTrigger }] = await Promise.all([
-            import("gsap"),
-            import("gsap/ScrollTrigger"),
-          ]);
-          if (disposed) return;
-          gsap.registerPlugin(ScrollTrigger);
-          gsapRef.current = { gsap, ScrollTrigger };
-          setLive(true);
-        })();
-      },
-      { rootMargin: "100% 0px" },
-    );
-    io.observe(el);
-
-    return () => {
-      disposed = true;
-      io.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const mods = gsapRef.current;
-    const el = section.current;
-    if (!live || !mods || !el) return;
-
-    const { gsap, ScrollTrigger } = mods;
-    let raf = 0;
-    let ctx: { revert: () => void } | undefined;
-
-    // One more frame so layout has settled before anything is measured.
-    raf = requestAnimationFrame(() => {
-      ctx = gsap.context(() => {
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top top",
-          end: `+=${STOPS * STOP_SCROLL}%`,
-          pin: screen.current,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-          onToggle: (self) => setPinned(self.isActive),
-          onUpdate: (self) => {
-            // Store only. The scene damps toward this in its own frame loop.
-            sequence.p = self.progress;
-            setBeat((prev) => {
-              const next = activeStop(self.progress);
-              return next === prev ? prev : next;
-            });
-          },
-        });
-      }, el);
-
-      ScrollTrigger.refresh();
-    });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      ctx?.revert();
-      sequence.p = 0;
-    };
-  }, [live]);
-
   return (
     <section
-      ref={section}
       id="method"
       data-section="The work"
       className={styles.sequence}
@@ -208,10 +86,8 @@ export default function MissionSequence() {
       aria-label="A flight through the missions"
     >
       <div
-        ref={screen}
         className={styles.screen}
         data-live={live || undefined}
-        data-pinned={pinned || undefined}
       >
         <div className={styles.stage} data-live={live || undefined}>
           {live ? (
@@ -223,9 +99,7 @@ export default function MissionSequence() {
              * twice. The canvas is aria-hidden inside CardGallery; the nav is
              * the one description that exists.
              */
-            <div className={styles.canvas}>
-              <CardGallery faces={faces} onFocusChange={setSelectedSlug} />
-            </div>
+            <div className={styles.canvas} />
           ) : (
             // Static fallback: a CSS orbit, no canvas, no WebGL.
             <div className={styles.cssOrbit} aria-hidden="true">
