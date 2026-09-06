@@ -2,9 +2,10 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { activeBeat, BEAT_SCROLL, BEATS, sequence } from "@/lib/sequence";
-import { featuredMissions } from "@/content/missions";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { activeStop, STOP_SCROLL, STOPS, sequence } from "@/lib/sequence";
+import { missions } from "@/content/missions";
+import MissionSignature from "@/components/MissionSignature";
 
 type GsapModules = {
   gsap: typeof import("gsap")["gsap"];
@@ -12,7 +13,7 @@ type GsapModules = {
 };
 import styles from "./MissionSequence.module.scss";
 
-const MissionFlight = dynamic(() => import("./MissionFlight"), {
+const CardGallery = dynamic(() => import("./CardGallery"), {
   ssr: false,
   loading: () => null,
 });
@@ -40,11 +41,14 @@ const MissionFlight = dynamic(() => import("./MissionFlight"), {
  * ("RANGE 6.2 AU") beside them. Three and a half screens of the most expensive
  * scroll on the site, spent on saying nothing that could be checked.
  *
- * Now each beat is a featured mission, and everything on screen comes from
- * content: the org, the premise, and whatever signals that mission actually
- * has. Nothing here can claim more than the data does.
+ * Now every mission gets a stop, not just the five featured ones — the flight
+ * is the showcase, and a showcase that skips half the work undersells it.
+ * `STOPS` in sequence.ts is kept at 10 to match; if the mission count ever
+ * changes, that constant and this array drift out of sync in a way TypeScript
+ * cannot catch, so tools/spiralfit.mjs and tools/beatfit.mjs both assert the
+ * pinned track still fits after any change to either.
  */
-const beats = featuredMissions.map((m) => ({
+const beats = missions.map((m) => ({
   id: m.slug,
   label: m.org,
   title: m.title,
@@ -61,6 +65,27 @@ export default function MissionSequence() {
   const screen = useRef<HTMLDivElement>(null);
   const [beat, setBeat] = useState(0);
   const [live, setLive] = useState(false);
+  // Which mission a click (or keyboard focus, via the sr-only nav below) has
+  // pinned the camera on. Separate from `beat`, which is purely a function of
+  // scroll — CardGallery owns the decision to stop following scroll while a
+  // card is selected, this component only needs to know WHICH one to show in
+  // the text band. Cleared by CardGallery itself once scroll drifts far
+  // enough, so there is never a scroll-hijack state this component has to undo.
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const selectedIndex = selectedSlug ? beats.findIndex((b) => b.id === selectedSlug) : -1;
+  const activeIndex = selectedIndex >= 0 ? selectedIndex : beat;
+
+  const faces = useMemo(
+    () =>
+      beats.map((b) => ({
+        slug: b.id,
+        title: b.title,
+        org: b.label,
+        period: b.period,
+        signal: b.signals[0]?.value,
+      })),
+    [],
+  );
   /*
    * True only while ScrollTrigger actually has the screen pinned.
    *
@@ -147,7 +172,7 @@ export default function MissionSequence() {
         ScrollTrigger.create({
           trigger: el,
           start: "top top",
-          end: `+=${BEATS * BEAT_SCROLL}%`,
+          end: `+=${STOPS * STOP_SCROLL}%`,
           pin: screen.current,
           scrub: 0.6,
           invalidateOnRefresh: true,
@@ -156,7 +181,7 @@ export default function MissionSequence() {
             // Store only. The scene damps toward this in its own frame loop.
             sequence.p = self.progress;
             setBeat((prev) => {
-              const next = activeBeat(self.progress);
+              const next = activeStop(self.progress);
               return next === prev ? prev : next;
             });
           },
@@ -180,7 +205,7 @@ export default function MissionSequence() {
       data-section="The work"
       className={styles.sequence}
       data-live={live || undefined}
-      aria-label="A flight through the featured missions"
+      aria-label="A flight through the missions"
     >
       <div
         ref={screen}
@@ -190,12 +215,16 @@ export default function MissionSequence() {
       >
         <div className={styles.stage} data-live={live || undefined}>
           {live ? (
-            <div
-              className={styles.canvas}
-              role="img"
-              aria-label={`A flight through the star map, stopping at ${beats.length} missions. The camera travels from system to system as you scroll.`}
-            >
-              <MissionFlight slugs={beats.map((b) => b.id)} />
+            /*
+             * No role="img" here. That description used to duplicate the
+             * sr-only <nav> below it — a WebGL canvas announces nothing on its
+             * own, so describing the picture AND publishing the real,
+             * operable list is telling assistive tech about the same thing
+             * twice. The canvas is aria-hidden inside CardGallery; the nav is
+             * the one description that exists.
+             */
+            <div className={styles.canvas}>
+              <CardGallery faces={faces} onFocusChange={setSelectedSlug} />
             </div>
           ) : (
             // Static fallback: a CSS orbit, no canvas, no WebGL.
@@ -207,6 +236,34 @@ export default function MissionSequence() {
           )}
 
         </div>
+
+          {/*
+            The real, operable version of the flight — see the comment on the
+            canvas above. Focus (tab) and click both select and pin the camera,
+            the identical result a mouse click on a card gives, so a keyboard
+            user gets the same experience rather than a text consolation prize.
+            Pattern lifted from InteractiveGalaxy's own sr-only node list.
+          */}
+          {live && (
+            <nav className={styles.srOnly} aria-label="Missions in this flight">
+              <ul>
+                {beats.map((b, i) => (
+                  <li key={b.id}>
+                    <button
+                      type="button"
+                      aria-current={activeIndex === i ? "true" : undefined}
+                      onFocus={() => setSelectedSlug(b.id)}
+                      onClick={() =>
+                        setSelectedSlug((prev) => (prev === b.id ? null : b.id))
+                      }
+                    >
+                      {b.title} — {b.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
 
           {/* Top rail. The live screen is a full 100vh with a vertically centred
               column of copy in it, so the top and bottom thirds were simply
@@ -229,8 +286,8 @@ export default function MissionSequence() {
                   {beats.map((b, i) => (
                     <li
                       key={b.id}
-                      data-on={i === beat || undefined}
-                      data-done={i < beat || undefined}
+                      data-on={i === activeIndex || undefined}
+                      data-done={i < activeIndex || undefined}
                     >
                       <span>{String(i + 1).padStart(2, "0")}</span>
                       {b.title}
@@ -238,7 +295,7 @@ export default function MissionSequence() {
                   ))}
                 </ol>
                 <span className={styles.hudCount}>
-                  {String(beat + 1).padStart(2, "0")} <i>/ 0{beats.length}</i>
+                  {String(activeIndex + 1).padStart(2, "0")} <i>/ 0{beats.length}</i>
                 </span>
               </>
             )}
@@ -249,9 +306,22 @@ export default function MissionSequence() {
             <article
               key={b.id}
               className={styles.beat}
-              data-on={i === beat || undefined}
-              aria-hidden={live && i !== beat ? true : undefined}
+              data-on={i === activeIndex || undefined}
+              data-selected={i === selectedIndex || undefined}
+              aria-hidden={live && i !== activeIndex ? true : undefined}
             >
+              {/* Only present while a click (or sr-only focus) has pinned this
+                  card. Scrolling on clears the selection itself, so this is
+                  the deliberate early exit, not the only one. */}
+              {i === selectedIndex && (
+                <button
+                  type="button"
+                  className={styles.beatClose}
+                  onClick={() => setSelectedSlug(null)}
+                >
+                  &times; Resume flight
+                </button>
+              )}
               {/* No number here. It used to print "01 APPROACH" directly under
                   a section labelled "02 / Method" — two counters running at
                   once — and the readout at the foot of the column already says
@@ -262,6 +332,13 @@ export default function MissionSequence() {
                   implicit rows, `-1` resolves to line 1, so the span collapsed
                   and the numbers sat on top of the band instead of beside it. */}
               <div className={styles.beatStory}>
+              {/* Same card face the 3D flight shows, server-rendered as SVG.
+                  Hidden once the live cross-fade takes over (see
+                  .copy[data-live] .beatSignature in the stylesheet) so it
+                  exists for exactly the audience that needs it: reduced
+                  motion, no JS, and search engines — never a duplicate next
+                  to the WebGL card. */}
+              <MissionSignature seed={b.id} width={220} height={72} className={styles.beatSignature} />
               <p className={styles.beatLabel}>{b.label}</p>
               <h2 className={styles.beatTitle}>{b.title}</h2>
               <p className={styles.beatBody}>{b.body}</p>

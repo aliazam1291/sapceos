@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const BASE = process.env.BASE ?? 'http://localhost:3210';
+const b = await chromium.launch({ args: ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+await p.goto(BASE + '/', { waitUntil: 'load' });
+const top = await p.evaluate(() => document.getElementById('method').getBoundingClientRect().top + scrollY);
+await p.evaluate((y) => scrollTo({ top: y, behavior: 'instant' }), top + (process.argv[2] ? Number(process.argv[2]) : 400));
+await p.waitForFunction(() => document.querySelector('[data-pinned]') !== null, null, { timeout: 8000 }).catch(() => {});
+await p.waitForTimeout(2500);
+await p.screenshot({ path: process.argv[3] || 'tools/shots/gallery.png' });
+console.log('wrote', process.argv[3] || 'tools/shots/gallery.png');
+await b.close();

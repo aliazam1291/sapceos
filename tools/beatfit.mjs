@@ -1,4 +1,7 @@
 // Does the tallest beat clear the flight plan below it, at every beat and size?
+// Scroll distance below is STOPS(10) * STOP_SCROLL(0.30) — update both if
+// src/lib/sequence.ts changes, or this scrolls to the wrong offsets and
+// reports layout failures that are not real.
 import { chromium } from 'playwright';
 const BASE = process.env.BASE ?? 'http://localhost:3100';
 const b = await chromium.launch({ args: ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
@@ -12,7 +15,7 @@ for (const [w, h] of [[1440, 900], [1807, 851], [2560, 1440], [3440, 1440], [384
   const top = await p.evaluate(() => document.getElementById('method').getBoundingClientRect().top + scrollY);
   const bad = [];
   for (const [i, f] of [0.08, 0.28, 0.48, 0.68, 0.9].entries()) {
-    await p.evaluate((y) => scrollTo({ top: y, behavior: 'instant' }), top + 5 * 0.6 * h * f);
+    await p.evaluate((y) => scrollTo({ top: y, behavior: 'instant' }), top + 10 * 0.30 * h * f);
     await p.waitForTimeout(1200);
     /*
      * Measure only while the screen is actually pinned.
@@ -53,7 +56,7 @@ for (const [w, h] of [[1440, 900], [1807, 851], [2560, 1440], [3440, 1440], [384
     if (r.cutBottom > 0) bad.push(`beat ${i + 1} cut off ${r.cutBottom}px below the fold`);
     if (r.cutTop > 0) bad.push(`beat ${i + 1} cut off ${r.cutTop}px above the fold`);
   }
-  console.log(`${w}x${h}: ${bad.length ? 'FAIL — ' + bad.join('; ') : 'all five beats fit, clear of the plan'}`);
+  console.log(`${w}x${h}: ${bad.length ? 'FAIL — ' + bad.join('; ') : 'all beats fit, clear of the plan'}`);
   await p.close();
 }
 await b.close();
