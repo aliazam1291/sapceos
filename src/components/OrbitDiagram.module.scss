@@ -1,0 +1,68 @@
+@use "../styles/tokens.scss" as *;
+
+.wrap {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin-inline: auto;
+  aspect-ratio: 1;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ring {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 0.4;
+}
+
+.ringActive {
+  stroke: var(--accent-line);
+}
+
+.core {
+  fill: var(--accent);
+}
+
+.coreRing {
+  fill: none;
+  stroke: var(--accent-line);
+  stroke-width: 0.5;
+}
+
+.body {
+  fill: var(--text-primary);
+}
+
+.bodySignal {
+  fill: var(--accent);
+}
+
+.orbiter {
+  transform-origin: 50px 50px;
+  animation: spin var(--period, 40s) linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 3px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  fill: var(--text-tertiary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbiter {
+    animation: none;
+  }
+}

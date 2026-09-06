@@ -1,0 +1,37 @@
+/*
+ * Tailwind v4, deliberately WITHOUT preflight.
+ *
+ * Importing the layers by hand (instead of `@import "tailwindcss"`) skips
+ * `base`, which is Tailwind's global reset. globals.scss already owns the
+ * reset, and letting both run means two systems fighting over the same
+ * element defaults. Utilities and theme are all the Aceternity components need.
+ */
+@layer theme, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --color-space-bg: #050505;
+  --color-space-raised: #101010;
+  --color-space-ink: #f5f5f5;
+  --color-space-muted: #8c8c8c;
+  --color-space-accent: #22d0b2;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Meteor streak — used by the Meteors component. */
+  --animate-meteor: meteor var(--meteor-duration, 5s) linear infinite;
+
+  @keyframes spotlight {
+    0%   { opacity: 0; transform: translateY(-6%) scale(0.82); }
+    100% { opacity: 1; transform: none; }
+  }
+
+  @keyframes meteor {
+    0%   { transform: rotate(215deg) translateX(0); opacity: 1; }
+    70%  { opacity: 1; }
+    100% { transform: rotate(215deg) translateX(-500px); opacity: 0; }
+  }
+}

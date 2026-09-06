@@ -1,0 +1,20 @@
+import { chromium } from 'playwright';
+const BASE = process.env.BASE ?? 'http://localhost:3000';
+const b = await chromium.launch();
+const p = await b.newPage({ viewportSize: { width: 1440, height: 1000 } });
+await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' });
+await p.waitForTimeout(3500);
+const toggles = await p.$$('summary');
+console.log('disclosures found:', toggles.length);
+if (!toggles.length) { console.log('FAIL: none rendered'); process.exit(1); }
+const t = toggles[0];
+await t.scrollIntoViewIfNeeded();
+await p.waitForTimeout(1200);
+await p.screenshot({ path: 'tools/shots/brief-closed.png' });
+await t.click();
+await p.waitForTimeout(1400);
+const open = await p.evaluate(() => document.querySelector('details')?.open);
+console.log('opened:', open);
+await p.screenshot({ path: 'tools/shots/brief-open.png' });
+console.log(open ? 'PASS' : 'FAIL: click did not open (link overlay likely intercepting)');
+await b.close();

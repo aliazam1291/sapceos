@@ -1,0 +1,81 @@
+@use "../../styles/tokens" as *;
+
+/*
+ * The sticky nav (65px) sits above this in normal flow, so a plain 100vh
+ * overflowed the viewport by exactly that much and pushed the galaxy's own
+ * bottom control bar below the fold — the zoom and filter buttons were
+ * simply unreachable without scrolling. Subtracting the nav height keeps the
+ * whole stage, and its controls, on screen. `svh` so mobile browser chrome
+ * doesn't reintroduce the same overflow.
+ */
+.mainContainer {
+  position: relative;
+  width: 100%;
+  height: calc(100svh - 65px);
+  min-height: 30rem;
+  background: #030608;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// A normal flex-flow item, not an absolute overlay — it used to sit at the
+// same `top: 1rem` as InteractiveGalaxy's own internal `.hudTop` telemetry
+// strip, and the two headers rendered on top of each other. Letting
+// `.mainContainer`'s flex column place this in flow means `.galaxyWrap`
+// (flex: 1 below) naturally starts beneath it instead of needing manually
+// coordinated offsets.
+.topBanner {
+  flex: none;
+  padding: 1rem 1.5rem;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.backLink {
+  padding: 0.5rem 0.85rem;
+  background: var(--panel-strong);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--type-micro);
+  text-decoration: none;
+  transition: all var(--dur-fast) var(--ease-out);
+
+  &:hover {
+    color: var(--accent);
+    border-color: var(--accent-line);
+    background: var(--accent-dim);
+  }
+}
+
+.headerTitle {
+  font-family: var(--font-mono);
+  font-size: var(--type-small);
+  letter-spacing: 0.2em;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.telemetryTag {
+  padding: 0.35rem 0.65rem;
+  background: rgba(34, 208, 178, 0.1);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--type-micro);
+  color: var(--accent);
+}
+
+.galaxyWrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}

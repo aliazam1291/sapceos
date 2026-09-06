@@ -1,0 +1,363 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * The command dock.
+ *
+ * One panel, docked to the bottom edge, centred. A top bar competes with the
+ * first thing a visitor reads; a bottom one stays reachable without ever
+ * covering the content it belongs to.
+ *
+ * `fixed`, not `sticky`: the bar has to hold its place while a pinned
+ * ScrollTrigger section is running, and sticky resolves against the scroll
+ * container, which the pin re-parents.
+ *
+ * This file used to declare `.bar` three times, `.rail` and `.inner` twice
+ * each, and carried a full set of `.link` / `.active` / `.drawer*` rules for
+ * markup that no longer exists (the route list moved into NavOverview, which
+ * has its own module). Rewritten as one pass so what is here is what renders.
+ */
+
+.bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 100;
+  padding-bottom: clamp(1rem, 2.4vh, 1.75rem);
+  // The bar itself is only a positioner; the dock carries the surface, so the
+  // dead space either side of it stays transparent to clicks.
+  pointer-events: none;
+
+  @media (max-width: 640px) {
+    padding-bottom: clamp(0.75rem, 2vh, 1rem);
+  }
+}
+
+.inner {
+  @include shell;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── The panel ────────────────────────────────────────────────────────────── */
+
+.dock {
+  position: relative;
+  // Above the Overview panel, which is a sibling inside this same header. See
+  // the note on `.overview` in NavOverview.module.scss.
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  max-width: 100%;
+  min-height: 52px;
+  pointer-events: auto;
+
+  // Square corners, one hairline, translucent fill — the same panel treatment
+  // as everything else on the site. It was a rounded card with a soft border,
+  // which is the generic-SaaS read the direction rules out.
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(130%);
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+
+  // Without backdrop-filter the fill has to do the occluding on its own,
+  // otherwise headlines scroll through the dock and nothing is legible.
+  @supports not (backdrop-filter: blur(1px)) {
+    background: color-mix(in srgb, var(--bg-primary) 96%, transparent);
+  }
+
+  // Hairline dividers, drawn between children rather than around each one, so
+  // the dock reads as one divided surface instead of a row of separate cards.
+  > * + * {
+    border-left: 1px solid var(--line);
+  }
+}
+
+/*
+ * Every direct control shares one baseline: same height, same vertical rhythm,
+ * same transition. Individually-padded segments are how the old bar ended up
+ * with modules of three different heights sitting next to each other.
+ */
+.status,
+.brand,
+.here,
+.cta,
+.toggle,
+.resume {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-4);
+  white-space: nowrap;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+/* Interactive controls get an accent underline that sweeps in from the left. */
+.brand,
+.cta,
+.toggle,
+.resume {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: right var(--dur-base) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 9%, transparent);
+
+      &::after {
+        right: 0;
+      }
+    }
+  }
+
+  // Keyboard users previously got nothing at all here — no ring, no fill.
+  &:focus-visible {
+    outline: none;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    color: var(--text-primary);
+
+    &::after {
+      right: 0;
+    }
+  }
+}
+
+/* ── Live signal ──────────────────────────────────────────────────────────── */
+
+.status {
+  padding-inline: var(--space-4);
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: statusPulse 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50%      { opacity: 1; transform: scale(1.15); }
+}
+
+/* ── Brand ────────────────────────────────────────────────────────────────── */
+
+.brand {
+  gap: var(--space-3);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.brandMark {
+  @include mono-label;
+  color: var(--accent);
+}
+
+.brandName {
+  display: inline-block;
+  max-width: 12rem;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    max-width var(--dur-slow) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out),
+    margin var(--dur-slow) var(--ease-out);
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+/* ── Current-location readout ─────────────────────────────────────────────── */
+
+.here {
+  gap: var(--space-3);
+
+  @media (max-width: 860px) {
+    display: none;
+  }
+}
+
+.hereLabel {
+  @include mono-label;
+  color: var(--text-tertiary);
+}
+
+.hereValue {
+  @include mono-label;
+  color: var(--text-secondary);
+  // A short leader tick, so the readout reads as an instrument value rather
+  // than as one more thing in the row you could click.
+  position: relative;
+  padding-left: var(--space-3);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 6px;
+    height: 1px;
+    background: var(--accent-line);
+  }
+}
+
+/* ── Actions ──────────────────────────────────────────────────────────────── */
+
+.cta {
+  font-size: var(--type-small);
+  color: var(--accent);
+
+  // On /contact the destination is where you already are, so it stops
+  // advertising itself as somewhere to go.
+  &[aria-current="page"] {
+    color: var(--text-primary);
+
+    &::after {
+      right: 0;
+    }
+  }
+}
+
+.toggle {
+  @include mono-label;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+}
+
+/*
+ * Two stacked rules that cross into an X when the panel is open — the control
+ * is a toggle, and a word alone never says which way it is about to go.
+ */
+.toggleGlyph {
+  position: relative;
+  display: block;
+  width: 12px;
+  height: 9px;
+  flex: none;
+
+  i {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  i:first-child { top: 0; }
+  i:last-child  { bottom: 0; }
+
+  &[data-open] i:first-child { transform: translateY(4px) rotate(45deg); }
+  &[data-open] i:last-child  { transform: translateY(-4px) rotate(-45deg); }
+}
+
+.resume {
+  justify-content: center;
+  min-width: 46px;
+  padding-inline: var(--space-3);
+  color: var(--text-secondary);
+
+  @media (max-width: 560px) {
+    display: none;
+  }
+}
+
+/*
+ * Narrow screens. At 390px the shell leaves 350px of content width and the
+ * dock's natural width was ~354 — so it ran under the viewport edge and lost
+ * its right-hand border. Tightening the control padding is enough to bring it
+ * back inside; nothing has to be dropped.
+ */
+@media (max-width: 560px) {
+  .status,
+  .brand,
+  .cta,
+  .toggle {
+    padding-inline: var(--space-3);
+  }
+
+  .cta {
+    font-size: 0.875rem;
+  }
+
+  .dock {
+    min-height: 48px;
+  }
+}
+
+/* ── Scroll state ─────────────────────────────────────────────────────────────
+ *
+ * At the top of a page the dock is quiet and the hero reads as full-bleed. Once
+ * scrolling starts it condenses — the brand word collapses to its mark — and
+ * the fill goes more opaque so the controls stay legible over whatever is
+ * passing underneath.
+ */
+
+.bar[data-scrolled] .brandName {
+  max-width: 0;
+  opacity: 0;
+  margin-left: -0.35rem;
+}
+
+.bar[data-scrolled] .dock {
+  background: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+  border-color: var(--line-strong);
+}
+
+/* ── Reading-progress rail ────────────────────────────────────────────────── */
+
+.rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.railFill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  // Driven directly from a rAF-throttled scroll handler, so no CSS transition
+  // here — a transition would lag behind the actual scroll position.
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statusDot,
+  .brandName,
+  .dock,
+  .toggleGlyph i {
+    animation: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,15 @@
+/*
+ * The stage a page's signature form occupies.
+ *
+ * No border, no fill, no `overflow: hidden` — a body in space must not have a
+ * rectangle around it. The mask is what ends the object, so it dissolves into
+ * the page instead of being cropped by a container.
+ */
+.stage {
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+  aspect-ratio: 1;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 68% 66% at 50% 50%, #000 42%, transparent 82%);
+}

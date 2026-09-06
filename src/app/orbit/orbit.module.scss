@@ -1,0 +1,62 @@
+@use "../../styles/tokens.scss" as *;
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(var(--space-8), 5vw, var(--space-16));
+  align-items: center;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 560px;
+  margin-inline: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.stageLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.stageLabel {
+  position: absolute;
+  left: var(--space-4);
+  top: var(--space-4);
+  z-index: 1;
+  @include mono-label;
+}
+
+.stageHint {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 1;
+  @include mono-label;
+
+  @media (hover: none) {
+    display: none;
+  }
+}
+
+
+/* ── Un-boxed stage ───────────────────────────────────────────────────────────
+ * The system was framed in a bordered panel, which made a body in space look
+ * like a thumbnail. It now sits directly in the page, consistent with the
+ * pinned sequence on the home page.
+ */
+.stage {
+  border: 0;
+  background: none;
+  border-radius: 0;
+  overflow: visible;
+}

@@ -1,0 +1,314 @@
+@use "../styles/tokens.scss" as *;
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4rem 1fr 200px auto;
+  gap: clamp(var(--space-4), 3vw, var(--space-8));
+  align-items: center;
+  padding: clamp(var(--space-8), 3.5vw, var(--space-12)) clamp(var(--space-6), 3vw, var(--space-10));
+  background: var(--panel);
+  isolation: isolate;
+  transition: background var(--dur-base) var(--ease-out);
+
+  @media (max-width: 1040px) {
+    grid-template-columns: 5.5rem 1fr auto;
+  }
+
+  @media (max-width: 860px) {
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-8);
+    align-items: start;
+  }
+}
+
+.signature {
+  width: 100%;
+  height: 84px;
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  background: rgba(5, 7, 8, 0.5);
+  color: var(--text-secondary);
+  opacity: 0.55;
+  transition: opacity var(--dur-slow) var(--ease-out),
+    color var(--dur-slow) var(--ease-out);
+
+  @media (max-width: 1040px) {
+    display: none;
+  }
+}
+
+// A spotlight that follows the pointer. Cheap, and it makes a black page feel
+// lit rather than empty. Coordinates come from JS custom properties.
+.row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(34, 208, 178, 0.07),
+    transparent 62%
+  );
+  transition: opacity var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+// An accent hairline that draws across the row on hover.
+.row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+@include hover-only {
+  .row:hover::before {
+    opacity: 1;
+  }
+
+  .row:hover {
+    background: var(--panel-strong);
+  }
+
+  .row:hover::after {
+    transform: scaleY(1);
+  }
+
+  .row:hover .title {
+    color: var(--accent);
+  }
+
+  .row:hover .arrow {
+    transform: translate(4px, -4px);
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
+
+  .row:hover .signature {
+    opacity: 1;
+    color: var(--text-primary);
+  }
+}
+
+.row:focus-within::after {
+  transform: scaleY(1);
+}
+
+.index {
+  @include mono-label;
+  font-size: 0.75rem;
+  padding-top: 0.35rem;
+  // Clear of the 2px accent bar that slides in on the row's left edge.
+  padding-left: var(--space-2);
+  align-self: start;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.body {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.titleLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-4);
+}
+
+.title {
+  font-size: clamp(1.5rem, 3.4vw, 2.5rem);
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+// The link covers the whole row so the hit target is the row, not the words.
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.premise {
+  color: var(--text-secondary);
+  max-width: 56ch;
+  font-size: var(--type-small);
+}
+
+// Real operating-scale signals, given a physical module rather than buried
+// inside metadata. The clipped corners keep the geometry intentional.
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.stats div {
+  min-width: 8.2rem;
+  padding: var(--space-3) var(--space-4);
+  background: linear-gradient(135deg, rgba(34, 208, 178, .09), rgba(255, 255, 255, .02));
+  border: 1px solid var(--accent-line);
+  clip-path: polygon(0 0, calc(100% - 0.5625rem) 0, 100% 0.5625rem, 100% 100%, 0 100%);
+  transition: transform var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+}
+
+.stats dt { @include mono-label; margin-bottom: 0.1875rem; }
+.stats dd { color: var(--text-primary); font-size: var(--type-small); font-weight: 500; }
+
+@include hover-only {
+  .row:hover .stats div { transform: translateY(-0.1875rem); background: rgba(34, 208, 178, .12); }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  @include mono-label;
+}
+
+.metaValue {
+  color: var(--text-secondary);
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  flex: none;
+  transition: transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+
+  @media (max-width: 860px) {
+    display: none;
+  }
+}
+
+.list {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  // Horizontal rules only. A full box around the list makes ten missions read
+  // as one widget sitting on the page; open sides let the rows belong to the
+  // page itself and the panels bleed to the shell edges.
+  border-block: 1px solid var(--line);
+}
+
+/* ── The brief ─────────────────────────────────────────────────────────────
+   An in-place disclosure onto the mission's real report sections.
+
+   STACKING: `.link::after` covers the entire row with an absolutely positioned
+   overlay so the card's hit target is the whole card. Anything interactive
+   added inside the row therefore lands UNDERNEATH it and cannot be clicked.
+   This lifts the disclosure back above that overlay, and gives it its own
+   background so the row's spotlight gradient does not wash through the text. */
+.brief {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-2);
+  max-width: 62ch;
+}
+
+.briefToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: rgba(5, 7, 8, 0.6);
+  color: var(--text-secondary);
+  @include mono-label;
+  transition: color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+
+  // The default disclosure triangle is the one piece of chrome on this page
+  // that no stylesheet here authored. Replaced below with a rotating caret.
+  list-style: none;
+  &::-webkit-details-marker { display: none; }
+
+  &::before {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+}
+
+.brief[open] .briefToggle::before { transform: rotate(45deg); }
+
+.brief[open] .briefToggle,
+.briefToggle:hover,
+.briefToggle:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent-line);
+}
+
+.briefCount {
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 0fr -> 1fr animates to the content's own height with nothing measured in JS.
+   Browsers without it simply show the content on open, which is the point of
+   building the disclosure on <details> in the first place. */
+.briefBody {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-slow) var(--ease-out);
+  > * { overflow: hidden; }
+}
+
+.brief[open] .briefBody { grid-template-rows: 1fr; }
+
+.briefList {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5) 0 var(--space-2);
+  min-height: 0;
+
+  dt {
+    @include mono-label;
+    color: var(--text-tertiary);
+    margin-bottom: 0.25rem;
+  }
+
+  dd {
+    color: var(--text-secondary);
+    font-size: var(--type-small);
+    // Hairline on the inline start, so each answer reads as an indented
+    // response to its label rather than as another paragraph in a stack.
+    border-inline-start: 1px solid var(--line);
+    padding-inline-start: var(--space-4);
+  }
+}
+
+.briefLink {
+  @include mono-label;
+  color: var(--accent);
+  display: inline-block;
+  padding-bottom: var(--space-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .briefBody { transition: none; }
+  .briefToggle::before { transition: none; }
+}

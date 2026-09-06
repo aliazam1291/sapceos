@@ -1,0 +1,120 @@
+@use "../styles/tokens.scss" as *;
+
+// Asymmetric grid. Named areas on desktop, a single stack on mobile — no
+// clever auto-placement that reorders content unpredictably.
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    "loop  loop  object object"
+    "note  note  object object"
+    "stat1 stat2 stat3  scale";
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "loop   loop"
+      "object object"
+      "note   note"
+      "stat1  stat2"
+      "stat3  scale";
+  }
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "loop"
+      "object"
+      "note"
+      "stat1"
+      "stat2"
+      "stat3"
+      "scale";
+  }
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: clamp(var(--space-4), 2.5vw, var(--space-8));
+  overflow: hidden;
+  min-width: 0;
+
+  @include panel;
+}
+
+.loop { grid-area: loop; }
+.object { grid-area: object; min-height: clamp(260px, 34vw, 400px); }
+.note { grid-area: note; }
+.stat1 { grid-area: stat1; }
+.stat2 { grid-area: stat2; }
+.stat3 { grid-area: stat3; }
+.scale { grid-area: scale; }
+
+.tileLabel {
+  @include mono-label;
+}
+
+.tileValue {
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.tileNote {
+  font-size: var(--type-small);
+  color: var(--text-secondary);
+}
+
+.canvasHost {
+  position: absolute;
+  inset: 0;
+}
+
+.objectCaption {
+  position: absolute;
+  left: clamp(var(--space-4), 2.5vw, var(--space-8));
+  bottom: clamp(var(--space-4), 2.5vw, var(--space-8));
+  z-index: 1;
+  @include mono-label;
+}
+
+// Steps of the operating loop, as a wrapping chain.
+.loopChain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  list-style: none;
+  padding: 0;
+}
+
+.loopStep {
+  @include mono-label;
+  color: var(--text-secondary);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: var(--space-1) var(--space-3);
+}
+
+.loopStepLead {
+  border-color: var(--accent-line);
+  color: var(--accent);
+}
+
+.loopArrow {
+  color: var(--text-tertiary);
+}
+
+.noteText {
+  color: var(--text-secondary);
+  max-width: 52ch;
+
+  p + p {
+    margin-top: var(--space-3);
+  }
+}

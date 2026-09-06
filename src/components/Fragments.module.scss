@@ -1,0 +1,260 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * The inventory band.
+ *
+ * Full-bleed on purpose: this is the one place on the site that should feel
+ * like there is more than fits on screen, and a strip that stops at the shell
+ * margin cannot say that. It runs off both edges and is scrubbed sideways.
+ */
+.band {
+  position: relative;
+  /*
+   * Asymmetric on purpose, and the one exception to --space-section.
+   *
+   * ui.module.scss collapses the doubled rhythm between stacked sections with
+   * `.section + .section { padding-top: 0 }`, but this band is `.band`, not
+   * `.section` — CSS Modules hash both, so the adjacency selector cannot see
+   * across the two files and never matched here. Measured on the home page:
+   * the missions section's 141px bottom padding met this band's 141px top for
+   * a 282px void, close to a third of a viewport of nothing, which is what
+   * made the page read as blocks floating apart rather than one continuous
+   * instrument. The band's own top border already marks the division; it does
+   * not also need the full rhythm above it.
+   */
+  padding-block: calc(var(--space-section) * 0.45) var(--space-section);
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+
+  /*
+   * One left edge for the whole band.
+   *
+   * The heading used `@include shell` (max-width, centred), the strip used a
+   * raw `--shell-pad`, and the progress rule used the shell INCLUDING its
+   * padding — three different left edges: 164 / 64 / 100 at 1440px, and
+   * 362 / 64 / 298 at 1836px. The error grew with the viewport, because only
+   * two of the three were centring against `--shell-max`.
+   *
+   * This resolves to wherever the shell's CONTENT actually starts, and falls
+   * back to the plain gutter on screens narrower than the shell.
+   */
+  --gutter: max(
+    var(--shell-pad),
+    calc((100% - var(--shell-max)) / 2 + var(--shell-pad))
+  );
+}
+
+.head {
+  @include shell;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-bottom: var(--space-10);
+}
+
+.headText {
+  max-width: 44rem;
+}
+
+.label {
+  @include mono-label;
+  color: var(--accent);
+  margin-bottom: var(--space-5);
+}
+
+.title {
+  font-size: var(--type-medium);
+  letter-spacing: -0.025em;
+  margin-bottom: var(--space-4);
+}
+
+.lede {
+  color: var(--text-secondary);
+  max-width: 40ch;
+}
+
+/*
+ * The count, at the scale the reference sites use for a wordmark.
+ *
+ * It is the length of the array, never a written figure — so it is allowed to
+ * be this loud, because it cannot be wrong.
+ */
+.count {
+  flex: none;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  line-height: 0.82;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+  font-variant-numeric: tabular-nums;
+
+  @media (max-width: 720px) {
+    display: none;
+  }
+}
+
+/* ── The strip ────────────────────────────────────────────────────────────── */
+
+.rail {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  // The scrollbar is redundant next to the progress rule below, and a visible
+  // one under a full-bleed band looks like a mistake.
+  scrollbar-width: none;
+  cursor: grab;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &[data-dragging] {
+    cursor: grabbing;
+    // Kills text selection mid-drag, which otherwise highlights every tile the
+    // pointer crosses.
+    user-select: none;
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: -1px;
+  }
+}
+
+.strip {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  // Hairline separators come from the gap showing the band through, which is
+  // the same divided-surface treatment the rest of the site uses.
+  gap: 1px;
+  // Starts on the page's text edge; still bleeds off the right, which is the
+  // point of the band.
+  padding-left: var(--gutter);
+  padding-right: var(--shell-pad);
+  background: none;
+  width: max-content;
+}
+
+.cell {
+  display: flex;
+}
+
+.tile {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--space-3);
+  width: clamp(13rem, 20vw, 16.5rem);
+  min-height: 12.5rem;
+  padding: var(--space-5);
+  background: var(--bg-secondary);
+  border: 1px solid var(--line);
+  position: relative;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+
+  // A hairline that draws across the top edge on approach — the same sweep the
+  // nav and mission rows use, so the whole site reacts one way.
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 100%;
+    top: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: right var(--dur-base) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover {
+      background: var(--bg-raised);
+      border-color: var(--accent-line);
+      transform: translateY(-3px);
+
+      &::after {
+        right: 0;
+      }
+
+      .tileTitle {
+        color: var(--accent);
+      }
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-raised);
+
+    &::after {
+      right: 0;
+    }
+  }
+}
+
+.index {
+  @include mono-label;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.kind {
+  @include mono-label;
+  color: var(--accent);
+
+  .tile[data-kind="lab"] & {
+    color: #8fe4d3;
+  }
+
+  .tile[data-kind="note"] & {
+    color: var(--text-secondary);
+  }
+}
+
+.tileTitle {
+  align-self: end;
+  font-size: var(--type-small);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.meta {
+  @include mono-label;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-tertiary);
+}
+
+/* Unwritten pieces say so rather than sitting in the strip as finished work. */
+.draft {
+  font-style: normal;
+  padding: 1px var(--space-2);
+  border: 1px solid var(--line-strong);
+  color: var(--text-secondary);
+}
+
+/* ── Scrub position ───────────────────────────────────────────────────────── */
+
+.progress {
+  margin-top: var(--space-8);
+  margin-left: var(--gutter);
+  margin-right: var(--shell-pad);
+  height: 1px;
+  background: var(--line);
+
+  span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: 0 50%;
+    // Driven straight from the scroll handler; a transition would lag the drag.
+  }
+}

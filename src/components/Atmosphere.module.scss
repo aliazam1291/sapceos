@@ -1,0 +1,71 @@
+@use "../styles/tokens.scss" as *;
+
+// Film grain + vignette. Texture instead of gradients — it keeps large black
+// areas from looking like dead flat fill without adding any colour.
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: radial-gradient(rgba(255,255,255,.42) .5px, transparent .7px);
+  background-size: 7px 7px;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 120% 90% at 50% 40%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+// Scroll telemetry rail — sits on the viewport edge, reads as instrumentation.
+.rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  z-index: 9999;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 25%, transparent));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+
+// Cursor reticle — fine pointers only, and only a ring. No trail, no glow.
+.reticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9996;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: width var(--dur-base) var(--ease-out), height var(--dur-base) var(--ease-out),
+    margin var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+
+  @media (hover: none), (pointer: coarse) {
+    display: none;
+  }
+}
+
+.reticleActive {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-color: var(--accent-line);
+  background: var(--accent-dim);
+}

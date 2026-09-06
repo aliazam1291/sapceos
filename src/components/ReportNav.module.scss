@@ -1,0 +1,84 @@
+@use "../styles/tokens.scss" as *;
+
+.layout {
+  @include shell;
+  padding-block: var(--space-section);
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: clamp(var(--space-8), 5vw, var(--space-16));
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+}
+
+.nav {
+  position: sticky;
+  top: calc(64px + var(--space-8));
+  display: grid;
+  gap: var(--space-1);
+
+  // On small screens it becomes a horizontal scroller pinned under the header.
+  @media (max-width: 900px) {
+    position: sticky;
+    top: 64px;
+    z-index: 20;
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-block: var(--space-3);
+    margin-inline: calc(var(--shell-pad) * -1);
+    padding-inline: var(--shell-pad);
+    background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.item {
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-1);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+
+  &::before {
+    content: "";
+    width: 10px;
+    height: 1px;
+    background: currentColor;
+    flex: none;
+    transition: width var(--dur-base) var(--ease-out);
+
+    @media (max-width: 900px) {
+      display: none;
+    }
+  }
+
+  @include hover-only {
+    &:hover {
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.itemActive {
+  color: var(--accent);
+
+  &::before {
+    width: 22px;
+  }
+}

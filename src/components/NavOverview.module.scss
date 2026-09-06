@@ -1,0 +1,397 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * Full-screen system manifest.
+ *
+ * Deliberately opaque rather than a translucent scrim: the page behind carries
+ * a live starfield, and reading twelve mission titles through moving stars is
+ * genuinely hard. The overlay gets its own quiet field instead.
+ */
+/*
+ * The dimmed page behind the panel.
+ *
+ * Sits ABOVE the command dock (which is z-index 2 inside this same header
+ * stacking context) because the panel now carries its own close control — so
+ * covering the dock costs nothing, where before it hid the only way out.
+ */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  /*
+   * Explicitly re-enabled. This panel renders inside <header>, which sets
+   * `pointer-events: none` so the empty space either side of the command dock
+   * stays click-through — and that inherits straight down into here. The
+   * backdrop was accepting no clicks at all: clicking the dimmed page did
+   * nothing, and the click landed on the hero underneath instead.
+   */
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vh, 2.5rem) clamp(1rem, 4vw, 2.5rem);
+  background: rgba(3, 4, 5, 0.72);
+  backdrop-filter: blur(10px) saturate(115%);
+  animation: backdropIn var(--dur-base) var(--ease-out) both;
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background: rgba(3, 4, 5, 0.93);
+  }
+}
+
+/*
+ * The panel itself.
+ *
+ * Square corners and one hairline, not the rounded card the reference uses —
+ * this site's whole language is instrument panels, and a soft-cornered floating
+ * card is the generic-SaaS read the direction rules out by name.
+ */
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(1180px, 100%);
+  max-height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--panel-line);
+  background:
+    radial-gradient(120% 80% at 78% 8%, rgba(34, 208, 178, 0.06), transparent 60%),
+    radial-gradient(90% 70% at 10% 92%, rgba(58, 96, 190, 0.05), transparent 62%),
+    rgba(8, 9, 10, 0.96);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+  animation: panelIn var(--dur-slow) var(--ease-out) both;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Foot: identity · where you are · the way out ─────────────────────────── */
+
+.foot {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: stretch;
+  border-top: 1px solid var(--panel-line);
+  flex: none;
+}
+
+.footMark {
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--space-5);
+  color: var(--accent);
+  border-right: 1px solid var(--panel-line);
+}
+
+.footHere {
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  color: var(--text-secondary);
+}
+
+.footClose {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--panel-line);
+  cursor: pointer;
+  color: var(--text-secondary);
+  @include mono-label;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+}
+
+.footCloseLabel {
+  @media (max-width: 560px) {
+    display: none;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  // Scrolls WITHIN the panel — the foot has to stay put, so the overflow
+  // cannot live on the overlay any more.
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(1.75rem, 4vh, 3rem) clamp(1.5rem, 3vw, 3rem);
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 6rem);
+  }
+}
+
+/* ── Left column ──────────────────────────────────────────────────────────── */
+
+.pages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.kicker {
+  @include mono-label;
+}
+
+.wordmark {
+  font-size: clamp(2.75rem, 6vw, 5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  margin-top: var(--space-3);
+}
+
+.pageList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border-block: 1px solid var(--line);
+}
+
+.pageLink {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-2);
+  background: #060708;
+  transition:
+    background var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      background: var(--bg-raised);
+
+      .pageLabel {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+.pageIndex {
+  @include mono-label;
+  font-variant-numeric: tabular-nums;
+}
+
+.pageLabel {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  letter-spacing: -0.02em;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.pageMeta {
+  @include mono-label;
+  text-align: right;
+}
+
+.pageLink[data-current] {
+  .pageLabel {
+    color: var(--accent);
+  }
+
+  .pageMeta {
+    color: var(--accent);
+  }
+}
+
+.social {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin-top: auto;
+
+  a {
+    @include mono-label;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: color var(--dur-base) var(--ease-out);
+
+    @include hover-only {
+      &:hover {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+/* ── Right column ─────────────────────────────────────────────────────────── */
+
+.manifest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.manifestHead {
+  @include mono-label;
+  display: grid;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+
+  span {
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: var(--font-sans);
+    font-size: var(--type-small);
+    color: var(--text-secondary);
+  }
+}
+
+.groupLabel {
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+
+  span {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Two columns of missions, on a hairline grid. */
+.missionGrid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+
+  @media (min-width: 620px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.mission {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  grid-template-areas:
+    "index title"
+    ".     meta";
+  gap: 0 var(--space-3);
+  align-items: baseline;
+  padding: var(--space-4) var(--space-3);
+  height: 100%;
+  background: #060708;
+  transition: background var(--dur-base) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      background: var(--bg-raised);
+
+      .missionTitle {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+.missionIndex {
+  grid-area: index;
+  @include mono-label;
+  font-variant-numeric: tabular-nums;
+}
+
+.missionTitle {
+  grid-area: title;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.missionMeta {
+  grid-area: meta;
+  @include mono-label;
+  margin-top: var(--space-2);
+}
+
+/* ── Actions ──────────────────────────────────────────────────────────────── */
+
+.actions {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-top: var(--space-8);
+}
+
+.action {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr auto;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-3);
+  background: #060708;
+  font-size: var(--type-small);
+  transition: background var(--dur-base) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      background: var(--bg-raised);
+      color: var(--accent);
+    }
+  }
+}
+
+.actionIndex {
+  @include mono-label;
+  font-variant-numeric: tabular-nums;
+}
+
+.actionMeta {
+  @include mono-label;
+  text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overview {
+    animation: none;
+  }
+}

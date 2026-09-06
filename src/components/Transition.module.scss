@@ -1,0 +1,25 @@
+@use "../styles/tokens.scss" as *;
+
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 9995;
+  pointer-events: none;
+  background: var(--bg-primary);
+  transform-origin: 50% 100%;
+  will-change: transform;
+  display: grid;
+  place-items: center;
+}
+
+.mark {
+  @include mono-label;
+  color: var(--accent);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veil {
+    display: none;
+  }
+}

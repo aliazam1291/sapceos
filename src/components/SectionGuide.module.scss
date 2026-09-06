@@ -1,0 +1,130 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * A vertical rail on the right edge: the current section named at the top,
+ * then one tick per section below it.
+ *
+ * Hidden below the desktop breakpoint. On a phone there is no spare gutter to
+ * put it in, and a rail overlapping content is worse than no rail.
+ */
+.guide {
+  position: fixed;
+  right: clamp(1rem, 2.2vw, 2rem);
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 90;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-6);
+  pointer-events: none;
+
+  @media (min-width: 1100px) {
+    display: flex;
+  }
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+/* Current section name, with the leading rule that anchors it to the ticks. */
+.current {
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
+
+.dash {
+  width: 22px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.ticks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+/*
+ * Each tick is a button, so the rail is a real navigation control and not a
+ * decorative readout — keyboard reachable, and it jumps through Lenis so the
+ * travel matches the rest of the site's scrolling.
+ */
+.tick {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  cursor: pointer;
+}
+
+.tickMark {
+  display: block;
+  width: 14px;
+  height: 1px;
+  background: var(--line-strong);
+  transition:
+    width var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+}
+
+.tick[data-passed] .tickMark {
+  background: var(--text-tertiary);
+}
+
+.tick[data-on] .tickMark {
+  width: 30px;
+  background: var(--accent);
+}
+
+/* The label rides in from the right on hover or focus; the tick alone is the
+   resting state, so the rail stays quiet while reading. */
+.tickLabel {
+  @include mono-label;
+  font-size: 0.6875rem;
+  white-space: nowrap;
+  opacity: 0;
+  translate: 6px 0;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    translate var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+@include hover-only {
+  .tick:hover .tickLabel {
+    opacity: 1;
+    translate: 0 0;
+    color: var(--text-primary);
+  }
+
+  .tick:hover .tickMark {
+    background: var(--accent);
+  }
+}
+
+.tick:focus-visible .tickLabel {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tickMark,
+  .tickLabel {
+    transition: none;
+  }
+}

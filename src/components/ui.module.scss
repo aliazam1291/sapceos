@@ -1,0 +1,910 @@
+@use "../styles/tokens.scss" as *;
+
+.shell {
+  @include shell;
+}
+
+.section {
+  @include shell;
+  padding-block: var(--space-section);
+}
+
+/*
+ * Consecutive sections each contributed a full --space-section, so the gap
+ * between any two of them was double the intended rhythm (up to 20rem). One
+ * section's bottom padding is the whole gap.
+ */
+.section + .section {
+  padding-top: 0;
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--space-12);
+}
+
+.sectionTitle {
+  font-size: var(--type-large);
+  letter-spacing: -0.03em;
+}
+
+// Section label with a leading rule — reads as a system marker, not decoration.
+.labelRule {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  @include mono-label;
+  margin-bottom: var(--space-4);
+
+  &::after {
+    content: "";
+    height: 1px;
+    width: clamp(24px, 6vw, 64px);
+    background: var(--accent-line);
+  }
+}
+
+.label {
+  @include mono-label;
+}
+
+.lede {
+  font-size: clamp(1.0625rem, 1.6vw, 1.375rem);
+  color: var(--text-secondary);
+  max-width: var(--measure);
+}
+
+.prose {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+
+  p + p {
+    margin-top: var(--space-4);
+  }
+}
+
+// ── Page header ──────────────────────────────────────────────────────────────
+/*
+ * Editorial two-column masthead. It used to be a single block whose contents
+ * were both capped at `--measure`, so on any wide screen the right ~45% of
+ * every page opened with nothing in it. Now the title holds the left column
+ * and the lede sits in the right, baseline-aligned to it — the width is used,
+ * and the two roles read as distinct rather than as one stacked paragraph.
+ */
+.pageHeader {
+  @include shell;
+  padding-block: clamp(var(--space-12), 8vw, 6rem) var(--space-12);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: var(--space-6);
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    column-gap: clamp(var(--space-8), 5vw, 5rem);
+    align-items: end;
+  }
+}
+
+.pageHeader > .labelRule {
+  margin-bottom: 0;
+
+  @media (min-width: 900px) {
+    grid-column: 1 / -1;
+  }
+}
+
+.pageTitle {
+  // Was --type-large, identical to .sectionTitle. A page's own name has to
+  // outrank the sections inside it or the hierarchy is flat.
+  font-size: var(--type-massive);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.pageHeader > .lede {
+  margin: 0;
+
+  // Optically settles the lede onto the title's last baseline.
+  @media (min-width: 900px) {
+    padding-bottom: 0.4em;
+  }
+}
+
+/*
+ * A page header already ends on a rule and 3rem of padding; the section that
+ * follows then added a full --space-section (up to 10rem) on top, opening a
+ * ~13rem hole of nothing between a page's title and its first content.
+ */
+.pageHeader + .section {
+  padding-top: clamp(var(--space-12), 6vw, var(--space-16));
+}
+
+// ── Buttons ──────────────────────────────────────────────────────────────────
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  background: transparent;
+  font-size: var(--type-small);
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  will-change: transform;
+  transition: border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+
+  // A fill that wipes up from the bottom edge rather than a colour swap.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--accent);
+    transform: translateY(101%);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover {
+      border-color: var(--accent);
+      color: #050505;
+
+      &::before {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+.buttonPrimary {
+  border-color: var(--accent-line);
+  color: var(--accent);
+}
+
+.magnetic {
+  transition: border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+
+.buttonLabel {
+  position: relative;
+  z-index: 1;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+// ── Cards / lists ────────────────────────────────────────────────────────────
+/*
+ * Two-up on desktop rather than three. At a 300px minimum the shell fitted
+ * three columns, which left the Lab's four entries as a 3 + 1 orphan and gave
+ * every card a cramped measure. A larger minimum resolves to two columns at
+ * this shell width: 4 entries land as a clean 2x2, 6 as 2x3, and each card has
+ * room for its trace and copy to breathe.
+ */
+.grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--panel);
+  height: 100%;
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+
+  // Corner tick — a small machined detail that only shows on approach.
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 34px;
+    height: 34px;
+    border-top: 1px solid var(--accent);
+    border-right: 1px solid var(--accent);
+    opacity: 0;
+    transform: translate(-6px, 6px);
+    transition: opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover {
+      border-color: var(--line-strong);
+      background: var(--bg-raised);
+      transform: translateY(-3px);
+
+      &::after {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+    }
+  }
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.cardTitle {
+  font-size: var(--type-medium);
+}
+
+.cardPremise {
+  color: var(--text-secondary);
+  font-size: var(--type-small);
+  flex: 1;
+}
+
+// The procedural trace inside a card. `--trace-opacity` is set by the card
+// wrapper on hover — a custom property, so it crosses CSS-module boundaries
+// that a descendant selector could not.
+.cardTrace {
+  width: 100%;
+  height: 72px;
+  color: var(--text-secondary);
+  opacity: var(--trace-opacity, 0.5);
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  @include mono-label;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  // It renders as a <ul>; without these the browser draws its default bullets
+  // and indent, so every tag row showed as "• D3.JS • NEXT.JS".
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tag {
+  @include mono-label;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 2px var(--space-3);
+  color: var(--text-secondary);
+}
+
+/*
+ * The interactive twin of `.tag`.
+ *
+ * The outbound links on /contact — GitHub, LinkedIn, Behance, Figma, Medium,
+ * HackerRank, Credly — were marked up with plain `.tag`, the same static chip
+ * used for tech labels like "D3.JS". So the eight ways to actually reach
+ * someone looked exactly like inert metadata and did nothing when pointed at.
+ * Every other page on the site had full hover coverage; this was the only
+ * inert set, and it was on the page whose whole job is making contact.
+ */
+.tagLink {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 2px var(--space-3);
+  color: var(--text-secondary);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+
+  // Marks these as leaving the site, which `.tag` gave no hint of.
+  &::after {
+    content: "97";
+    font-size: 0.9em;
+    opacity: 0.45;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+      border-color: var(--accent-line);
+      // A neutral lift rather than an accent fill — accent text on an accent
+      // ground is the one colour combination the direction rules out.
+      background: rgba(245, 245, 245, 0.04);
+
+      &::after {
+        transform: translate(2px, -2px);
+        opacity: 1;
+      }
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(245, 245, 245, 0.06);
+  }
+}
+
+.reportObject {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 420px;
+  margin-top: var(--space-8);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.reportObjectLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.reportObjectCaption {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  @include mono-label;
+}
+
+.reportTrace {
+  width: 100%;
+  height: clamp(90px, 14vw, 150px);
+  margin-top: var(--space-8);
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+// ── Status ───────────────────────────────────────────────────────────────────
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  @include mono-label;
+  color: var(--accent);
+}
+
+.dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+
+  // Active signals breathe. Idle ones sit still.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: currentColor;
+    animation: ping 2.4s var(--ease-out) infinite;
+  }
+}
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.6; }
+  70%, 100% { transform: scale(3.2); opacity: 0; }
+}
+
+.statusIdle {
+  color: var(--text-tertiary);
+
+  .dot::after {
+    animation: none;
+  }
+}
+
+// ── Draft flag — deliberately visible. Unverified content must look unverified.
+.draft {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  @include mono-label;
+  color: #e0b341;
+  border: 1px dashed rgba(224, 179, 65, 0.4);
+  border-radius: var(--radius);
+  padding: var(--space-1) var(--space-3);
+  letter-spacing: 0.12em;
+}
+
+.orbitLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(var(--space-8), 6vw, var(--space-16));
+  align-items: center;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Definition rows (mission report, resume) ─────────────────────────────────
+.rows {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: var(--space-6);
+  padding-block: var(--space-6);
+  border-bottom: 1px solid var(--line);
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+.rowLabel {
+  @include mono-label;
+  padding-top: 0.35em;
+}
+
+.rowBody {
+  color: var(--text-secondary);
+  max-width: var(--measure);
+
+  p + p {
+    margin-top: var(--space-3);
+  }
+}
+
+// ── Timeline (mission history) ───────────────────────────────────────────────
+.timeline {
+  position: relative;
+  display: grid;
+  gap: var(--space-12);
+  padding-left: clamp(var(--space-6), 4vw, var(--space-12));
+
+  // The spine.
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: linear-gradient(var(--accent-line), var(--line), transparent);
+  }
+}
+
+.timelineItem {
+  position: relative;
+
+  // The node.
+  &::before {
+    content: "";
+    position: absolute;
+    left: calc(clamp(var(--space-6), 4vw, var(--space-12)) * -1);
+    top: 8px;
+    width: 7px;
+    height: 7px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 1px solid var(--line-strong);
+    transition: border-color var(--dur-base) var(--ease-out),
+      background var(--dur-base) var(--ease-out);
+  }
+
+  &:first-child::before {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+}
+
+.timelineHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.timelineRole {
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.timelineOrg {
+  color: var(--accent);
+  font-size: var(--type-small);
+}
+
+.timelinePeriod {
+  @include mono-label;
+  margin-left: auto;
+
+  @media (max-width: 640px) {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+.timelinePoints {
+  display: grid;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  max-width: var(--measure);
+  color: var(--text-secondary);
+  font-size: var(--type-small);
+}
+
+.timelinePoints li {
+  position: relative;
+  padding-left: var(--space-6);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 12px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+}
+
+// ── Statement type — used sparingly, once per page at most. ──────────────────
+.statement {
+  font-size: clamp(1.5rem, 4vw, 2.75rem);
+  line-height: 1.22;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  // 22ch ran to six short lines and orphaned most of a wide screen. This is
+  // still a deliberately tight measure for large type, just not a column.
+  max-width: 30ch;
+  text-wrap: balance;
+}
+
+.statementDim {
+  color: var(--text-tertiary);
+}
+
+.bigLink {
+  display: inline-block;
+  font-size: clamp(1.375rem, 5vw, 3.25rem);
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  line-height: 1.1;
+  word-break: break-word;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--dur-slow) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+      background-size: 100% 1px;
+    }
+  }
+}
+
+// ── Notice block (unpublished / awaiting content) ────────────────────────────
+.notice {
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(var(--space-6), 4vw, var(--space-12));
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-panel);
+  background: var(--panel);
+  max-width: var(--measure);
+}
+
+.noticeText {
+  color: var(--text-secondary);
+  font-size: var(--type-small);
+}
+
+// ── Next-mission handoff ─────────────────────────────────────────────────────
+.next {
+  position: relative;
+  display: block;
+  @include shell;
+  padding-block: clamp(var(--space-12), 8vw, 6rem);
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      70% 120% at 50% 130%,
+      rgba(34, 208, 178, 0.09),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover::before {
+      opacity: 1;
+    }
+
+    &:hover .nextTitle {
+      color: var(--accent);
+      transform: translateX(6px);
+    }
+  }
+}
+
+.nextInner {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.nextTitle {
+  font-size: clamp(1.75rem, 6vw, 4rem);
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  line-height: 1.05;
+  transition: color var(--dur-base) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.nextPremise {
+  color: var(--text-secondary);
+  max-width: 52ch;
+  font-size: var(--type-small);
+}
+
+// ── Numbered entry (lab, field notes) ────────────────────────────────────────
+.entryIndex {
+  @include mono-label;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+// ── Footer ───────────────────────────────────────────────────────────────────
+.footer {
+  position: relative;
+  border-top: 1px solid var(--line);
+  margin-top: var(--space-section);
+  // Was `var(--panel)`, an opaque fill. The horizon renders behind the footer
+  // content, so the surface has to be transparent or it would be covered by
+  // the very panel it is meant to sit under.
+  background: transparent;
+  // Taller than it needs to be for the links alone: the horizon needs room to
+  // run out to a vanishing point, and a 200px strip of it reads as a texture
+  // rather than as ground.
+  min-height: min(88vh, 760px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/*
+ * The planetary surface behind the footer.
+ *
+ * Masked at the top so the grid emerges out of the page instead of starting on
+ * a hard line, and dimmed toward the bottom so the link text keeps its contrast
+ * over whatever the terrain happens to be doing underneath it.
+ */
+.footerHorizon {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 40%,
+      rgba(5, 5, 5, 0.55) 78%,
+      rgba(5, 5, 5, 0.85) 100%
+    );
+  }
+}
+
+.footerInner {
+  @include shell;
+  position: relative;
+  padding-block: var(--space-12);
+  display: grid;
+  gap: var(--space-8);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.footerCol {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.footerLink {
+  color: var(--text-secondary);
+  font-size: var(--type-small);
+  width: fit-content;
+
+  @include hover-only {
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+}
+
+.footerBase {
+  @include shell;
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
+  @include mono-label;
+}
+
+// Oversized wordmark that bleeds to the shell edges — the sign-off.
+.wordmark {
+  @include shell;
+  padding-top: var(--space-8);
+  overflow: hidden;
+}
+
+.wordmarkText {
+  font-size: clamp(2.5rem, 15vw, 12rem);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+  white-space: nowrap;
+  user-select: none;
+  transition: -webkit-text-stroke-color var(--dur-slow) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      -webkit-text-stroke-color: var(--accent-line);
+    }
+  }
+}
+
+.footerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-6);
+}
+
+/* ── Instrument grid ──────────────────────────────────────────────────────────
+ *
+ * The house grid for collections of equal-weight items (Lab experiments, field
+ * notes). Cells sit flush against 1px seams that are just the container's
+ * background showing through — no per-card borders, so adjacent cards never
+ * double up into a 2px rule, and the whole block reads as one panel.
+ */
+.instrumentGrid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+}
+
+.instrumentCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: clamp(var(--space-6), 2.6vw, var(--space-10));
+  height: 100%;
+
+  @include panel(18px);
+
+  // Pointer spotlight, coordinates supplied by the component.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: radial-gradient(
+      360px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(34, 208, 178, 0.09),
+      transparent 62%
+    );
+    transition: opacity var(--dur-slow) var(--ease-out);
+    pointer-events: none;
+  }
+
+  // Left-edge marker, matching the mission rows.
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: 50% 0;
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+
+  > * {
+    position: relative;
+  }
+
+  @include hover-only {
+    &:hover {
+      background: var(--panel-strong);
+    }
+
+    &:hover::before {
+      opacity: 1;
+    }
+
+    &:hover::after {
+      transform: scaleY(1);
+    }
+  }
+}
+
+/* Framed trace inside an instrument cell — a readout, not a floating squiggle. */
+.instrumentCell .cardTrace {
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  background: rgba(5, 7, 8, 0.5);
+  height: 64px;
+}
+
+/* A page's signature form, sized to sit beside content without dominating it. */
+.pageForm {
+  width: min(38vw, 340px);
+  margin: 0 auto var(--space-8);
+
+  @media (max-width: 900px) {
+    width: min(64vw, 260px);
+  }
+}

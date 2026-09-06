@@ -1,0 +1,13 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
+const p = await b.newPage({ viewport:{width:1440,height:900} });
+const msgs=[];
+p.on('console', m => msgs.push(m.type().toUpperCase()+': '+m.text().slice(0,600)));
+p.on('pageerror', e => msgs.push('PAGEERROR: '+String(e).slice(0,600)));
+await p.goto('http://localhost:3000', { waitUntil:'domcontentloaded' });
+await p.waitForTimeout(25000);
+console.log('canvases:', await p.evaluate(()=>document.querySelectorAll('canvas').length));
+const bad = msgs.filter(m=>/error|invalid|fail|shader|glsl|compile/i.test(m));
+console.log('--- relevant messages ---');
+console.log(bad.slice(0,6).join('\n---\n') || '(none)');
+await b.close();

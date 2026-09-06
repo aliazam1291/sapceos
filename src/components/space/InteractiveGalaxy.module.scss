@@ -1,0 +1,584 @@
+@use "../../styles/tokens" as *;
+
+.shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: clamp(480px, 46vw, 640px);
+  background: radial-gradient(circle at 50% 50%, rgba(13, 40, 46, 0.35) 0%, rgba(5, 5, 5, 0.95) 75%);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  user-select: none;
+  font-family: var(--font-mono);
+
+  // The embedded (home hero) context asks for a stage that feels lit rather
+  // than boxed — the hard rectangle recedes. The scene itself fades at its
+  // own edges (applied to .canvas below, not here) so the HUD chrome in the
+  // corners stays fully legible instead of fading out with it.
+  &.embedded {
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+    min-height: 0;
+
+    // `overflow: hidden` is what actually made this read as "a canvas in a
+    // box": the border and fill were already transparent, but the hard clip
+    // still cut the particle bloom off along a straight rectangular edge. The
+    // radial mask on .canvas is what should end the scene, not a crop.
+    overflow: visible;
+  }
+}
+
+.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  min-height: 100vh;
+  border: none;
+  border-radius: 0;
+  background: #030608;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+
+  .embedded & {
+    /*
+     * A soft edge, not a vignette.
+     *
+     * This was `62% 58% ... #000 38%, transparent 78%` — an ellipse covering
+     * well under two thirds of the canvas that went fully transparent at 78% of
+     * itself. It was not dissolving the canvas boundary, it was eating content:
+     * the outer navigation hubs (Mission History, Field Notes, Open Channel)
+     * sit beyond it and were faded to nothing. The map's own edges are the
+     * furthest thing from the centre, so any mask tight enough to be felt takes
+     * the hubs with it.
+     *
+     * Now it holds full opacity across almost the whole frame and only softens
+     * in the last stretch, which is all a canvas edge needs.
+     */
+    mask-image: radial-gradient(ellipse 86% 82% at 52% 50%, #000 66%, transparent 100%);
+  }
+  touch-action: none;
+}
+
+/* --- HUD Topbar & Coordinates --- */
+.hudTop {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.telemetry {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.5rem 0.85rem;
+  background: var(--panel);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  font-size: var(--type-micro);
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+}
+
+.statusIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--accent);
+
+  &::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite ease-in-out;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/*
+ * Bottom bar. filterBar and hudControls used to be two independently
+ * absolute-positioned strips (left:1rem / right:1rem) with a hardcoded
+ * width budget between them — real content overran that budget and they
+ * overlapped ("Hubs" clipped mid-word against the "+" button). Wrapping
+ * both in one flex row that's allowed to wrap means they can never overlap:
+ * the layout algorithm resolves the space instead of two guesses about it.
+ */
+/*
+ * Single row, always. Wrapping was allowed here before, which on the narrower
+ * embedded panel dropped the controls onto a second line — two left-aligned
+ * bars of different widths (359px over 261px), reading as broken alignment.
+ * Instead the filter bar is the flexible one: it shrinks and scrolls its own
+ * overflow (see .filterBar) while the controls keep their intrinsic size, so
+ * the two stay pinned to opposite edges at any panel width.
+ */
+.hudBottom {
+  position: absolute;
+  inset-inline: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* --- HUD Controls --- */
+.hudControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  padding: 0.35rem;
+  background: var(--panel-strong);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+}
+
+.ctrlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent-line);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.soundOn {
+    background: var(--accent-dim);
+    border-color: var(--accent-line);
+    color: var(--accent);
+    box-shadow: 0 0 8px rgba(34, 208, 178, 0.2);
+    animation: soundGlow 2.5s infinite alternate ease-in-out;
+  }
+}
+
+@keyframes soundGlow {
+  from { box-shadow: 0 0 4px rgba(34, 208, 178, 0.1); }
+  to { box-shadow: 0 0 10px rgba(34, 208, 178, 0.3); }
+}
+
+.zoomReadout {
+  padding: 0 0.5rem;
+  font-size: var(--type-micro);
+  color: var(--text-tertiary);
+}
+
+/* --- Category Filter Bar --- */
+.filterBar {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  background: var(--panel-strong);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  // Absorbs the squeeze so the row never wraps: shrink when cramped, but
+  // never grow — growing stretched it across the full width of the wide
+  // /galaxy page, leaving a mostly-empty bar. `min-width: 0` is what
+  // actually lets a flex item shrink below its content size.
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.filterBtn {
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--type-micro);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--dur-fast) var(--ease-out);
+
+  &:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &.active {
+    background: var(--accent-dim);
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
+}
+
+/* --- Detail Drawer --- */
+.drawer {
+  position: absolute;
+  top: 4.5rem;
+  right: 1rem;
+  width: 340px;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100% - 6rem);
+  z-index: 20;
+  background: var(--panel-strong);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(34, 208, 178, 0.12);
+  padding: 1.25rem;
+  overflow-y: auto;
+  animation: slideIn 300ms var(--ease-out);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px) scale(0.96); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--panel-line);
+}
+
+.drawerIdent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+// The product's own icon. Rounded to match how the store renders it, and
+// bordered so light icons don't float on the dark panel.
+.drawerIcon {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 10px;
+  border: 1px solid var(--panel-line);
+  object-fit: cover;
+}
+
+.drawerTitle {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.drawerOrg {
+  font-size: var(--type-micro);
+  color: var(--accent);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.2rem;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.drawerPremise {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.drawerSignals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.signalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--type-micro);
+}
+
+.signalLabel {
+  color: var(--text-tertiary);
+}
+
+.signalValue {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.drawerStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.techTag {
+  padding: 0.2rem 0.5rem;
+  background: rgba(34, 208, 178, 0.08);
+  border: 1px solid rgba(34, 208, 178, 0.2);
+  border-radius: var(--radius);
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+
+.drawerActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionBtn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--accent);
+  color: #050505;
+  font-weight: 600;
+  font-size: var(--type-micro);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: all var(--dur-fast) var(--ease-out);
+
+  &:hover {
+    background: #44f0d2;
+    box-shadow: 0 0 16px rgba(34, 208, 178, 0.4);
+  }
+}
+
+.actionBtnSecondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--line-strong);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--accent-line);
+    color: var(--accent);
+    box-shadow: none;
+  }
+}
+
+/* --- Spatial 3D Node Label ---
+ *
+ * A chart annotation, not a card. This used to be a rounded, opaque, drop-
+ * shadowed pill: three nav labels floating over the galaxy as grey chat
+ * bubbles, which is the exact generic-SaaS read the direction rules out and
+ * the most obviously off-brand thing on the hero. Now it is a leader tick and
+ * a mono caption sitting directly on the sky, the way a label on a navigation
+ * chart is drawn.
+ */
+.spatialBadge {
+  position: relative;
+  padding: 0 0 0.3rem 0;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  transition: color var(--dur-fast) var(--ease-out);
+  /* Legible over a bright star without needing a fill behind it. */
+  text-shadow: 0 0 10px rgba(5, 5, 5, 0.95), 0 0 3px rgba(5, 5, 5, 0.95);
+
+  /* Leader line down to the body it names. */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 1px;
+    height: 0.55rem;
+    background: linear-gradient(to bottom, var(--accent-line), transparent);
+  }
+
+  &.focused {
+    color: var(--accent);
+  }
+}
+
+/* ── Embedded (home hero) chrome ──────────────────────────────────────────────
+ *
+ * The hero galaxy is a preview; the operable version lives at /galaxy, which
+ * the nav links to. Its HUD — status chip, filter bar, zoom controls — was
+ * written for a page where the scene owns the whole viewport. Floated over the
+ * hero it reads as loose furniture drifting across the headline, and the filter
+ * bar in particular collides with the CTAs.
+ *
+ * Nodes stay clickable; only the chrome stands down.
+ */
+.embedded .hudTop,
+.embedded .hudBottom,
+.embedded .hudControls,
+.embedded .zoomReadout,
+.embedded .filterBar {
+  display: none;
+}
+
+/*
+ * Visually hidden, but still focusable and still announced.
+ *
+ * Deliberately NOT `display: none` or `visibility: hidden` — both remove the
+ * element from the accessibility tree and the tab order, which would defeat the
+ * entire point. The clip-rect technique keeps it operable while taking no
+ * space. `white-space: nowrap` stops a 1px-wide box from wrapping every label
+ * into a tall invisible column that can still scroll the page when focused.
+ */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Real-Time Telemetry Console Log --- */
+.telemetryConsole {
+  position: absolute;
+  bottom: 4.5rem;
+  left: 1rem;
+  width: 320px;
+  max-width: calc(100vw - 2rem);
+  max-height: 140px;
+  z-index: 10;
+  background: rgba(3, 6, 8, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--type-micro);
+  color: var(--text-secondary);
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: slideUpConsole 0.3s var(--ease-out);
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+@keyframes slideUpConsole {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.consoleHeader {
+  font-size: 0.62rem;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  border-bottom: 1px dashed rgba(34, 208, 178, 0.2);
+  padding-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.consoleDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: blinkConsole 1.5s infinite;
+}
+
+@keyframes blinkConsole {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.consoleBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.consoleLine {
+  font-size: 0.58rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-tertiary);
+  display: flex;
+  gap: 0.35rem;
+}
+
+.consoleArrow {
+  color: var(--accent);
+  user-select: none;
+}

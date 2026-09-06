@@ -1,0 +1,48 @@
+.deepSpace {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  contain: layout style;
+}
+
+/*
+ * The travelling field. Everything that moves lives inside the canvas, so this
+ * element never changes and never triggers a paint of its own — the compositor
+ * only has to hand the canvas texture back.
+ */
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Nebula wash. Three wide, very low-opacity radial gradients — teal signal,
+ * a cold blue, and a faint warm counterpoint so the field is not monochrome.
+ * Kept under 0.1 alpha: this should register as depth, never as colour. It is
+ * also the server-rendered floor, so the sky is never flat black before the
+ * canvas has drawn its first frame.
+ */
+.nebula {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(46% 38% at 78% 18%, rgba(34, 208, 178, 0.05), transparent 62%),
+    radial-gradient(52% 44% at 16% 72%, rgba(58, 96, 190, 0.045), transparent 66%),
+    radial-gradient(34% 30% at 62% 88%, rgba(148, 92, 200, 0.028), transparent 64%);
+}
+
+/* Darkens the lower page so long content sections keep text contrast. */
+.horizon {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(5, 5, 5, 0.35) 55%,
+    rgba(5, 5, 5, 0.72) 100%
+  );
+}
