@@ -1,7 +1,22 @@
 "use client";
 
 import PageForm from "@/components/space/PageForm";
-import type { OrbitBody } from "@/components/OrbitScene";
+/**
+ * Kept here rather than imported, because the scene it used to live in is gone.
+ *
+ * `OrbitScene` was replaced by the `PageForm` treatment below but survived as
+ * dead code, reachable only by this type-only import — which is why a search
+ * for "is anything still using OrbitScene?" answered no while deleting it would
+ * have broken the build. The shape belongs to whatever renders these bodies,
+ * and that is this file.
+ */
+export type OrbitBody = {
+  label: string;
+  radius: number;
+  period: number;
+  offset: number;
+  tilt: number;
+};
 import styles from "./orbit.module.scss";
 
 /**
