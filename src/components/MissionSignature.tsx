@@ -7,25 +7,7 @@
  * Pure SVG and fully server-rendered: no canvas, no client JS.
  */
 
-/** mulberry32 — small, fast, deterministic. */
-function rng(seed: number) {
-  return () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function hash(s: string) {
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
+import { hash, signatureFigure, SIGNATURE_PAD } from "@/lib/signature";
 
 export default function MissionSignature({
   seed,
@@ -38,24 +20,13 @@ export default function MissionSignature({
   height?: number;
   className?: string;
 }) {
-  const rand = rng(hash(seed));
-  const steps = 11;
-  const pad = 6;
-
-  // A monotonic-x walk with bounded vertical jitter — reads as a trace, not noise.
-  const points: [number, number][] = [];
-  let y = height * (0.3 + rand() * 0.4);
-  for (let i = 0; i < steps; i++) {
-    const x = pad + ((width - pad * 2) * i) / (steps - 1);
-    y += (rand() - 0.5) * height * 0.42;
-    y = Math.max(pad, Math.min(height - pad, y));
-    points.push([x, y]);
-  }
+  // Shared with the 3D card texture — see src/lib/signature.ts. The walk and
+  // the live node are computed there so the SVG and the texture can never
+  // describe different figures for the same mission.
+  const pad = SIGNATURE_PAD;
+  const { points, liveIndex } = signatureFigure(seed, width, height);
 
   const path = points.map(([x, p], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${p.toFixed(1)}`).join(" ");
-
-  // One node on the trace is live.
-  const liveIndex = 2 + Math.floor(rand() * (steps - 3));
 
   // Closed path for the area fill: the trace, then down and back along the
   // baseline. Kept separate from the stroke path so the line stays open.
