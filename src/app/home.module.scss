@@ -12,22 +12,23 @@
   border-bottom: 1px solid var(--line);
 }
 
+/*
+ * One column, so the headline can have the whole viewport.
+ *
+ * This was a two-column grid with the copy in a 0.92fr cell beside the galaxy,
+ * which capped the h1 at roughly 40% of the screen however large the font was
+ * set — the reason the type never read at the scale the reference does. The
+ * galaxy is now a field BEHIND the type (see .heroPanel), not a sibling
+ * competing with it for width.
+ */
 .heroInner {
   @include shell;
   position: relative;
   z-index: 1;
-  padding-block: clamp(2.5rem, 7vw, 5.5rem);
+  padding-block: clamp(2rem, 5vw, 4rem);
   display: grid;
-  gap: var(--space-8);
-
-  // The galaxy stage now carries real visual weight instead of being a
-  // squeezed side panel — headline and stage are near-even, stage slightly
-  // ahead, since it's the thing meant to be explored.
-  @media (min-width: 1025px) {
-    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.18fr);
-    align-items: center;
-    gap: clamp(2rem, 4vw, 4rem);
-  }
+  gap: clamp(1.25rem, 2.4vw, 2.25rem);
+  align-content: center;
 }
 
 /*
@@ -40,9 +41,18 @@
  */
 .heroPanel {
   position: absolute;
-  inset: 0 -14vw 0 26%;
+  // Pushed right and down: the headline is now full-bleed across the top, so a
+  // field starting at 26% put star systems directly behind the largest type on
+  // the site. It reads as the stage the words stand on, not as a texture over
+  // them.
+  inset: -4% -12vw 6% 40%;
   z-index: 0;
   pointer-events: auto;
+  // Eased back, and faded out on its left edge where the headline crosses it.
+  // Legibility of the h1 is the binding constraint here; the field is scenery.
+  opacity: 0.72;
+  mask-image: linear-gradient(to right, transparent 0%, #000 26%, #000 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26%, #000 100%);
 
   // Ambient wash behind the field, so it reads as lit rather than pasted on.
   //
@@ -71,27 +81,68 @@
   }
 }
 
+// Positioned so it paints above .heroPanel. A positioned box with z-index 0
+// paints after static block boxes, so without this the galaxy field covers the
+// hero text — .heroCopy used to supply this stacking context and is now gone.
 .heroLabel {
+  position: relative;
+  z-index: 1;
   @include mono-label;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-4);
 }
 
-.heroCopy {
-  display: grid;
-  gap: var(--space-8);
+/*
+ * The foot band: statement, mono counterweight, action.
+ *
+ * Auriga pairs its statement with a small monospace restatement and pushes the
+ * action to the far edge; that three-part band is what stops a very large
+ * headline from floating with nothing beneath it. Collapses to a stack below
+ * the breakpoint, where three columns would each be too narrow to read.
+ */
+.heroFoot {
   position: relative;
   z-index: 1;
-  max-width: 34rem;
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 2.5rem);
+  align-items: start;
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.75fr) auto;
+    align-items: center;
+  }
 }
 
+/*
+ * Mono counterweight — the site's one-sentence pitch, which was defined in
+ * profile.ts and never shown on the home page.
+ */
+.heroSpec {
+  @include mono-label;
+  color: var(--text-tertiary);
+  line-height: 1.7;
+  max-width: 34ch;
+  text-transform: none;
+}
+
+/*
+ * Sized off the VIEWPORT, not off a type scale.
+ *
+ * --type-massive tops out well short of the edges, and a 16ch max-width held it
+ * back further. A wordmark reads as a wordmark when it spans the measure: 8.6vw
+ * sets "Digital products" to very nearly the full shell width across desktop
+ * sizes, and the clamp keeps it sane on phones and at 4K. Tracking tightens as
+ * it grows, because letter-spacing that looks right at 3rem is a gap at 11rem.
+ */
 .heroTitle {
-  font-size: var(--type-massive);
-  line-height: var(--leading-tight);
-  letter-spacing: -0.035em;
+  position: relative;
+  z-index: 1;
+  font-size: clamp(2.75rem, 8.6vw, 10.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.045em;
   font-weight: 500;
-  max-width: 16ch;
+  max-width: none;
 }
 
 // Each line clips its own overflow so the boot timeline can lift them in.
@@ -125,6 +176,8 @@
 }
 
 .heroRule {
+  position: relative;
+  z-index: 1;
   height: 1px;
   background: linear-gradient(
     90deg,

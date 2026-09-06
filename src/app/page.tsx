@@ -51,32 +51,47 @@ export default function Home() {
             from="rgba(34,208,178,0.10)"
           />
         <HeroStage>
+          {/*
+            Set to the viewport, not to a column.
+            The headline used to sit in a ~40% grid cell beside the galaxy, at
+            three lines with two of them entirely in accent. Measured against
+            the reference this was timid twice over: the type never reached the
+            scale that makes a wordmark read as a wordmark, and accent covering
+            two whole lines left nothing for the eye to land ON — the hierarchy
+            rule in DESIGN_DIRECTION.md asks for one primary accent event per
+            screen, not an accent paragraph.
+            Now: two lines, full-bleed, with the accent carrying a single
+            phrase. The galaxy moves behind the type rather than beside it.
+          */}
           <div className={styles.heroInner}>
-            <div className={styles.heroCopy}>
-              <p className={styles.heroLabel} data-boot="status">
-                <Status>Product engineer</Status>
-                <span>{profile.location}</span>
-                <LocalTime />
-              </p>
+            <p className={styles.heroLabel} data-boot="status">
+              <Status>Product engineer</Status>
+              <span>{profile.location}</span>
+              <LocalTime />
+            </p>
 
-              <h1 className={styles.heroTitle} data-boot="mask">
-                <span className={styles.maskLine}>
-                  <span>Digital products</span>
+            <h1 className={styles.heroTitle} data-boot="mask">
+              <span className={styles.maskLine}>
+                <span>Digital products</span>
+              </span>
+              <span className={styles.maskLine}>
+                <span>
+                  with a point <span className={styles.heroAccent}>of view.</span>
                 </span>
-                <span className={styles.maskLine}>
-                  <span className={styles.heroAccent}>with a point</span>
-                </span>
-                <span className={styles.maskLine}>
-                  <span className={styles.heroAccent}>of view.</span>
-                </span>
-              </h1>
+              </span>
+            </h1>
 
-              <div className={styles.heroRule} data-boot="rule" />
+            <div className={styles.heroRule} data-boot="rule" />
 
+            {/* Statement, mono counterweight, action — one band across the
+                foot of the hero, so the headline above it is uninterrupted. */}
+            <div className={styles.heroFoot}>
               <p className={styles.heroLede} data-boot="lede">
                 I turn complex operational work into clear products — from the first sketch to
                 the interface people rely on every day.
               </p>
+
+              <p className={styles.heroSpec}>{profile.oneLine}</p>
 
               <div className={ui.buttonRow} data-boot="cta">
                 <MagneticButton href="/missions" primary>
