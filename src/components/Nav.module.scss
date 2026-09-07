@@ -29,6 +29,27 @@
   @media (max-width: 640px) {
     padding-bottom: clamp(0.75rem, 2vh, 1rem);
   }
+
+  /*
+   * Steps fully out of the viewport on a net downward scroll, and back on a
+   * net upward one — see the accumulator in Nav.tsx for why a single wheel
+   * tick can't trigger this on its own.
+   *
+   * `translateY`, not `opacity`: this is `fixed`, so an opacity-only hide
+   * would leave it sitting there at 0 opacity, still `pointer-events: auto`
+   * on `.dock` beneath, still capturing the clicks meant for whatever the
+   * page put in that space. Moving it clear of the viewport is what actually
+   * gives that space back.
+   */
+  transition: transform var(--dur-base) var(--ease-out);
+
+  &[data-hidden] {
+    transform: translateY(calc(100% + 2rem));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 .inner {

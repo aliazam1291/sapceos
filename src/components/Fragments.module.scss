@@ -10,7 +10,7 @@
 .band {
   position: relative;
   /*
-   * Asymmetric on purpose, and the one exception to --space-section.
+   * Zero top padding, and the one exception to --space-section.
    *
    * ui.module.scss collapses the doubled rhythm between stacked sections with
    * `.section + .section { padding-top: 0 }`, but this band is `.band`, not
@@ -19,10 +19,16 @@
    * the missions section's 141px bottom padding met this band's 141px top for
    * a 282px void, close to a third of a viewport of nothing, which is what
    * made the page read as blocks floating apart rather than one continuous
-   * instrument. The band's own top border already marks the division; it does
-   * not also need the full rhythm above it.
+   * instrument.
+   *
+   * A first pass split the difference at 0.45x rather than 0 and still left a
+   * measured ~232px gap at 1440px — visibly the same problem, just smaller.
+   * The band's own top border already marks the division, which is exactly
+   * what `.section + .section` relies on elsewhere: one side's padding IS the
+   * gap, not a blend of both sides'. Zero is the actual fix, not a step
+   * toward it.
    */
-  padding-block: calc(var(--space-section) * 0.45) var(--space-section);
+  padding-block: 0 var(--space-section);
   border-top: 1px solid var(--line);
   overflow: hidden;
 

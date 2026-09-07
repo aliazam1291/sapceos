@@ -1,231 +1,99 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 import { missions } from "@/content/missions";
 import MissionSignature from "@/components/MissionSignature";
 import styles from "./MissionSequence.module.scss";
 
 /**
- * The cinematic beat of the site: one pinned screen the reader scrubs through.
+ * A second, deeper cut of the work — in depth, not just headline.
  *
- * Technique is GSAP ScrollTrigger pin + scrub rather than drei's ScrollControls,
- * because this is a 3D moment *inside* a normal scrolling document — the rest of
- * the page has to keep behaving like a page. ScrollTrigger writes a plain object
- * (`sequence.p`); the R3F loop reads it and damps toward it. Neither system ever
- * writes the same property, which is what keeps them from fighting.
+ * This used to be a 400vh GSAP ScrollTrigger pin with its own WebGL scene
+ * (first an abstract flight through invented telemetry, later an interactive
+ * card gallery). Both were reverted after real use: pinning the scroll made
+ * normal wheel scrolling feel stuck, content jumped while the pin measured
+ * itself, and the mechanism ended up competing with the portfolio work it was
+ * supposed to be showing. This is intentionally a plain, editorial,
+ * native-scroll section now — no pin, no canvas, no `live` branch to keep in
+ * sync with one. The persistent sky already gives the page its sense of
+ * motion; this section's job is just to read well.
  *
- * Progressive enhancement is the whole design here. Server-render is the static
- * fallback: four stacked articles and a CSS orbit, no canvas, fully readable.
- * `data-live` is attached only once GSAP has loaded and reduced motion is off,
- * and the tall pinned track plus the WebGL scene exist only in that state.
+ * REWRITTEN FROM A DEAD-BRANCH COMPONENT.
+ *
+ * The previous version kept full `live`/CardGallery/sr-only-flight-nav/
+ * itinerary machinery around a `const live = false` that could never flip —
+ * a section that renders exactly one way with roughly half its JSX unable to
+ * execute. Removed rather than left dark, because the next person to open
+ * this file has no way to tell "kept for later" from "forgot to delete."
  */
 
 /*
- * The beats ARE the missions.
+ * Different four missions than the ones already shown above.
  *
- * This used to be a hand-written array of four abstract stages — "Approach",
- * "Orbit insertion", "Surface scan", "Handoff" — with invented telemetry
- * ("RANGE 6.2 AU") beside them. Three and a half screens of the most expensive
- * scroll on the site, spent on saying nothing that could be checked.
- *
- * Now every mission gets a stop, not just the five featured ones — the flight
- * is the showcase, and a showcase that skips half the work undersells it.
- * `STOPS` in sequence.ts is kept at 10 to match; if the mission count ever
- * changes, that constant and this array drift out of sync in a way TypeScript
- * cannot catch, so tools/spiralfit.mjs and tools/beatfit.mjs both assert the
- * pinned track still fits after any change to either.
+ * The home page's "01 / Missions" section renders `featuredMissions` — the
+ * five with `featured: true`. This section used to take `missions.slice(0,
+ * 4)`, which is array order, not curation — and the first four missions in
+ * the array happen to BE four of the five featured ones. The result was the
+ * same four case studies shown twice in one scroll, back to back, which is
+ * the kind of thing a visitor notices even if they can't say why the page
+ * felt padded. Filtering to the non-featured missions gives this section its
+ * own material instead.
  */
-// The home page is an edit, not an exhaustive archive. The full project index
-// remains available from /missions; four strong examples keep this section
-// scannable and leave the reader in control of the page length.
-const beats = missions.slice(0, 4).map((m) => ({
-  id: m.slug,
-  label: m.org,
-  title: m.title,
-  body: m.premise,
-  href: `/missions/${m.slug}`,
-  role: m.role,
-  period: m.period,
-  stack: m.stack,
-  signals: m.signals ?? [],
-}));
+const beats = missions
+  .filter((m) => !m.featured)
+  .slice(0, 4)
+  .map((m) => ({
+    id: m.slug,
+    label: m.org,
+    title: m.title,
+    body: m.premise,
+    href: `/missions/${m.slug}`,
+    role: m.role,
+    period: m.period,
+    stack: m.stack,
+    signals: m.signals ?? [],
+  }));
 
 export default function MissionSequence() {
-  // The old version turned this content into a 400vh ScrollTrigger pin with a
-  // second WebGL scene. In practice it made normal wheel scrolling feel stuck,
-  // caused content to jump while the pin measured itself, and obscured the
-  // actual portfolio work. This is intentionally an editorial, native-scroll
-  // section; the persistent sky already provides the site's sense of motion.
-  const live = false;
-  // Which mission a click (or keyboard focus, via the sr-only nav below) has
-  // pinned the camera on. Separate from `beat`, which is purely a function of
-  // scroll — CardGallery owns the decision to stop following scroll while a
-  // card is selected, this component only needs to know WHICH one to show in
-  // the text band. Cleared by CardGallery itself once scroll drifts far
-  // enough, so there is never a scroll-hijack state this component has to undo.
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const selectedIndex = selectedSlug ? beats.findIndex((b) => b.id === selectedSlug) : -1;
-  const activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
-  /*
-   * True only while ScrollTrigger actually has the screen pinned.
-   *
-   * The band, rail and flight plan are positioned against `.screen`, which is
-   * 100vh. Before the pin engages that box is still scrolling with the page, so
-   * anything anchored to its bottom sits below the fold and gets sliced by the
-   * viewport — the section looked broken for the whole approach. The chrome now
-   * waits for the pin; the flight itself stays visible throughout, so the
-   * readout arrives over a scene that is already there.
-   */
   return (
-    <section
-      id="method"
-      data-section="The work"
-      className={styles.sequence}
-      data-live={live || undefined}
-      aria-label="A flight through the missions"
-    >
-      <div
-        className={styles.screen}
-        data-live={live || undefined}
-      >
-        <div className={styles.stage} data-live={live || undefined}>
-          {live ? (
-            /*
-             * No role="img" here. That description used to duplicate the
-             * sr-only <nav> below it — a WebGL canvas announces nothing on its
-             * own, so describing the picture AND publishing the real,
-             * operable list is telling assistive tech about the same thing
-             * twice. The canvas is aria-hidden inside CardGallery; the nav is
-             * the one description that exists.
-             */
-            <div className={styles.canvas} />
-          ) : (
-            // Static fallback: a CSS orbit, no canvas, no WebGL.
-            <div className={styles.cssOrbit} aria-hidden="true">
-              <span />
-              <i />
-              <b />
-            </div>
-          )}
-
+    <section id="method" data-section="More of the work" className={styles.sequence}>
+      <div className={styles.screen}>
+        {/*
+          CSS-only relief model: a static faceted planet with orbit rings,
+          communicating depth without a WebGL canvas or a render loop. Kept
+          from the pinned version deliberately — it costs nothing (no canvas,
+          no JS) and gives this section a visual anchor of its own rather than
+          just being four more text rows after the missions grid above it.
+        */}
+        <div className={styles.stage}>
+          <div className={styles.cssOrbit} aria-hidden="true">
+            <span />
+            <i />
+            <b />
+          </div>
         </div>
 
-          {/*
-            The real, operable version of the flight — see the comment on the
-            canvas above. Focus (tab) and click both select and pin the camera,
-            the identical result a mouse click on a card gives, so a keyboard
-            user gets the same experience rather than a text consolation prize.
-            Pattern lifted from InteractiveGalaxy's own sr-only node list.
-          */}
-          {live && (
-            <nav className={styles.srOnly} aria-label="Missions in this flight">
-              <ul>
-                {beats.map((b, i) => (
-                  <li key={b.id}>
-                    <button
-                      type="button"
-                      aria-current={activeIndex === i ? "true" : undefined}
-                      onFocus={() => setSelectedSlug(b.id)}
-                      onClick={() =>
-                        setSelectedSlug((prev) => (prev === b.id ? null : b.id))
-                      }
-                    >
-                      {b.title} — {b.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
+        <div className={styles.rail} aria-hidden="true">
+          <span className={styles.hudTag}>03 / More of the work</span>
+          <span className={styles.railLine} />
+        </div>
 
-          {/* Top rail. The live screen is a full 100vh with a vertically centred
-              column of copy in it, so the top and bottom thirds were simply
-              empty — the composition read as two objects floating with a lot of
-              black between them. The column now has a header and a footer
-              registered to the same left edge as the text, which is what gives
-              it structure instead of just centring. */}
-          <div className={styles.rail} aria-hidden="true">
-            <span className={styles.hudTag}>03 / The work, in flight</span>
-            <span className={styles.railLine} />
-          </div>
-
-          <div className={styles.hud} aria-hidden="true">
-            {live && (
-              <>
-                {/* The route, named. Five identical dashes told you how far in
-                    you were and nothing about where you were going; this is the
-                    flight plan, with the current stop lit. */}
-                <ol className={styles.itinerary}>
-                  {beats.map((b, i) => (
-                    <li
-                      key={b.id}
-                      data-on={i === activeIndex || undefined}
-                      data-done={i < activeIndex || undefined}
-                    >
-                      <span>{String(i + 1).padStart(2, "0")}</span>
-                      {b.title}
-                    </li>
-                  ))}
-                </ol>
-                <span className={styles.hudCount}>
-                  {String(activeIndex + 1).padStart(2, "0")} <i>/ 0{beats.length}</i>
-                </span>
-              </>
-            )}
-          </div>
-
-        <div className={styles.copy} data-live={live || undefined}>
-          {beats.map((b, i) => (
-            <article
-              key={b.id}
-              className={styles.beat}
-              data-on={i === activeIndex || undefined}
-              data-selected={i === selectedIndex || undefined}
-              aria-hidden={live && i !== activeIndex ? true : undefined}
-            >
-              {/* Only present while a click (or sr-only focus) has pinned this
-                  card. Scrolling on clears the selection itself, so this is
-                  the deliberate early exit, not the only one. */}
-              {i === selectedIndex && (
-                <button
-                  type="button"
-                  className={styles.beatClose}
-                  onClick={() => setSelectedSlug(null)}
-                >
-                  &times; Resume flight
-                </button>
-              )}
-              {/* No number here. It used to print "01 APPROACH" directly under
-                  a section labelled "02 / Method" — two counters running at
-                  once — and the readout at the foot of the column already says
-                  which beat of four this is. */}
-              {/* The story is ONE column, wrapped.
-                  It used to be four loose children with the readout spanning
-                  `grid-row: 1 / -1` beside them — but in a grid with only
-                  implicit rows, `-1` resolves to line 1, so the span collapsed
-                  and the numbers sat on top of the band instead of beside it. */}
+        <div className={styles.copy}>
+          {beats.map((b) => (
+            <article key={b.id} className={styles.beat}>
               <div className={styles.beatStory}>
-              {/* Same card face the 3D flight shows, server-rendered as SVG.
-                  Hidden once the live cross-fade takes over (see
-                  .copy[data-live] .beatSignature in the stylesheet) so it
-                  exists for exactly the audience that needs it: reduced
-                  motion, no JS, and search engines — never a duplicate next
-                  to the WebGL card. */}
-              <MissionSignature seed={b.id} width={220} height={72} className={styles.beatSignature} />
-              <p className={styles.beatLabel}>{b.label}</p>
-              <h2 className={styles.beatTitle}>{b.title}</h2>
-              <p className={styles.beatBody}>{b.body}</p>
-              {/* Each stop is a real report, so it gets a way in. Without this
-                  the flight shows you the work and then strands you. */}
-              <Link href={b.href} className={styles.beatLink}>
-                Open the report &rarr;
-              </Link>
+                {/* Server-rendered SVG, zero JS — the same figure a card in
+                    the old 3D flight would have shown, kept here as this
+                    mission's visual identity now that there is no 3D scene
+                    to show it in. */}
+                <MissionSignature seed={b.id} width={220} height={72} className={styles.beatSignature} />
+                <p className={styles.beatLabel}>{b.label}</p>
+                <h2 className={styles.beatTitle}>{b.title}</h2>
+                <p className={styles.beatBody}>{b.body}</p>
+                {/* Each stop is a real report, so it gets a way in. */}
+                <Link href={b.href} className={styles.beatLink}>
+                  Open the report &rarr;
+                </Link>
               </div>
 
-              {/* A readout, not a sentence. The signals used to run as one dim
-                  inline line that the eye skipped; as labelled cells they read
-                  as instrument values, which is what they are. */}
               <dl className={styles.readout}>
                 {b.signals.map((sig) => (
                   <div key={sig.label}>
@@ -239,9 +107,6 @@ export default function MissionSequence() {
                 </div>
               </dl>
 
-              {/* Role and stack were already in the data and shown nowhere on
-                  the home page. This is the part that answers "what did HE
-                  actually do here". */}
               <dl className={styles.spec}>
                 <div>
                   <dt>Role</dt>

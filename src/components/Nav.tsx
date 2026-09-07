@@ -24,6 +24,14 @@ export default function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // True while the dock should step out of the way. `fixed` at the bottom of
+  // every viewport, it sat over whatever content happened to be there —
+  // hero stats, a mission's signal cells, "Open the report" links, even
+  // titles — clipping the last ~70px of the page at every scroll position,
+  // not just at a "footer" the page could design around. Measured across the
+  // home page: every section that reaches the lower third of the viewport
+  // loses something under it.
+  const [hidden, setHidden] = useState(false);
   const railRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => setOpen(false), [pathname]);
@@ -39,16 +47,39 @@ export default function Nav() {
    */
   useEffect(() => {
     let raf = 0;
+    let lastY = window.scrollY;
+    // Accumulates signed scroll distance since the direction last flipped, so
+    // a single jittery wheel tick (trackpad inertia, a rubber-band bounce)
+    // cannot toggle the dock. It has to actually mean it.
+    let travel = 0;
+    const THRESHOLD = 28;
 
     const read = () => {
       raf = 0;
       const doc = document.documentElement;
       const max = doc.scrollHeight - doc.clientHeight;
       const y = doc.scrollTop;
+      const dy = y - lastY;
+      lastY = y;
 
       setScrolled((prev) => {
         const next = y > 48;
         return next === prev ? prev : next;
+      });
+
+      // Same sign as the last tick: keep accumulating. Direction flipped:
+      // restart the count from this tick, so a reversal is reflected exactly
+      // as fast as a run in one direction is.
+      travel = Math.sign(dy) === Math.sign(travel) ? travel + dy : dy;
+
+      setHidden((prev) => {
+        // Always visible near the top (nothing to hide from yet) and within
+        // reach of the very bottom (the reader has arrived, not passing
+        // through — snapping it away right as they land reads as broken).
+        if (y < 120 || y > max - 80) return false;
+        if (travel > THRESHOLD) return true; // net downward run
+        if (travel < -THRESHOLD) return false; // net upward run
+        return prev;
       });
 
       if (railRef.current) {
@@ -93,6 +124,9 @@ export default function Nav() {
     <header
       className={styles.bar}
       data-scrolled={scrolled || undefined}
+      // Never hidden while the overview panel is open — the toggle that
+      // closes it lives inside this same dock.
+      data-hidden={(hidden && !open) || undefined}
     >
       <nav className={styles.inner} aria-label="Primary">
         {/*
