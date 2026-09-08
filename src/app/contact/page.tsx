@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ButtonLink, PageHeader, Row, Section, Status, ui } from "@/components/ui";
+import CopyLink from "@/components/CopyLink";
 import { links, profile } from "@/content/profile";
 
 export const metadata: Metadata = {
@@ -25,20 +26,23 @@ export default function ContactPage() {
         </div>
 
         <div className={ui.rows} style={{ marginTop: "var(--space-8)" }}>
+          {/* Both values are as often copied as clicked, so each carries a
+              copy control beside the link rather than only a mailto/href. */}
           <Row label="Email">
-            <a href={`mailto:${profile.email}`} className={ui.bigLink}>
-              {profile.email}
-            </a>
+            <CopyLink
+              href={`mailto:${profile.email}`}
+              value={profile.email}
+              label="email address"
+            />
           </Row>
           <Row label="Book a slot">
-            <a
+            <CopyLink
               href={profile.calendly}
-              className={ui.bigLink}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {profile.calendly.replace("https://", "")}
-            </a>
+              value={profile.calendly}
+              display={profile.calendly.replace("https://", "")}
+              label="booking link"
+              external
+            />
           </Row>
           <Row label="Elsewhere">
             <div className={ui.rowBody}>

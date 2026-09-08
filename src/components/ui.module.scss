@@ -100,11 +100,28 @@
 }
 
 .pageTitle {
-  // Was --type-large, identical to .sectionTitle. A page's own name has to
-  // outrank the sections inside it or the hierarchy is flat.
-  font-size: var(--type-massive);
-  line-height: var(--leading-tight);
-  letter-spacing: -0.035em;
+  /*
+   * Sized off the viewport, like the hero, rather than off the shared type
+   * scale.
+   *
+   * It was `--type-massive` (capping at 5.5rem), which was already an
+   * improvement on being identical to `.sectionTitle` — but every inner route
+   * opens on this element, and at that size the eight text-only routes all
+   * began at a noticeably quieter register than the home page. The cap here
+   * is 7.5rem against the hero's 9rem: still clearly subordinate to the
+   * site's front door, no longer timid next to it. Tracking tightens with the
+   * size for the same reason it does in the hero — letter-spacing that reads
+   * correctly at 3rem is a gap at 7rem.
+   */
+  /*
+   * 7vw against the hero's 7.2vw — and note it is the vw term that binds at
+   * ordinary desktop widths, not the cap. Raising only the cap (5.5rem to
+   * 7.5rem) moved the title by 4px at 1440px and did nothing at all below
+   * ~1875px, which is where essentially every reader is.
+   */
+  font-size: clamp(2.5rem, 7vw, 8rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
   margin: 0;
 }
 
@@ -461,7 +478,18 @@
   border-top: 1px solid var(--line);
 }
 
+/*
+ * The row answers the cursor.
+ *
+ * Same technique as `MissionRow` — pointer position arrives as `--mx`/`--my`
+ * from Row.tsx and CSS does the rest, so nothing re-renders. Deliberately
+ * quieter than MissionRow's version (0.045 against its 0.07, no lift, no
+ * shadow): a mission row is a link you are meant to click, whereas most of
+ * these are label/value pairs you are meant to read. The response is there to
+ * show the page is alive under the cursor, not to promise a destination.
+ */
 .row {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(140px, 200px) 1fr;
   gap: var(--space-6);
@@ -471,6 +499,60 @@
   @media (max-width: 720px) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
+  }
+}
+
+.row::before {
+  content: "";
+  position: absolute;
+  // Bleeds past the text edge so the wash reads as lighting the row rather
+  // than as a rectangle drawn inside it.
+  inset: 0 calc(var(--space-6) * -1);
+  z-index: -1;
+  opacity: 0;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(34, 208, 178, 0.045),
+    transparent 64%
+  );
+  transition: opacity var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+// An accent hairline drawn down the left edge, so the row being read has a
+// registration mark and not just a glow.
+.row::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-6) * -1);
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  opacity: 0.55;
+  transition: transform var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+// Fine pointers only. On touch there is no hover state to enter, and
+// `:hover` on a touch device latches on after a tap and stays until the next
+// one, which reads as a row that got stuck.
+@media (hover: hover) and (pointer: fine) {
+  .row:hover::before {
+    opacity: 1;
+  }
+
+  .row:hover::after {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row::before,
+  .row::after {
+    transition: none;
   }
 }
 

@@ -105,14 +105,12 @@ export function Body({ value }: { value: string | string[] }) {
   );
 }
 
-export function Row({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className={styles.row} data-reveal>
-      <div className={styles.rowLabel}>{label}</div>
-      {children}
-    </div>
-  );
-}
+/*
+ * Re-exported from its own client module — see Row.tsx for why it is not
+ * defined inline here. Callers keep importing `{ Row } from "@/components/ui"`,
+ * so nothing at the eight call sites had to change.
+ */
+export { default as Row } from "./Row";
 
 export function TagRow({ items }: { items: string[] }) {
   return (
