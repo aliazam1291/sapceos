@@ -137,30 +137,14 @@ Linear vs Jira · The AI Code Assistant Adoption Paradox · Apple Ecosystem Frag
 - **DumbMoney** (dumbmoney.in) — appears on an older resume as a coupon/cashback platform founded 2026, reportedly profitable in its first quarter with 37+ partner brands. Not currently on the live portfolio. Confirm current status before featuring.
 - Outcome metrics for the three Active missions.
 - Orbit topics / reading list / music — no verified data. Must come from Ali directly.
-You are acting as a Design Architect and Senior Frontend Engineer execution engine.
-Your task is to build the SPACE OS portfolio using the "Quiet Orbit" visual direction.
 
-DESIGN CONSTRAINTS (STRICT):
-1. COLOR PALETTE:
-   - Primary Background: #050505
-   - Surface/Card Background: #0B0B0B
-   - Hairline Borders: 1px solid #1A1A1A (No glowing or animated borders)
-   - Text Primary: #F5F5F5
-   - Text Muted: #8C8C8C
-   - Accent Signal: #22D0B2 (STRICT RULE: Maximum 3 instances per screen, strictly reserved for live status indicators, active active-tab dots, or small telemetry tags. NEVER use for large buttons, background glows, or text highlights).
+---
 
-2. TYPOGRAPHY & LAYOUT:
-   - Font: Geist (sans) and Geist Mono.
-   - Use layout grid and extreme typographic contrast for structure rather than visual containers/cards.
-   - Micro Telemetry Text: Uppercase Geist Mono, tracking 0.1em, 11px font size, #8C8C8C color.
-   - NO HUD overload, NO glowing neon elements, NO rounded-card soup, NO cyber-punk visuals, NO random floating 3D objects.
-
-3. MOTION & PERFORMANCE:
-   - Zero continuous background render loops.
-   - CSS-first layout with GPU-accelerated transforms (`transform: translate3d`).
-   - Motion must be calm, precise, and direct. GSAP timelines should use discrete steps or subtle scroll scrubbing.
-
-When generating UI components or page layouts:
-- Write clean SCSS Modules using existing tokens in `src/once-ui/`.
-- Prioritize semantic HTML structure (LCP text renders instantly).
-- Ensure all copy directly references facts from `PROFILE.md` with zero fabricated metrics or buzzwords.
+> **On design direction:** this file is Ali's factual record and nothing else.
+> The visual authority is `DESIGN_DIRECTION.md`, with `CLAUDE.md` for working
+> rules. A block of "Quiet Orbit" build instructions used to sit below this
+> line — zero render loops, a three-per-screen accent cap, no accent on large
+> buttons or glows — all of which `DESIGN_DIRECTION.md` has explicitly
+> withdrawn, and which pointed at a `src/once-ui/` directory that does not
+> exist in this repo. Instructions inside a data file are how a later session
+> ends up reverting shipped work while believing it is following the brief.

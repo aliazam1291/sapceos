@@ -94,11 +94,34 @@ Non-negotiable, and unchanged from the previous direction:
 ## Home composition
 
 1. **Hero** — declarative statement over the live field. Text renders first.
+   The headline is set to the VIEWPORT, not to a column beside the galaxy.
 2. **Evidence strip** — verified outcomes as an instrument readout.
-3. **Pinned sequence** — the cinematic beat. A scrubbed screen the reader flies
-   through, four stages, camera keyframed per beat.
-4. **Missions** — the proof, as a hairline instrument grid.
-5. **Open channel** — a direct invitation.
+3. **Missions** — the proof, as a hairline instrument grid. The five featured.
+4. **Fragments** — everything that exists, as one draggable strip.
+5. **More of the work** — the non-featured missions, so the home page never
+   shows the same case study twice.
+6. **Open channel** — a direct invitation.
+
+### The pinned sequence is gone, and should stay gone
+
+This list used to have a "Pinned sequence — a scrubbed screen the reader flies
+through, four stages, camera keyframed per beat" at position 3. It was built
+twice: first as an abstract flight through invented telemetry, then as an
+interactive 3D card gallery with a solved helix layout and hover/click.
+
+Both were reverted after being used rather than tested. A 400vh
+ScrollTrigger pin made ordinary wheel scrolling feel stuck, content jumped
+while the pin measured itself, and the mechanism ended up competing with the
+work it existed to show. The second attempt was mechanically correct —
+composition solved against clipping at four aspect ratios, textures cached,
+draw calls *lower* than what it replaced — and still wrong, because none of
+that addressed the thing that was actually bad about it.
+
+The lesson is not "no 3D." It is that **taking the scroll away from the
+reader is the expensive part**, and no amount of polish inside a pin pays
+that back. The site's sense of motion comes from the persistent field, which
+costs the reader nothing. If a pinned section is ever proposed again, the
+burden is to show it beats plain scrolling *in use*, not in a harness.
 
 ## Quality bar
 

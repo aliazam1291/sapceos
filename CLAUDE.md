@@ -27,7 +27,7 @@ When implementing UI, components, or feature branches, follow this 4-step MCP ex
 1. **Context Discovery (Read First):**
    - Query `PROFILE.md` for factual data before writing copy. Never invent metrics — unverified values must stay as the `DRAFT` marker from `src/content/types.ts`.
    - Read `DESIGN_DIRECTION.md` before any visual work. It is the current visual authority and supersedes the older "Quiet Orbit" guidance wherever they disagree.
-   - Inspect existing components in `src/once-ui/` and `src/components/` before creating new ones. Re-use tokens and modular elements.
+   - Inspect existing components in `src/components/` (and `src/components/space/` for anything 3D) before creating new ones. Re-use tokens and modular elements. There is no `src/once-ui/` in this repo — that path was in these instructions for a long time and sent sessions looking for a directory that has never existed.
 
 2. **UI Architectural Planning (Plan Before Coding):**
    - For any UI build, define the DOM tree, layout grid structure, SCSS module approach, and state boundaries before writing code.
@@ -36,7 +36,7 @@ When implementing UI, components, or feature branches, follow this 4-step MCP ex
 3. **Code Generation & Token Adherence:**
    - Write semantic HTML5 tags (`<header>`, `<main>`, `<section>`, `<article>`, `<nav>`).
    - Use CSS Grid / Flexbox with precise pixel/rem gap tokens instead of arbitrary wrapper margins.
-   - Use SCSS modules with BEM or clean functional naming. Rely on `src/once-ui/tokens/` variables.
+   - Use SCSS modules with BEM or clean functional naming. Rely on the custom properties in `src/styles/tokens.scss` (imported via `@use "../styles/tokens.scss" as *`), not on hardcoded values.
 
 4. **Self-Verification Checklist:**
    - Does this component look like generic SaaS? If YES -> square the corners, drop the shadow, make the fill translucent so the starfield reads through. Panels, not cards.
