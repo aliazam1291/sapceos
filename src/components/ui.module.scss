@@ -729,6 +729,14 @@
  * Masked at the top so the grid emerges out of the page instead of starting on
  * a hard line, and dimmed toward the bottom so the link text keeps its contrast
  * over whatever the terrain happens to be doing underneath it.
+ *
+ * The dimming used to be fighting the scene rather than shaping it: the
+ * pointer response peaked brightest at the BOTTOM of this band (see the
+ * z-mapping fix in HorizonScene.tsx), directly under the heaviest part of
+ * this gradient — the response was real and simultaneously invisible. Now
+ * that the brightest response lands near the top (in the 22-40% zone this
+ * gradient leaves untouched) and fades toward the bottom, the two work in
+ * the same direction; the gradient only needed a modest trim, not a rewrite.
  */
 .footerHorizon {
   position: absolute;
@@ -745,8 +753,8 @@
     background: linear-gradient(
       to bottom,
       transparent 40%,
-      rgba(5, 5, 5, 0.55) 78%,
-      rgba(5, 5, 5, 0.85) 100%
+      rgba(5, 5, 5, 0.45) 78%,
+      rgba(5, 5, 5, 0.72) 100%
     );
   }
 }

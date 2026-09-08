@@ -33,16 +33,19 @@ export default function FooterHorizon() {
     if (!el) return;
 
     /*
-     * Not on phones.
+     * Now mounts on touch too, at a reduced budget.
      *
-     * This is the footer, so it rides on every route — including text-only
-     * pages that otherwise never touch three.js. On a coarse pointer that
-     * means spending 245kb and a WebGL context on decoration at the very
-     * bottom of the page, against the one performance budget that actually
-     * matters here. The star field still sits behind the footer, so it is not
-     * bare; it just does not get ground.
+     * This used to skip coarse pointers outright, on the reasoning that the
+     * footer rides on every route — including text-only ones like /contact —
+     * so 245kb and a WebGL context felt like a lot to spend on decoration.
+     * The cost is real but bounded: `useSceneFrameloop` inside the scene
+     * already pauses the render loop the moment it leaves the viewport, and
+     * `HorizonScene` itself halves the grid density and drops to dpr 1 on a
+     * coarse pointer (see SEG_X_COARSE/SEG_Z_COARSE). What tipped this back
+     * on: the pointer interactivity this scene offers was previously
+     * unavailable on touch entirely, on the one input class where "tap to
+     * see it respond" is the most natural gesture there is.
      */
-    if (window.matchMedia("(pointer: coarse)").matches) return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

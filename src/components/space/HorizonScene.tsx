@@ -27,28 +27,36 @@ import { useSceneFrameloop } from "@/lib/use-scene-frameloop";
 
 const SEG_X = 64;
 const SEG_Z = 48;
+// Touch was previously skipped entirely (see FooterHorizon.tsx). Now it
+// mounts, so it needs its own budget rather than desktop's: a quarter the
+// line segments is still visually a grid, at a quarter the vertices to
+// stream through the vertex shader every frame on a weaker GPU.
+const SEG_X_COARSE = 32;
+const SEG_Z_COARSE = 24;
 const WIDTH = 46;
 const DEPTH = 34;
 
 /** Row and column lines only — no diagonals. */
-function buildGrid() {
+function buildGrid(coarse: boolean) {
+  const segX = coarse ? SEG_X_COARSE : SEG_X;
+  const segZ = coarse ? SEG_Z_COARSE : SEG_Z;
   const pts: number[] = [];
   const x0 = -WIDTH / 2;
   const z0 = -DEPTH;
 
-  for (let iz = 0; iz <= SEG_Z; iz++) {
-    const z = z0 + (iz / SEG_Z) * DEPTH;
-    for (let ix = 0; ix < SEG_X; ix++) {
-      const xa = x0 + (ix / SEG_X) * WIDTH;
-      const xb = x0 + ((ix + 1) / SEG_X) * WIDTH;
+  for (let iz = 0; iz <= segZ; iz++) {
+    const z = z0 + (iz / segZ) * DEPTH;
+    for (let ix = 0; ix < segX; ix++) {
+      const xa = x0 + (ix / segX) * WIDTH;
+      const xb = x0 + ((ix + 1) / segX) * WIDTH;
       pts.push(xa, 0, z, xb, 0, z);
     }
   }
-  for (let ix = 0; ix <= SEG_X; ix++) {
-    const x = x0 + (ix / SEG_X) * WIDTH;
-    for (let iz = 0; iz < SEG_Z; iz++) {
-      const za = z0 + (iz / SEG_Z) * DEPTH;
-      const zb = z0 + ((iz + 1) / SEG_Z) * DEPTH;
+  for (let ix = 0; ix <= segX; ix++) {
+    const x = x0 + (ix / segX) * WIDTH;
+    for (let iz = 0; iz < segZ; iz++) {
+      const za = z0 + (iz / segZ) * DEPTH;
+      const zb = z0 + ((iz + 1) / segZ) * DEPTH;
       pts.push(x, 0, za, x, 0, zb);
     }
   }
@@ -63,6 +71,7 @@ const vert = /* glsl */ `
   uniform float uAmp;
   uniform vec2  uPointer;
   uniform float uPointerOn;
+  uniform vec3  uRipple; // xy: world position, z: current strength (1 -> 0)
   varying float vFade;
   varying float vHeight;
   varying float vTouch;
@@ -111,7 +120,18 @@ const vert = /* glsl */ `
     float d = distance(vec2(p.x, p.z), uPointer);
     float touch = exp(-(d * d) / 18.0) * uPointerOn;
     p.y += touch * 1.5;
-    vTouch = touch;
+
+    /*
+     * A click/tap ripple — tighter and taller than the ambient cursor swell
+     * (radius 9 vs 18, height 2.6 vs 1.5), so a click reads as an event, not
+     * just more of the same hover. uRipple.z is a strength that decays in
+     * JS (see the damp toward 0 in Terrain below); the shader only has to
+     * know "how strong right now", not when it started.
+     */
+    float rd = distance(vec2(p.x, p.z), uRipple.xy);
+    float ripple = exp(-(rd * rd) / 9.0) * uRipple.z;
+    p.y += ripple * 2.6;
+    vTouch = max(touch, ripple);
 
     vHeight = clamp(p.y * 0.9 + 0.3, 0.0, 1.0);
 
@@ -142,18 +162,51 @@ const frag = /* glsl */ `
   }
 `;
 
-function Terrain() {
-  const geo = useMemo(buildGrid, []);
+/**
+ * Screen Y (0 top, 1 bottom of the footer host) mapped onto the plane by
+ * hand rather than by raycasting — the surface is displaced in the vertex
+ * shader, so the CPU-side geometry a raycast would hit is a flat plane
+ * anyway.
+ *
+ * THIS USED TO BE INVERTED. `z = -26 + (1-ny)*-4 + ny*26` put the TOP of the
+ * footer (ny=0, where `.footerHorizon`'s mask has just finished revealing
+ * the terrain, at 22% down) at z=-30 — nearly 40 world units from the camera,
+ * which is past where `vFade` (smoothstep 6..30 on camera distance) reaches
+ * zero. It put the BOTTOM (ny=1) at z=0, the closest and brightest the
+ * terrain ever gets — exactly where the CSS `::after` gradient lays
+ * `rgba(5,5,5,0.85)` over it. The response was real; it landed once in a
+ * spot too far to render and once in a spot too dark to see.
+ *
+ * Now: top of the footer maps to NEAR (z=-2, ~9.5 units from the 7.5-unit-
+ * back camera, vFade≈0.94) and bottom maps to a still-partially-visible
+ * z=-13 (~20.5 units, vFade≈0.35) — same direction the mask and the darkening
+ * overlay already move in, so the response reinforces the composition
+ * instead of fighting it.
+ */
+const Z_NEAR = -2;
+const Z_FAR = -13;
+
+function screenToWorld(nx: number, ny: number) {
+  return { x: (nx - 0.5) * 34, z: Z_NEAR + ny * (Z_FAR - Z_NEAR) };
+}
+
+function Terrain({ coarse }: { coarse: boolean }) {
+  const geo = useMemo(() => buildGrid(coarse), [coarse]);
   const mat = useRef<THREE.ShaderMaterial>(null);
   // Where the pointer is, in the terrain's own coordinates, damped toward.
-  const target = useRef({ x: 0, z: -12, on: 0 });
+  const target = useRef({ x: 0, z: Z_NEAR, on: 0 });
+  // A click/tap ripple: position plus a strength that decays toward 0 in the
+  // frame loop. One active ripple at a time — a second click just restarts
+  // it, which reads as "still responding," not as a queue.
+  const ripple = useRef({ x: 0, z: Z_NEAR, strength: 0 });
 
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
       uAmp: { value: 2.15 },
-      uPointer: { value: new THREE.Vector2(0, -12) },
+      uPointer: { value: new THREE.Vector2(0, Z_NEAR) },
       uPointerOn: { value: 0 },
+      uRipple: { value: new THREE.Vector3(0, Z_NEAR, 0) },
       uLine: { value: new THREE.Color("#123c39") },
       uCrest: { value: new THREE.Color("#22d0b2") },
     }),
@@ -165,35 +218,58 @@ function Terrain() {
     const host = canvas?.closest("[data-horizon]") as HTMLElement | null;
     if (!host) return;
 
-    const onMove = (e: PointerEvent) => {
+    const posFromEvent = (clientX: number, clientY: number) => {
       const r = host.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width;
-      const ny = (e.clientY - r.top) / r.height;
-      if (nx < 0 || nx > 1 || ny < 0 || ny > 1) {
+      const nx = (clientX - r.left) / r.width;
+      const ny = (clientY - r.top) / r.height;
+      if (nx < 0 || nx > 1 || ny < 0 || ny > 1) return null;
+      return { nx, ny };
+    };
+
+    // Fine pointers get continuous tracking; coarse ones only get the tap
+    // ripple below — there is no cursor to drift, and chasing `touchmove`
+    // the same way just turns scrolling the page into painting the terrain.
+    const onMove = (e: PointerEvent) => {
+      if (coarse) return;
+      const pos = posFromEvent(e.clientX, e.clientY);
+      if (!pos) {
         target.current.on = 0;
         return;
       }
-      /*
-       * Screen position mapped onto the plane by hand rather than by raycasting.
-       * A raycast per pointer move would be exact and pointless: the surface is
-       * displaced in the vertex shader, so the CPU-side geometry it would hit is
-       * a flat plane anyway. This lands the swell where the eye expects it.
-       */
-      target.current.x = (nx - 0.5) * 34;
-      target.current.z = -26 + (1 - ny) * -4 + ny * 26;
+      const w = screenToWorld(pos.nx, pos.ny);
+      target.current.x = w.x;
+      target.current.z = w.z;
       target.current.on = 1;
     };
     const onLeave = () => {
       target.current.on = 0;
     };
+    // Click (fine) or tap (coarse): a ripple at the contact point. Kept as a
+    // real DOM click rather than folded into pointermove, so it reads as a
+    // deliberate response to an action rather than more ambient hover.
+    const onDown = (e: PointerEvent) => {
+      const pos = posFromEvent(e.clientX, e.clientY);
+      if (!pos) return;
+      const w = screenToWorld(pos.nx, pos.ny);
+      ripple.current.x = w.x;
+      ripple.current.z = w.z;
+      ripple.current.strength = 1;
+      if (coarse) {
+        target.current.x = w.x;
+        target.current.z = w.z;
+        target.current.on = 1;
+      }
+    };
 
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerdown", onDown, { passive: true });
     document.addEventListener("pointerleave", onLeave);
     return () => {
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onDown);
       document.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [coarse]);
 
   useFrame((_, delta) => {
     const m = mat.current;
@@ -202,16 +278,24 @@ function Terrain() {
     m.uniforms.uTime.value += dt * 1.15;
 
     // Damped in the loop, never chased off the event — the same contract the
-    // rest of the site's pointer motion follows.
+    // rest of the site's pointer motion follows. Lambdas raised from 3.4/2.6
+    // to 5.5/4.2: the old response was legible only once it had landed
+    // somewhere visible, which read as sluggish on top of being misplaced.
     const p = m.uniforms.uPointer.value as THREE.Vector2;
-    p.x = damp(p.x, target.current.x, 3.4, dt);
-    p.y = damp(p.y, target.current.z, 3.4, dt);
+    p.x = damp(p.x, target.current.x, 5.5, dt);
+    p.y = damp(p.y, target.current.z, 5.5, dt);
     m.uniforms.uPointerOn.value = damp(
       m.uniforms.uPointerOn.value as number,
       target.current.on,
-      2.6,
+      4.2,
       dt,
     );
+
+    const r = m.uniforms.uRipple.value as THREE.Vector3;
+    r.x = ripple.current.x;
+    r.y = ripple.current.z;
+    r.z = damp(r.z, 0, 2.2, dt);
+    ripple.current.strength = r.z;
   });
 
   return (
@@ -252,7 +336,7 @@ export default function HorizonScene() {
       style={{ position: "absolute", inset: 0 }}
       onCreated={({ camera }) => camera.lookAt(0, -0.35, -14)}
     >
-      <Terrain />
+      <Terrain coarse={coarse} />
     </Canvas>
   );
 }
