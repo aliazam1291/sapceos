@@ -3,7 +3,19 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  contain: layout style;
+  /*
+   * `contain: layout style` does NOT clip — that is `paint`. `.nebula` below
+   * is `inset: -20%`, i.e. 140% of this box, and nothing was stopping it
+   * bleeding out and widening the document: measured +9px of horizontal
+   * scroll at 375 and +12px at 320.
+   *
+   * `overflow: clip` rather than `hidden`, because `hidden` on a fixed
+   * full-viewport layer makes it a scroll container, and a scroll container
+   * can be scrolled programmatically or by a stray focus. `clip` cuts the
+   * overflow without creating one.
+   */
+  contain: layout style paint;
+  overflow: clip;
 }
 
 /*

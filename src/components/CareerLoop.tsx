@@ -102,7 +102,32 @@ export default function CareerLoop() {
   const [active, setActive] = useState(0);
 
   return (
-    <div className={styles.loop} data-enhanced>
+    <div className={styles.loop} data-career-loop data-enhanced>
+      {/*
+       * The counterpart that makes the progressive-enhancement claim true.
+       *
+       * `data-enhanced` is written in JSX, and a "use client" component is
+       * still SERVER-rendered — so that attribute is in the served HTML and
+       * the `[data-enhanced] .detail { display: none }` rule applies with
+       * scripting off, hiding seven of eight stages. The docblock above used
+       * to claim the opposite; it was verified by grepping the served markup
+       * for the copy and finding all eight, which answers "is it present"
+       * rather than "is it visible". tools/nojscheck.mjs asks the second
+       * question and reported 7 HIDDEN.
+       *
+       * Setting the attribute in an effect instead would fix no-JS but make
+       * every panel paint open and then collapse on hydration — real layout
+       * shift for every reader, to fix a case that this one static rule
+       * handles for free. Same trade, and the same solution, as the
+       * `[data-reveal]` override in src/app/layout.tsx.
+       */}
+      <noscript>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: "[data-career-loop] [data-loop-detail]{display:block!important}",
+          }}
+        />
+      </noscript>
       <div className={styles.ringWrap}>
         <svg className={styles.ring} viewBox="0 0 100 100" aria-hidden="true">
           <circle className={styles.orbit} cx="50" cy="50" r="38" />
@@ -147,7 +172,9 @@ export default function CareerLoop() {
               <span className={styles.stageIndex}>{String(i + 1).padStart(2, "0")}</span>
               <span className={styles.stageLabel}>{stage.label}</span>
             </button>
-            <p id={`loop-${stage.key}`} className={styles.detail}>
+            {/* data-loop-detail, not the hashed class: the noscript rule
+                above has to be able to name this from a plain string. */}
+            <p id={`loop-${stage.key}`} className={styles.detail} data-loop-detail>
               {stage.body}
             </p>
           </li>

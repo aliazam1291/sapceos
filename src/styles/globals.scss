@@ -15,6 +15,27 @@ html {
   // No `scroll-behavior: smooth` here: it fights the router's scroll reset and
   // Lenis already owns smooth scrolling. Reduced-motion users get instant
   // jumps, which is the correct fallback anyway.
+
+  /*
+   * The horizontal-scroll guard has to be HERE, not only on body.
+   *
+   * `body { overflow-x: hidden }` alone was not preventing anything: measured
+   * with a real gesture rather than by reading `scrollWidth`, the page still
+   * scrolled 12px at 320, 9px at 375 and 8px at 768. Overflow propagation
+   * from body to the viewport did not save it, and the symptom is easy to
+   * miss because the page never shows a scrollbar — you only find it by
+   * trying to scroll (tools/hscrolltest.mjs).
+   *
+   * `clip` rather than `hidden`: `hidden` would make the root a scroll
+   * container, which is a heavier change on a page that hands scrolling to
+   * Lenis. `clip` cuts the overflow without creating one.
+   *
+   * This is a guard, not a fix for any individual offender — 122 elements
+   * legitimately extend past the viewport here (full-bleed washes, the
+   * Fragments strip, negative-inset decorative layers) and all of them are
+   * meant to be cut off at the edge.
+   */
+  overflow-x: clip;
 }
 
 body {
@@ -26,7 +47,17 @@ body {
   font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  /*
+   * `clip`, not `hidden`, for the same reason as on `html` above — and here
+   * there is a second reason. `overflow-x: hidden` makes body a scroll
+   * CONTAINER: even with the root guard in place and `scrollWidth` reporting
+   * no overflow, `document.body.scrollLeft = 9999` still moved it 9px,
+   * because a hidden container is programmatically scrollable even when the
+   * user cannot reach it. A stray `scrollIntoView` on clipped content is
+   * enough to shunt the whole page sideways with no way to scroll back.
+   * `clip` removes the container, so there is nothing to shunt.
+   */
+  overflow-x: clip;
 }
 
 /*

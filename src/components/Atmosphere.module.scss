@@ -2,6 +2,12 @@
 
 // Film grain + vignette. Texture instead of gradients — it keeps large black
 // areas from looking like dead flat fill without adding any colour.
+/*
+ * `inset: -50%` makes this twice the viewport in each axis — deliberate, so
+ * the grain never shows a seam, but it also meant a fixed layer extending
+ * 50% past the right edge and contributing to the document's scroll width.
+ * The oversize is kept; it just cannot widen the page any more.
+ */
 .grain {
   position: fixed;
   inset: -50%;
@@ -10,6 +16,7 @@
   opacity: 0.025;
   background-image: radial-gradient(rgba(255,255,255,.42) .5px, transparent .7px);
   background-size: 7px 7px;
+  contain: layout style paint;
 }
 
 .vignette {
