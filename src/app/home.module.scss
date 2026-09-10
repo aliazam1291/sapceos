@@ -11,6 +11,29 @@
   min-height: clamp(620px, 88svh, 980px);
   display: flex;
   align-items: center;
+  /*
+   * Without this the hero is the only section on the site that does not
+   * centre, and on a wide monitor it is THE bug.
+   *
+   * `HeroStage` renders an unstyled <div> purely as a GSAP context root, and
+   * that div is this flex container's only in-flow child. A flex item is
+   * packed to the start of the line unless told otherwise, so `.heroInner`'s
+   * `margin-inline: auto` had no free space to distribute and could not
+   * centre — the whole shell sat pinned at x=0 while every other section
+   * centred normally.
+   *
+   * Measured at 2000x1000 before the fix: `.heroInner` and `.readoutInner`
+   * are both exactly 1520px wide, but the hero's left edge was 0 and the
+   * readout's was 233 — a 233px misalignment between the hero and the
+   * section directly beneath it, growing with the viewport and invisible
+   * below ~1632px where the shell is frozen at 1240.
+   *
+   * This is also the whole of the "content only uses the left half on a wide
+   * screen" complaint: the dead space was never split evenly left and right,
+   * which is what a too-narrow shell would produce. It was all on one side,
+   * because flex packs to flex-start.
+   */
+  justify-content: center;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
 }
