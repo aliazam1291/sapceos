@@ -329,7 +329,23 @@ export default function InteractiveGalaxy({
    * camera reads a plain prop instead of subscribing to anything.
    */
   const [hoveredNode, setHoveredNode] = useState<GalaxyNode | null>(null);
-  const [zoomScale, setZoomScale] = useState<number>(1.0);
+  /*
+   * The hero starts closer than the full-page map does.
+   *
+   * DEFAULT_CAM_POS was pulled back to (0, 5.2, 7.8) — distance 9.37 — so the
+   * outermost hub nodes' HTML labels would not clip against the panel edge.
+   * That was tuned when the embedded panel was roughly 587px wide. It is now
+   * ~1152px at 2000px viewport, and at that size the same framing leaves the
+   * galaxy as a small cluster adrift in a large dark rectangle: the canvas
+   * fills its stage correctly, the SUBJECT inside it does not.
+   *
+   * `dist = DEFAULT_DIST / zoomScale`, floored at MIN_ORBIT_DIST (5.5), so
+   * 1.38 puts the hero camera at 6.8 units — about 27% closer, which reads as
+   * roughly a third larger — while leaving headroom before the floor. The
+   * full-page /galaxy route keeps 1.0, where the wider viewport already gives
+   * the map room and the labels have somewhere to go.
+   */
+  const [zoomScale, setZoomScale] = useState<number>(embedded ? 1.38 : 1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [isMuted, setIsMuted] = useState(true);

@@ -1,17 +1,37 @@
 @use "../styles/tokens.scss" as *;
 
+/*
+ * The galaxy fills its stage. It does not sit in a box on it.
+ *
+ * This was `width: min(100%, 34rem); height: 480px` — a hard 544x480 cap.
+ * `.heroPanel` gives it roughly 1150x700 on a 2000px screen, so the hero's
+ * headline element was rendering at under a quarter of the area it had been
+ * given, which is why it read as a small cluster floating in the corner
+ * rather than as the field the page is set on.
+ *
+ * The card treatment is gone for the same reason. It carried a border, an
+ * opaque radial background and a 3.875rem drop shadow — the exact
+ * "rounded, opaque, shadowed card" DESIGN_DIRECTION.md names as what makes a
+ * dark site look like generic SaaS, and directly against `.heroPanel`'s own
+ * docblock: "The galaxy is the hero's field, not a widget parked in the
+ * right column." The mask and opacity on `.heroPanel` are what end the
+ * field now, so there is no edge to draw.
+ *
+ * `overflow: hidden` stays: the canvas still has to be clipped to its box.
+ */
 .shell {
-  width: min(100%, 34rem);
-  height: 480px;
+  width: 100%;
+  height: 100%;
   position: relative;
-  border: 1px solid var(--panel-line);
-  background: radial-gradient(145deg, rgba(20, 27, 30, 0.9), rgba(5, 7, 8, 0.82));
-  box-shadow: 1.25rem 1.75rem 3.875rem rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  border-radius: var(--radius-panel);
 
+  /*
+   * Below the breakpoint `.heroPanel` stops being absolutely positioned and
+   * becomes a normal-flow block with its own height (see home.module.scss),
+   * so 100% still resolves against a real box.
+   */
   @media (max-width: 45rem) {
     width: 100%;
-    height: 380px;
+    height: 100%;
   }
 }
