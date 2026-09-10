@@ -1,0 +1,163 @@
+@use "../styles/tokens.scss" as *;
+
+.loop {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+
+  @media (min-width: 900px) {
+    // Ring left, stages right — the ring is the illustration, the list is the
+    // content, and the content gets the wider column.
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  }
+}
+
+/* ── The ring ─────────────────────────────────────────────────────────────── */
+
+.ringWrap {
+  position: relative;
+  width: 100%;
+  max-width: 22rem;
+  margin-inline: auto;
+  aspect-ratio: 1;
+}
+
+.ring {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.orbit {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 0.25;
+}
+
+.node {
+  fill: var(--text-tertiary);
+  transition:
+    r var(--dur-base) var(--ease-out),
+    fill var(--dur-base) var(--ease-out);
+
+  &[data-on] {
+    fill: var(--accent);
+  }
+}
+
+/*
+ * The lit stage's name, centred in its own ring.
+ *
+ * `aria-hidden`, because the list beside it already names every stage and
+ * marks the current one with `aria-expanded` — announcing it here as well
+ * would report the same state twice.
+ */
+.ringLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  text-align: center;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+
+.ringIndex {
+  @include mono-label;
+  color: var(--accent);
+}
+
+/* ── The stages ───────────────────────────────────────────────────────────── */
+
+.stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.stage {
+  border-bottom: 1px solid var(--line);
+
+  &:first-child {
+    border-top: 1px solid var(--line);
+  }
+}
+
+.stageButton {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4) 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color var(--dur-base) var(--ease-out);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.stage[data-on] .stageButton {
+  color: var(--text-primary);
+}
+
+.stageIndex {
+  @include mono-label;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.stage[data-on] .stageIndex {
+  color: var(--accent);
+}
+
+.stageLabel {
+  font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Every stage's copy is server-rendered and visible by default.
+ *
+ * The collapse is applied ONLY under `[data-enhanced]`, which the component
+ * sets on itself at render — so with scripting off the whole loop is a plain
+ * ordered list with all eight descriptions readable, and nothing is hidden
+ * behind an interaction that cannot happen. Same contract the rest of the
+ * site's progressive enhancement follows.
+ */
+.detail {
+  color: var(--text-secondary);
+  max-width: var(--measure);
+  padding-bottom: var(--space-5);
+}
+
+.loop[data-enhanced] .detail {
+  display: none;
+}
+
+.loop[data-enhanced] .stage[data-on] .detail {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node,
+  .stageButton {
+    transition: none;
+  }
+}

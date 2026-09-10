@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ButtonLink, PageHeader, Row, Section, SectionHead, TagRow, ui } from "@/components/ui";
 import { education, leadership, profile, skills } from "@/content/profile";
 import PageForm from "@/components/space/PageForm";
+import CareerLoop from "@/components/CareerLoop";
 
 export const metadata: Metadata = {
   title: "About the Operator",
@@ -49,6 +50,19 @@ export default function AboutPage() {
             that a brand and an interface are the same argument told at different resolutions.
           </p>
         </div>
+      </Section>
+
+      {/* The loop is the answer to "what does he actually do", and it is the
+          one piece of PROFILE.md that states the differentiator outright.
+          Placed straight after the prose, before the credentials — it belongs
+          with the argument, not with the record. */}
+      <Section>
+        <SectionHead
+          label="How the work goes"
+          title="Problem in, problem out"
+          action={undefined}
+        />
+        <CareerLoop />
       </Section>
 
       <Section>
