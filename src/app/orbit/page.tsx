@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import OrbitStage from "./OrbitStage";
 import { DraftFlag, NextStep, PageHeader, Row, Section, ui } from "@/components/ui";
+import { orbitSlots } from "@/content/orbit";
 import styles from "./orbit.module.scss";
 
 export const metadata: Metadata = {
@@ -10,13 +11,10 @@ export const metadata: Metadata = {
 };
 
 // PROFILE.md: "Orbit topics / reading list / music — no verified data.
-// Must come from Ali directly." Nothing is invented here.
-const slots = [
-  { label: "Reading", note: "books, papers, long-form", radius: 0.95, period: 26, offset: 0, tilt: 0.05 },
-  { label: "Tools", note: "what's actually open every day", radius: 1.35, period: 38, offset: 9, tilt: -0.16 },
-  { label: "Questions", note: "problems being chewed on", radius: 1.78, period: 52, offset: 20, tilt: 0.22 },
-  { label: "Signal", note: "music / focus", radius: 2.2, period: 68, offset: 34, tilt: -0.09 },
-];
+// Must come from Ali directly." Nothing is invented here. The slots now live
+// in src/content/orbit.ts so the nav can gate its own link on whether this
+// page has anything to say yet.
+const slots = orbitSlots;
 
 export default function OrbitPage() {
   return (
@@ -35,9 +33,13 @@ export default function OrbitPage() {
             {slots.map((slot) => (
               <Row key={slot.label} label={slot.label}>
                 <div className={ui.rowBody}>
-                  <p>
-                    <DraftFlag note={slot.note} />
-                  </p>
+                  {slot.entries.length > 0 ? (
+                    slot.entries.map((entry) => <p key={entry}>{entry}</p>)
+                  ) : (
+                    <p>
+                      <DraftFlag note={slot.note} />
+                    </p>
+                  )}
                 </div>
               </Row>
             ))}

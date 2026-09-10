@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { links, profile } from "@/content/profile";
+import { orbitHasContent } from "@/content/orbit";
 import FooterHorizon from "./FooterHorizon";
 import LocalTime from "./LocalTime";
 import { ui } from "./ui";
@@ -7,7 +8,10 @@ import { ui } from "./ui";
 const nav = [
   { href: "/missions", label: "Missions" },
   { href: "/lab", label: "Lab" },
-  { href: "/orbit", label: "Orbit" },
+  // Gated the same way as in Nav.tsx — see src/content/orbit.ts. Listing a
+  // route whose four rows all read "needs input" is worse than not listing
+  // it, and this reverses itself the moment there is content.
+  ...(orbitHasContent ? [{ href: "/orbit", label: "Orbit" }] : []),
   { href: "/field-notes", label: "Field Notes" },
   { href: "/about", label: "About" },
   { href: "/mission-history", label: "Mission History" },

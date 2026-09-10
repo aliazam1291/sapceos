@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/content/profile";
+import { orbitHasContent } from "@/content/orbit";
 import { lockScroll } from "@/lib/lenis";
 import NavOverview from "./NavOverview";
 import styles from "./Nav.module.scss";
@@ -13,7 +14,11 @@ const routes = [
   { href: "/missions", label: "Missions", plain: "Projects" },
   { href: "/galaxy", label: "Galaxy 3D", plain: "Interactive Map" },
   { href: "/lab", label: "Lab", plain: "Experiments" },
-  { href: "/orbit", label: "Orbit", plain: "Interests" },
+  // Listed only once /orbit has real content — see src/content/orbit.ts.
+  // The route always works; this is the link, not the page.
+  ...(orbitHasContent
+    ? [{ href: "/orbit", label: "Orbit", plain: "Interests" }]
+    : []),
   { href: "/field-notes", label: "Field Notes", plain: "Writing" },
   { href: "/about", label: "About", plain: "About" },
   { href: "/mission-history", label: "Mission History", plain: "Resume" },
