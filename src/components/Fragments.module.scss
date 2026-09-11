@@ -1,130 +1,208 @@
 @use "../styles/tokens.scss" as *;
 
-/*
- * The inventory band.
- *
- * Full-bleed on purpose: this is the one place on the site that should feel
- * like there is more than fits on screen, and a strip that stops at the shell
- * margin cannot say that. It runs off both edges and is scrubbed sideways.
- */
+/* ══════════════════════════════════════════════════════════════════════════════
+   FRAGMENTS — ARCHIVE SHOWCASE (KINETIC MOTION EDITION)
+   Pinned horizontal scroll with physics-based 3D tilt, holographic depth layers,
+   scroll velocity inertia, and procedural vector animations.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
 .band {
   position: relative;
-  /*
-   * Zero top padding, and the one exception to --space-section.
-   *
-   * ui.module.scss collapses the doubled rhythm between stacked sections with
-   * `.section + .section { padding-top: 0 }`, but this band is `.band`, not
-   * `.section` — CSS Modules hash both, so the adjacency selector cannot see
-   * across the two files and never matched here. Measured on the home page:
-   * the missions section's 141px bottom padding met this band's 141px top for
-   * a 282px void, close to a third of a viewport of nothing, which is what
-   * made the page read as blocks floating apart rather than one continuous
-   * instrument.
-   *
-   * A first pass split the difference at 0.45x rather than 0 and still left a
-   * measured ~232px gap at 1440px — visibly the same problem, just smaller.
-   * The band's own top border already marks the division, which is exactly
-   * what `.section + .section` relies on elsewhere: one side's padding IS the
-   * gap, not a blend of both sides'. Zero is the actual fix, not a step
-   * toward it.
-   */
-  padding-block: 0 var(--space-section);
+  width: 100%;
+  background: var(--bg-primary);
   border-top: 1px solid var(--line);
   overflow: hidden;
 
-  /*
-   * One left edge for the whole band.
-   *
-   * The heading used `@include shell` (max-width, centred), the strip used a
-   * raw `--shell-pad`, and the progress rule used the shell INCLUDING its
-   * padding — three different left edges: 164 / 64 / 100 at 1440px, and
-   * 362 / 64 / 298 at 1836px. The error grew with the viewport, because only
-   * two of the three were centring against `--shell-max`.
-   *
-   * This resolves to wherever the shell's CONTENT actually starts, and falls
-   * back to the plain gutter on screens narrower than the shell.
-   */
   --gutter: max(
     var(--shell-pad),
     calc((100% - var(--shell-max)) / 2 + var(--shell-pad))
   );
 }
 
+/* Pinned Viewport Stage */
+.pinnedStage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 660px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-block: clamp(var(--space-6), 4vh, var(--space-10)) clamp(var(--space-4), 3vh, var(--space-8));
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 100svh;
+    padding-block: var(--space-10) var(--space-6);
+  }
+}
+
+/* Ambient backdrop grid & celestial illumination */
+.ambientBackdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(ellipse 65% 45% at 50% 50%, rgba(34, 208, 178, 0.05) 0%, transparent 80%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 80px 80px, 80px 80px;
+  opacity: 0.75;
+}
+
+/* ── Section Header ───────────────────────────────────────────────────────── */
+
 .head {
   @include shell;
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-8);
-  margin-bottom: var(--space-10);
+  gap: var(--space-6);
+  flex-shrink: 0;
 }
 
-.headText {
-  max-width: 44rem;
+.headLeft {
+  max-width: 48rem;
+}
+
+.labelRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.beaconDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulseBeacon 2.4s ease-in-out infinite;
+}
+
+@keyframes pulseBeacon {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.4;
+  }
 }
 
 .label {
   @include mono-label;
   color: var(--accent);
-  margin-bottom: var(--space-5);
+  letter-spacing: 0.2em;
 }
 
 .title {
-  font-size: var(--type-medium);
-  letter-spacing: -0.025em;
-  margin-bottom: var(--space-4);
+  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .lede {
   color: var(--text-secondary);
-  max-width: 40ch;
-}
+  font-size: var(--type-small);
+  line-height: 1.5;
+  max-width: 42ch;
 
-/*
- * The count, at the scale the reference sites use for a wordmark.
- *
- * It is the length of the array, never a written figure — so it is allowed to
- * be this loud, because it cannot be wrong.
- */
-.count {
-  flex: none;
-  font-size: clamp(3.5rem, 9vw, 8rem);
-  line-height: 0.82;
-  font-weight: 500;
-  letter-spacing: -0.05em;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--line-strong);
-  font-variant-numeric: tabular-nums;
-
-  @media (max-width: 720px) {
+  @media (max-width: 640px) {
     display: none;
   }
 }
 
-/* ── The strip ────────────────────────────────────────────────────────────── */
+.headRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.telemetryCounter {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+
+  .currentNum {
+    color: var(--accent);
+    text-shadow: 0 0 16px rgba(34, 208, 178, 0.4);
+  }
+
+  .divider {
+    color: var(--line-strong);
+    font-size: 0.8em;
+  }
+
+  .totalNum {
+    color: var(--text-secondary);
+  }
+}
+
+.scrollHint {
+  @include mono-label;
+  font-size: 0.625rem;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  span {
+    display: inline-block;
+    color: var(--accent);
+    animation: bounceDown 1.8s ease-in-out infinite;
+  }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+/* ── The Horizontal Rail & Track ──────────────────────────────────────────── */
 
 .rail {
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  // The scrollbar is redundant next to the progress rule below, and a visible
-  // one under a full-bleed band looks like a mistake.
-  scrollbar-width: none;
-  cursor: grab;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-block: var(--space-3);
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-block: var(--space-4);
 
-  &[data-dragging] {
-    cursor: grabbing;
-    // Kills text selection mid-drag, which otherwise highlights every tile the
-    // pointer crosses.
-    user-select: none;
-  }
-
-  &:focus-visible {
-    outline: 1px solid var(--accent);
-    outline-offset: -1px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
@@ -132,61 +210,127 @@
   display: flex;
   list-style: none;
   margin: 0;
-  // Hairline separators come from the gap showing the band through, which is
-  // the same divided-surface treatment the rest of the site uses.
-  gap: 1px;
-  // Starts on the page's text edge; still bleeds off the right, which is the
-  // point of the band.
+  padding: 0;
+  gap: clamp(var(--space-4), 2.2vw, var(--space-8));
   padding-left: var(--gutter);
   padding-right: var(--shell-pad);
-  background: none;
   width: max-content;
+  will-change: transform;
+
+  @media (max-width: 768px) {
+    padding-left: var(--shell-pad);
+  }
 }
 
 .cell {
   display: flex;
+  flex: none;
+  perspective: 1200px;
+
+  @media (max-width: 768px) {
+    scroll-snap-align: center;
+  }
 }
 
-.tile {
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: var(--space-3);
-  width: clamp(13rem, 20vw, 16.5rem);
-  min-height: 12.5rem;
-  padding: var(--space-5);
-  background: var(--bg-secondary);
-  border: 1px solid var(--line);
-  position: relative;
-  transition:
-    background var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-base) var(--ease-out);
+/* ── Card (Tile) Design — 3D Spatial Holographic Panel ─────────────────────── */
 
-  // A hairline that draws across the top edge on approach — the same sweep the
-  // nav and mission rows use, so the whole site reacts one way.
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: clamp(300px, 24vw, 400px);
+  height: clamp(390px, 53vh, 500px);
+  padding: clamp(var(--space-5), 2.4vh, var(--space-7));
+  text-decoration: none;
+  border-radius: 14px;
+  background: linear-gradient(
+    165deg,
+    rgba(24, 30, 34, 0.72) 0%,
+    rgba(12, 16, 18, 0.86) 60%,
+    rgba(8, 10, 12, 0.95) 100%
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(245, 245, 245, 0.09);
+  box-shadow: 
+    0 16px 36px -12px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  overflow: hidden;
+  isolation: isolate;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--card-lift, 0px));
+  transition:
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+
+  @media (max-width: 768px) {
+    width: clamp(280px, 82vw, 340px);
+    height: 440px;
+    transform: none !important;
+  }
+
+  // Pointer spotlight that follows mouse coordinates in 3D
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      360px circle at var(--card-x, 50%) var(--card-y, 50%),
+      rgba(34, 208, 178, 0.14),
+      transparent 68%
+    );
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  // Glowing top highlight hairline
   &::after {
     content: "";
     position: absolute;
+    top: 0;
     left: 0;
     right: 100%;
-    top: 0;
-    height: 1px;
-    background: var(--accent);
-    transition: right var(--dur-base) var(--ease-out);
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transition: right var(--dur-slow) var(--ease-out);
+    z-index: 2;
   }
 
   @include hover-only {
     &:hover {
-      background: var(--bg-raised);
-      border-color: var(--accent-line);
-      transform: translateY(-3px);
+      border-color: rgba(34, 208, 178, 0.42);
+      box-shadow: 
+        0 28px 56px -12px rgba(0, 0, 0, 0.85),
+        0 0 34px -4px rgba(34, 208, 178, 0.22),
+        0 0 0 1px rgba(34, 208, 178, 0.28) inset;
+
+      &::before {
+        opacity: 1;
+      }
 
       &::after {
         right: 0;
       }
 
       .tileTitle {
-        color: var(--accent);
+        color: var(--text-primary);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+      }
+
+      .actionArrow {
+        transform: translateZ(48px) rotate(45deg);
+        background: var(--accent);
+        color: #000;
+        box-shadow: 0 0 20px var(--accent);
+      }
+
+      .cardGraphic {
+        opacity: 1;
+        transform: translateZ(30px) scale(1.04);
       }
     }
   }
@@ -194,73 +338,425 @@
   &:focus-visible {
     outline: none;
     border-color: var(--accent);
-    background: var(--bg-raised);
-
-    &::after {
-      right: 0;
-    }
+    box-shadow: 0 0 0 2px var(--accent-dim);
   }
+}
+
+/* Diagonal glass sheen effect on hover */
+.cardSheen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    108deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.03) 44%,
+    rgba(34, 208, 178, 0.1) 50%,
+    rgba(255, 255, 255, 0.03) 56%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  .tile:hover & {
+    transform: translateX(100%);
+  }
+}
+
+/* ── Card Header Row (Parallax Layer: Z=32px) ─────────────────────────────── */
+
+.cardHeader {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  transform: translateZ(32px);
+  transform-style: preserve-3d;
+}
+
+.indexBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .index {
   @include mono-label;
   color: var(--text-tertiary);
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
-.kind {
+.kindBadge {
   @include mono-label;
-  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  transition: all var(--dur-fast) var(--ease-out);
+
+  .kindDot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  // Variations per kind
+  .tile[data-kind="mission"] & {
+    color: #3bf1cd;
+    background: rgba(34, 208, 178, 0.08);
+    border-color: rgba(34, 208, 178, 0.24);
+
+    .kindDot {
+      background: #3bf1cd;
+      box-shadow: 0 0 8px #3bf1cd;
+    }
+  }
 
   .tile[data-kind="lab"] & {
-    color: #8fe4d3;
+    color: #5eead4;
+    background: rgba(94, 234, 212, 0.08);
+    border-color: rgba(94, 234, 212, 0.24);
+
+    .kindDot {
+      background: #5eead4;
+      box-shadow: 0 0 8px #5eead4;
+    }
   }
 
   .tile[data-kind="note"] & {
-    color: var(--text-secondary);
+    color: #c4b5fd;
+    background: rgba(196, 181, 253, 0.08);
+    border-color: rgba(196, 181, 253, 0.24);
+
+    .kindDot {
+      background: #c4b5fd;
+      box-shadow: 0 0 8px #c4b5fd;
+    }
   }
 }
 
+.draftBadge {
+  @include mono-label;
+  font-size: 0.5625rem;
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px dashed rgba(245, 245, 245, 0.2);
+  color: var(--text-tertiary);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ── Card Graphic Stage (Parallax Layer: Z=24px with Kinetic Motions) ──────── */
+
+.cardGraphic {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: clamp(110px, 17vh, 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-block: var(--space-2);
+  opacity: 0.72;
+  transform: translateZ(24px);
+  transform-style: preserve-3d;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+}
+
+/* ── Kinetic SVG Motion Elements ──────────────────────────────────────────── */
+
+/* 1. Mission Orbit & Sonar Animations */
+.orbitGroup {
+  transform-origin: 140px 70px;
+  animation: orbitSpin 14s linear infinite;
+}
+
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sonarPulse {
+  transform-origin: 140px 70px;
+  animation: sonarPing 3.2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}
+
+@keyframes sonarPing {
+  0% {
+    r: 6px;
+    opacity: 0.8;
+    stroke-width: 1.5;
+  }
+  100% {
+    r: 48px;
+    opacity: 0;
+    stroke-width: 0.5;
+  }
+}
+
+.radarSweepHand {
+  transform-origin: 140px 70px;
+  animation: orbitSpin 7s linear infinite;
+  opacity: 0.45;
+}
+
+.beaconCore {
+  animation: pulseGlow 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+/* 2. Lab Frequency Wave & Quantum Core Animations */
+.kineticWave {
+  stroke-dasharray: 8 6;
+  animation: waveShift 10s linear infinite;
+}
+
+@keyframes waveShift {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -140; }
+}
+
+.quantumGyro {
+  transform-origin: 140px 70px;
+  animation: gyroMotion 7s ease-in-out infinite alternate;
+}
+
+@keyframes gyroMotion {
+  0% {
+    transform: rotate(45deg) scale(0.9);
+  }
+  50% {
+    transform: rotate(225deg) scale(1.12);
+  }
+  100% {
+    transform: rotate(405deg) scale(0.9);
+  }
+}
+
+.frequencyNode {
+  animation: nodeBob 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes nodeBob {
+  0% { transform: translateY(-3px); }
+  100% { transform: translateY(3px); }
+}
+
+/* 3. Field Note Laser Scan & Blueprint Matrix Animations */
+.laserScanner {
+  animation: laserSweep 3.6s ease-in-out infinite alternate;
+}
+
+@keyframes laserSweep {
+  0% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(64px);
+    opacity: 0.35;
+  }
+}
+
+.blueprintPing {
+  animation: pingFlicker 2s ease-in-out infinite;
+}
+
+@keyframes pingFlicker {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ── Card Content & Parallax Layers (Z=36px) ──────────────────────────────── */
+
+.cardBody {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transform: translateZ(34px);
+  transform-style: preserve-3d;
+}
+
 .tileTitle {
-  align-self: end;
-  font-size: var(--type-small);
+  font-size: clamp(1.125rem, 1.4vw, 1.375rem);
   font-weight: 500;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   transition: color var(--dur-fast) var(--ease-out);
 }
 
-.meta {
-  @include mono-label;
+.cardFooter {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.metaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.metaLabel {
+  @include mono-label;
+  font-size: 0.5625rem;
   color: var(--text-tertiary);
 }
 
-/* Unwritten pieces say so rather than sitting in the strip as finished work. */
-.draft {
-  font-style: normal;
-  padding: 1px var(--space-2);
-  border: 1px solid var(--line-strong);
+.metaValue {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ── Scrub position ───────────────────────────────────────────────────────── */
+/* Magnetic Interactive Arrow (Z=48px) */
+.actionArrow {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  font-size: 0.9375rem;
+  transform: translateZ(44px);
+  transition:
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
 
-.progress {
-  margin-top: var(--space-8);
-  margin-left: var(--gutter);
-  margin-right: var(--shell-pad);
-  height: 1px;
-  background: var(--line);
+/* ── Bottom Progress & Navigation Control Bar ─────────────────────────────── */
+
+.progressWrapper {
+  @include shell;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  margin-top: var(--space-2);
+}
+
+.progressBar {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+
+  .progressFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(34, 208, 178, 0.4), var(--accent));
+    transform-origin: 0 50%;
+    box-shadow: 0 0 12px var(--accent);
+  }
+}
+
+.progressFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.legendList {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.legendItem {
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.625rem;
+  color: var(--text-tertiary);
 
   span {
-    display: block;
-    height: 100%;
-    background: var(--accent);
-    transform-origin: 0 50%;
-    // Driven straight from the scroll handler; a transition would lag the drag.
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &[data-kind="mission"] span {
+    background: #3bf1cd;
+  }
+
+  &[data-kind="lab"] span {
+    background: #5eead4;
+  }
+
+  &[data-kind="note"] span {
+    background: #c4b5fd;
+  }
+}
+
+.scrubInstruction {
+  @include mono-label;
+  font-size: 0.625rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.14em;
+
+  strong {
+    color: var(--accent);
+    font-weight: 500;
   }
 }

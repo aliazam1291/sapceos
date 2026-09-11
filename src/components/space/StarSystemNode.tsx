@@ -33,6 +33,8 @@ interface StarSystemNodeProps {
    * subject is already the largest, brightest thing on screen.
    */
   reticle?: boolean;
+  /** When false, hubs hide static idle labels (e.g. in the embedded hero) unless hovered. */
+  showLabels?: boolean;
 }
 
 const _scale = new THREE.Vector3();
@@ -248,6 +250,7 @@ export default function StarSystemNode({
   onHover,
   compact = false,
   reticle = true,
+  showLabels = true,
 }: StarSystemNodeProps) {
   const bodyRef = useRef<THREE.Group>(null);
   const reticleRef = useRef<THREE.LineSegments>(null);
@@ -532,7 +535,7 @@ export default function StarSystemNode({
           nodes reveal on approach, which keeps 15 labels from colliding. Once
           something is focused the drawer names it, so the remaining labels
           stand down rather than overlapping the panel. */}
-      {((hovered && !isFocused) || (node.isHub && !anyFocused)) && (
+      {((hovered && !isFocused) || (node.isHub && !anyFocused && showLabels)) && (
         <Html
           // drei scales HTML by distanceFactor/distance. On a phone the panel is
           // ~390px wide but the camera sits at the same world distance, so 12

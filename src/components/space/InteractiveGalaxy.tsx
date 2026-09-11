@@ -521,6 +521,7 @@ export default function InteractiveGalaxy({
             isFocused={focusedNode?.id === node.id}
             anyFocused={Boolean(focusedNode)}
             compact={isCoarse}
+            showLabels={!embedded}
             onHover={setHoveredNode}
             onSelect={(selected) => {
               setFocusedNode(selected);

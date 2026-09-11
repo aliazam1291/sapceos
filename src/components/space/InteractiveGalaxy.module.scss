@@ -582,3 +582,40 @@
   color: var(--accent);
   user-select: none;
 }
+
+/* 3D Spatial Tag Badges */
+.spatialBadge {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: rgba(8, 12, 14, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(34, 208, 178, 0.32);
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(34, 208, 178, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  &::before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  &.focused {
+    border-color: var(--accent);
+    background: rgba(14, 24, 26, 0.92);
+    box-shadow: 0 0 16px rgba(34, 208, 178, 0.35);
+  }
+}
+

@@ -64,45 +64,51 @@ export default function Home() {
             phrase. The galaxy moves behind the type rather than beside it.
           */}
           <div className={styles.heroInner}>
-            <p className={styles.heroLabel} data-boot="status">
-              <Status>Product engineer</Status>
-              <span>{profile.location}</span>
-              <LocalTime />
-            </p>
-
-            <h1 className={styles.heroTitle} data-boot="mask">
-              <span className={styles.maskLine}>
-                <span>Digital products</span>
-              </span>
-              <span className={styles.maskLine}>
-                <span>
-                  with a point <span className={styles.heroAccent}>of view.</span>
-                </span>
-              </span>
-            </h1>
-
-            <div className={styles.heroRule} data-boot="rule" />
-
-            {/* Statement, mono counterweight, action — one band across the
-                foot of the hero, so the headline above it is uninterrupted. */}
-            <div className={styles.heroFoot}>
-              <p className={styles.heroLede} data-boot="lede">
-                I turn complex operational work into clear products — from the first sketch to
-                the interface people rely on every day.
+            <div className={styles.heroContent}>
+              <p className={styles.heroLabel} data-boot="status">
+                <Status>Product engineer</Status>
+                <span>{profile.location}</span>
+                <LocalTime />
               </p>
 
-              <p className={styles.heroSpec}>{profile.oneLine}</p>
+              <h1 className={styles.heroTitle} data-boot="mask">
+                <span className={styles.maskLine}>
+                  <span>Digital products</span>
+                </span>
+                <span className={styles.maskLine}>
+                  <span>
+                    with a point <span className={styles.heroAccent}>of view.</span>
+                  </span>
+                </span>
+              </h1>
 
-              <div className={ui.buttonRow} data-boot="cta">
-                <MagneticButton href="/missions" primary>
-                  View missions &rarr;
-                </MagneticButton>
-                <MagneticButton href="/contact">Open a channel</MagneticButton>
+              <div className={styles.heroRule} data-boot="rule" />
+
+              <div className={styles.heroNarrative}>
+                <p className={styles.heroLede} data-boot="lede">
+                  I turn complex operational work into clear products — from the first sketch to
+                  the interface people rely on every day.
+                </p>
+
+                <div className={styles.heroQuote}>
+                  <p className={styles.heroSpec}>{profile.oneLine}</p>
+                </div>
+
+                <div className={styles.heroActions} data-boot="cta">
+                  <MagneticButton href="/missions" primary>
+                    View missions &rarr;
+                  </MagneticButton>
+                  <MagneticButton href="/contact">Open a channel</MagneticButton>
+                </div>
               </div>
             </div>
 
             <div className={styles.heroPanel} data-boot="panel">
               <GalaxyNavigator />
+              <div className={styles.heroStageBadge} aria-hidden="true">
+                <span className={styles.badgeDot} />
+                <span>3D ORBIT MAP</span>
+              </div>
             </div>
           </div>
         </HeroStage>

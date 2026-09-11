@@ -51,67 +51,117 @@
   @include shell;
   position: relative;
   z-index: 1;
-  padding-block: clamp(2rem, 5vw, 4rem);
+  padding-top: clamp(2rem, 4vh, 3.5rem);
+  padding-bottom: clamp(4.5rem, 9vh, 6.5rem);
   display: grid;
-  gap: clamp(1.25rem, 2.4vw, 2.25rem);
-  align-content: center;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: var(--space-8);
+
+  @media (max-width: 1040px) {
+    grid-template-columns: 1fr;
+    padding-block: clamp(2rem, 6vw, 3.5rem);
+  }
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.2vw, 2rem);
+  max-width: 44rem;
+}
+
+.heroNarrative {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+.heroQuote {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--accent);
+  margin-block: var(--space-1);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
 }
 
 /*
- * The galaxy is the hero's field, not a widget parked in the right column.
- *
- * As a grid item it was ~587px wide and clipped to that rectangle, which is
- * what made it look like a canvas embedded in the page. It now spans the whole
- * hero and bleeds off the right edge; the radial mask on the scene ends it, so
- * there is no boundary to see. The copy sits above it on z-index.
+ * The galaxy visual stage — framed on the right half,
+ * providing depth and ambiance without colliding with hero copy or CTAs.
  */
 .heroPanel {
-  position: absolute;
-  // Pushed right and down: the headline is now full-bleed across the top, so a
-  // field starting at 26% put star systems directly behind the largest type on
-  // the site. It reads as the stage the words stand on, not as a texture over
-  // them.
-  inset: -4% -12vw 6% 40%;
-  z-index: 0;
-  // This is a visual field. Keeping a WebGL canvas interactive here made it
-  // compete with wheel/touch input before the visitor reached the work.
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: clamp(480px, 60vh, 720px);
   pointer-events: none;
-  // Eased back, and faded out on its left edge where the headline crosses it.
-  // Legibility of the h1 is the binding constraint here; the field is scenery.
-  opacity: 0.72;
-  mask-image: linear-gradient(to right, transparent 0%, #000 26%, #000 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26%, #000 100%);
 
-  // Ambient wash behind the field, so it reads as lit rather than pasted on.
-  //
-  // Halved and tightened. At 0.14 over a 48px blur this was not lighting the
-  // galaxy, it was tinting the entire hero — stacked with the spotlight, the
-  // core bloom and the nebula, the #050505 ground never appeared anywhere on
-  // the screen and the whole section read as a flat green wash with objects in
-  // it. The blacks are the point; the accent has to be something you arrive at.
-  &::before {
-    content: "";
+  @media (min-width: 1041px) {
     position: absolute;
-    inset: -10%;
-    z-index: -1;
-    background: radial-gradient(circle at 48% 46%, rgba(34, 208, 178, 0.07), transparent 54%);
-    filter: blur(48px);
-    pointer-events: none;
+    right: -8vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 55vw;
+    height: 94%;
+    mask-image: radial-gradient(ellipse 75% 70% at 55% 50%, #000 50%, transparent 95%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 55% 50%, #000 50%, transparent 95%);
   }
 
-  @media (max-width: 1024px) {
-    position: relative;
-    inset: auto;
-    margin-top: var(--space-6);
+  @media (max-width: 1040px) {
+    margin-top: var(--space-4);
     height: 46vh;
-    opacity: 0.55;
-    pointer-events: none;
+    opacity: 0.85;
   }
 }
 
-// Positioned so it paints above .heroPanel. A positioned box with z-index 0
-// paints after static block boxes, so without this the galaxy field covers the
-// hero text — .heroCopy used to supply this stacking context and is now gone.
+.heroStageBadge {
+  position: absolute;
+  bottom: 2rem;
+  right: 3rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: rgba(8, 12, 14, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.16em;
+  pointer-events: none;
+
+  @media (max-width: 1040px) {
+    display: none;
+  }
+}
+
+.badgeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
 .heroLabel {
   position: relative;
   z-index: 1;
@@ -121,36 +171,12 @@
   gap: var(--space-2) var(--space-4);
 }
 
-/*
- * The foot band: statement, mono counterweight, action.
- *
- * Auriga pairs its statement with a small monospace restatement and pushes the
- * action to the far edge; that three-part band is what stops a very large
- * headline from floating with nothing beneath it. Collapses to a stack below
- * the breakpoint, where three columns would each be too narrow to read.
- */
-.heroFoot {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: clamp(1.25rem, 2.5vw, 2.5rem);
-  align-items: start;
-
-  @media (min-width: 900px) {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.75fr) auto;
-    align-items: center;
-  }
-}
-
-/*
- * Mono counterweight — the site's one-sentence pitch, which was defined in
- * profile.ts and never shown on the home page.
- */
 .heroSpec {
   @include mono-label;
   color: var(--text-tertiary);
-  line-height: 1.7;
-  max-width: 34ch;
+  line-height: 1.6;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
   text-transform: none;
 }
 
