@@ -1,0 +1,156 @@
+@use "../styles/tokens.scss" as *;
+
+.bay {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-10) var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+}
+
+.slot {
+  min-width: 0;
+}
+
+/*
+ * No panel. The drone carries the study in; the only frame on screen is
+ * the payload itself. Each slot flies in from its own side as it enters
+ * the viewport and holds station — scroll-driven, so the flight is the
+ * scroll, not a timer. A hairline under the copy is the deck.
+ */
+.cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-2) 0 var(--space-5);
+  border-bottom: 1px solid var(--line);
+  transition: border-color var(--dur-base) var(--ease-out);
+
+  &:hover {
+    border-color: var(--accent-line);
+  }
+}
+
+/*
+ * One by one, on a clock, not on the scrollbar. The section gets
+ * data-arrived (ArrivalGate) the moment it is in view; each drone then
+ * swoops in from the right on its own delay — bank in, overshoot, settle —
+ * with the next one starting as the previous one docks. However fast the
+ * reader scrolled, they see the sequence.
+ */
+// The frame comes empty. The drone descends into it carrying the study;
+// the caption appears only once the load is down.
+.carry {
+  opacity: 0;
+  transform: translateY(-70vh) scale(0.96);
+}
+
+
+// --delay is inherited by the Drone inside, which times its brake and the
+// swing of the load off the same clock.
+.slot:nth-child(2) { --delay: 0.9s; }
+.slot:nth-child(3) { --delay: 1.8s; }
+
+:global([data-arrived]) .carry {
+  animation: swoop 1.7s cubic-bezier(0.3, 0.75, 0.25, 1) var(--delay, 0s) both;
+}
+
+:global([data-arrived]) .meta {
+  animation: caption 0.6s ease-out calc(var(--delay, 0s) + 1.5s) both;
+}
+
+@keyframes caption {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carry,
+  .meta {
+    opacity: 1;
+    transform: none;
+  }
+  :global([data-arrived]) .carry,
+  :global([data-arrived]) .meta {
+    animation: none;
+  }
+}
+
+// Straight down from above, in formation: a delivery drone descends onto
+// its mark, checks its descent just above it, settles. The slight lateral
+// sway is the airframe correcting; the load's own swing is in Drone.
+@keyframes swoop {
+  0% { opacity: 0; transform: translateY(-70vh) translateX(1.2vw) rotate(1.5deg) scale(0.96); }
+  18% { opacity: 1; }
+  55% { transform: translateY(1.6vh) translateX(-0.6vw) rotate(-1deg) scale(1.01); }
+  78% { transform: translateY(-0.5vh) translateX(0.2vw) rotate(0.3deg) scale(1); }
+  100% { opacity: 1; transform: none; }
+}
+
+.meta {
+  display: grid;
+  gap: var(--space-2);
+  opacity: 0;
+}
+
+.kind {
+  margin: 0;
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--accent);
+}
+
+.draft {
+  color: var(--text-tertiary);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.link {
+  color: var(--text-primary);
+  text-decoration: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.title {
+  margin: 0;
+}
+
+.premise {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.more {
+  margin: var(--space-6) 0 0;
+  @include mono-label;
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+}

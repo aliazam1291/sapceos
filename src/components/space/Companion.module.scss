@@ -1,0 +1,37 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  // Above the Atmosphere vignette (9997): the ship lives in the corners,
+  // exactly where the vignette darkens, and was disappearing into it.
+  z-index: 9998;
+  pointer-events: none;
+
+  // Above the page, below the nav and the section guide. Nothing in it is
+  // interactive, so it never gets in the way of a click.
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+// The engine light on the page. Screen-blended so it only ever brightens;
+// sized to feel like a lamp a few metres away, not a spotlight.
+.light {
+  --lx: 80%;
+  --ly: 80%;
+  --li: 0;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--li);
+  background: radial-gradient(circle 360px at var(--lx) var(--ly), rgba(255, 179, 90, 0.42), rgba(255, 179, 90, 0.1) 45%, transparent 70%);
+  transition: opacity 0.2s linear;
+}
+
+// Phones: the ship would cover copy at the default station, so it rides
+// smaller (the Pilot reads this through viewport width) and the whole layer
+// sits under the sticky nav.
+.coarse {
+  z-index: 9998;
+  opacity: 0.85;
+}

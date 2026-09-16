@@ -22,6 +22,8 @@ export type Mission = {
   signals: { label: string; value: string }[];
   report: ReportSection[];
   featured?: boolean;
+  /** Path under /public — a real screenshot or render of the shipped thing. */
+  cover?: string;
 };
 
 export type FieldNote = {
@@ -31,6 +33,7 @@ export type FieldNote = {
   premise: string;
   published?: string;
   body: string[];
+  cover?: string;
 };
 
 export type OrbitTopic = {
@@ -44,4 +47,5 @@ export type LabEntry = {
   stack: string[];
   status: "live" | "open-source" | "prototype";
   href?: string;
+  cover?: string;
 };

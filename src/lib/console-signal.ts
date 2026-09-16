@@ -13,7 +13,7 @@ import { profile } from "@/content/profile";
  */
 export function printConsoleSignal() {
   if (typeof window === "undefined") return;
-  const accent = "color:#22d0b2;font-family:monospace;font-weight:bold";
+  const accent = "color:#3cdd9e;font-family:monospace;font-weight:bold";
   const dim = "color:#8c8c8c;font-family:monospace";
   console.log("%cSPACE OS — signal received", accent);
   console.log(

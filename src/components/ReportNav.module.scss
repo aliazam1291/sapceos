@@ -33,7 +33,6 @@
     margin-inline: calc(var(--shell-pad) * -1);
     padding-inline: var(--shell-pad);
     background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
-    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--line);
 
     &::-webkit-scrollbar {

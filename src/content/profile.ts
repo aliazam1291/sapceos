@@ -12,6 +12,95 @@ export const profile = {
   oneLine: "Give me a problem. I'll figure out what to do next.",
 };
 
+/**
+ * How Ali works — the mindset, as four principles. Editorial framing of the
+ * core story in PROFILE.md; every `evidence` line is a fact from that file.
+ */
+export const principles = [
+  {
+    title: "Decide what matters first.",
+    body: "Most delays are not build problems. They are a decision nobody has made yet.",
+    evidence: "Defined vehicle status logic, alarm, geofence and ticketing workflows before they were built.",
+  },
+  {
+    title: "Write it down before building it.",
+    body: "A PRD is not paperwork. It is the argument, made early enough to be wrong cheaply.",
+    evidence: "Authored full PRDs — problem statements, user stories, acceptance criteria, edge cases.",
+  },
+  {
+    title: "Learn whatever the problem needs.",
+    body: "Frontend one week, a pitch deck the next. The tool is chosen by the problem, not the résumé.",
+    evidence: "Angular, React, Ionic, D3, geospatial pipelines — and a design studio on the side.",
+  },
+  {
+    title: "Ship, then look at what happened.",
+    body: "A shipped thing teaches more than a perfect plan. The loop ends in learn, then starts again.",
+    evidence: "5+ live production projects; ~40% dashboard speed-up found after shipping, not before.",
+  },
+];
+
+/**
+ * The operating loop, one beat per step. `line` is editorial; `evidence` is a
+ * fact from PROFILE.md that shows the step actually happening.
+ */
+export const operatingLoop = [
+  {
+    step: "Problem",
+    line: "Find the decision nobody has made yet.",
+    evidence: "Mappls Shop Admin: billing was manual, and the real work was finding every place a human was quietly deciding.",
+  },
+  {
+    step: "Understand",
+    line: "Who feels it, what the system must insist on.",
+    evidence: "Technician App: installation, replacement and rectification are three different jobs wearing the same uniform.",
+  },
+  {
+    step: "Strategy",
+    line: "Decide what matters first.",
+    evidence: "Vehicle status logic — moving, stopped, idle, delayed, offline — defined before anything was built.",
+  },
+  {
+    step: "UX",
+    line: "Design for the hand, the signal and the daylight.",
+    evidence: "Map UX: rotation, fit-to-route, route playback. Alarm, geofence and ticketing workflows.",
+  },
+  {
+    step: "Technology",
+    line: "The tool the problem needs, not the one on the résumé.",
+    evidence: "React, Angular, Ionic, RxJS, D3, Mappls SDK — and a 30,000-route geospatial pipeline into S3.",
+  },
+  {
+    step: "Build",
+    line: "Own the frontend end to end.",
+    evidence: "Frontend owned on nine of ten missions; UI/UX on six; the PRD on the active ones.",
+  },
+  {
+    step: "Ship",
+    line: "Live, in production, with real users on it.",
+    evidence: "5+ live projects. Vahan Shakti, Intouch and Indane Yatra Mitra on the Play Store.",
+  },
+  {
+    step: "Learn",
+    line: "Look at what happened. Then start again.",
+    evidence: "~40% dashboard speed-up — found after shipping, from caching, RxJS and API work.",
+  },
+];
+
+/** Smaak.ux clients, with the logos carried over from the previous site. */
+export const studioClients = [
+  { name: "Atmos", work: "Brand identity", logo: "/logos/atmos.png" },
+  { name: "Mintair", work: "Investor pitch deck", logo: "/logos/mintair.svg" },
+  { name: "Ravenouxs", work: "Responsive website", logo: "/logos/ravenouxs.webp" },
+  { name: "Lean Multiverse", work: "Brand identity + web UI · 600K+ followers", logo: "/logos/leanmultiverse.svg" },
+  { name: "Ekal", work: "Brand identity, pitch decks", logo: "/logos/ekal.png" },
+  { name: "Urban Livin", work: "Product catalogues", logo: "/logos/urbanlivin.png" },
+  { name: "Sorted Blinds", work: "Website · Australia", logo: "/logos/sortedblinds.png" },
+  { name: "Posh Dikur", work: "Marketing creatives", logo: "/logos/poshdikur.png" },
+];
+
+/** What is on the desk right now — from the ACTIVE list in PROFILE.md. */
+export const currently = "Building the Technician App end to end; replacing manual billing at Mappls Shop Admin.";
+
 export const links = [
   { label: "GitHub", href: "https://github.com/aliazam1291" },
   { label: "LinkedIn", href: "https://linkedin.com/in/ali-azam-kazmi" },

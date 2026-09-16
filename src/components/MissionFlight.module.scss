@@ -1,0 +1,492 @@
+@use "../styles/tokens.scss" as *;
+
+.section {
+  position: relative;
+  width: 100%;
+  border-bottom: 1px solid var(--line);
+}
+
+.stage {
+  position: relative;
+  height: 100svh;
+  min-height: 620px;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 100svh;
+  }
+}
+
+// ── The field ────────────────────────────────────────────────────────────────
+.field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 78%, rgba(6, 6, 6, 0.7) 100%);
+    pointer-events: none;
+  }
+}
+
+.fieldInner {
+  position: absolute;
+  inset: -4%;
+  mask-image: radial-gradient(ellipse 70% 78% at 50% 50%, #000 55%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 78% at 50% 50%, #000 55%, transparent 100%);
+}
+
+// ── Chrome ───────────────────────────────────────────────────────────────────
+.chrome {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(var(--space-6), 4vh, var(--space-10)) var(--shell-pad) 6.5rem;
+  padding-right: max(var(--shell-pad), 6.5rem);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.label {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  @include mono-label;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Flight plan: the vertical beat track on the left.
+.plan {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  width: fit-content;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.stop {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color var(--dur-base) var(--ease-out);
+
+  i {
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--line-strong);
+    transform: rotate(45deg);
+    transition:
+      background var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+
+  span {
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  &[data-done] i {
+    background: var(--accent-line);
+    border-color: var(--accent-line);
+  }
+
+  &[data-on] {
+    color: var(--accent);
+
+    i {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    span {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @include hover-only {
+    &:hover {
+      color: var(--text-primary);
+
+      span {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+}
+
+.hint {
+  grid-column: 1;
+  grid-row: 3;
+  align-self: end;
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-variant-numeric: tabular-nums;
+
+  &::after {
+    content: "";
+    width: 1px;
+    height: 28px;
+    background: linear-gradient(var(--accent), transparent);
+    animation: drop 2.2s var(--ease-in-out) infinite;
+  }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+@keyframes drop {
+  0% { transform: scaleY(0); transform-origin: 50% 0; }
+  50% { transform: scaleY(1); transform-origin: 50% 0; }
+  100% { transform: scaleY(0); transform-origin: 50% 100%; }
+}
+
+// ── HUD ──────────────────────────────────────────────────────────────────────
+.hud {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  // Clear of the section rail on the right edge.
+  right: max(var(--shell-pad), 9rem);
+  transform: translateY(-50%);
+  width: min(400px, 32vw);
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+// A targeting panel, not a card: translucent, squared, bracket corners,
+// hairline seams between stat cells — the reference's HUD language.
+.hudInner {
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-5);
+  pointer-events: auto;
+  background: linear-gradient(180deg, rgba(10, 12, 12, 0.9), rgba(6, 6, 6, 0.82));
+  border: 1px solid rgba(190, 230, 215, 0.14);
+  animation: dock 0.55s var(--ease-out) both;
+}
+
+.bracket {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid var(--accent);
+
+  &[data-c="tl"] { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  &[data-c="tr"] { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+  &[data-c="bl"] { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+  &[data-c="br"] { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+}
+
+// Stat cells with 1px seams.
+.stats {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 1px;
+  margin: 0;
+  background: rgba(190, 230, 215, 0.14);
+  border: 1px solid rgba(190, 230, 215, 0.14);
+}
+
+.stat {
+  display: grid;
+  gap: 3px;
+  padding: var(--space-3);
+  background: rgba(6, 6, 6, 0.6);
+
+  dt {
+    @include mono-label;
+    font-size: 0.5625rem;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.2;
+
+    &[data-big] {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+// Callout: a line from the panel's edge out to the interface thumbnail,
+// which sits slightly outside the panel like an inset detail.
+.callout {
+  position: relative;
+  margin-top: var(--space-2);
+}
+
+.calloutLine {
+  position: absolute;
+  left: 18px;
+  top: -18px;
+  width: 1px;
+  height: 18px;
+  background: var(--accent);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: -5px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--accent);
+    transform: rotate(45deg);
+    background: var(--bg-primary);
+  }
+}
+
+.coverTag {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--text-secondary);
+  padding: 4px var(--space-2);
+  background: rgba(6, 6, 6, 0.8);
+  border-left: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+
+  span {
+    color: var(--text-primary);
+    margin-right: 4px;
+  }
+}
+
+.hudFoot {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+@keyframes dock {
+  from { opacity: 0; transform: translateX(28px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hudInner { animation: none; }
+}
+
+.hudHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.hudIndex {
+  @include mono-label;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.hudStatus {
+  @include mono-label;
+  font-size: 0.5625rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border: 1px solid var(--line-strong);
+
+  i {
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+  }
+
+  &[data-status="active"] {
+    color: var(--accent);
+    border-color: var(--accent-line);
+  }
+}
+
+.hudCover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid rgba(190, 230, 215, 0.22);
+  background: rgba(6, 6, 6, 0.6);
+}
+
+// Shown in colour: the reference's detail image is the one full-colour
+// thing in the frame, and the screenshot is the proof — it should not be
+// duotoned into decoration here.
+.hudImg {
+  object-fit: cover;
+  object-position: center top;
+  filter: contrast(1.02) brightness(0.92);
+}
+
+.hudTint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(6, 6, 6, 0.55) 100%);
+}
+
+.hudScan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.7), transparent);
+  animation: scan 5s linear infinite;
+}
+
+@keyframes scan {
+  from { top: -2px; }
+  to { top: 100%; }
+}
+
+.hudSignal {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  @include mono-label;
+
+  b {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.hudTitle {
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  font-weight: 500;
+}
+
+.hudPremise {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.hudOwned {
+  @include mono-label;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  color: var(--text-primary);
+
+  span {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.5625rem;
+    color: var(--accent);
+    margin-right: var(--space-2);
+  }
+}
+
+.hudLink {
+  @include mono-label;
+  color: var(--accent);
+  width: fit-content;
+
+  @include hover-only {
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+.hudIdle {
+  @include mono-label;
+  color: var(--accent);
+}
+
+// ── Fallback list (touch / reduced motion) ───────────────────────────────────
+.fallback {
+  display: none;
+  position: relative;
+  z-index: 2;
+  list-style: none;
+  margin: 0;
+  padding: 48vh var(--shell-pad) var(--space-12);
+  gap: var(--space-3);
+
+  @media (max-width: 768px) {
+    display: grid;
+  }
+}
+
+.fallbackItem {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  color: inherit;
+
+  @include panel(14px);
+}
+
+.fallbackTitle {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}

@@ -12,7 +12,7 @@ import { cn } from "@/lib/cn";
  */
 export default function Spotlight({
   className,
-  from = "rgba(34,208,178,0.16)",
+  from = "rgba(52, 211, 153,0.16)",
 }: {
   className?: string;
   from?: string;

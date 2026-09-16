@@ -1,0 +1,332 @@
+@use "../styles/tokens.scss" as *;
+
+.impact {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ledger,
+.matrix {
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+  padding: clamp(var(--space-5), 2.6vw, var(--space-8));
+
+  @include panel(20px);
+}
+
+.panelHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.panelLabel {
+  @include mono-label;
+  color: var(--text-primary);
+}
+
+.panelMeta {
+  @include mono-label;
+}
+
+.footnote {
+  @include mono-label;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  max-width: 52ch;
+}
+
+// ── Ledger rows ──────────────────────────────────────────────────────────────
+.group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.groupHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+
+.groupTitle {
+  @include mono-label;
+  color: var(--accent);
+}
+
+.groupNote {
+  @include mono-label;
+  font-size: 0.5625rem;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+// Two lines per row: the number and its label on the first, the bar
+// running under both on the second — so the bar has the whole width and
+// the value can be set large without stealing room from the label.
+.row {
+  display: grid;
+  grid-template-columns: 1.75rem auto minmax(0, 1fr);
+  grid-template-areas:
+    "index value label"
+    "index bar   bar";
+  column-gap: var(--space-4);
+  row-gap: var(--space-2);
+  align-items: baseline;
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--line);
+  transition: background var(--dur-fast) var(--ease-out);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  @include hover-only {
+    &:hover {
+      background: rgba(52, 211, 153, 0.03);
+    }
+  }
+}
+
+.rowIndex {
+  grid-area: index;
+  @include mono-label;
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  align-self: start;
+  padding-top: 0.45em;
+}
+
+.value {
+  grid-area: value;
+  font-family: var(--font-mono);
+  font-size: clamp(1.25rem, 1.5vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  .row[data-kind="delta"] & {
+    color: var(--accent);
+  }
+}
+
+.labelCol {
+  grid-area: label;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  min-width: 0;
+}
+
+.rowLabel {
+  font-size: var(--type-small);
+  color: var(--text-primary);
+}
+
+.rowSource {
+  @include mono-label;
+  font-size: 0.5625rem;
+}
+
+.bar {
+  grid-area: bar;
+  display: block;
+  position: relative;
+  height: 4px;
+  background: rgba(190, 230, 215, 0.07);
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(52, 211, 153, 0.3), var(--accent));
+  transition: width 1.1s var(--ease-out);
+
+  // End cap — the reading mark.
+  i {
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    transform: translateY(-50%) rotate(45deg);
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+  }
+
+  .row[data-kind="delta"] & {
+    background: linear-gradient(90deg, rgba(190, 230, 215, 0.25), var(--text-primary));
+
+    i {
+      background: var(--text-primary);
+      box-shadow: 0 0 8px rgba(245, 245, 245, 0.5);
+    }
+  }
+}
+
+// ── Matrix ───────────────────────────────────────────────────────────────────
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: var(--type-small);
+
+  th,
+  td {
+    padding: var(--space-3) var(--space-2);
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  tfoot th,
+  tfoot td {
+    border-bottom: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+}
+
+.thMission {
+  @include mono-label;
+}
+
+// Column heads stand upright. Letter-spaced mono labels like CROSS-TEAM
+// were wider than the 4.25rem cells and ran into each other; a matrix
+// reads its columns vertically anyway, and this keeps the cells narrow.
+.thCol {
+  @include mono-label;
+  text-align: center !important;
+  width: 4.25rem;
+  white-space: nowrap;
+  vertical-align: bottom !important;
+  height: 7rem;
+  padding-bottom: var(--space-3) !important;
+
+  > span {
+    display: inline-block;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    line-height: 1;
+  }
+
+  @media (max-width: 560px) {
+    width: 3rem;
+  }
+}
+
+.thRow {
+  font-weight: 400;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-3);
+  min-width: 0;
+}
+
+.missionLink {
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  transition: color var(--dur-fast) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+}
+
+.statusTag {
+  @include mono-label;
+  font-size: 0.5625rem;
+
+  &[data-status="active"] {
+    color: var(--accent);
+  }
+}
+
+// Heat-map cells: an owned cell carries a faint fill as well as the mark, so
+// the shape of the ownership reads from across the room before the dots do.
+.cell {
+  text-align: center !important;
+  transition: background var(--dur-fast) var(--ease-out);
+
+  &[data-on] {
+    background: rgba(52, 211, 153, 0.07);
+    box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.12);
+  }
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--line-strong);
+  transform: rotate(45deg);
+  transition:
+    background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+
+  &[data-on] {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.45);
+  }
+}
+
+.totalLabel {
+  @include mono-label;
+}
+
+.total {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.totalOf {
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+
+.totalBar {
+  display: block;
+  height: 3px;
+  margin-top: var(--space-2);
+  background: rgba(190, 230, 215, 0.08);
+
+  i {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.5);
+  }
+}

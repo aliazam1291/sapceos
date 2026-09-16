@@ -54,7 +54,7 @@
   overflow: hidden;
   border: 1px solid var(--panel-line);
   background:
-    radial-gradient(120% 80% at 78% 8%, rgba(34, 208, 178, 0.06), transparent 60%),
+    radial-gradient(120% 80% at 78% 8%, rgba(52, 211, 153, 0.06), transparent 60%),
     radial-gradient(90% 70% at 10% 92%, rgba(58, 96, 190, 0.05), transparent 62%),
     rgba(8, 9, 10, 0.96);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
@@ -190,7 +190,7 @@
   align-items: baseline;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-2);
-  background: #060708;
+  background: #050505;
   transition:
     background var(--dur-base) var(--ease-out),
     color var(--dur-base) var(--ease-out);
@@ -316,7 +316,7 @@
   align-items: baseline;
   padding: var(--space-4) var(--space-3);
   height: 100%;
-  background: #060708;
+  background: #050505;
   transition: background var(--dur-base) var(--ease-out);
 
   @include hover-only {
@@ -368,7 +368,7 @@
   align-items: baseline;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-3);
-  background: #060708;
+  background: #050505;
   font-size: var(--type-small);
   transition: background var(--dur-base) var(--ease-out);
 

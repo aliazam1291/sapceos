@@ -74,6 +74,16 @@
   }
 }
 
+/*
+ * Sized for sitting inside an instrument cell rather than as a page's lone
+ * headline value — the cell already carries its own label and border, so the
+ * value doesn't need to shoulder that weight too.
+ */
+.compact {
+  font-size: clamp(1.0625rem, 1.6vw, 1.375rem);
+  word-break: break-word;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .value,
   .copy {

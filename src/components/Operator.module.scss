@@ -1,0 +1,268 @@
+@use "../styles/tokens.scss" as *;
+
+.operator {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-areas:
+    "identity principles"
+    "capabilities capabilities";
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "identity"
+      "principles"
+      "capabilities";
+  }
+}
+
+.identity { grid-area: identity; }
+.principles { grid-area: principles; }
+.capabilities { grid-area: capabilities; }
+
+.currently {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--accent);
+  background: var(--accent-dim);
+  font-size: var(--type-small);
+  color: var(--text-primary);
+}
+
+.currentlyLabel {
+  @include mono-label;
+  color: var(--accent);
+}
+
+// ── Principles ───────────────────────────────────────────────────────────────
+.principles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+
+  @include panel(20px);
+
+  // The panel mixin paints its own surface; the 1px seams come from the
+  // container background showing between cells.
+  &::after {
+    background: none;
+  }
+}
+
+.principle {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-6);
+  background: var(--bg-secondary);
+}
+
+.principleIndex {
+  @include mono-label;
+  color: var(--accent);
+  padding-top: 0.3em;
+  font-variant-numeric: tabular-nums;
+}
+
+.principleBody {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.principleTitle {
+  font-size: clamp(1.0625rem, 1.3vw, 1.25rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.principleText {
+  font-size: var(--type-small);
+  color: var(--text-secondary);
+  max-width: 48ch;
+}
+
+.principleEvidence {
+  display: grid;
+  gap: 2px;
+  @include mono-label;
+  text-transform: none;
+  letter-spacing: 0.03em;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.evidenceLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.5625rem;
+  color: var(--accent);
+}
+
+// ── Identity panel ───────────────────────────────────────────────────────────
+.identity {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-6) var(--space-6);
+  align-items: start;
+  align-content: start;
+  padding: clamp(var(--space-6), 3vw, var(--space-10));
+
+  @include panel(20px);
+}
+
+// The photo, chamfered like every other panel, duotoned at rest and in
+// colour on hover — same treatment as the mission covers.
+// The portrait as a character matrix (see MatrixPortrait). Chamfered like
+// every other panel; the canvas inside handles hover itself.
+.avatar {
+  position: relative;
+  display: block;
+  width: 168px;
+  height: 168px;
+  overflow: hidden;
+  background: rgba(6, 6, 6, 0.7);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+
+  @media (max-width: 480px) {
+    width: 132px;
+    height: 132px;
+  }
+}
+
+.avatarInitials {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--accent);
+}
+
+.meta {
+  display: grid;
+  gap: var(--space-2);
+  align-content: center;
+}
+
+.name {
+  font-size: var(--type-medium);
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.role {
+  font-size: var(--type-small);
+  color: var(--text-primary);
+}
+
+.org {
+  color: var(--text-secondary);
+}
+
+.statement {
+  grid-column: 1 / -1;
+  font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  font-weight: 500;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+
+.statementDim {
+  color: var(--text-tertiary);
+}
+
+.links {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+}
+
+.link {
+  font-size: var(--type-small);
+  color: var(--text-secondary);
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition:
+    background-size var(--dur-slow) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      color: var(--text-primary);
+      background-size: 100% 1px;
+    }
+  }
+}
+
+// ── Capability cells ─────────────────────────────────────────────────────────
+.capabilities {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cell {
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(var(--space-5), 2vw, var(--space-6));
+
+  @include panel(14px);
+}
+
+.cellHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.cellIndex {
+  @include mono-label;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.cellLabel {
+  @include mono-label;
+  color: var(--text-primary);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tag {
+  @include mono-label;
+  padding: 3px var(--space-3);
+  border: 1px solid var(--line);
+  color: var(--text-secondary);
+}
+
+.tagMore {
+  color: var(--text-tertiary);
+  border-style: dashed;
+}

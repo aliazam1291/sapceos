@@ -1,0 +1,216 @@
+@use "../styles/tokens.scss" as *;
+
+// Touchdown. The stage is the whole width; copy is a caption top-left,
+// the readout and the door sit on the bottom rule.
+.landing {
+  @include shell;
+  position: relative;
+  max-width: none;
+  padding-block: clamp(3rem, 8vh, 5rem) clamp(3rem, 6vh, 4rem);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.head {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 34ch;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--type-large);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.stage {
+  position: relative;
+  height: clamp(420px, 66vh, 680px);
+  // The scene paints its own black; a soft floor so the pad has ground.
+  background: radial-gradient(ellipse 60% 40% at 50% 68%, rgba(60, 221, 158, 0.06), transparent 70%);
+}
+
+// A marker: a ring at the part, and the callout beside it. All markers
+// are hidden until touchdown, then appear one after another.
+.marker {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-out);
+
+  [data-landed] & {
+    opacity: 1;
+    pointer-events: auto;
+    animation: appear 0.6s var(--ease-out) both;
+    animation-delay: var(--delay, 0s);
+  }
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+
+.ring {
+  position: absolute;
+  left: -9px;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-line);
+  box-shadow: 0 0 0 4px rgba(60, 221, 158, 0.08);
+  transition: transform 0.3s var(--ease-out), border-color 0.3s, box-shadow 0.3s;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.55;
+  }
+
+  [data-on] & {
+    border-color: var(--accent);
+    transform: scale(1.35);
+    box-shadow: 0 0 0 6px rgba(60, 221, 158, 0.12), 0 0 22px rgba(60, 221, 158, 0.35);
+    &::after { opacity: 1; }
+  }
+}
+
+// The callout: a leader line from the ring to a small block of text. Sits
+// to the part's assigned side; only the active part's is shown.
+.callout {
+  position: absolute;
+  top: -0.5rem;
+  width: 16rem;
+  display: grid;
+  gap: 0.2rem;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+  pointer-events: none;
+
+  // Pushed well clear of the hull, on a dark backing, so the words never
+  // sit on the ship. The leader runs back to the ring.
+  padding: 0.5rem 0.75rem;
+  background: rgba(3, 3, 3, 0.78);
+  border: 1px solid var(--line);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 1rem;
+    width: 6rem;
+    height: 1px;
+    background: var(--accent-line);
+  }
+
+  [data-side="right"] & {
+    left: 7rem;
+    &::before { left: -6.75rem; }
+  }
+  [data-side="left"] & {
+    right: 7rem;
+    text-align: right;
+    justify-items: end;
+    &::before { right: -6.75rem; }
+  }
+
+  // Edge parts (the wing tip) speak upward, so the block never leaves the stage.
+  [data-side="up"] & {
+    bottom: 3.5rem;
+    top: auto;
+    left: -14rem;
+    text-align: right;
+    justify-items: end;
+    &::before {
+      top: auto;
+      bottom: -3.25rem;
+      right: 0;
+      width: 1px;
+      height: 3rem;
+    }
+  }
+
+  [data-on] & {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 720px) {
+    width: 11rem;
+    [data-side="right"] & { left: 2.5rem; &::before { left: -2.25rem; width: 2rem; } }
+    [data-side="left"] & { right: 2.5rem; &::before { right: -2.25rem; width: 2rem; } }
+  }
+}
+
+.system {
+  @include mono-label;
+  color: var(--accent);
+}
+
+.partTitle {
+  font-size: var(--type-medium);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.line {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.readout {
+  @include mono-label;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-tertiary);
+}
+
+.readoutIndex {
+  color: var(--text-primary);
+}
+
+.readoutSystem {
+  color: var(--text-secondary);
+}
+
+.ticks {
+  display: inline-flex;
+  gap: 4px;
+  i {
+    display: block;
+    width: 14px;
+    height: 2px;
+    background: var(--line-strong);
+    &[data-on] { background: var(--accent); }
+  }
+}

@@ -1,31 +1,44 @@
 import type { Metadata } from "next";
 import { ButtonLink, PageHeader, Row, Section, SectionHead, TagRow, ui } from "@/components/ui";
 import { education, leadership, profile, skills } from "@/content/profile";
-import PageForm from "@/components/space/PageForm";
+import MatrixPortrait from "@/components/space/MatrixPortrait";
 import CareerLoop from "@/components/CareerLoop";
+import Impact from "@/components/Impact";
+import LoopSequence from "@/components/LoopSequence";
+import ClientGrid from "@/components/ClientGrid";
+import { identityKeywords, keywordsFor, placeKeywords, roleKeywords } from "@/lib/keywords";
+import { jsonLd, personId } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "About the Operator",
+  title: "About — Product Engineer & UX Strategist",
   description:
-    "Ali Azam Kazmi — product engineer and UX strategist working on fleet and telematics platforms in New Delhi.",
+    "Ali Azam Kazmi: Associate Software Developer (Product & Platform) at MapMyIndia, founder of Smaak.ux, B.Tech CSE from SRM. Frontend, UI/UX and PRD ownership across enterprise fleet platforms. Based in New Delhi, open to product roles.",
+  keywords: keywordsFor(identityKeywords, roleKeywords, placeKeywords, ["about Ali Azam Kazmi", "product engineer bio", "Smaak.ux founder"]),
   alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
     <>
+      {/* This page is the person's profile; say so to the crawler. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            mainEntity: { "@id": personId },
+          }),
+        }}
+      />
       <PageHeader
         label="About the Operator"
         title={profile.name}
         lede={`${profile.title} · ${profile.location}`}
+        figure={<MatrixPortrait src="/images/ali.jpg" alt={profile.name} size={220} cells={56} />}
       />
 
       <Section>
-        <PageForm
-          form="crystal"
-          label="A slowly turning faceted wireframe solid, generated from this site’s own identity."
-          size={280}
-        />
 
         {/* Above the fold on load — see PageHeader. */}
         <p className={ui.statement}>
@@ -50,6 +63,20 @@ export default function AboutPage() {
             that a brand and an interface are the same argument told at different resolutions.
           </p>
         </div>
+      </Section>
+
+      {/* The ledger and the ownership matrix, then the operating loop — both
+          moved here when the home page was cut to the flight. */}
+      <Section id="impact" data-section="Impact">
+        <SectionHead label="Impact" title="What moved, and what I owned" />
+        <Impact />
+      </Section>
+
+      <LoopSequence />
+
+      <Section>
+        <SectionHead label="Smaak.ux · since 2023" title="Ten clients, eight of them here" />
+        <ClientGrid />
       </Section>
 
       {/* The loop is the answer to "what does he actually do", and it is the

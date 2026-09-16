@@ -1,0 +1,120 @@
+@use "../styles/tokens.scss" as *;
+
+// Wraps the primary button; the craft is positioned relative to it.
+.host {
+  position: relative;
+  display: inline-block;
+}
+
+.craft {
+  position: absolute;
+  // Parks in the empty air to the right of the button row, at button
+  // height, and beams down-left onto the button — there is no vertical
+  // room above it, the headline lives there.
+  left: 50%;
+  margin-left: -70px;
+  bottom: calc(100% - 1rem);
+  width: 140px;
+  height: 92px;
+  pointer-events: none;
+  z-index: 2;
+  // The whole approach: in from the right, hover, out to the left.
+  animation: visit 11s cubic-bezier(0.4, 0, 0.2, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    transform: translate(0, 0);
+  }
+}
+
+.saucer {
+  position: absolute;
+  left: 0;
+  bottom: 26px;
+  width: 150px;
+  height: 75px;
+  left: -5px;
+  animation: hover 2.6s ease-in-out infinite;
+}
+
+.beam {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 140px;
+  height: 60px;
+  transform-origin: 50% 0%;
+  animation: beam 11s ease-in-out both;
+  mix-blend-mode: screen;
+}
+
+.lights g {
+  animation: blink 0.9s steps(1) infinite;
+}
+
+.arm {
+  transform-origin: 131px 64px;
+  animation: wave 0.7s ease-in-out infinite alternate;
+}
+
+.alien {
+  animation: peek 11s ease-in-out both;
+}
+
+.caption {
+  position: absolute;
+  left: calc(100% + 0.75rem);
+  bottom: 44px;
+  width: max-content;
+  max-width: 18rem;
+  text-align: left;
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--text-secondary);
+  animation: caption 11s ease-in-out both;
+
+  span {
+    color: var(--accent);
+  }
+}
+
+@keyframes visit {
+  0% { transform: translate(50vw, -30px) rotate(6deg); opacity: 0; }
+  12% { transform: translate(8px, -6px) rotate(-3deg); opacity: 1; }
+  20%, 82% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-60vw, -120px) rotate(-8deg); opacity: 0; }
+}
+
+@keyframes hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes beam {
+  0%, 22% { transform: scaleY(0); opacity: 0; }
+  30%, 74% { transform: scaleY(1); opacity: 1; }
+  82%, 100% { transform: scaleY(0); opacity: 0; }
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+
+@keyframes wave {
+  from { transform: rotate(-18deg); }
+  to { transform: rotate(14deg); }
+}
+
+@keyframes peek {
+  0%, 26% { transform: translateY(22px); }
+  34%, 76% { transform: translateY(0); }
+  84%, 100% { transform: translateY(22px); }
+}
+
+@keyframes caption {
+  0%, 34% { opacity: 0; transform: translateX(6px); }
+  42%, 76% { opacity: 1; transform: translateX(0); }
+  84%, 100% { opacity: 0; transform: translateX(-4px); }
+}

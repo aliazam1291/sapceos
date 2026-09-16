@@ -5,7 +5,7 @@
   width: 100%;
   height: 100%;
   min-height: clamp(480px, 46vw, 640px);
-  background: radial-gradient(circle at 50% 50%, rgba(13, 40, 46, 0.35) 0%, rgba(5, 5, 5, 0.95) 75%);
+  background: radial-gradient(circle at 50% 50%, rgba(13, 40, 46, 0.35) 0%, rgba(6, 6, 6, 0.95) 75%);
   border: 1px solid var(--panel-line);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -37,7 +37,7 @@
   min-height: 100vh;
   border: none;
   border-radius: 0;
-  background: #030608;
+  background: #050505;
 }
 
 .canvas {
@@ -66,6 +66,30 @@
   touch-action: none;
 }
 
+/*
+ * Lens, not screen. Two things every photograph has that a raw render
+ * never does: a vignette (light falls off toward the edge of the glass)
+ * and grain (the sensor is not perfect). Both are cheap CSS layers over
+ * the canvas — the grain is a tiled SVG turbulence at a few percent, the
+ * vignette a radial gradient — and both go a long way toward the frame
+ * reading as a picture of a place rather than a diagram of one.
+ */
+.lens {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 76% at 50% 48%, transparent 58%, rgba(0, 0, 0, 0.38) 100%);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 240px 240px;
+  }
+}
+
 /* --- HUD Topbar & Coordinates --- */
 .hudTop {
   position: absolute;
@@ -89,7 +113,6 @@
   gap: 1.25rem;
   padding: 0.5rem 0.85rem;
   background: var(--panel);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--panel-line);
   border-radius: var(--radius);
   font-size: var(--type-micro);
@@ -155,7 +178,6 @@
   flex: 0 0 auto;
   padding: 0.35rem;
   background: var(--panel-strong);
-  backdrop-filter: blur(16px);
   border: 1px solid var(--panel-line);
   border-radius: var(--radius);
 }
@@ -191,14 +213,14 @@
     background: var(--accent-dim);
     border-color: var(--accent-line);
     color: var(--accent);
-    box-shadow: 0 0 8px rgba(34, 208, 178, 0.2);
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.2);
     animation: soundGlow 2.5s infinite alternate ease-in-out;
   }
 }
 
 @keyframes soundGlow {
-  from { box-shadow: 0 0 4px rgba(34, 208, 178, 0.1); }
-  to { box-shadow: 0 0 10px rgba(34, 208, 178, 0.3); }
+  from { box-shadow: 0 0 4px rgba(52, 211, 153, 0.1); }
+  to { box-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
 }
 
 .zoomReadout {
@@ -213,7 +235,6 @@
   gap: 0.35rem;
   padding: 0.35rem;
   background: var(--panel-strong);
-  backdrop-filter: blur(16px);
   border: 1px solid var(--panel-line);
   border-radius: var(--radius);
   // Absorbs the squeeze so the row never wraps: shrink when cramped, but
@@ -259,14 +280,22 @@
   top: 4.5rem;
   right: 1rem;
   width: 340px;
+
+  // In the hero the galaxy is oversized past the frame (inset -4%) and the
+  // section rail sits on the right edge, so the drawer comes well inboard
+  // and never fights the rail or the clipped edge.
+  .embedded & {
+    top: 5.5rem;
+    right: clamp(4rem, 8vw, 8rem);
+    width: 360px;
+  }
   max-width: calc(100vw - 2rem);
   max-height: calc(100% - 6rem);
   z-index: 20;
   background: var(--panel-strong);
-  backdrop-filter: blur(24px);
   border: 1px solid var(--accent-line);
   border-radius: var(--radius-lg);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(34, 208, 178, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(52, 211, 153, 0.12);
   padding: 1.25rem;
   overflow-y: auto;
   animation: slideIn 300ms var(--ease-out);
@@ -374,8 +403,8 @@
 
 .techTag {
   padding: 0.2rem 0.5rem;
-  background: rgba(34, 208, 178, 0.08);
-  border: 1px solid rgba(34, 208, 178, 0.2);
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.2);
   border-radius: var(--radius);
   font-size: 0.7rem;
   color: var(--accent);
@@ -394,7 +423,7 @@
   gap: 0.4rem;
   padding: 0.6rem 0.85rem;
   background: var(--accent);
-  color: #050505;
+  color: #060606;
   font-weight: 600;
   font-size: var(--type-micro);
   border-radius: var(--radius);
@@ -402,8 +431,8 @@
   transition: all var(--dur-fast) var(--ease-out);
 
   &:hover {
-    background: #44f0d2;
-    box-shadow: 0 0 16px rgba(34, 208, 178, 0.4);
+    background: #8af0c8;
+    box-shadow: 0 0 16px rgba(52, 211, 153, 0.4);
   }
 }
 
@@ -442,7 +471,7 @@
   pointer-events: none;
   transition: color var(--dur-fast) var(--ease-out);
   /* Legible over a bright star without needing a fill behind it. */
-  text-shadow: 0 0 10px rgba(5, 5, 5, 0.95), 0 0 3px rgba(5, 5, 5, 0.95);
+  text-shadow: 0 0 10px rgba(6, 6, 6, 0.95), 0 0 3px rgba(6, 6, 6, 0.95);
 
   /* Leader line down to the body it names. */
   &::after {
@@ -510,7 +539,6 @@
   max-height: 140px;
   z-index: 10;
   background: rgba(3, 6, 8, 0.65);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--panel-line);
   border-radius: var(--radius);
   padding: 0.65rem 0.85rem;
@@ -539,7 +567,7 @@
   color: var(--accent);
   font-weight: 600;
   letter-spacing: 0.08em;
-  border-bottom: 1px dashed rgba(34, 208, 178, 0.2);
+  border-bottom: 1px dashed rgba(52, 211, 153, 0.2);
   padding-bottom: 0.25rem;
   display: flex;
   align-items: center;
@@ -591,14 +619,12 @@
   text-transform: uppercase;
   color: var(--text-primary);
   background: rgba(8, 12, 14, 0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(34, 208, 178, 0.32);
+  border: 1px solid rgba(52, 211, 153, 0.32);
   padding: 3px 8px;
   border-radius: 4px;
   white-space: nowrap;
   pointer-events: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(34, 208, 178, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px rgba(52, 211, 153, 0.15);
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -615,7 +641,7 @@
   &.focused {
     border-color: var(--accent);
     background: rgba(14, 24, 26, 0.92);
-    box-shadow: 0 0 16px rgba(34, 208, 178, 0.35);
+    box-shadow: 0 0 16px rgba(52, 211, 153, 0.35);
   }
 }
 

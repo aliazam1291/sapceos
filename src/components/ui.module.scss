@@ -30,8 +30,13 @@
 }
 
 .sectionTitle {
+  // Display size (2026-09-16, after the dzinr reference): a section is a
+  // sentence you can read from across the room, not a heading over a card.
   font-size: var(--type-large);
+  line-height: 1.02;
   letter-spacing: -0.03em;
+  max-width: 22ch;
+  text-wrap: balance;
 }
 
 // Section label with a leading rule — reads as a system marker, not decoration.
@@ -55,7 +60,7 @@
 }
 
 .lede {
-  font-size: clamp(1.0625rem, 1.6vw, 1.375rem);
+  font-size: clamp(0.95rem, 1.1vw, 1.0625rem);
   color: var(--text-secondary);
   max-width: var(--measure);
 }
@@ -119,10 +124,13 @@
    * 7.5rem) moved the title by 4px at 1440px and did nothing at all below
    * ~1875px, which is where essentially every reader is.
    */
-  font-size: clamp(2.5rem, 7vw, 8rem);
-  line-height: 0.98;
-  letter-spacing: -0.042em;
+  // Caption scale now (2026-09-16): the header's figure — hologram, drone,
+  // portrait — is the subject; the title names it.
+  font-size: var(--type-massive);
+  line-height: 1;
+  letter-spacing: -0.035em;
   margin: 0;
+  max-width: 20ch;
 }
 
 .pageHeader > .lede {
@@ -131,6 +139,37 @@
   // Optically settles the lede onto the title's last baseline.
   @media (min-width: 900px) {
     padding-bottom: 0.4em;
+  }
+}
+
+// Right column when the route has a signature object: the form above, the
+// lede below, both bottom-aligned with the title so the header reads as one
+// composition rather than a title with an ornament floating beside it.
+.pageAside {
+  display: grid;
+  gap: var(--space-4);
+  align-content: end;
+  justify-items: start;
+
+  @media (min-width: 900px) {
+    padding-bottom: 0.4em;
+  }
+
+  .lede {
+    margin: 0;
+  }
+}
+
+.pageFigure {
+  width: min(100%, 260px);
+  // Pulls the object up into the title's vertical space so the header does
+  // not grow taller just to fit it.
+  margin-top: calc(-1 * clamp(var(--space-6), 4vw, var(--space-12)));
+  margin-bottom: calc(-1 * var(--space-4));
+
+  @media (max-width: 899px) {
+    width: min(60vw, 220px);
+    margin-top: 0;
   }
 }
 
@@ -175,7 +214,7 @@
   @include hover-only {
     &:hover {
       border-color: var(--accent);
-      color: #050505;
+      color: #060606;
 
       &::before {
         transform: translateY(0);
@@ -291,6 +330,53 @@
   transition: opacity var(--dur-slow) var(--ease-out);
 }
 
+// ── Manifest (mission report) ────────────────────────────────────────────────
+// One HUD strip: hairline-divided cells, mono labels, the numbers big. The
+// grid's 1px background is the divider — the instrument-panel idiom.
+.manifest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin: 0;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.manifestCell {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-primary);
+  min-width: 0;
+  flex: 1 1 10rem;
+
+  dt {
+    @include mono-label;
+    font-size: 0.5625rem;
+    color: var(--text-tertiary);
+  }
+
+  dd {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--type-small);
+    line-height: 1.4;
+  }
+
+  &[data-big] dd {
+    font-family: var(--font-mono);
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    line-height: 1;
+  }
+}
+
+.manifestWide {
+  flex-basis: 100%;
+}
+
 .metaRow {
   display: flex;
   flex-wrap: wrap;
@@ -389,6 +475,71 @@
 .reportObjectLayer {
   position: absolute;
   inset: 0;
+}
+
+// With a cover, the 3D form becomes a seal in the frame's top-right corner
+// rather than the whole frame.
+.reportObjectSeal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(160px, 26%, 300px);
+  aspect-ratio: 1;
+  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 40%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 40%, transparent 78%);
+}
+
+.reportCover {
+  position: absolute;
+  inset: 0;
+}
+
+// The report opens on a projector: the interface as a hologram, on open
+// floor inside the object frame, with the mission form as its seal.
+.reportHolo {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4) var(--space-6);
+
+  > * {
+    width: min(100%, 420px);
+    max-width: none;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+}
+
+// With a hologram inside, the frame is the floor, not a card.
+.reportObject[data-cover] {
+  border-color: transparent;
+  background: transparent;
+}
+
+.reportCoverImg {
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(0.85) contrast(1.05) brightness(0.8);
+  transition: filter var(--dur-slow) var(--ease-out);
+
+  .reportObject:hover & {
+    filter: grayscale(0) contrast(1) brightness(0.98);
+  }
+}
+
+.reportCoverTint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 6, 6, 0.05) 30%, rgba(6, 6, 6, 0.7) 100%),
+    rgba(52, 211, 153, 0.16);
+  mix-blend-mode: multiply;
+  transition: opacity var(--dur-slow) var(--ease-out);
+
+  .reportObject:hover & {
+    opacity: 0.4;
+  }
 }
 
 .reportObjectCaption {
@@ -512,7 +663,7 @@
   opacity: 0;
   background: radial-gradient(
     340px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(34, 208, 178, 0.045),
+    rgba(52, 211, 153, 0.045),
     transparent 64%
   );
   transition: opacity var(--dur-slow) var(--ease-out);
@@ -570,6 +721,20 @@
   }
 }
 
+// Subheads inside a long body: mono, accent-marked, with room above so the
+// argument reads in sections rather than as one wall.
+.rowSubhead {
+  @include mono-label;
+  color: var(--accent);
+  margin: var(--space-8) 0 var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+
+  p + & {
+    margin-top: var(--space-8);
+  }
+}
+
 // ── Timeline (mission history) ───────────────────────────────────────────────
 .timeline {
   position: relative;
@@ -585,7 +750,9 @@
     top: 6px;
     bottom: 6px;
     width: 1px;
-    background: linear-gradient(var(--accent-line), var(--line), transparent);
+    // A route, not a rule: dashed, as a flight plan is drawn.
+    background: repeating-linear-gradient(180deg, var(--accent-line) 0 6px, transparent 6px 12px);
+    mask-image: linear-gradient(180deg, #000 70%, transparent);
   }
 }
 
@@ -598,12 +765,14 @@
     position: absolute;
     left: calc(clamp(var(--space-6), 4vw, var(--space-12)) * -1);
     top: 8px;
-    width: 7px;
-    height: 7px;
-    margin-left: -3px;
-    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    // A waypoint: the diamond the flight plan uses.
+    transform: rotate(45deg);
+    border-radius: 1px;
     background: var(--bg-primary);
-    border: 1px solid var(--line-strong);
+    border: 1px solid var(--accent-line);
     transition: border-color var(--dur-base) var(--ease-out),
       background var(--dur-base) var(--ease-out);
   }
@@ -670,7 +839,7 @@
 
 // ── Statement type — used sparingly, once per page at most. ──────────────────
 .statement {
-  font-size: clamp(1.5rem, 4vw, 2.75rem);
+  font-size: var(--type-medium);
   line-height: 1.22;
   letter-spacing: -0.03em;
   font-weight: 500;
@@ -737,7 +906,7 @@
     inset: 0;
     background: radial-gradient(
       70% 120% at 50% 130%,
-      rgba(34, 208, 178, 0.09),
+      rgba(52, 211, 153, 0.09),
       transparent 70%
     );
     opacity: 0;
@@ -825,8 +994,8 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 34%, #000 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 34%, #000 100%);
 
   &::after {
     content: "";
@@ -835,8 +1004,8 @@
     background: linear-gradient(
       to bottom,
       transparent 40%,
-      rgba(5, 5, 5, 0.45) 78%,
-      rgba(5, 5, 5, 0.72) 100%
+      rgba(6, 6, 6, 0.45) 78%,
+      rgba(6, 6, 6, 0.72) 100%
     );
   }
 }
@@ -918,6 +1087,21 @@
  * background showing through — no per-card borders, so adjacent cards never
  * double up into a 2px rule, and the whole block reads as one panel.
  */
+// Projector gallery: holograms on open floor, no panels. Used by the lab.
+.projectorGrid {
+  display: grid;
+  gap: var(--space-10) var(--space-8);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+.projectorCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--line);
+}
+
 .instrumentGrid {
   display: grid;
   gap: var(--space-4);
@@ -941,7 +1125,7 @@
     opacity: 0;
     background: radial-gradient(
       360px circle at var(--mx, 50%) var(--my, 50%),
-      rgba(34, 208, 178, 0.09),
+      rgba(52, 211, 153, 0.09),
       transparent 62%
     );
     transition: opacity var(--dur-slow) var(--ease-out);
@@ -985,8 +1169,80 @@
 .instrumentCell .cardTrace {
   padding: var(--space-2);
   border: 1px solid var(--line);
-  background: rgba(5, 7, 8, 0.5);
+  background: rgba(6, 6, 6, 0.5);
   height: 64px;
+}
+
+// ── Contact vcard ────────────────────────────────────────────────────────────
+/*
+ * The profile summary panel at the top of /contact — name, role, status and
+ * primary actions read as one instrument rather than as a title stacked over
+ * a loose row of links, which is what the page was before this.
+ */
+.vcard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  padding: clamp(var(--space-6), 3vw, var(--space-10));
+
+  @include panel(20px);
+}
+
+.vcardAvatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(64px, 6vw, 84px);
+  aspect-ratio: 1;
+  @include mono-label;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-line);
+}
+
+.vcardMeta {
+  display: grid;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 220px;
+}
+
+.vcardName {
+  font-size: var(--type-medium);
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.vcardTitle {
+  color: var(--text-secondary);
+  font-size: var(--type-small);
+}
+
+.vcardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+// The individual contact channels — email, booking, elsewhere — each mounted
+// as its own instrument cell rather than three rows of the same weight, so a
+// reader scans channels instead of parsing a label column.
+.vcardChannel {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.vcardChannelValue {
+  font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+  letter-spacing: -0.01em;
+}
+
+.vcardLinksCell {
+  grid-column: 1 / -1;
 }
 
 /* A page's signature form, sized to sit beside content without dominating it. */

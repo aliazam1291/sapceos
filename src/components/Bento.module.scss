@@ -46,6 +46,36 @@
   @include panel;
 }
 
+// Tiles arrive as they enter the viewport and dim as they leave — driven by
+// the scroll position itself, so scrolling back replays it in reverse.
+@supports (animation-timeline: view()) {
+  .tile {
+    animation:
+      tileEnter linear both,
+      tileLeave linear forwards;
+    animation-timeline: view(), view();
+    animation-range:
+      entry 0% entry 45%,
+      exit 55% exit 100%;
+  }
+
+  // Stagger by column: the second and fourth tiles trail a little.
+  .stat2, .scale, .object { animation-range: entry 8% entry 55%, exit 55% exit 100%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile { animation: none; }
+  }
+}
+
+@keyframes tileEnter {
+  from { opacity: 0; transform: translateY(36px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes tileLeave {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0.35; transform: translateY(-18px); }
+}
+
 .loop { grid-area: loop; }
 .object { grid-area: object; min-height: clamp(260px, 34vw, 400px); }
 .note { grid-area: note; }
@@ -99,11 +129,64 @@
   border: 1px solid var(--line);
   border-radius: 100px;
   padding: var(--space-1) var(--space-3);
+  cursor: default;
+  transition:
+    color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+
+  &[data-done] {
+    color: var(--text-primary);
+    border-color: var(--line-strong);
+  }
+
+  &[data-active] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    box-shadow: 0 0 14px rgba(52, 211, 153, 0.35);
+  }
 }
 
-.loopStepLead {
-  border-color: var(--accent-line);
+.loopHead {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+}
+
+.loopReadout {
+  @include mono-label;
   color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-variant-numeric: tabular-nums;
+
+  i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+  }
+}
+
+.loopTrack {
+  display: block;
+  height: 2px;
+  background: rgba(190, 230, 215, 0.08);
+  margin-top: var(--space-2);
+
+  i {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+    transition: width 0.6s var(--ease-out);
+  }
 }
 
 .loopArrow {

@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { damp } from "@/lib/scroll-signal";
+import { heavySceneLive } from "@/lib/scene-load";
+import { shipState } from "./shipState";
+import { decidePerfLevel, perf, reportFrame } from "@/lib/perf";
 import styles from "./DeepSpace.module.scss";
 
 /**
@@ -36,7 +39,7 @@ const SPREAD = 1.35;
 /** Constant approach speed, in depth units per second, with no scroll at all. */
 const IDLE_SPEED = 0.055;
 /** Ceiling on the scroll throttle, so a fling can't turn this into a warp gate. */
-const MAX_THROTTLE = 1.5;
+const MAX_THROTTLE = 0.55;
 
 const CLUSTERS = 11;
 /** Share of stars that belong to a cluster; the rest fill the voids between. */
@@ -49,7 +52,7 @@ type Tint = { r: number; g: number; b: number };
 // screensaver.
 const TINTS: Tint[] = [
   { r: 226, g: 236, b: 245 },
-  { r: 34, g: 208, b: 178 },
+  { r: 110, g: 220, b: 180 },
   { r: 255, g: 206, b: 150 },
 ];
 
@@ -63,6 +66,9 @@ type Star = {
   bright: number;
   phase: number;
   rate: number;
+  /** Last projected position, for motion blur. NaN until first drawn. */
+  px: number;
+  py: number;
 };
 
 type Cluster = { x: number; y: number; z: number; r: number; tint: number };
@@ -120,13 +126,13 @@ function buildField(count: number) {
       x = (rand() * 2 - 1) * SPREAD;
       y = (rand() * 2 - 1) * SPREAD;
       z = Z_NEAR + rand() * Z_RANGE;
-      bright = 0.16 + Math.pow(rand(), 2.8) * 0.8;
+      bright = 0.24 + Math.pow(rand(), 2.6) * 0.8;
     }
 
     // Heavily skewed: an evenly-sized field looks like a texture. Most stars
     // are specks, a handful are genuinely bright — and the handful is what the
     // eye actually reads as "stars", so the tail matters more than the median.
-    const size = 0.5 + Math.pow(rand(), 4.4) * 3.4;
+    const size = 0.6 + Math.pow(rand(), 4.0) * 4.0;
 
     const roll = rand();
     const tint = roll < 0.075 ? 1 : roll < 0.105 ? 2 : 0;
@@ -141,6 +147,8 @@ function buildField(count: number) {
       phase: rand() * Math.PI * 2,
       // Small stars flicker faster than big ones, which is what the eye expects.
       rate: 0.5 + rand() * 1.3,
+      px: NaN,
+      py: NaN,
     });
   }
 
@@ -245,7 +253,7 @@ export default function DeepSpace() {
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const { stars, clusters } = buildField(coarse ? 480 : 1150);
+    const { stars, clusters } = buildField(coarse ? 560 : 1500);
     const glows = TINTS.map(buildGlow);
     const stars9 = TINTS.map((t) => buildStar(t, false));
     const bright9 = TINTS.map((t) => buildStar(t, true));
@@ -253,7 +261,9 @@ export default function DeepSpace() {
     // Fill rate is the whole cost of a full-screen 2D canvas, and it scales with
     // the square of this. Stars are 1-3px specks: past ~1.5 there is nothing left
     // to resolve, and a phone gets none of it.
-    const dprCap = coarse ? 1 : 1.5;
+    decidePerfLevel();
+    // A background does not need retina; the fill it saves goes to the scenes.
+    const dprCap = coarse || perf.level !== "high" ? 1 : 1.25;
     let w = 0;
     let h = 0;
     let cx = 0;
@@ -319,6 +329,23 @@ export default function DeepSpace() {
     let clock = 0;
 
     /*
+     * Warp — a burst of speed on route launch.
+     *
+     * Any link that leaves for another route can dispatch `space:warp` (see
+     * warp() in lib/warp.ts). The field jumps to several times idle speed and
+     * every star trails a streak toward the edge, then it settles over about a
+     * second — long enough to cover the route transition, short enough that a
+     * back-button never lands mid-warp.
+     */
+    let warp = 0;
+    let shipWarp = 0;
+    let vpMix = 0;
+    const onWarp = () => {
+      warp = 1;
+    };
+    window.addEventListener("space:warp", onWarp);
+
+    /*
      * Pointer parallax — the sky's lateral position, damped toward the cursor.
      *
      * This is true parallax, not a uniform slide: the offset is applied in
@@ -361,7 +388,7 @@ export default function DeepSpace() {
 
           // Deliberately faint. Anything stronger stops reading as a distant
           // knot of stars and starts reading as fog laid over the page, which
-          // lifts the #050505 ground everything else is judged against.
+          // lifts the #060606 ground everything else is judged against.
           const a =
             0.13 *
             smoothstep(Z_NEAR, Z_NEAR + 0.5, z) *
@@ -407,12 +434,18 @@ export default function DeepSpace() {
         const k = focal / z;
         const sx = cx + (s.x - panX) * k;
         const sy = cy + (s.y - panY) * k;
-        if (sx < -12 || sx > w + 12 || sy < -12 || sy > h + 12) continue;
+        if (sx < -12 || sx > w + 12 || sy < -12 || sy > h + 12) {
+          s.px = NaN;
+          continue;
+        }
 
         // Fade in out of the far distance and dissolve just before passing the
         // camera, so the depth wrap is never a pop.
         const fade = smoothstep(Z_NEAR, Z_NEAR + 0.42, z) * smoothstep(Z_FAR, Z_FAR - 1.0, z);
-        if (fade <= 0.004) continue;
+        if (fade <= 0.004) {
+          s.px = NaN;
+          continue;
+        }
 
         // Small stars scintillate hard; big ones barely do. That asymmetry is
         // both what the sky actually does and what stops the field looking
@@ -422,7 +455,7 @@ export default function DeepSpace() {
         // Global level. The field has to read as depth BEHIND the page — at
         // full strength the brightest stars competed with the galaxy in the
         // hero and with body copy everywhere else.
-        const a = s.bright * fade * twinkle * 0.82;
+        const a = s.bright * fade * twinkle * 1.0;
         if (a <= 0.012) continue;
 
         /*
@@ -433,10 +466,40 @@ export default function DeepSpace() {
          * which is how distance actually reads, and size carries the difference
          * between a faint star and a bright one.
          */
-        const r = Math.min(Math.max(s.size * k * 0.0038, 1), 5);
+        const r = Math.min(Math.max(s.size * k * 0.0042, 1.1), 6);
         // Roughly one star in eighty. At the 14% the first pass produced, the
         // sky read as a lens filter rather than as a sky.
         const sprite = (s.size > 3.4 ? bright9 : stars9)[s.tint];
+
+        /*
+         * Motion blur, done honestly: a line from where this star was drawn
+         * last frame to where it is now. Its length IS the star's speed on
+         * screen, so near stars streak more than far ones, streaks all point
+         * the way the field is actually moving, and a still field draws no
+         * lines at all. Faint, thin, and only past a few pixels of travel —
+         * a shutter, not a hyperspace jump. The page-leave warp stretches it.
+         */
+        if (!Number.isNaN(s.px)) {
+          const mx = sx - s.px;
+          const my = sy - s.py;
+          const travel = Math.hypot(mx, my);
+          // A depth wrap teleports the star; never draw that.
+          // Quiet on scroll: only the brighter stars trail, only past a
+          // real jump, and faintly. The page-leave warp opens it right up.
+          if (travel > 4 + (1 - warp) * 8 && travel < 140 && (warp > 0.1 || s.bright > 0.72)) {
+            const stretch = 1 + warp * 3;
+            const blur = Math.min((travel - 4) / 80, 1) * (0.08 + warp * 0.75);
+            ctx.globalAlpha = Math.min(a * blur, 0.8);
+            ctx.strokeStyle = s.tint === 1 ? "rgba(110,220,180,1)" : "rgba(226,236,245,1)";
+            ctx.lineWidth = Math.max(r * 0.45, 0.5);
+            ctx.beginPath();
+            ctx.moveTo(sx - mx * stretch, sy - my * stretch);
+            ctx.lineTo(sx, sy);
+            ctx.stroke();
+          }
+        }
+        s.px = sx;
+        s.py = sy;
 
         ctx.globalAlpha = Math.min(a, 1);
         // Extent is 5x the core radius: enough halo to glow, tight enough that
@@ -460,6 +523,7 @@ export default function DeepSpace() {
 
     let raf = 0;
     let prev = performance.now();
+    let frameIx = 0;
 
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
@@ -472,17 +536,41 @@ export default function DeepSpace() {
 
       // Scroll is the throttle: down flies in, up flies back out. Damped, so
       // the field keeps coasting after the wheel stops instead of jerking.
-      const target = Math.max(Math.min(dy * 0.05, MAX_THROTTLE), -MAX_THROTTLE);
+      const target = Math.max(Math.min(dy * 0.03, MAX_THROTTLE), -MAX_THROTTLE);
       throttle = damp(throttle, target, 2.4, dt);
       // Below the idle floor the field would stall or crawl backwards on a
       // hard scroll-up; clamping keeps it always moving, just sometimes slowly.
-      camZ += (IDLE_SPEED + throttle) * dt;
+      warp = damp(warp, 0, 2.2, dt);
+      camZ += (IDLE_SPEED + throttle + warp * 2.4) * dt;
 
       // Read the pointer in the loop and damp toward it, the same contract the
       // scroll throttle follows — chasing pointermove directly ties the motion
       // to event frequency and reads as jitter.
-      panX = damp(panX, panTargetX, 2.6, dt);
-      panY = damp(panY, panTargetY, 2.6, dt);
+      // The ship pulls the field: a camera tracking a moving ship sees the
+      // stars slide the other way. Its burn also reads as warp — streaks
+      // whose vanishing point is the ship, not the screen centre.
+      // Gentle: the field leans against the ship, it does not chase it.
+      const shipPanX = -shipState.vx * 0.025 * shipState.on;
+      const shipPanY = shipState.vy * 0.015 * shipState.on;
+      panX = damp(panX, panTargetX + shipPanX, 2.6, dt);
+      panY = damp(panY, panTargetY + shipPanY, 2.6, dt);
+      // Only a hard burn stretches the stars, and only a little. A full
+      // warp is for leaving the page (space:warp), not for scrolling it.
+      // No streaks from scrolling at all — that read as a bold smear across
+      // the page. The ship's burn only nudges the vanishing point; the
+      // streaks themselves belong to leaving the page (space:warp).
+      const burn = 0;
+      shipWarp = damp(shipWarp, burn, 3.0, dt);
+      vpMix = damp(vpMix, shipWarp > 0.02 ? 1 : 0, 2.5, dt);
+
+      // Behind a live WebGL scene the field is mostly covered; drawing it
+      // every other frame frees that time for the scene on top. Motion
+      // state above still advances every frame, so nothing stutters when
+      // the scene stops and the field comes back to full rate.
+      reportFrame(dt);
+      frameIx++;
+      // Half rate behind a heavy scene, or whenever the machine is struggling.
+      if ((heavySceneLive() || perf.level !== "high") && (frameIx & 1)) return;
 
       draw(dt);
     };
@@ -530,6 +618,7 @@ export default function DeepSpace() {
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pointermove", onPointer);
       document.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("space:warp", onWarp);
     };
   }, []);
 

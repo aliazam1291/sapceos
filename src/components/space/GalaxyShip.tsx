@@ -219,13 +219,13 @@ export default function GalaxyShip({ focusedNode, onTelemetry }: GalaxyShipProps
       {/* Main Hull Body */}
       <mesh>
         <cylinderGeometry args={[0.012, 0.038, 0.38, 6]} />
-        <meshStandardMaterial color="#0d1518" roughness={0.4} metalness={0.9} flatShading />
+        <meshStandardMaterial color="#101010" roughness={0.4} metalness={0.9} flatShading />
       </mesh>
       
       {/* Nose cone - Sensor block */}
       <mesh position={[0, 0.2, 0]}>
         <coneGeometry args={[0.012, 0.07, 6]} />
-        <meshStandardMaterial color="#2d4a4d" roughness={0.2} metalness={0.8} flatShading />
+        <meshStandardMaterial color="#2e2e2e" roughness={0.2} metalness={0.8} flatShading />
       </mesh>
       
       {/* Left Wing & Solar Array */}
@@ -233,12 +233,12 @@ export default function GalaxyShip({ focusedNode, onTelemetry }: GalaxyShipProps
         {/* Wing arm */}
         <mesh>
           <boxGeometry args={[0.12, 0.007, 0.04]} />
-          <meshStandardMaterial color="#0d1518" flatShading />
+          <meshStandardMaterial color="#101010" flatShading />
         </mesh>
         {/* Solar collector panel */}
         <mesh position={[-0.1, 0, 0]}>
           <boxGeometry args={[0.11, 0.004, 0.095]} />
-          <meshStandardMaterial color="#1b4549" roughness={0.1} emissive="#0d282b" flatShading />
+          <meshStandardMaterial color="#1f3a30" roughness={0.1} emissive="#122a22" flatShading />
         </mesh>
         {/* Wing tip flashing LED */}
         <mesh position={[-0.16, 0, 0]}>
@@ -252,12 +252,12 @@ export default function GalaxyShip({ focusedNode, onTelemetry }: GalaxyShipProps
         {/* Wing arm */}
         <mesh>
           <boxGeometry args={[0.12, 0.007, 0.04]} />
-          <meshStandardMaterial color="#0d1518" flatShading />
+          <meshStandardMaterial color="#101010" flatShading />
         </mesh>
         {/* Solar collector panel */}
         <mesh position={[0.1, 0, 0]}>
           <boxGeometry args={[0.11, 0.004, 0.095]} />
-          <meshStandardMaterial color="#1b4549" roughness={0.1} emissive="#0d282b" flatShading />
+          <meshStandardMaterial color="#1f3a30" roughness={0.1} emissive="#122a22" flatShading />
         </mesh>
         {/* Wing tip flashing LED */}
         <mesh position={[0.16, 0, 0]}>
@@ -269,20 +269,20 @@ export default function GalaxyShip({ focusedNode, onTelemetry }: GalaxyShipProps
       {/* Dorsal Fin */}
       <mesh position={[0, -0.05, -0.08]} rotation={[0.4, 0, 0]}>
         <boxGeometry args={[0.007, 0.09, 0.09]} />
-        <meshStandardMaterial color="#0d1518" flatShading />
+        <meshStandardMaterial color="#101010" flatShading />
       </mesh>
 
       {/* Engine Cowl */}
       <mesh position={[0, -0.18, 0]}>
         <cylinderGeometry args={[0.038, 0.024, 0.08, 6]} />
-        <meshStandardMaterial color="#344246" roughness={0.6} metalness={0.7} flatShading />
+        <meshStandardMaterial color="#2e2e2e" roughness={0.6} metalness={0.7} flatShading />
       </mesh>
 
       {/* Engine thruster fire plume (scales with thrust) */}
       <mesh ref={plumeRef} position={[0, -0.27, 0]} rotation={[Math.PI, 0, 0]}>
         <coneGeometry args={[0.016, 0.16, 6]} />
         <meshBasicMaterial
-          color="#22d0b2"
+          color="#3cdd9e"
           transparent
           opacity={0.88}
           blending={THREE.AdditiveBlending}
@@ -303,7 +303,7 @@ export default function GalaxyShip({ focusedNode, onTelemetry }: GalaxyShipProps
             the wrong parameters and put `1` on the boolean `openEnded`. */}
         <cylinderGeometry args={[0.02, 0.28, 1.2, 8, 1, true]} />
         <meshBasicMaterial
-          color="#22d0b2"
+          color="#3cdd9e"
           transparent
           opacity={0.16}
           side={THREE.DoubleSide}

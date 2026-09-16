@@ -19,7 +19,7 @@ const routes = [
   ...(orbitHasContent
     ? [{ href: "/orbit", label: "Orbit", plain: "Interests" }]
     : []),
-  { href: "/field-notes", label: "Field Notes", plain: "Writing" },
+  { href: "/field-notes", label: "Field Notes", plain: "Case studies" },
   { href: "/about", label: "About", plain: "About" },
   { href: "/mission-history", label: "Mission History", plain: "Resume" },
   { href: "/contact", label: "Open Channel", plain: "Contact" },

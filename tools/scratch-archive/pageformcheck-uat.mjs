@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const BASE = process.env.BASE ?? 'http://localhost:3000';
+const b = await chromium.launch({ args: ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+await p.goto(BASE + '/about', { waitUntil: 'load' });
+await p.waitForTimeout(6000);
+const canvasCount = await p.evaluate(() => document.querySelectorAll('canvas').length);
+console.log('canvases on /about:', canvasCount);
+await p.screenshot({ path: 'tools/shots/about-crystal-check.png' });
+await b.close();

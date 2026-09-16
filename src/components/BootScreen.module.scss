@@ -1,0 +1,192 @@
+@use "../styles/tokens.scss" as *;
+
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: grid;
+  place-items: center;
+  background: #030303;
+  color: var(--text-primary);
+  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
+
+  &[data-leaving] {
+    opacity: 0;
+    transform: scale(1.06);
+    pointer-events: none;
+  }
+}
+
+// A faint HUD grid, so the black is a surface and not a void.
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(60, 221, 158, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(60, 221, 158, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%);
+}
+
+.inner {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  padding: var(--space-8);
+}
+
+// The ship on the pad, above the log. Fades in from black so the first
+// frame of a cold canvas is never a pop.
+.pad {
+  position: relative;
+  width: min(560px, 92vw);
+  height: clamp(200px, 32vh, 300px);
+  margin-bottom: var(--space-2);
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 55%, #000 45%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 55%, #000 45%, transparent 100%);
+  animation: padIn 1.2s var(--ease-out) both;
+}
+
+@keyframes padIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.title {
+  @include mono-label;
+  color: var(--accent);
+  letter-spacing: 0.4em;
+  margin: var(--space-2) 0 0;
+}
+
+.sub {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.log {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  min-height: 7.5rem;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+}
+
+.line {
+  display: flex;
+  gap: 0.6rem;
+  animation: lineIn 0.35s ease-out both;
+}
+
+.tick {
+  color: var(--accent);
+  width: 1ch;
+}
+
+.ok {
+  color: var(--accent);
+}
+
+/* The hold. A ring that fills clockwise with --fill; the label inside. */
+.launch {
+  --fill: 0deg;
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin-top: var(--space-6);
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color var(--dur-base) var(--ease-out);
+  touch-action: none;
+  user-select: none;
+
+  &[data-ready] {
+    color: var(--text-primary);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  &:active .ring::after {
+    transform: scale(0.94);
+  }
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) var(--fill), rgba(190, 230, 215, 0.14) 0);
+  // Inner cut so the conic reads as a ring, not a pie.
+  mask: radial-gradient(circle, transparent 60px, #000 61px);
+  -webkit-mask: radial-gradient(circle, transparent 60px, #000 61px);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+}
+
+.launchLabel {
+  @include mono-label;
+  font-size: 0.5625rem;
+  max-width: 5.5rem;
+  line-height: 1.4;
+}
+
+.launchPlain {
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--accent-line);
+  background: transparent;
+  color: var(--accent);
+  border-radius: 100px;
+  font-size: var(--type-small);
+  cursor: pointer;
+}
+
+.skip {
+  margin-top: var(--space-2);
+  background: none;
+  border: 0;
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 40px rgba(60, 221, 158, 0.12); }
+  50% { box-shadow: 0 0 60px rgba(60, 221, 158, 0.28); }
+}
+
+@keyframes lineIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: none; }
+}

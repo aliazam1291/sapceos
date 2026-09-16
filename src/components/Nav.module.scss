@@ -76,8 +76,8 @@
   // which is the generic-SaaS read the direction rules out.
   border: 1px solid var(--line);
   border-radius: 0;
-  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
-  backdrop-filter: blur(18px) saturate(130%);
+  background: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+
   transition:
     background var(--dur-base) var(--ease-out),
     border-color var(--dur-base) var(--ease-out);

@@ -8,10 +8,17 @@ import { getGlowTexture } from "./glowTexture";
 import StarSystemNode from "./StarSystemNode";
 import StarDetailDrawer from "./StarDetailDrawer";
 import GalaxyHUD from "./GalaxyHUD";
+import { cameraFocus } from "./cameraFocus";
 import { GALAXY_NODES, type GalaxyNode, type StarCategory } from "./galaxyData";
 import styles from "./InteractiveGalaxy.module.scss";
 import { useSceneFrameloop } from "@/lib/use-scene-frameloop";
+import { registerHeavyScene } from "@/lib/scene-load";
 import GalaxyShip from "./GalaxyShip";
+import Starship from "./Starship";
+import AsteroidField from "./AsteroidField";
+import Nebula from "./Nebula";
+import ShootingStars from "./ShootingStars";
+import Cinematic from "./Cinematic";
 import { spaceSound } from "@/lib/spaceSound";
 import { signal, decay } from "@/lib/scroll-signal";
 
@@ -133,6 +140,12 @@ const HOVER_PULL = 0.16;
 const HOVER_LOOK = 0.3;
 
 const BASE_FOV = 60;
+// The flight uses a longer lens. A 60° field is a phone camera: it makes
+// the subject small and the space between bodies exaggerated. ~38° is a
+// portrait lens — the subject fills the frame and the galaxy behind it
+// compresses into a backdrop, which is what a photograph of a planet
+// looks like.
+const FLIGHT_FOV = 38;
 
 /**
  * Framerate-independent damping: the fraction of the remaining distance to
@@ -149,18 +162,39 @@ function CameraController({
   focusedNode,
   hoveredNode,
   zoomScale,
+  flight = false,
 }: {
   focusedNode: GalaxyNode | null;
   hoveredNode: GalaxyNode | null;
   zoomScale: number;
+  /** Flight mode: approach a system, don't park on top of it. */
+  flight?: boolean;
 }) {
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
   const currentLookAt = useRef(new THREE.Vector3(0, 0, 0));
+  // Is the canvas actually on screen? The frameloop keeps running a little
+  // past the edge (its observer has a margin), and the last beat's focus
+  // never clears — so without this the flight flag stayed raised into the
+  // hangar and the companion ship stayed hidden there.
+  const onScreen = useRef(true);
+  useEffect(() => {
+    const el = gl.domElement;
+    const io = new IntersectionObserver(([e]) => { onScreen.current = e.isIntersecting && e.intersectionRatio > 0.2; }, { threshold: [0, 0.2, 0.5] });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [gl]);
   // Scroll is damped through its own state rather than read raw, so a trackpad
   // flick cannot snap the camera a quarter-turn in a single frame.
   const scrollT = useRef(0);
+  // Time on the current system; resets on arrival so each shot starts fresh.
+  const flightT = useRef(0);
+  const lastFocusId = useRef<string | null>(null);
 
   useFrame((_, delta) => {
+    if (focusedNode?.id !== lastFocusId.current) {
+      lastFocusId.current = focusedNode?.id ?? null;
+      flightT.current = 0;
+    }
     // Clamped so a backgrounded tab resuming does not hand us a one-second
     // delta and teleport the rig.
     const dt = Math.min(delta, 0.05);
@@ -177,9 +211,33 @@ function CameraController({
 
     if (focusedNode) {
       const [nx, ny, nz] = focusedNode.position;
-      const offset = Math.max(3.4 / zoomScale, MIN_FOCUS_DIST);
-      targetPos.set(nx, ny + 0.7, nz + offset);
-      targetLookAt.set(nx, ny, nz);
+      if (flight) {
+        /*
+         * A shot, not a lock. The camera settles into a slow orbit around the
+         * body at a low angle — the way an establishing shot circles a
+         * planet — and eases in a little over the dwell, so a held beat is
+         * never a still frame. The body sits left of centre, clear of the HUD.
+         */
+        flightT.current += dt;
+        const t = flightT.current;
+        const azimuth = 0.55 + Math.sin(t * 0.11) * 0.42;
+        // Close, on a long lens: the subject is the shot, the galaxy is
+        // its backdrop. Eases in a little over the dwell.
+        const radius = 3.1 - Math.min(t * 0.05, 0.4);
+        // Above the disc plane: from inside the dust the field is a wall of
+        // discs; from ~20° up it is a galaxy with a planet in front of it.
+        const elevation = 1.35 + Math.sin(t * 0.07) * 0.2;
+        targetPos.set(
+          nx + Math.sin(azimuth) * radius + 0.7,
+          ny + elevation,
+          nz + Math.cos(azimuth) * radius,
+        );
+        targetLookAt.set(nx + 0.5, ny + 0.05, nz);
+      } else {
+        const offset = Math.max(3.4 / zoomScale, MIN_FOCUS_DIST);
+        targetPos.set(nx, ny + 0.7, nz + offset);
+        targetLookAt.set(nx, ny, nz);
+      }
     } else {
       const dist = Math.max(DEFAULT_DIST / zoomScale, MIN_ORBIT_DIST);
 
@@ -252,9 +310,28 @@ function CameraController({
      * velocity, and `decay` is called here because this is the render loop
      * consuming it.
      */
+    // Focus follows the subject. Bodies and dust read this to go soft
+    // when they are off the focal plane.
+    const inFlight = flight && focusedNode && onScreen.current ? 1 : 0;
+    cameraFocus.on += (inFlight - cameraFocus.on) * damp(3, dt);
+    const nowMs = performance.now();
+    if (cameraFocus.tick) cameraFocus.frameMs += (Math.min(nowMs - cameraFocus.tick, 2000) - cameraFocus.frameMs) * 0.2;
+    // First frame: the launch sequence (BootScreen) waits for this.
+    if (!cameraFocus.tick) window.dispatchEvent(new Event("space:ready"));
+    cameraFocus.tick = nowMs;
+    if (focusedNode) {
+      const [fx, fy, fz] = focusedNode.position;
+      const d = Math.hypot(camera.position.x - fx, camera.position.y - fy, camera.position.z - fz);
+      cameraFocus.dist += (d - cameraFocus.dist) * damp(4, dt);
+      cameraFocus.target.x = fx;
+      cameraFocus.target.y = fy;
+      cameraFocus.target.z = fz;
+    }
+
     const cam = camera as THREE.PerspectiveCamera;
     if (cam.isPerspectiveCamera) {
-      const wanted = BASE_FOV + signal.velocity * 4;
+      const base = BASE_FOV + (FLIGHT_FOV - BASE_FOV) * cameraFocus.on;
+      const wanted = base + signal.velocity * 4;
       if (Math.abs(cam.fov - wanted) > 0.01) {
         cam.fov += (wanted - cam.fov) * damp(6, dt);
         cam.updateProjectionMatrix();
@@ -270,28 +347,70 @@ function CameraController({
 function CoreGlow() {
   const glowMap = getGlowTexture();
   const inner = useRef<THREE.Sprite>(null);
+  const hazeWide = useRef<THREE.MeshBasicMaterial>(null);
+  const hazeWarm = useRef<THREE.MeshBasicMaterial>(null);
 
   useFrame((state) => {
     if (!inner.current) return;
     const pulse = 1 + Math.sin(state.clock.elapsedTime * 0.8) * 0.04;
     inner.current.scale.set(1.1 * pulse, 1.1 * pulse, 1);
+    // The plane haze is a map-altitude effect. Seen edge-on from inside the
+    // disc it is a fog over the whole lower frame, so it fades with the flight.
+    const k = 1 - cameraFocus.on * 0.85;
+    if (hazeWide.current) hazeWide.current.opacity = 0.22 * k;
+    if (hazeWarm.current) hazeWarm.current.opacity = 0.3 * k;
   });
 
   if (!glowMap) return null;
 
   return (
     <group>
+      {/* The disc itself as light: a flat warm haze in the galactic plane,
+          brightest at the core, so the space between stars is not black —
+          a galaxy is a glowing thing, not a scatter of dots. Two layers:
+          a wide cool one and a tight warm one. */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
+        <planeGeometry args={[13, 13]} />
+        <meshBasicMaterial ref={hazeWide} map={glowMap} color="#3a8f7a" transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <planeGeometry args={[6.5, 6.5]} />
+        <meshBasicMaterial ref={hazeWarm} map={glowMap} color="#ffc98a" transparent opacity={0.3} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
       {/* Pulled in from 3.4 / 0.32. The wide teal bloom was reaching most of
           the way across the panel and washing the nodes it sat behind, so the
           map lost its blacks and every planet picked up a green cast. */}
       <sprite scale={[2.6, 2.6, 1]}>
         <spriteMaterial
           map={glowMap}
-          color="#22d0b2"
+          color="#ffe2b0"
           transparent
           depthWrite={false}
           blending={THREE.AdditiveBlending}
-          opacity={0.2}
+          opacity={0.22}
+        />
+      </sprite>
+      {/* Anamorphic streak: the same radial sprite squashed flat, which is
+          what a bright point does in a lens. It is the cue that says "sun"
+          rather than "glow". */}
+      <sprite scale={[7.5, 0.16, 1]}>
+        <spriteMaterial
+          map={glowMap}
+          color="#ffd9a0"
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          opacity={0.55}
+        />
+      </sprite>
+      <sprite scale={[0.14, 3.2, 1]}>
+        <spriteMaterial
+          map={glowMap}
+          color="#ffe8c8"
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          opacity={0.22}
         />
       </sprite>
       <sprite ref={inner} scale={[1.1, 1.1, 1]}>
@@ -313,15 +432,44 @@ interface InteractiveGalaxyProps {
   allowFullscreen?: boolean;
   /** Home-hero context: fades at its own edges instead of sitting in a hard-bordered box. */
   embedded?: boolean;
+  /** Node id to fly the camera to (flight mode); null flies back out. */
+  flightTo?: string | null;
+  /** When true, the page drives focus and the detail drawer stays closed. */
+  flightControlled?: boolean;
 }
 
 export default function InteractiveGalaxy({
   className,
   allowFullscreen = true,
   embedded = false,
+  flightTo = null,
+  flightControlled = false,
 }: InteractiveGalaxyProps) {
   const [category, setCategory] = useState<StarCategory>("all");
   const [focusedNode, setFocusedNode] = useState<GalaxyNode | null>(null);
+
+  /*
+   * Flight mode: the page drives the camera. The home page pins the hero
+   * and maps scroll progress to a node id; when it changes the camera flies
+   * there exactly as a click would, and clearing it flies back out. The
+   * detail drawer stays closed — the page renders its own HUD beside the
+   * body — and the map's own click-to-focus keeps working in between.
+   */
+  useEffect(() => {
+    if (!flightControlled) return;
+    if (flightTo === null) {
+      setFocusedNode(null);
+      setZoomScale(embedded ? 1.2 : 1.0);
+      return;
+    }
+    const node = GALAXY_NODES.find((n) => n.id === flightTo) ?? null;
+    setFocusedNode(node);
+    // A modest approach, not a close-up. Up close the bodies are low-poly
+    // props and the dust turns to discs; from here the system reads as a
+    // place and the HUD carries the detail.
+    if (node) setZoomScale(1.12);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flightTo, flightControlled]);
   /*
    * Hover is held here rather than only inside the node so the camera can read
    * it. It is a ref-like piece of state on purpose: it changes at most once per
@@ -345,7 +493,16 @@ export default function InteractiveGalaxy({
    * full-page /galaxy route keeps 1.0, where the wider viewport already gives
    * the map room and the labels have somewhere to go.
    */
-  const [zoomScale, setZoomScale] = useState<number>(embedded ? 1.38 : 1.0);
+  /*
+   * 1.2, down from 1.38, now that the hero panel is the right half of the
+   * shell (see home.module.scss .heroPanel) rather than 55vw. At ~720px wide
+   * and nearly square, 1.38 pushed the outer nodes and their orbits past the
+   * panel edge, where the section's overflow clipped them into a hard frame;
+   * 1.0 fit but left the galaxy a small cluster in a large dark field.
+   */
+  // Full-frame hero: the camera sits back so the field reads as a galaxy
+  // seen from a distance rather than a handful of large solids up close.
+  const [zoomScale, setZoomScale] = useState<number>(embedded ? 1.2 : 1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [isMuted, setIsMuted] = useState(true);
@@ -451,8 +608,25 @@ export default function InteractiveGalaxy({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameloop = useSceneFrameloop(canvasRef);
 
-  const starCount = isCoarse ? 2600 : 7200;
-  const dpr: [number, number] = isCoarse ? [1, 1.25] : [1, 1.75];
+  // While this scene is running, the always-on 2D layers back off (see
+  // lib/scene-load.ts): they are mostly hidden behind it anyway.
+  useEffect(() => {
+    if (frameloop !== "always") return;
+    return registerHeavyScene();
+  }, [frameloop]);
+
+  // Denser in the hero: at the pulled-back camera, more and finer points
+  // read as dust and gas rather than as sparkles.
+  // A galaxy is a haze of tens of thousands of pinpricks, not thousands of
+  // discs. Points are near-free on the GPU; the cost was never count.
+  const starCount = isCoarse ? 9000 : embedded ? 26000 : 20000;
+  /*
+   * Fill-rate is the whole cost of this scene — thousands of additive point
+   * sprites — and it scales with the square of the pixel ratio. 1.75 was
+   * ~2x the pixels of 1.25 for no visible gain on a field of sub-pixel
+   * dust. The hero, which is full-frame, sits at the lower cap.
+   */
+  const dpr: [number, number] = isCoarse ? [1, 1.25] : [1, 1.35];
 
   return (
     <div
@@ -490,29 +664,46 @@ export default function InteractiveGalaxy({
         onPointerMissed={() => setFocusedNode(null)}
         camera={{ position: [0, 5, 7.5], fov: 60, near: 0.1, far: 100 }}
         dpr={dpr}
-        gl={{ antialias: true, powerPreference: "low-power" }}
+        // MSAA on: it does nothing for the dust but everything for planet
+        // limbs and ring edges, which is where "pixelated" was coming from.
+        // This is the one scene that earns the real GPU — "low-power" on a
+        // dual-GPU laptop means the integrated chip.
+        // MSAA moves into the composer (multisampling={4} in Cinematic).
+        gl={{ antialias: false, powerPreference: embedded ? "high-performance" : "low-power" }}
       >
         <CameraController
           focusedNode={focusedNode}
           hoveredNode={hoveredNode}
           zoomScale={zoomScale}
+          flight={flightControlled}
         />
 
-        {/* Detailed 3D Spaceship */}
-        {!isCoarse && (
+        {/* The ship and its scan cone are a map-view prop; at flight
+            distance the cone reads as a green wedge across the frame. */}
+        {!isCoarse && !flightControlled && (
           <GalaxyShip focusedNode={focusedNode} onTelemetry={addTelemetryLog} />
         )}
 
-        <ambientLight intensity={0.6} />
-        <pointLight position={[0, 0, 0]} intensity={3.0} color="#22d0b2" distance={10} />
-        <pointLight position={[5, 5, 5]} intensity={1.5} color="#e6ffff" />
+        {/* One sun for everything with a standard material (rocks, the map
+            ship): the core, warm, inverse-square. Ambient stays low so a rock
+            has a dark side — that is the whole point of a rock. */}
+        <ambientLight intensity={0.22} color="#7fa8b0" />
+        <pointLight position={[0, 0, 0]} intensity={7} color="#ffe2b0" distance={16} decay={2} />
 
-        <GalaxyParticles count={starCount} dpr={isCoarse ? 1.25 : 1.75} />
+        {/* Far background: colour and structure behind the disc. */}
+        <Nebula />
+        <ShootingStars />
+
+        <GalaxyParticles count={starCount} dpr={isCoarse ? 1.25 : 1.5} />
 
         {/* Galactic core. Two additive sprites — a warm inner point and a wide
             teal bloom — instead of the old emissive sphere, which rendered as
             a hard-edged white blob sitting on top of the star field. */}
         <CoreGlow />
+        {/* The operator's ship flies lead through the mission flight. */}
+        <Starship visible={flightControlled && focusedNode !== null} />
+        {/* Rocks: lit, opaque, tumbling — the occluders the field lacked. */}
+        <AsteroidField count={isCoarse ? 160 : 320} />
 
         {filteredNodes.map((node) => (
           <StarSystemNode
@@ -522,6 +713,9 @@ export default function InteractiveGalaxy({
             anyFocused={Boolean(focusedNode)}
             compact={isCoarse}
             showLabels={!embedded}
+            // Hero: bodies are worlds in a field, not the subject. About 30%
+            // smaller than the map view, so the dust carries the picture.
+            sizeScale={embedded ? 0.68 : 1}
             onHover={setHoveredNode}
             onSelect={(selected) => {
               setFocusedNode(selected);
@@ -529,7 +723,14 @@ export default function InteractiveGalaxy({
             }}
           />
         ))}
+
+        {/* The lens: bloom, depth of field on the flight subject, a touch of
+            chromatic fringing. See Cinematic.tsx. */}
+        <Cinematic />
       </Canvas>
+
+      {/* Vignette and grain over the render — see .lens in the module. */}
+      <div className={styles.lens} aria-hidden="true" />
 
       {/*
        * The star map as operable navigation.
@@ -583,7 +784,7 @@ export default function InteractiveGalaxy({
         telemetryLogs={telemetryLogs}
       />
 
-      {focusedNode && (
+      {focusedNode && !flightControlled && (
         <div onClick={(e) => e.stopPropagation()}>
           <StarDetailDrawer node={focusedNode} onClose={() => setFocusedNode(null)} />
         </div>

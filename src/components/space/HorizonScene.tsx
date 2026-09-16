@@ -107,7 +107,11 @@ const vert = /* glsl */ `
     // Flatten toward the camera so the near edge reads as a plain rather than
     // a wall of noise cut off by the viewport.
     float settle = smoothstep(-2.0, -12.0, p.z);
-    p.y = (h - 0.7) * uAmp * settle;
+    // ...and flatten toward the horizon, hard. Relief lives in the middle
+    // distance; the far rows are a plain, so the horizon is a straight line
+    // that lands in the same place on every screen, not a crest that wanders.
+    float horizon = 1.0 - smoothstep(-18.0, -30.0, p.z);
+    p.y = (h - 0.7) * uAmp * settle * horizon;
 
     /*
      * The surface answers the cursor.
@@ -174,7 +178,7 @@ const frag = /* glsl */ `
  * which is past where `vFade` (smoothstep 6..30 on camera distance) reaches
  * zero. It put the BOTTOM (ny=1) at z=0, the closest and brightest the
  * terrain ever gets — exactly where the CSS `::after` gradient lays
- * `rgba(5,5,5,0.85)` over it. The response was real; it landed once in a
+ * `rgba(6, 6, 6,0.85)` over it. The response was real; it landed once in a
  * spot too far to render and once in a spot too dark to see.
  *
  * Now: top of the footer maps to NEAR (z=-2, ~9.5 units from the 7.5-unit-
@@ -207,8 +211,8 @@ function Terrain({ coarse }: { coarse: boolean }) {
       uPointer: { value: new THREE.Vector2(0, Z_NEAR) },
       uPointerOn: { value: 0 },
       uRipple: { value: new THREE.Vector3(0, Z_NEAR, 0) },
-      uLine: { value: new THREE.Color("#123c39") },
-      uCrest: { value: new THREE.Color("#22d0b2") },
+      uLine: { value: new THREE.Color("#0f3b2e") },
+      uCrest: { value: new THREE.Color("#2fbf8a") },
     }),
     [],
   );

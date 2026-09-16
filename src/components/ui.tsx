@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { DRAFT } from "@/content/types";
 import TextReveal from "./TextReveal";
+import Decode from "./Decode";
 import styles from "./ui.module.scss";
 
 export function Section({
@@ -34,7 +35,9 @@ export function SectionHead({
   return (
     <div className={styles.sectionHead} data-reveal>
       <div>
-        <p className={styles.labelRule}>{label}</p>
+        <p className={styles.labelRule}>
+          <Decode>{label}</Decode>
+        </p>
         <TextReveal as="h2" className={styles.sectionTitle}>
           {title}
         </TextReveal>
@@ -48,24 +51,36 @@ export function PageHeader({
   label,
   title,
   lede,
+  figure,
 }: {
   label: string;
   title: string;
   lede?: string;
+  /** The route's signature object — sits in the right column above the lede. */
+  figure?: ReactNode;
 }) {
   return (
-    <div className={styles.pageHeader}>
-      <p className={styles.labelRule}>{label}</p>
+    <div className={styles.pageHeader} data-figure={figure ? "" : undefined}>
+      <p className={styles.labelRule}>
+        <Decode>{label}</Decode>
+      </p>
       {/* The page title is the one piece of type per route that earns a
           line-by-line reveal; everything below it uses the cheaper fade. */}
       <TextReveal as="h1" className={styles.pageTitle} start="top 92%">
         {title}
       </TextReveal>
-      {/* No `data-reveal` here. The page header is, by definition, the first
-          thing on the route — it is never scrolled to, so a scroll reveal only
-          held the opening sentence back until hydration. It was the LCP element
-          on several routes because of it. */}
-      {lede ? <p className={styles.lede}>{lede}</p> : null}
+      {/* No `data-reveal` on the lede. The page header is, by definition, the
+          first thing on the route — it is never scrolled to, so a scroll reveal
+          only held the opening sentence back until hydration. It was the LCP
+          element on several routes because of it. */}
+      {figure ? (
+        <div className={styles.pageAside}>
+          <div className={styles.pageFigure}>{figure}</div>
+          {lede ? <p className={styles.lede}>{lede}</p> : null}
+        </div>
+      ) : lede ? (
+        <p className={styles.lede}>{lede}</p>
+      ) : null}
     </div>
   );
 }
@@ -97,6 +112,12 @@ export function Body({ value }: { value: string | string[] }) {
           <p key={i}>
             <DraftFlag note={part.slice(DRAFT.length).replace(/^\s*—\s*/, "")} />
           </p>
+        ) : part.startsWith("## ") ? (
+          // A long note needs structure; a "## " prefix is the one bit of
+          // markup content is allowed, and it becomes a real subheading.
+          <h3 key={i} className={styles.rowSubhead}>
+            {part.slice(3)}
+          </h3>
         ) : (
           <p key={i}>{part}</p>
         ),

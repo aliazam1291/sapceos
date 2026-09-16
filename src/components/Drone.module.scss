@@ -1,0 +1,228 @@
+@use "../styles/tokens.scss" as *;
+
+.drone {
+  --roll: 0deg;
+  --pitch: 0deg;
+  --yaw: 0deg;
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto auto;
+  perspective: 900px;
+}
+
+/* Airframe: tilts toward the pointer, bobs on two frequencies. */
+.airframe {
+  position: relative;
+  z-index: 3;
+  width: 70%;
+  margin: 0 auto 4%;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(14deg + var(--pitch))) rotateY(var(--yaw)) rotateZ(var(--roll));
+  transition: transform 0.5s var(--ease-out);
+  animation: bob 4.8s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Rotors: a blur disc with a faint spinning highlight. */
+.rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 0.18s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.navL, .navR { animation: blink 1.4s steps(1) infinite; }
+.navR { animation-delay: 0.7s; }
+.strobe { animation: strobe 2s steps(1) infinite; }
+
+/* Spotlight cone from the gimbal down onto the load. */
+.beam {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 70%;
+  height: 30%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(200, 235, 255, 0.28), rgba(200, 235, 255, 0.02));
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* The load sways a beat behind the airframe. On arrival it swings hard:
+   the drone brakes, the card keeps going, the cables catch it, it settles.
+   That swing is what says "carried", and it runs off the slot's --delay. */
+.load {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  transform-origin: 50% -30%;
+  animation: sway 4.8s ease-in-out infinite;
+  animation-delay: -0.6s;
+
+  :global([data-arrived]) & {
+    animation:
+      carry 2.2s cubic-bezier(0.3, 0.6, 0.3, 1) calc(var(--delay, 0s) + 0.35s) both,
+      sway 4.8s ease-in-out calc(var(--delay, 0s) + 2.55s) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* The airframe flares to brake — nose up — as it arrives, then levels. */
+:global([data-arrived]) .airframe {
+  animation:
+    brake 1.6s cubic-bezier(0.3, 0.7, 0.3, 1) var(--delay, 0s) both,
+    bob 4.8s ease-in-out calc(var(--delay, 0s) + 1.6s) infinite;
+}
+
+.cable {
+  position: absolute;
+  top: -16%;
+  height: 17%;
+  width: 1.5px;
+  background: linear-gradient(180deg, rgba(190, 230, 215, 0.25), rgba(190, 230, 215, 0.8));
+  z-index: 1;
+}
+.cableL { left: 30%; transform: rotate(-14deg); transform-origin: bottom; }
+.cableR { right: 30%; transform: rotate(14deg); transform-origin: bottom; }
+
+.payload {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: rgba(6, 6, 6, 0.6);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5);
+}
+
+.img {
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(1) contrast(1.05) brightness(0.7);
+  transition: filter var(--dur-slow) var(--ease-out);
+
+  li:hover & {
+    filter: none;
+  }
+}
+
+.trace {
+  width: 100%;
+  height: 100%;
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+/* Where the spotlight lands: a soft pool on the upper middle of the load. */
+.lit {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 45% 40% at 50% 12%, rgba(200, 235, 255, 0.28), transparent 70%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* The manifest: printed on the crate, bottom edge, over a dark strip. */
+.manifest {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.7rem 0.9rem 0.7rem 4.6rem;
+  background: linear-gradient(180deg, rgba(6, 6, 6, 0), rgba(6, 6, 6, 0.86) 40%);
+  pointer-events: none;
+}
+
+.manifestSub {
+  @include mono-label;
+  font-size: 0.5rem;
+  color: var(--accent);
+}
+
+.manifestLabel {
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.tag {
+  z-index: 2;
+  position: absolute;
+  left: 0.9rem;
+  bottom: 0.7rem;
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--text-primary);
+  background: rgba(6, 6, 6, 0.6);
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--line);
+}
+
+@keyframes bob {
+  0%, 100% { translate: 0 0; }
+  33% { translate: 0 -5px; }
+  66% { translate: 0 2px; }
+}
+
+@keyframes sway {
+  0%, 100% { rotate: -1.2deg; }
+  50% { rotate: 1.2deg; }
+}
+
+// A descending load: the cables go slack as the drone checks its drop,
+// the card bounces up under the airframe, then swings out to settle.
+@keyframes carry {
+  0% { rotate: 2deg; translate: 0 -22px; }
+  28% { rotate: -5deg; translate: 0 8px; }
+  50% { rotate: 4deg; translate: 0 -3px; }
+  72% { rotate: -2deg; translate: 0 1px; }
+  100% { rotate: 0deg; translate: 0 0; }
+}
+
+@keyframes brake {
+  0% { transform: rotateX(30deg) rotateZ(-6deg); }
+  40% { transform: rotateX(2deg) rotateZ(3deg); }
+  70% { transform: rotateX(18deg) rotateZ(-1deg); }
+  100% { transform: rotateX(14deg) rotateZ(0deg); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg) scaleX(1); }
+  50% { transform: rotate(180deg) scaleX(0.94); }
+  to { transform: rotate(360deg) scaleX(1); }
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+@keyframes strobe {
+  0%, 96% { opacity: 0.15; }
+  97%, 100% { opacity: 1; }
+}

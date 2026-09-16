@@ -81,7 +81,7 @@ function Form({ seed }: { seed: string }) {
     return new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(points),
       new THREE.LineBasicMaterial({
-        color: new THREE.Color("#22d0b2"),
+        color: new THREE.Color("#2fbf8a"),
         transparent: true,
         opacity: 0.55,
       }),
@@ -109,7 +109,7 @@ function Form({ seed }: { seed: string }) {
         <pointsMaterial
           size={0.03}
           sizeAttenuation
-          color="#22d0b2"
+          color="#2fbf8a"
           transparent
           opacity={0.8}
           blending={THREE.AdditiveBlending}

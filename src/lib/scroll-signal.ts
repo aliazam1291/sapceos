@@ -35,8 +35,17 @@ function sample() {
   signal.velocity = Math.max(signal.velocity, speed);
 }
 
-/** Call once per frame from a render loop so velocity falls back to rest. */
+/**
+ * Call from any render loop so velocity falls back to rest. Guarded per frame:
+ * several loops can run at once (the galaxy, a page form, the horizon) and
+ * each calling this would multiply the falloff, so only the first call in a
+ * given frame does the work.
+ */
+let lastDecayFrame = -1;
 export function decay(delta: number) {
+  const frame = typeof performance !== "undefined" ? Math.floor(performance.now() / 8) : 0;
+  if (frame === lastDecayFrame) return;
+  lastDecayFrame = frame;
   signal.velocity *= Math.exp(-4.5 * delta);
   if (signal.velocity < 0.001) signal.velocity = 0;
 }

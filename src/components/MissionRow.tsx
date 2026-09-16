@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Mission } from "@/content/types";
 import { DRAFT } from "@/content/types";
-import MissionSignature from "./MissionSignature";
+import Hologram from "./Hologram";
 import { Status } from "./ui";
 import styles from "./MissionRow.module.scss";
 
@@ -128,7 +128,14 @@ export default function MissionRow({
         )}
       </div>
 
-      <MissionSignature seed={mission.slug} className={styles.signature} />
+      {/* The project, projected: a hologram of its interface (or of its
+          trace, when no interface shipped to show). */}
+      <Hologram
+        src={mission.cover}
+        seed={mission.slug}
+        tag={`M-${String(index + 1).padStart(2, "0")}`}
+        className={styles.holo}
+      />
 
       <div className={styles.arrow} aria-hidden="true">
         ↗

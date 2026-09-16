@@ -7,6 +7,22 @@ import * as THREE from "three";
 import type { GalaxyNode } from "./galaxyData";
 import styles from "./InteractiveGalaxy.module.scss";
 import { spaceSound } from "@/lib/spaceSound";
+import { cameraFocus } from "./cameraFocus";
+import { atmoFrag, atmoVert, planetFrag, planetLook, planetVert, ringFrag, ringVert } from "./planetShader";
+
+// One sphere for every body; segment count is enough for a smooth limb at
+// the sizes it is drawn, and the surface detail is all in the fragment.
+// Dense enough that the limb is a curve, not a polygon, at flight distance.
+const PLANET = new THREE.SphereGeometry(1, 72, 48);
+// The ring's u coordinate runs 0..1 from inner to outer radius, which the
+// ring shader uses as its radial axis.
+const RING = new THREE.RingGeometry(1.4, 2.1, 128, 1);
+// R3F updates a ShaderMaterial's source strings on hot reload but never
+// sets needsUpdate, so the old program keeps running until a hard reload —
+// which is how a fixed shader bug can stay on screen for an hour. Keying
+// the material on its source remounts it whenever the GLSL changes.
+const SHADER_REV = String(planetVert.length + planetFrag.length + atmoFrag.length + ringVert.length + ringFrag.length);
+const _ringN = new THREE.Vector3();
 
 interface StarSystemNodeProps {
   node: GalaxyNode;
@@ -35,6 +51,8 @@ interface StarSystemNodeProps {
   reticle?: boolean;
   /** When false, hubs hide static idle labels (e.g. in the embedded hero) unless hovered. */
   showLabels?: boolean;
+  /** Multiplier on the body's size — the hero runs bodies smaller than the map. */
+  sizeScale?: number;
 }
 
 const _scale = new THREE.Vector3();
@@ -146,7 +164,7 @@ const UNIT_CIRCLE = (() => {
 /* ── Hull shading ─────────────────────────────────────────────────────────── */
 
 /*
- * The hull used to be `meshBasicMaterial color="#070a0b"` — one flat
+ * The hull used to be `meshBasicMaterial color="#080808"` — one flat
  * near-black. With white edges drawn on top, that reads as a hole punched in
  * the sky rather than as a solid: nothing tells you which face is turned
  * toward you, so the body has no volume and the tumble animation does nothing
@@ -155,13 +173,37 @@ const UNIT_CIRCLE = (() => {
  * Flat facet normals plus one fixed view-space key light means every face
  * catches a different value, and the body turning under that light is what
  * actually sells it as a mass. It stays dark — the near-black ground is not
- * negotiable — so this is a lift from #060809 to about #1b2325, not a lit ball.
+ * negotiable — so this is a lift from #080808 to about #181818, not a lit ball.
+ */
+/*
+ * Lit like a body in the scene, not a diagram.
+ *
+ * The galactic core is the scene's light source, so the key light comes from
+ * it — direction computed per vertex in view space, so a body on the far side
+ * of the disc is lit from behind and one near the camera is lit from the
+ * front. A cool fill from the camera's upper-left keeps the dark side from
+ * going flat, a Blinn highlight gives each facet a specular read, and a
+ * Fresnel term lifts the silhouette. "Texture" is procedural, in the
+ * fragment: fine grain plus thin panel seams in object space, so the hull
+ * looks machined rather than painted. No texture files, ~15 low-poly meshes —
+ * this costs nothing measurable.
  */
 const hullVert = /* glsl */ `
   varying vec3 vNormal;
+  varying vec3 vView;
+  varying vec3 vObj;
+  varying vec3 vCoreDir;
   void main() {
     vNormal = normalize(normalMatrix * normal);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vView = normalize(-mv.xyz);
+    vObj = position;
+    vec3 coreView = (viewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+    vec3 toCore = coreView - mv.xyz;
+    // The hub sits at the core itself; a zero vector would normalise to NaN
+    // and black the body out, so it takes a fixed key from the camera side.
+    vCoreDir = length(toCore) < 0.6 ? vec3(-0.3, 0.55, 0.78) : normalize(toCore);
+    gl_Position = projectionMatrix * mv;
   }
 `;
 
@@ -169,17 +211,48 @@ const hullFrag = /* glsl */ `
   precision mediump float;
   uniform vec3 uBase;
   uniform vec3 uLit;
+  uniform vec3 uAccent;
+  uniform float uOpacity;
   varying vec3 vNormal;
+  varying vec3 vView;
+  varying vec3 vObj;
+  varying vec3 vCoreDir;
 
-  // Fixed in VIEW space: the key light stays put while the body turns under it.
-  const vec3 KEY = vec3(-0.42, 0.66, 0.62);
+  float hash(vec3 p) {
+    p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
+    p *= 17.0;
+    return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+  }
 
   void main() {
-    float d = clamp(dot(normalize(vNormal), normalize(KEY)) * 0.5 + 0.5, 0.0, 1.0);
-    // Steeper than a linear mix: unlit facets stay close to uBase so the body
-    // still reads as a dark solid, and only the facets actually facing the key
-    // light climb to uLit — contrast between faces, not a flat overall lift.
-    gl_FragColor = vec4(mix(uBase, uLit, pow(d, 2.4)), 1.0);
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(vView);
+    vec3 K = normalize(vCoreDir);
+    const vec3 FILL = vec3(-0.45, 0.62, 0.64);
+
+    // Diffuse: warm key from the core, cool fill from the camera side.
+    float kd = max(dot(N, K), 0.0);
+    float fd = max(dot(N, normalize(FILL)), 0.0);
+
+    // Blinn highlight on the key. Tight, so it reads as a hard material.
+    vec3 H = normalize(K + V);
+    float spec = pow(max(dot(N, H), 0.0), 56.0);
+
+    // Fresnel: silhouettes pick up the ambient sky.
+    float fr = pow(1.0 - max(dot(N, V), 0.0), 3.0);
+
+    // Surface. Grain at a fine scale; seams as thin dark lines on a coarser
+    // object-space grid, so each facet shows plating.
+    float grain = (hash(floor(vObj * 64.0)) - 0.5) * 0.05;
+    vec3 g = abs(fract(vObj * 2.6) - 0.5);
+    float seam = 1.0 - smoothstep(0.0, 0.045, min(min(g.x, g.y), g.z));
+
+    vec3 col = uBase + uLit * (kd * 1.1 + fd * 0.32) + vec3(grain);
+    col = mix(col, col * 0.55, seam * 0.7);
+    col += uAccent * (spec * 0.55 + fr * 0.28);
+    col += vec3(1.0, 0.98, 0.92) * spec * 0.25;
+
+    gl_FragColor = vec4(col, uOpacity);
   }
 `;
 
@@ -212,15 +285,15 @@ const rimFrag = /* glsl */ `
 `;
 
 /*
- * Brighter than the first pass. At #242f32 the "lit" facet colour was only
- * marginally above the #060809 base — measured against a real screenshot, the
+ * Brighter than the first pass. At #222222 the "lit" facet colour was only
+ * marginally above the #080808 base — measured against a real screenshot, the
  * hull read as a flat dark shape with edge lines on top rather than a body
  * with facets catching light, which is exactly what the direction's "lit
  * vertices" language rules out. This is still dark and still desaturated —
  * the near-black ground stays non-negotiable — it is a genuine value step
  * instead of a barely-there one.
  */
-const LIT = new THREE.Color("#3c4f54");
+const LIT = new THREE.Color("#3a3a3a");
 
 /**
  * One navigable star system, drawn as a GEOMETRIC BODY.
@@ -251,11 +324,14 @@ export default function StarSystemNode({
   compact = false,
   reticle = true,
   showLabels = true,
+  sizeScale = 1,
 }: StarSystemNodeProps) {
   const bodyRef = useRef<THREE.Group>(null);
   const reticleRef = useRef<THREE.LineSegments>(null);
   const satRef = useRef<THREE.Mesh>(null);
   const edgeMat = useRef<THREE.LineBasicMaterial>(null);
+  const hullMat = useRef<THREE.ShaderMaterial>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
   const orbitTime = useRef(Math.random() * Math.PI * 2);
   const [hovered, setHovered] = useState(false);
 
@@ -265,32 +341,56 @@ export default function StarSystemNode({
   const [rippleActive, setRippleActive] = useState(false);
 
   const active = hovered || isFocused;
-  const kind = solidFor(node.category);
-  const solid = SOLIDS[kind];
-  const solidEdges = SOLID_EDGES[kind];
-  const shapeScale = SOLID_SCALE[kind];
   // A real size hierarchy. The source data has every node between 0.23 and
   // 0.35, so on its own the map is fifteen lumps of the same size and nothing
   // tells you what to click first. Hubs are now roughly twice a mission node.
-  const baseSize = node.size * (node.isHub ? 1.35 : 0.72);
-  const colorHex = node.color || "#22d0b2";
+  // Real hierarchy of scale. Gas giants are an order of magnitude larger
+  // than rocky worlds; the map cannot go that far (the small ones are
+  // still click targets) but a 2.5:1 ratio is enough to read as a system
+  // rather than a set of marbles.
+  const baseSize = node.size * (node.isHub ? 1.6 : 0.64) * sizeScale;
+  const colorHex = node.color || "#2fbf8a";
+
+  const look = useMemo(() => planetLook(node.id, Boolean(node.isHub)), [node.id, node.isHub]);
 
   const hullUniforms = useMemo(
     () => ({
-      uBase: { value: new THREE.Color("#060809") },
-      // A trace of the node's own colour in the lit facets, so the hub and
-      // mission families read as different materials, not just different sizes.
-      uLit: { value: new THREE.Color().copy(LIT).lerp(new THREE.Color(colorHex), 0.16) },
+      uSea: { value: new THREE.Color(look.sea) },
+      uLand: { value: new THREE.Color(look.land) },
+      uAccent: { value: new THREE.Color(look.accent) },
+      uAtmo: { value: new THREE.Color(look.atmo) },
+      uSeed: { value: look.seed * 10 },
+      uKind: { value: look.kind },
+      uTime: { value: 0 },
+      uOpacity: { value: 1 },
+      uRing: { value: look.ring ? 1 : 0 },
+      uRingN: { value: new THREE.Vector3(0, 1, 0) },
+      // Ring radii in planet-radius units: the ring is 1.4–2.1 in group
+      // space, the planet mesh is 1.06.
+      uRingIn: { value: 1.4 / 1.06 },
+      uRingOut: { value: 2.1 / 1.06 },
+      uDefocus: { value: 0 },
     }),
-    [colorHex],
+    [look],
   );
 
   const rimUniforms = useMemo(
     () => ({
-      uColor: { value: new THREE.Color(colorHex) },
+      uAtmo: { value: new THREE.Color(look.atmo) },
       uIntensity: { value: 0.4 },
     }),
-    [colorHex],
+    [look],
+  );
+
+  const ringUniforms = useMemo(
+    () => ({
+      uColor: { value: new THREE.Color(look.atmo) },
+      uSeed: { value: look.seed * 40 },
+      uOpacity: { value: 0.5 },
+      uInner: { value: 1.4 },
+      uOuter: { value: 2.1 },
+    }),
+    [look],
   );
 
   // A stable per-node phase, so the map does not pulse or orbit in unison.
@@ -335,12 +435,40 @@ export default function StarSystemNode({
       const dist = _world.distanceTo(state.camera.position);
       const depth = 1 - Math.min(Math.max((dist - 5.5) / 6.5, 0), 1) * 0.34;
 
-      if (edgeMat.current) {
-        edgeMat.current.opacity = active ? 0.95 : 0.78 * depth;
+      // Near clip, done softly. A body the camera flies past would fill a
+      // corner of the frame as a giant low-poly prop; inside ~2.6 units it
+      // fades out and shrinks instead, the way an out-of-focus foreground
+      // object drops away in a real lens.
+      // Measured to the *surface*, not the centre: a large hub's limb reaches
+      // the near plane long before its centre does, and a sphere sliced flat
+      // by the frustum is the least real thing a camera can show.
+      const reach = bodyRef.current.scale.x * (look.ring ? 2.1 : 1.16);
+      const near = Math.min(Math.max((dist - reach - 0.9) / 1.6, 0), 1);
+      if (near < 1) bodyRef.current.scale.multiplyScalar(0.55 + near * 0.45);
+      bodyRef.current.visible = near > 0.02 || active;
+
+      hullUniforms.uOpacity.value = near;
+      ringUniforms.uOpacity.value = 0.5 * near;
+
+      // Depth of field, the cheap way: the subject is sharp, everything
+      // off its focal plane loses surface detail and grows a soft limb.
+      // The active body is always sharp — it is what the camera is on.
+      const off = active ? 0 : Math.min(Math.abs(dist - cameraFocus.dist) / 4.0, 1);
+      hullUniforms.uDefocus.value = off * cameraFocus.on;
+
+      // The ring plane normal, in view space, for the ring-shadow test in
+      // the planet shader. The group tumbles, so this moves every frame.
+      if (ringRef.current) {
+        ringRef.current.getWorldDirection(_ringN);
+        _ringN.transformDirection(state.camera.matrixWorldInverse);
+        hullUniforms.uRingN.value.copy(_ringN);
       }
+      hullUniforms.uTime.value = state.clock.elapsedTime;
+      if (hullMat.current) hullMat.current.transparent = near < 1;
+      void depth;
 
       const pulse = 1 + Math.sin(state.clock.elapsedTime * 1.4 + phase) * 0.12;
-      rimUniforms.uIntensity.value = (active ? 0.9 : 0.5 * depth) * pulse;
+      rimUniforms.uIntensity.value = (active ? 0.9 : 0.5 * depth) * pulse * near;
     }
 
     if (satRef.current) {
@@ -355,7 +483,12 @@ export default function StarSystemNode({
 
     if (reticleRef.current && active) {
       // Snaps in on acquire rather than appearing at full size.
-      const s = THREE.MathUtils.lerp(reticleRef.current.scale.x, 1, Math.min(dt * 12, 1));
+      // Acquired size stays close to the body: brackets that expand to the
+      // frame read as a crosshair, not a lock.
+      // Tighter on the long lens: at flight distance the brackets would
+      // otherwise frame half the sky instead of the body.
+      const want = 0.78 - cameraFocus.on * 0.4;
+      const s = THREE.MathUtils.lerp(reticleRef.current.scale.x, want, Math.min(dt * 12, 1));
       reticleRef.current.scale.set(s, s, s);
       reticleRef.current.lookAt(state.camera.position);
     } else if (reticleRef.current) {
@@ -422,25 +555,26 @@ export default function StarSystemNode({
       </mesh>
 
       <group ref={bodyRef} scale={[baseSize, baseSize, baseSize]} raycast={() => null}>
-        {/* Shaded hull. Occludes the far side of the wireframe, and carries the
-            facet values that make the tumble legible. */}
-        <mesh geometry={solid} scale={0.99 * shapeScale}>
+        {/* The world itself: a procedural planet (see planetShader.ts) — gas
+            giant, rocky or ice by node — lit from the core, with a Fresnel
+            atmosphere. Replaced the faceted wireframe solids, which read as
+            props the moment the camera came near. */}
+        <mesh geometry={PLANET} scale={1.06}>
           <shaderMaterial
-            vertexShader={hullVert}
-            fragmentShader={hullFrag}
+            key={SHADER_REV}
+            ref={hullMat}
+            vertexShader={planetVert}
+            fragmentShader={planetFrag}
             uniforms={hullUniforms}
           />
         </mesh>
 
-        <lineSegments geometry={solidEdges} scale={shapeScale}>
-          <lineBasicMaterial ref={edgeMat} color={colorHex} transparent opacity={0.5} />
-        </lineSegments>
-
-        {/* Rim light on the hull's own silhouette — same solid, marginally out. */}
-        <mesh geometry={solid} scale={1.03 * shapeScale}>
+        {/* Atmosphere shell, additive, just outside the limb. */}
+        <mesh geometry={PLANET} scale={1.16}>
           <shaderMaterial
-            vertexShader={rimVert}
-            fragmentShader={rimFrag}
+            key={SHADER_REV}
+            vertexShader={atmoVert}
+            fragmentShader={atmoFrag}
             uniforms={rimUniforms}
             transparent
             side={THREE.BackSide}
@@ -448,6 +582,22 @@ export default function StarSystemNode({
             depthWrite={false}
           />
         </mesh>
+
+        {/* Ring system on gas giants — one annulus, bands and soft edges in
+            the shader (see ringFrag), so nothing about it can alias. */}
+        {look.ring && (
+          <mesh ref={ringRef} geometry={RING} rotation={[Math.PI / 2 + 0.35, 0.2, 0]} raycast={() => null}>
+            <shaderMaterial
+              key={SHADER_REV}
+              vertexShader={ringVert}
+              fragmentShader={ringFrag}
+              uniforms={ringUniforms}
+              transparent
+              side={THREE.DoubleSide}
+              depthWrite={false}
+            />
+          </mesh>
+        )}
       </group>
 
       {/* Hubs carry a real orbit with a body riding it, inclined per node.
@@ -456,7 +606,13 @@ export default function StarSystemNode({
         <group scale={[baseSize, baseSize, baseSize]} rotation={orbitTilt} raycast={() => null}>
           <line>
             <primitive object={ORBIT} attach="geometry" />
-            <lineBasicMaterial color={colorHex} transparent opacity={active ? 0.6 : 0.28} />
+            <lineBasicMaterial
+              color={colorHex}
+              transparent
+              // Fainter when the bodies are scaled down for the hero: an
+              // orbit line brighter than the world it circles reads as a diagram.
+              opacity={active ? 0.6 : sizeScale < 1 ? 0.14 : 0.28}
+            />
           </line>
           <mesh ref={satRef}>
             <octahedronGeometry args={[0.11, 0]} />

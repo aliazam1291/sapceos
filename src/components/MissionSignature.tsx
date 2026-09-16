@@ -48,24 +48,24 @@ export default function MissionSignature({
         {/* Stroke fades in from the left, so the trace reads as arriving
             rather than as a line that simply stops at the edge. */}
         <linearGradient id={`${uid}-stroke`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#22d0b2" stopOpacity="0.15" />
-          <stop offset="55%" stopColor="#22d0b2" stopOpacity="0.75" />
-          <stop offset="100%" stopColor="#7fe9d5" stopOpacity="1" />
+          <stop offset="0%" stopColor="#2fbf8a" stopOpacity="0.15" />
+          <stop offset="55%" stopColor="#2fbf8a" stopOpacity="0.75" />
+          <stop offset="100%" stopColor="#9df2d3" stopOpacity="1" />
         </linearGradient>
 
         {/* Area wash under the trace, dying out before the baseline so the
             panel underneath is never hard-edged. */}
         <linearGradient id={`${uid}-area`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#22d0b2" stopOpacity="0.28" />
-          <stop offset="60%" stopColor="#22d0b2" stopOpacity="0.06" />
-          <stop offset="100%" stopColor="#22d0b2" stopOpacity="0" />
+          <stop offset="0%" stopColor="#2fbf8a" stopOpacity="0.28" />
+          <stop offset="60%" stopColor="#2fbf8a" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#2fbf8a" stopOpacity="0" />
         </linearGradient>
 
         {/* Soft bloom for the live node. */}
         <radialGradient id={`${uid}-node`}>
-          <stop offset="0%" stopColor="#9ffbe8" stopOpacity="0.95" />
-          <stop offset="45%" stopColor="#22d0b2" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#22d0b2" stopOpacity="0" />
+          <stop offset="0%" stopColor="#d2f7e8" stopOpacity="0.95" />
+          <stop offset="45%" stopColor="#2fbf8a" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#2fbf8a" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -108,7 +108,7 @@ export default function MissionSignature({
           cx={x}
           cy={p}
           r={i === liveIndex ? 2.6 : 1.3}
-          fill={i === liveIndex ? "#c7fff2" : "currentColor"}
+          fill={i === liveIndex ? "#ecfdf5" : "currentColor"}
           fillOpacity={i === liveIndex ? 1 : 0.3}
         />
       ))}

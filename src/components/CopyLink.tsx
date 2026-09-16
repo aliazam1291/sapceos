@@ -21,6 +21,7 @@ export default function CopyLink({
   display,
   label,
   external,
+  compact,
 }: {
   href: string;
   /**
@@ -34,6 +35,8 @@ export default function CopyLink({
   /** Describes the value for assistive tech, e.g. "email address". */
   label: string;
   external?: boolean;
+  /** Smaller type, for sitting inside an instrument cell rather than alone. */
+  compact?: boolean;
 }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | undefined>(undefined);
@@ -60,7 +63,7 @@ export default function CopyLink({
   return (
     <span className={styles.wrap}>
       <a
-        className={styles.value}
+        className={`${styles.value} ${compact ? styles.compact : ""}`}
         href={href}
         {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
       >

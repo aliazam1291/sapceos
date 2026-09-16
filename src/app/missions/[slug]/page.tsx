@@ -13,9 +13,11 @@ import {
 } from "@/components/ui";
 import ReportNav, { ReportLayout } from "@/components/ReportNav";
 import MissionSignature from "@/components/MissionSignature";
-import ReportHero from "@/components/ReportHero";
+import Hologram from "@/components/Hologram";
 import { sectionSlug } from "@/lib/slug";
 import { getMission, missions } from "@/content/missions";
+import { breadcrumbJsonLd, jsonLd, missionJsonLd } from "@/lib/seo";
+import { domainKeywords, identityKeywords, keywordsFor } from "@/lib/keywords";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -27,10 +29,21 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const mission = getMission(slug);
   if (!mission) return {};
+  const facts = mission.signals.map((sig) => `${sig.value} ${sig.label.toLowerCase()}`).join(", ");
+  const description = `${mission.title} at ${mission.org} — ${mission.premise}${facts ? ` ${facts}.` : ""} Role: ${mission.role}.`;
   return {
     title: `${mission.title} — Mission Report`,
-    description: mission.premise,
+    description,
+    keywords: keywordsFor([mission.title, `${mission.title} case study`, mission.org, ...mission.stack], identityKeywords, domainKeywords, ["mission report", "product engineering case study"]),
     alternates: { canonical: `/missions/${mission.slug}` },
+    openGraph: {
+      type: "article",
+      title: `${mission.title} — Mission Report`,
+      description,
+      url: `/missions/${mission.slug}`,
+      images: mission.cover ? [{ url: mission.cover, width: 1200, height: 675, alt: `${mission.title} interface` }] : undefined,
+    },
+    twitter: { card: "summary_large_image", title: mission.title, description },
   };
 }
 
@@ -44,45 +57,57 @@ export default async function MissionReport({ params }: Params) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            missionJsonLd(mission),
+            breadcrumbJsonLd([
+              { name: "Home", path: "/" },
+              { name: "Missions", path: "/missions" },
+              { name: mission.title, path: `/missions/${mission.slug}` },
+            ]),
+          ),
+        }}
+      />
+      {/* The report opens the way every other page does: the object beside
+          the title. Here the object is the interface, projected. */}
       <PageHeader
         label={`Mission Report · ${mission.org}`}
         title={mission.title}
         lede={mission.premise}
+        figure={<Hologram src={mission.cover} seed={mission.slug} tag="REPORT" />}
       />
 
+      {/* The manifest: everything that used to be spread down the page as a
+          meta row, an object block, a signals list and a tag row, as one HUD
+          strip — status, role, the verified numbers, the stack. */}
       <Section>
-        <div className={ui.metaRow} data-reveal>
-          <Status idle={mission.status !== "active"}>
-            {mission.status === "active" ? "Active" : "Shipped"}
-          </Status>
-          <span>{mission.role}</span>
-          {/* `period` is always literally "Active"/"Shipped" in the content
-              data — never a real date range — so showing it here just
-              repeats the Status pill next to it. */}
-        </div>
-
-        <ReportHero seed={mission.slug} title={mission.title} />
-
-        <MissionSignature
-          seed={mission.slug}
-          width={640}
-          height={130}
-          className={ui.reportTrace}
-        />
-
-        {mission.signals.length ? (
-          <div className={ui.rows} style={{ marginTop: "var(--space-8)" }}>
-            {mission.signals.map((s) => (
-              <Row key={s.label} label={s.label}>
-                <div className={ui.rowBody}>{s.value}</div>
-              </Row>
-            ))}
+        <dl className={ui.manifest} data-reveal>
+          <div className={ui.manifestCell}>
+            <dt>Status</dt>
+            <dd>
+              <Status idle={mission.status !== "active"}>{mission.status === "active" ? "Active" : "Shipped"}</Status>
+            </dd>
           </div>
-        ) : null}
-
-        <div style={{ marginTop: "var(--space-8)" }} data-reveal>
-          <TagRow items={mission.stack} />
-        </div>
+          <div className={ui.manifestCell}>
+            <dt>Owned</dt>
+            <dd>{mission.role}</dd>
+          </div>
+          {mission.signals.map((sig) => (
+            <div key={sig.label} className={ui.manifestCell} data-big={/\d/.test(sig.value) || undefined}>
+              <dt>{sig.label}</dt>
+              <dd>{sig.value}</dd>
+            </div>
+          ))}
+          <div className={`${ui.manifestCell} ${ui.manifestWide}`}>
+            <dt>Stack</dt>
+            <dd>
+              <TagRow items={mission.stack} />
+            </dd>
+          </div>
+        </dl>
+        <MissionSignature seed={mission.slug} width={640} height={90} className={ui.reportTrace} />
       </Section>
 
       <ReportLayout>

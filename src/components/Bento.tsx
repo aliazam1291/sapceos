@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Counter from "./Counter";
 import PageForm from "@/components/space/PageForm";
 import styles from "./Bento.module.scss";
@@ -13,20 +14,46 @@ const loop = [
  * full-width text block. Every number here comes from PROFILE.md.
  */
 export default function Bento() {
+  // The loop runs. The active step advances on its own; hovering a step holds
+  // it there. A static list of eight words said "process"; a cursor moving
+  // through them says the thing actually cycles.
+  const [active, setActive] = useState(0);
+  const [held, setHeld] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (held !== null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => setActive((a) => (a + 1) % loop.length), 1400);
+    return () => window.clearInterval(id);
+  }, [held]);
+
+  const current = held ?? active;
+
   return (
     <div className={styles.grid}>
       <div className={`${styles.tile} ${styles.loop}`} data-reveal>
-        <span className={styles.tileLabel}>Operating loop</span>
-        <ul className={styles.loopChain}>
+        <div className={styles.loopHead}>
+          <span className={styles.tileLabel}>Operating loop</span>
+          <span className={styles.loopReadout} aria-live="polite">
+            <i /> {String(current + 1).padStart(2, "0")} / {String(loop.length).padStart(2, "0")} · {loop[current]}
+          </span>
+        </div>
+        <ul className={styles.loopChain} onPointerLeave={() => setHeld(null)}>
           {loop.map((step, i) => (
             <li
               key={step}
-              className={`${styles.loopStep} ${i === 0 ? styles.loopStepLead : ""}`}
+              className={styles.loopStep}
+              data-active={i === current || undefined}
+              data-done={i < current || undefined}
+              onPointerEnter={() => setHeld(i)}
             >
               {step}
             </li>
           ))}
         </ul>
+        <span className={styles.loopTrack} aria-hidden="true">
+          <i style={{ width: `${((current + 1) / loop.length) * 100}%` }} />
+        </span>
       </div>
 
       <div className={`${styles.tile} ${styles.object}`} data-reveal>

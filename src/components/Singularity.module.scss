@@ -1,0 +1,111 @@
+@use "../styles/tokens.scss" as *;
+
+.field {
+  position: relative;
+  width: 100%;
+  height: clamp(460px, 68vh, 720px);
+  overflow: hidden;
+  background: #030303;
+  // Dissolves into the page top and bottom; the scene paints its own sky,
+  // so a hard edge here would read as a screenshot dropped into the page.
+  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+
+  // The showreel move: it arrives as a framed window inside the shell and
+  // opens to full bleed as it comes up the screen. Scroll-driven, so it is
+  // the reader's hand doing it; clip-path is composited, so it costs nothing.
+  @supports (animation-timeline: view()) {
+    animation: open linear both;
+    animation-timeline: view();
+    animation-range: entry 10% entry 90%;
+  }
+}
+
+@keyframes open {
+  from { clip-path: inset(10% var(--shell-pad) 10% var(--shell-pad) round 18px); }
+  to { clip-path: inset(0 0 0 0 round 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field { animation: none; clip-path: none; }
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.copy {
+  position: absolute;
+  left: var(--shell-pad);
+  bottom: clamp(2.5rem, 8vh, 4.5rem);
+  max-width: min(30rem, 50vw);
+  pointer-events: none;
+}
+
+.label {
+  @include mono-label;
+  margin-bottom: var(--space-3);
+  color: var(--accent);
+}
+
+.title {
+  font-size: var(--type-large);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  text-wrap: balance;
+  margin: 0;
+}
+
+.lede {
+  margin: var(--space-4) 0 0;
+  color: var(--text-secondary);
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  max-width: 34ch;
+}
+
+/*
+ * The masses, docked right. Weight sets both the value's size and its
+ * opacity — the largest number is the loudest thing on the strip and the
+ * smallest is a whisper. A thin rule ties them to the frame edge, the way
+ * the flight HUD brackets do.
+ */
+.masses {
+  position: absolute;
+  right: var(--shell-pad);
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0 0 0 var(--space-4);
+  list-style: none;
+  display: grid;
+  gap: var(--space-4);
+  border-left: 1px solid var(--line-strong);
+  text-align: left;
+  pointer-events: none;
+
+  @media (max-width: 720px) {
+    display: none;
+  }
+}
+
+.mass {
+  display: grid;
+  gap: 0.15rem;
+  opacity: calc(0.45 + var(--w) * 0.55);
+}
+
+.massValue {
+  font-family: var(--font-mono);
+  font-size: calc(0.95rem + var(--w) * 0.9rem);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.massLabel {
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: var(--text-tertiary);
+}

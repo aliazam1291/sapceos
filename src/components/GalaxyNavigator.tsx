@@ -24,7 +24,13 @@ const DynamicInteractiveGalaxy = dynamic(() => import("@/components/space/Intera
  * is the floor: on a busy main thread idle may never come, and the stage should
  * still arrive rather than never loading at all.
  */
-export default function GalaxyNavigator() {
+export default function GalaxyNavigator({
+  flightTo = null,
+  flightControlled = false,
+}: {
+  flightTo?: string | null;
+  flightControlled?: boolean;
+}) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -43,5 +49,12 @@ export default function GalaxyNavigator() {
   // carries a dedicated "Galaxy 3D" route for the full-page experience.
   if (!ready) return <div className={styles.shell} aria-hidden="true" />;
 
-  return <DynamicInteractiveGalaxy embedded allowFullscreen={false} />;
+  return (
+    <DynamicInteractiveGalaxy
+      embedded
+      allowFullscreen={false}
+      flightTo={flightTo}
+      flightControlled={flightControlled}
+    />
+  );
 }

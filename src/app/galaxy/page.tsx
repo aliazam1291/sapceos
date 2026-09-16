@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { genreKeywords, identityKeywords, keywordsFor } from "@/lib/keywords";
 import Link from "next/link";
 import GalaxyClientLoader from "./GalaxyClientLoader";
 import styles from "./galaxyPage.module.scss";
 
 export const metadata: Metadata = {
-  title: "Galaxy Explorer — SPACE OS",
-  description: "Interactive 3D galaxy map and telemetry viewer for portfolio missions, field ops, and architecture.",
+  title: "Galaxy — Interactive 3D Map of the Work",
+  description: "An interactive WebGL galaxy where every star system is one of Ali Azam Kazmi's products. Fly between missions, open their reports.",
+  keywords: keywordsFor(genreKeywords, identityKeywords),
   alternates: { canonical: "/galaxy" },
 };
 

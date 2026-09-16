@@ -8,7 +8,8 @@
   // A hero should establish the site, not consume a whole monitor. The former
   // 94svh / 1500px range left the dock sitting on top of content at common
   // laptop sizes and made the first scroll feel as though it had stalled.
-  min-height: clamp(620px, 88svh, 980px);
+  // The landing screen is the galaxy, so it takes the viewport.
+  min-height: clamp(620px, 100svh, 1100px);
   display: flex;
   align-items: center;
   /*
@@ -36,6 +37,15 @@
   justify-content: center;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
+
+  // HeroStage's wrapper (the last child) is the only in-flow flex item; it
+  // has to take the whole frame. NOT `> *`: the Spotlight before it is
+  // absolutely positioned, and forcing it in-flow split the hero in half.
+  > :last-child {
+    width: 100%;
+    min-height: inherit;
+    position: relative;
+  }
 }
 
 /*
@@ -54,23 +64,109 @@
   padding-top: clamp(2rem, 4vh, 3.5rem);
   padding-bottom: clamp(4.5rem, 9vh, 6.5rem);
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   align-items: center;
-  gap: var(--space-8);
 
   @media (max-width: 1040px) {
-    grid-template-columns: 1fr;
-    padding-block: clamp(2rem, 6vw, 3.5rem);
+    // Room beneath the CTAs for the field, which sits in the lower half
+    // of the frame at this width.
+    padding-block: clamp(2rem, 6vw, 3.5rem) clamp(16rem, 38vh, 24rem);
+    align-items: start;
   }
 }
 
+// The copy sits over the field's quiet left edge. Wide enough that
+// "Digital products" holds one line at every desktop width — the galaxy is
+// behind it now, not beside it, so it no longer has to share the row.
 .heroContent {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 2.2vw, 2rem);
-  max-width: 44rem;
+  max-width: min(60rem, 66%);
+
+  @media (max-width: 1040px) {
+    max-width: none;
+  }
+}
+
+// ── The full-screen galaxy ───────────────────────────────────────────────────
+.heroField {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+
+  // Only the very bottom is washed, so the field hands over to the readout
+  // strip without a hard edge. Everything else is the galaxy.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 78%, rgba(6, 6, 6, 0.7) 100%);
+    pointer-events: none;
+  }
+}
+
+.heroFieldInner {
+  position: absolute;
+  inset: -4%;
+  mask-image: radial-gradient(ellipse 70% 78% at 50% 50%, #000 55%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 78% at 50% 50%, #000 55%, transparent 100%);
+}
+
+// Instrument chrome over the field — pinned to the frame's corners, never
+// the middle. An absolute layer so it always spans the full hero regardless
+// of how the flex wrapper sizes.
+.heroChrome {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  align-items: start;
+  padding: clamp(var(--space-6), 4vh, var(--space-10)) var(--shell-pad);
+  // The right-edge section rail (SectionGuide) lives at ~5rem from the
+  // edge; keep the badge clear of it. The dock nav and the logo sit on the
+  // bottom edge, so the bottom row lifts above them.
+  padding-right: max(var(--shell-pad), 6.5rem);
+  padding-bottom: 6.5rem;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.heroChrome .heroLabel {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.heroChrome .heroStageBadge {
+  position: static;
+  grid-column: 2;
+  grid-row: 3;
+  align-self: end;
+  justify-self: end;
+}
+
+// `.scrollHint` itself is defined further down; this is only its placement.
+.heroChrome .scrollHint {
+  grid-column: 1;
+  grid-row: 3;
+  align-self: end;
+  margin: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .heroNarrative {
@@ -96,35 +192,6 @@
   margin-top: var(--space-2);
 }
 
-/*
- * The galaxy visual stage — framed on the right half,
- * providing depth and ambiance without colliding with hero copy or CTAs.
- */
-.heroPanel {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: clamp(480px, 60vh, 720px);
-  pointer-events: none;
-
-  @media (min-width: 1041px) {
-    position: absolute;
-    right: -8vw;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 55vw;
-    height: 94%;
-    mask-image: radial-gradient(ellipse 75% 70% at 55% 50%, #000 50%, transparent 95%);
-    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 55% 50%, #000 50%, transparent 95%);
-  }
-
-  @media (max-width: 1040px) {
-    margin-top: var(--space-4);
-    height: 46vh;
-    opacity: 0.85;
-  }
-}
-
 .heroStageBadge {
   position: absolute;
   bottom: 2rem;
@@ -133,8 +200,7 @@
   align-items: center;
   gap: 8px;
   padding: 5px 12px;
-  background: rgba(8, 12, 14, 0.75);
-  backdrop-filter: blur(12px);
+  background: rgba(11, 11, 11, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 9999px;
   @include mono-label;
@@ -203,11 +269,14 @@
    * declarative statement — still clearly the largest type on the page — but
    * leaves the field visibly the larger presence behind it.
    */
-  font-size: clamp(2.25rem, 5.4vw, 6.25rem);
-  line-height: 0.98;
+  font-size: clamp(2.25rem, 5.5vw, 6.5rem);
+  line-height: 0.96;
   letter-spacing: -0.04em;
   font-weight: 500;
   max-width: none;
+  // Sits over the field now: a soft dark halo keeps the strokes crisp
+  // against stars without a box behind the type.
+  text-shadow: 0 2px 28px rgba(6, 6, 6, 0.85), 0 0 2px rgba(6, 6, 6, 0.9);
 }
 
 // Each line clips its own overflow so the boot timeline can lift them in.
@@ -276,100 +345,51 @@
 .heroLede {
   font-size: clamp(1.0625rem, 1.7vw, 1.375rem);
   color: var(--text-secondary);
-  max-width: 52ch;
+  max-width: 44ch;
+  text-shadow: 0 1px 16px rgba(6, 6, 6, 0.9);
 }
 
-// Telemetry readout — the one place small mono type earns its keep.
-// Instrument strip. The dot grid is a CSS radial-gradient rather than a shader
-// — same result, no GPU cost.
-.readout {
-  position: relative;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: radial-gradient(
-      circle at center,
-      rgba(245, 245, 245, 0.13) 1px,
-      transparent 1px
-    );
-    background-size: 22px 22px;
-    mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
-  }
-}
-
-.readoutInner {
+// The operator statement. One sentence at display size, left, with the
+// right half of the frame left empty on purpose: the ship flies there.
+.statementBlock {
   @include shell;
-  position: relative;
-  z-index: 1;
+  // A caption in the lower left; the ship has the rest of the frame.
+  min-height: 78vh;
+  padding-block: clamp(4rem, 10vh, 7rem);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
-  gap: var(--space-6);
-  padding-block: var(--space-6);
+  align-content: end;
+  gap: var(--space-4);
+  max-width: none;
 }
 
-.readoutItem {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.readoutLabel {
-  @include mono-label;
-}
-
-.readoutValue {
-  font-size: clamp(1.25rem, 2.4vw, 1.875rem);
+.statementTitle {
+  font-size: var(--type-massive);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  max-width: 20ch;
+  margin: 0;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
+  text-wrap: balance;
 }
 
-.readoutNote {
-  font-size: var(--type-small);
+.statementDim {
+  margin: 0;
+  max-width: 40ch;
   color: var(--text-secondary);
+  font-size: var(--type-body);
 }
 
-.readoutItem {
-  position: relative;
-  padding-left: var(--space-4);
-  border-left: 1px solid var(--line);
-}
-
-.loop {
+.statementLinks {
   display: flex;
+  gap: var(--space-5);
   flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
-  list-style: none;
-  padding: 0;
+}
+
+.statementLink {
   @include mono-label;
-  color: var(--text-secondary);
-}
-
-.loopSep {
   color: var(--accent);
-}
-
-.splitGrid {
-  display: grid;
-  gap: var(--space-12);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-}
-
-.closing {
-  @include shell;
-  padding-block: var(--space-section);
-  display: grid;
-  gap: var(--space-6);
-  justify-items: start;
-}
-
-.closingTitle {
-  font-size: var(--type-large);
-  max-width: 18ch;
+  text-decoration: none;
+  @include hover-only {
+    &:hover { color: var(--text-primary); }
+  }
 }

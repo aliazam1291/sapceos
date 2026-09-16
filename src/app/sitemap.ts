@@ -16,7 +16,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // input" should not be handed to a search engine either; the route stays
     // reachable by URL, it just is not advertised anywhere while it is empty.
     ...(orbitHasContent ? [{ path: "/orbit", priority: 0.5 }] : []),
-    { path: "/field-notes", priority: 0.7 },
+    { path: "/field-notes", priority: 0.8 },
+    { path: "/galaxy", priority: 0.5 },
     { path: "/about", priority: 0.8 },
     { path: "/mission-history", priority: 0.8 },
     { path: "/contact", priority: 0.6 },
@@ -36,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...fieldNotes.map((n) => ({
       url: `${siteUrl}/field-notes/${n.slug}`,
       lastModified: now,
-      priority: 0.6,
+      priority: 0.7,
     })),
   ];
 }

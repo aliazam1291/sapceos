@@ -1,0 +1,308 @@
+@use "../styles/tokens.scss" as *;
+
+.flight {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: var(--space-8);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Sticky rail ──────────────────────────────────────────────────────────────
+.rail {
+  position: sticky;
+  top: 6rem;
+  align-self: start;
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.railLabel {
+  @include mono-label;
+  color: var(--accent);
+}
+
+.railCount {
+  font-family: var(--font-mono);
+  font-size: 2.5rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.railNote {
+  @include mono-label;
+  font-size: 0.5625rem;
+}
+
+.railLine {
+  margin-top: var(--space-3);
+  width: 1px;
+  height: 120px;
+  background: linear-gradient(var(--accent-line), transparent);
+}
+
+// ── Rows ─────────────────────────────────────────────────────────────────────
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(var(--space-8), 6vh, var(--space-16));
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(var(--space-6), 3vw, var(--space-12));
+  align-items: center;
+  padding: clamp(var(--space-5), 2.6vw, var(--space-8)) clamp(var(--space-3), 1.5vw, var(--space-6));
+  // No panel: a drone in a box is a card. The row is open air over a
+  // floor line; the copy and the load are the only things on it.
+  border-bottom: 1px solid var(--line);
+
+  &[data-side="right"] {
+    .cover { order: 2; }
+    .body { order: 1; }
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+
+    &[data-side="right"] {
+      .cover { order: 0; }
+      .body { order: 1; }
+    }
+  }
+}
+
+// ── Scroll-driven entrance and exit ──────────────────────────────────────────
+// Two animations on one timeline: the first runs while the row enters the
+// viewport, the second while it leaves. Between them it sits still.
+@supports (animation-timeline: view()) {
+  .row {
+    // Fill modes matter: the leave animation must only hold AFTER its range
+    // (`forwards`), or its "from" state (opacity 1) would override the enter
+    // animation's hidden start for rows still below the viewport.
+    animation:
+      enterLeft linear both,
+      leaveLeft linear forwards;
+    animation-timeline: view(), view();
+    animation-range:
+      entry 0% entry 55%,
+      exit 45% exit 100%;
+
+    &[data-side="right"] {
+      animation-name: enterRight, leaveRight;
+    }
+  }
+
+  // The cover drifts against the text — parallax without a listener.
+  .coverImg,
+  .trace {
+    animation: drift linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .row,
+    .coverImg,
+    .trace {
+      animation: none;
+    }
+  }
+}
+
+@keyframes enterLeft {
+  from { opacity: 0; transform: translateX(-56px) scale(0.965); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes enterRight {
+  from { opacity: 0; transform: translateX(56px) scale(0.965); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes leaveLeft {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(40px) scale(0.97); }
+}
+@keyframes leaveRight {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(-40px) scale(0.97); }
+}
+@keyframes drift {
+  from { transform: translateY(-7%) scale(1.12); }
+  to { transform: translateY(7%) scale(1.12); }
+}
+
+// ── Cover ────────────────────────────────────────────────────────────────────
+// The cover slot holds a drone carrying the cover. It descends onto the
+// row when the row is reached (data-arrived, set by ArrivalGate), straight
+// down, checks its drop, settles — the load's own swing is in Drone.
+.cover {
+  position: relative;
+  display: block;
+  overflow: visible;
+  opacity: 0;
+  transform: translateY(-60vh);
+}
+
+.row[data-arrived] .cover {
+  animation: descend 1.7s cubic-bezier(0.3, 0.75, 0.25, 1) 0.15s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover {
+    opacity: 1;
+    transform: none;
+  }
+  .row[data-arrived] .cover {
+    animation: none;
+  }
+}
+
+.body {
+  opacity: 0;
+}
+
+.row[data-arrived] .body {
+  animation: bodyIn 0.6s ease-out 1.55s both;
+}
+
+@keyframes bodyIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body { opacity: 1; }
+  .row[data-arrived] .body { animation: none; }
+}
+
+@keyframes descend {
+  0% { opacity: 0; transform: translateY(-60vh) translateX(0.8vw) rotate(1deg); }
+  18% { opacity: 1; }
+  55% { transform: translateY(1.4vh) translateX(-0.4vw) rotate(-0.6deg); }
+  78% { transform: translateY(-0.4vh) rotate(0.2deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+.coverImg {
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(1) contrast(1.05) brightness(0.72);
+  transition: filter var(--dur-slow) var(--ease-out);
+
+  .row:hover & {
+    filter: none;
+  }
+}
+
+.trace {
+  position: absolute;
+  inset: 18%;
+  width: 64%;
+  height: 64%;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.coverTint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 6, 6, 0.05) 40%, rgba(6, 6, 6, 0.6) 100%),
+    rgba(52, 211, 153, 0.2);
+  mix-blend-mode: multiply;
+  transition: opacity var(--dur-slow) var(--ease-out);
+
+  .row:hover & {
+    opacity: 0.35;
+  }
+}
+
+.coverIndex {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  @include mono-label;
+  color: var(--accent);
+}
+
+// ── Body ─────────────────────────────────────────────────────────────────────
+.body {
+  display: grid;
+  gap: var(--space-3);
+  align-content: center;
+  min-width: 0;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.kind {
+  @include mono-label;
+  color: var(--accent);
+}
+
+.draft {
+  @include mono-label;
+  font-size: 0.5625rem;
+  color: #e0b341;
+  border: 1px dashed rgba(224, 179, 65, 0.4);
+  padding: 1px var(--space-2);
+}
+
+.title {
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+.titleLink {
+  color: var(--text-primary);
+  transition: color var(--dur-fast) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+}
+
+.premise {
+  color: var(--text-secondary);
+  max-width: 44ch;
+}
+
+.read {
+  @include mono-label;
+  color: var(--accent);
+  width: fit-content;
+  display: inline-flex;
+  gap: var(--space-2);
+
+  span {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover span {
+      transform: translateX(4px);
+    }
+  }
+}

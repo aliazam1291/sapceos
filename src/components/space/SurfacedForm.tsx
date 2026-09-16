@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { damp, decay, signal } from "@/lib/scroll-signal";
 import { buildForm, disposeForm, type FormName } from "./forms";
 
 /**
@@ -21,7 +22,7 @@ import { buildForm, disposeForm, type FormName } from "./forms";
  * Two draw calls per form (edges + nodes), plus an optional hull.
  */
 
-const ACCENT = new THREE.Color("#22d0b2");
+const ACCENT = new THREE.Color("#2fbf8a");
 
 const edgeVert = /* glsl */ `
   uniform float uTime;
@@ -176,24 +177,78 @@ export default function SurfacedForm({
     [built.nodes.length, nodeSize],
   );
 
+  /*
+   * The form answers the room.
+   *
+   * It used to spin at a fixed rate and nothing else, which is a screensaver.
+   * Two inputs now feed it, both damped in the frame loop rather than read
+   * directly (the motion contract in DESIGN_DIRECTION.md):
+   *
+   *   - Pointer: the whole window's pointer, measured from the canvas centre,
+   *     leans the form a few degrees toward the cursor. Window-level on
+   *     purpose — the canvas is small and `pointer-events: none`, so the R3F
+   *     pointer would never see anything.
+   *   - Scroll: the shared scroll velocity adds spin, so flicking the page
+   *     sets the object turning and it settles as the scroll does.
+   */
+  const lean = useRef(new THREE.Vector2());
+  const leanTarget = useRef(new THREE.Vector2());
+  const gl = useThree((s) => s.gl);
+
+  useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    const el = gl.domElement;
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      // Normalised against the viewport so the lean is gentle from across the
+      // page and strongest when the cursor is right over the form.
+      leanTarget.current.set(
+        THREE.MathUtils.clamp((e.clientX - cx) / (window.innerWidth * 0.5), -1, 1),
+        THREE.MathUtils.clamp((e.clientY - cy) / (window.innerHeight * 0.5), -1, 1),
+      );
+    };
+    const onLeave = () => leanTarget.current.set(0, 0);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    document.addEventListener("pointerleave", onLeave);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerleave", onLeave);
+    };
+  }, [gl]);
+
+  const poseGroup = useRef<THREE.Group>(null);
+
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
     if (edgeMat.current) edgeMat.current.uniforms.uTime.value += dt;
     if (nodeMat.current) nodeMat.current.uniforms.uTime.value += dt;
+
+    const scrollSpin = signal.velocity * 1.4;
     if (group.current) {
-      group.current.rotation.y += dt * spin;
+      group.current.rotation.y += dt * (spin + scrollSpin);
       group.current.rotation.x += dt * spin * 0.35;
+    }
+    decay(dt);
+
+    lean.current.x = damp(lean.current.x, leanTarget.current.x, 4, dt);
+    lean.current.y = damp(lean.current.y, leanTarget.current.y, 4, dt);
+    if (poseGroup.current) {
+      poseGroup.current.rotation.x = tilt[0] + lean.current.y * 0.28;
+      poseGroup.current.rotation.y = tilt[1] + lean.current.x * 0.38;
+      poseGroup.current.rotation.z = tilt[2];
     }
   });
 
   return (
-    <group rotation={tilt} scale={scale}>
+    <group ref={poseGroup} rotation={tilt} scale={scale}>
       <group ref={group}>
         {/* Occluder in the page colour, so far edges are genuinely hidden
             rather than just dimmed. Only closed forms have one. */}
         {built.hull && (
           <mesh geometry={built.hull} scale={0.985}>
-            <meshBasicMaterial color="#060809" />
+            <meshBasicMaterial color="#080808" />
           </mesh>
         )}
 

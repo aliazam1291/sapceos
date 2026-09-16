@@ -7,9 +7,15 @@ import MotionProvider from "@/components/MotionProvider";
 import SmoothScroll from "@/components/SmoothScroll";
 import Atmosphere from "@/components/Atmosphere";
 import DeepSpace from "@/components/space/DeepSpace";
+import CometCursor from "@/components/space/CometCursor";
+import WarpOnNavigate from "@/components/space/WarpOnNavigate";
+import Companion from "@/components/space/Companion";
+import BootScreen from "@/components/BootScreen";
 import Transition from "@/components/Transition";
 import { profile } from "@/content/profile";
 import { siteUrl } from "@/lib/site";
+import { jsonLd, personJsonLd, websiteJsonLd } from "@/lib/seo";
+import { allKeywords } from "@/lib/keywords";
 import "@/styles/tailwind.css";
 import "@/styles/globals.scss";
 
@@ -19,29 +25,62 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", dis
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${profile.name} — ${profile.title}`,
+    default: `${profile.name} — ${profile.title} · Product Manager Portfolio`,
     template: `%s — ${profile.name}`,
   },
   description:
-    "Mission Control for a curious builder. Product engineering, UX strategy and platform work by Ali Azam Kazmi.",
+    "Ali Azam Kazmi — product engineer and UX strategist in New Delhi. Enterprise fleet and telematics platforms serving 200,000+ users, product case studies, and PRDs. Open to product management roles.",
+  applicationName: "Space OS",
+  authors: [{ name: profile.name, url: siteUrl }],
+  creator: profile.name,
+  keywords: allKeywords,
+  category: "technology",
+  classification: "Portfolio; Product Management; UX Design; Software Engineering",
+  other: {
+    // Geo tags: read by Bing and several directories, harmless elsewhere.
+    "geo.region": "IN-DL",
+    "geo.placename": "New Delhi",
+    "geo.position": "28.6139;77.2090",
+    ICBM: "28.6139, 77.2090",
+    subject: "Product management, UX strategy and product engineering portfolio",
+    audience: "Recruiters, hiring managers, product leaders",
+    rating: "general",
+    "revisit-after": "7 days",
+    designer: profile.name,
+    owner: profile.name,
+  },
   openGraph: {
     type: "website",
     siteName: `${profile.name} — Space OS`,
     locale: "en_IN",
+    url: siteUrl,
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050505",
+  themeColor: "#060606",
   colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
-      <body>
+      {/* suppressHydrationWarning: browser extensions (ColorZilla's
+          `cz-shortcut-listen`, Grammarly, etc.) add attributes to <body>
+          before React hydrates. That is not a mismatch we can fix. */}
+      <body suppressHydrationWarning>
+        {/* Who this is and what this site is, for machines. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(personJsonLd(), websiteJsonLd()) }}
+        />
         {/*
          * Reveal-on-scroll content must survive the script never arriving.
          *
@@ -62,9 +101,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">
           Skip to content
         </a>
+        {/* The launch sequence, first visit of a session. */}
+        <BootScreen />
         <MotionProvider />
         <SmoothScroll />
         <DeepSpace />
+        <CometCursor />
+        <WarpOnNavigate />
+        {/* The ship that travels with you, every route. */}
+        <Companion />
         <Atmosphere />
         <Transition />
         <Nav />

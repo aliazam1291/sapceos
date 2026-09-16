@@ -1,0 +1,147 @@
+// SPACE OS design tokens — the CSS custom properties. Emitted ONCE, from
+// globals.scss. Do not @use this from a component module: every module that
+// pulls it in ships its own copy of :root, and Turbopack has served stale
+// copies of those duplicates on top of the live one.
+
+:root {
+  // Surface — shades of black only. No blue or green cast in the ground.
+  --bg-primary: #060606;
+  --bg-secondary: #0d0d0d;
+  --bg-raised: #151515;
+
+  // Panels float ON the starfield rather than covering it. Translucent, not
+  // blurred: backdrop-filter on every card in a list is a real scroll cost.
+  --panel: linear-gradient(
+    168deg,
+    rgba(24, 24, 24, 0.78) 0%,
+    rgba(15, 15, 15, 0.62) 46%,
+    rgba(9, 9, 9, 0.42) 100%
+  );
+  --panel-strong: linear-gradient(
+    168deg,
+    rgba(30, 30, 30, 0.9) 0%,
+    rgba(19, 19, 19, 0.78) 46%,
+    rgba(11, 11, 11, 0.6) 100%
+  );
+  --panel-line: rgba(190, 230, 215, 0.14);
+
+  // Gradient hairline for panel edges — brightest at the top-left corner,
+  // dying out toward the bottom-right so a panel looks lit from one side
+  // rather than outlined. Lit by the signal: the hot corner is emerald, the
+  // rest a mint-tinted hairline, so every panel has a crisp edge at rest.
+  --panel-edge-hot: linear-gradient(
+    150deg,
+    rgba(52, 211, 153, 0.62) 0%,
+    rgba(52, 211, 153, 0.26) 30%,
+    rgba(190, 230, 215, 0.14) 66%,
+    rgba(190, 230, 215, 0.06) 100%
+  );
+
+  --panel-edge: linear-gradient(
+    150deg,
+    rgba(52, 211, 153, 0.34) 0%,
+    rgba(190, 230, 215, 0.18) 28%,
+    rgba(190, 230, 215, 0.09) 62%,
+    rgba(190, 230, 215, 0.05) 100%
+  );
+  // Hairlines a step brighter than the old 8%: on a black ground a panel
+  // without a visible edge is a blur.
+  --line: rgba(190, 230, 215, 0.11);
+  --line-strong: rgba(190, 230, 215, 0.22);
+
+  // Ink
+  --text-primary: #f5f5f5;
+  --text-secondary: #8c8c8c;
+  --text-tertiary: #5a5a5a;
+
+  // Signal — emerald. Active states, telemetry, orbit paths, CTAs.
+  --accent: #3cdd9e;
+  --accent-dim: rgba(60, 221, 158, 0.14);
+  --accent-line: rgba(60, 221, 158, 0.38);
+
+  // Type
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", "Cascadia Code", monospace;
+
+  // Type is a caption for the objects (2026-09-16): the ship, the stars and
+  // the 3D are the page; a title names the place and gets out of the way.
+  --type-massive: clamp(2rem, 3.6vw, 3.4rem);
+  --type-large: clamp(1.6rem, 2.8vw, 2.6rem);
+  --type-medium: clamp(1.2rem, 1.8vw, 1.6rem);
+  --type-body: clamp(1rem, 1.05vw, 1.125rem);
+  --type-small: 0.9375rem;
+  --type-micro: 0.6875rem;
+
+  --leading-tight: 1.04;
+  --leading-snug: 1.25;
+  --leading-body: 1.65;
+
+  // Space — an 8pt rhythm, fluid at the section scale.
+  //
+  // The scale is deliberately CONTIGUOUS. A gap in it (no --space-5, no
+  // --space-10) is not a harmless omission: `clamp(var(--space-6), 3vw,
+  // var(--space-10))` referencing a missing custom property makes the whole
+  // declaration invalid, so the element silently loses its padding entirely.
+  // That failure is invisible in review and has already shipped twice here.
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-section: clamp(4.5rem, 11vw, 10rem);
+
+  --measure: 68ch;
+  /*
+   * Content width, fluid above the old fixed 1240px.
+   *
+   * It was a flat 77.5rem, which on a 32-inch monitor left the whole site as a
+   * narrow column using 48% of the screen — 36% on an ultrawide, 32% at 4K.
+   * The `max()` keeps every viewport up to ~1590px exactly where it was, so
+   * nothing about the existing desktop layout moves; past that the shell grows
+   * with the screen until it reaches a sensible reading ceiling.
+   *
+   * Body copy is capped separately by `--measure`, so widening this changes
+   * layout room, never line length.
+   */
+  --shell-max: min(max(77.5rem, 76vw), 120rem);
+  --shell-pad: clamp(1.25rem, 5vw, 4rem);
+
+  // Motion — Level 01 only. Levels 02/03 are driven by GSAP.
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 140ms;
+  --dur-base: 260ms;
+  --dur-slow: 620ms;
+
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+}
+
+/*
+ * Large displays.
+ *
+ * The type scale and the hero both topped out around a 1440px viewport: the
+ * headline clamped at 5.5rem and the hero at 980px tall, so on a 2560 or 4K
+ * screen the page rendered at laptop scale in the middle of a lot of nothing —
+ * measured at 45% of viewport height for the hero at 2160.
+ *
+ * Raising the ceilings here rather than in the base clamps keeps every smaller
+ * screen byte-identical to what it was.
+ */
+@media (min-width: 1700px) {
+  :root {
+    --type-massive: clamp(3.2rem, 3vw, 4.2rem);
+    --type-large: clamp(2.4rem, 2.4vw, 3.2rem);
+    --type-medium: clamp(1.5rem, 1.6vw, 2rem);
+    --type-body: clamp(1.125rem, 0.95vw, 1.375rem);
+    --type-small: clamp(0.9375rem, 0.78vw, 1.125rem);
+    --type-micro: clamp(0.6875rem, 0.52vw, 0.8125rem);
+  }
+}

@@ -1,120 +1,6 @@
-// SPACE OS design tokens — single source of truth for colour, type, space, motion.
-
-:root {
-  // Surface
-  --bg-primary: #050505;
-  --bg-secondary: #0b0b0b;
-  --bg-raised: #101010;
-
-  // Panels float ON the starfield rather than covering it. Translucent, not
-  // blurred: backdrop-filter on every card in a list is a real scroll cost.
-  --panel: linear-gradient(
-    168deg,
-    rgba(22, 27, 30, 0.78) 0%,
-    rgba(13, 16, 18, 0.62) 46%,
-    rgba(8, 10, 11, 0.42) 100%
-  );
-  --panel-strong: linear-gradient(
-    168deg,
-    rgba(28, 35, 38, 0.9) 0%,
-    rgba(16, 20, 22, 0.78) 46%,
-    rgba(10, 13, 14, 0.6) 100%
-  );
-  --panel-line: rgba(245, 245, 245, 0.10);
-
-  // Gradient hairline for panel edges — brightest at the top-left corner,
-  // dying out toward the bottom-right so a panel looks lit from one side
-  // rather than outlined.
-  --panel-edge-hot: linear-gradient(
-    150deg,
-    rgba(34, 208, 178, 0.68) 0%,
-    rgba(34, 208, 178, 0.26) 30%,
-    rgba(245, 245, 245, 0.09) 66%,
-    rgba(245, 245, 245, 0.03) 100%
-  );
-
-  --panel-edge: linear-gradient(
-    150deg,
-    rgba(34, 208, 178, 0.34) 0%,
-    rgba(245, 245, 245, 0.13) 28%,
-    rgba(245, 245, 245, 0.05) 62%,
-    rgba(245, 245, 245, 0.02) 100%
-  );
-  --line: rgba(245, 245, 245, 0.08);
-  --line-strong: rgba(245, 245, 245, 0.16);
-
-  // Ink
-  --text-primary: #f5f5f5;
-  --text-secondary: #8c8c8c;
-  --text-tertiary: #5a5a5a;
-
-  // Signal — used sparingly. Active states, telemetry, orbit paths, CTAs.
-  --accent: #22d0b2;
-  --accent-dim: rgba(34, 208, 178, 0.14);
-  --accent-line: rgba(34, 208, 178, 0.32);
-
-  // Type
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", "Cascadia Code", monospace;
-
-  --type-massive: clamp(2.5rem, 6.4vw, 5.5rem);
-  --type-large: clamp(2rem, 5.5vw, 4rem);
-  --type-medium: clamp(1.375rem, 2.6vw, 2rem);
-  --type-body: clamp(1rem, 1.05vw, 1.125rem);
-  --type-small: 0.9375rem;
-  --type-micro: 0.6875rem;
-
-  --leading-tight: 1.04;
-  --leading-snug: 1.25;
-  --leading-body: 1.65;
-
-  // Space — an 8pt rhythm, fluid at the section scale.
-  //
-  // The scale is deliberately CONTIGUOUS. A gap in it (no --space-5, no
-  // --space-10) is not a harmless omission: `clamp(var(--space-6), 3vw,
-  // var(--space-10))` referencing a missing custom property makes the whole
-  // declaration invalid, so the element silently loses its padding entirely.
-  // That failure is invisible in review and has already shipped twice here.
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-7: 1.75rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-section: clamp(4.5rem, 11vw, 10rem);
-
-  --measure: 68ch;
-  /*
-   * Content width, fluid above the old fixed 1240px.
-   *
-   * It was a flat 77.5rem, which on a 32-inch monitor left the whole site as a
-   * narrow column using 48% of the screen — 36% on an ultrawide, 32% at 4K.
-   * The `max()` keeps every viewport up to ~1590px exactly where it was, so
-   * nothing about the existing desktop layout moves; past that the shell grows
-   * with the screen until it reaches a sensible reading ceiling.
-   *
-   * Body copy is capped separately by `--measure`, so widening this changes
-   * layout room, never line length.
-   */
-  --shell-max: min(max(77.5rem, 76vw), 120rem);
-  --shell-pad: clamp(1.25rem, 5vw, 4rem);
-
-  // Motion — Level 01 only. Levels 02/03 are driven by GSAP.
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-fast: 140ms;
-  --dur-base: 260ms;
-  --dur-slow: 620ms;
-
-  --radius: 0.25rem;
-  --radius-lg: 0.5rem;
-}
+// SPACE OS design tokens — Sass mixins only. The CSS custom properties live
+// in vars.scss and are emitted once via globals.scss; mixins here reference
+// them as var(--x), so @use-ing this file from a module emits no CSS.
 
 @mixin mono-label {
   font-family: var(--font-mono);
@@ -137,18 +23,15 @@
   }
 }
 
-
-/*
- * Instrument panel.
- *
- * The house card treatment: square corners, one hairline border, a translucent
- * fill so the starfield reads through, and corner ticks instead of a radius.
- * Rounded, shadowed, opaque cards are what make a dark site look like generic
- * SaaS — this is meant to read as a mounted panel on an instrument face.
- *
- * Corner ticks are drawn with pseudo-elements on a wrapper-free element, so a
- * panel costs no extra DOM.
- */
+// Instrument panel.
+//
+// The house card treatment: square corners, one hairline border, a translucent
+// fill so the starfield reads through, and corner ticks instead of a radius.
+// Rounded, shadowed, opaque cards are what make a dark site look like generic
+// SaaS — this is meant to read as a mounted panel on an instrument face.
+//
+// (Silent `//` comment on purpose: a `/* */` here is emitted into every
+// module that @uses this file.)
 @mixin panel($cut: 16px) {
   position: relative;
   border: 0;
@@ -202,28 +85,5 @@
     &:hover::after {
       background: var(--panel-strong);
     }
-  }
-}
-
-
-/*
- * Large displays.
- *
- * The type scale and the hero both topped out around a 1440px viewport: the
- * headline clamped at 5.5rem and the hero at 980px tall, so on a 2560 or 4K
- * screen the page rendered at laptop scale in the middle of a lot of nothing —
- * measured at 45% of viewport height for the hero at 2160.
- *
- * Raising the ceilings here rather than in the base clamps keeps every smaller
- * screen byte-identical to what it was.
- */
-@media (min-width: 1700px) {
-  :root {
-    --type-massive: clamp(5.5rem, 5.4vw, 9rem);
-    --type-large: clamp(4rem, 4.2vw, 6.5rem);
-    --type-medium: clamp(2rem, 2.2vw, 3rem);
-    --type-body: clamp(1.125rem, 0.95vw, 1.375rem);
-    --type-small: clamp(0.9375rem, 0.78vw, 1.125rem);
-    --type-micro: clamp(0.6875rem, 0.52vw, 0.8125rem);
   }
 }

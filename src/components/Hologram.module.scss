@@ -1,0 +1,247 @@
+@use "../styles/tokens.scss" as *;
+
+.holo {
+  --tx: 0deg;
+  --ty: 0deg;
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+  aspect-ratio: 10 / 11;
+  perspective: 700px;
+  perspective-origin: 50% 70%;
+  display: grid;
+  grid-template-rows: 76% 24%;
+}
+
+/* The projected plate, floating above the emitter. */
+.stage {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(8deg + var(--tx))) rotateY(var(--ty));
+  transition: transform 0.6s var(--ease-out);
+  animation: turn 9s ease-in-out infinite alternate;
+  margin: 0 8%;
+  height: 76%;
+  align-self: start;
+  will-change: transform;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// Screen-blended against the page: whatever is dark in the projection is
+// simply not there, the way a hologram has no black — only light or none.
+.plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgba(60, 221, 158, 0.4);
+  mix-blend-mode: screen;
+  box-shadow:
+    0 0 28px rgba(60, 221, 158, 0.2),
+    inset 0 0 40px rgba(60, 221, 158, 0.15);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  animation: flicker 3.7s steps(1) infinite, hover 5.2s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.ghostA,
+.ghostB {
+  border-color: transparent;
+  box-shadow: none;
+  background: none;
+  opacity: 0.28;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.ghostA { transform: translate3d(-3px, 0, -6px); filter: hue-rotate(-30deg); }
+.ghostB { transform: translate3d(3px, 0, 6px); filter: hue-rotate(30deg); }
+
+// The image as light: desaturated, pushed to a single hue by a screen over
+// emerald, and never fully opaque — you can see the room through it.
+// Luminance becomes emerald light: grayscale image multiplied onto the
+// emerald field, so bright pixels glow and dark ones go to nothing.
+.img {
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(1) contrast(1.35) brightness(1.05);
+  mix-blend-mode: multiply;
+}
+
+.plate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #4de3aa, #1a8f68);
+  z-index: 0;
+}
+.plate > :global(img),
+.trace {
+  position: relative;
+  z-index: 1;
+}
+
+.trace {
+  width: 100%;
+  height: 100%;
+  color: var(--accent);
+  opacity: 0.9;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.32) 2px 3px);
+  pointer-events: none;
+}
+
+.sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 18%;
+  z-index: 3;
+  background: linear-gradient(180deg, transparent, rgba(191, 245, 223, 0.35), transparent);
+  animation: sweep 3.1s linear infinite;
+  pointer-events: none;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}
+
+.edge {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(90deg, rgba(60, 221, 158, 0.35), transparent 18%, transparent 82%, rgba(60, 221, 158, 0.35));
+  pointer-events: none;
+}
+
+/* Light cone from the emitter up to the plate. */
+.cone {
+  position: absolute;
+  left: 50%;
+  bottom: 11%;
+  width: 84%;
+  height: 42%;
+  transform: translateX(-50%);
+  background: linear-gradient(0deg, rgba(60, 221, 158, 0.4), rgba(60, 221, 158, 0.06));
+  clip-path: polygon(40% 100%, 60% 100%, 100% 0, 0 0);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 3;
+  animation: coneFlicker 2.9s steps(1) infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* The emitter: a plate on the ground, seen at a low angle. */
+.emitter {
+  position: relative;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+// Disc seen from a low angle: a lit top face and a dark rim beneath it.
+.emitter::after {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 34%;
+  bottom: 6%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #2a2e34, #0a0b0d);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
+  z-index: 0;
+}
+.emitter::before {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 24%;
+  bottom: 18%;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(60, 221, 158, 0.45), transparent 55%),
+    linear-gradient(160deg, #6a7079, #2b2f36 55%, #15181c);
+  border: 1px solid rgba(190, 230, 215, 0.28);
+  z-index: 1;
+}
+
+.slit {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  top: 50%;
+  height: 3px;
+  z-index: 2;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(60, 221, 158, 0.9), 0 0 30px rgba(60, 221, 158, 0.5);
+  border-radius: 2px;
+}
+
+.ring {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 34%;
+  bottom: 28%;
+  border-radius: 50%;
+  border: 1px solid rgba(60, 221, 158, 0.35);
+  z-index: 2;
+}
+
+.tag {
+  position: absolute;
+  right: 8%;
+  bottom: -2px;
+  z-index: 2;
+  @include mono-label;
+  font-size: 0.5rem;
+  color: var(--text-tertiary);
+}
+
+@keyframes turn {
+  from { transform: rotateX(calc(8deg + var(--tx))) rotateY(calc(-9deg + var(--ty))); }
+  to { transform: rotateX(calc(8deg + var(--tx))) rotateY(calc(9deg + var(--ty))); }
+}
+
+@keyframes hover {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+
+@keyframes sweep {
+  from { top: -20%; }
+  to { top: 110%; }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  7% { opacity: 0.86; }
+  9% { opacity: 1; }
+  41% { opacity: 0.92; }
+  43% { opacity: 1; }
+  67% { opacity: 0.8; }
+  68% { opacity: 1; }
+}
+
+@keyframes coneFlicker {
+  0%, 100% { opacity: 0.9; }
+  7% { opacity: 0.7; }
+  9% { opacity: 0.95; }
+  67% { opacity: 0.6; }
+  68% { opacity: 0.9; }
+}
