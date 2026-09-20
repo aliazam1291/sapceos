@@ -569,8 +569,83 @@ the open channel; the one joke; keep it the only one).
   → 53+213+63 ms, zero blocking GL queries. `window.__gls` lists every
   renderer for the harnesses (`tools/programs-uat.mjs`).
 
+- *The recompile hunt* (2026-09-20, later). The home page still froze
+  mid-scroll (long tasks 542/668/926/1105 ms) with every scene warmed.
+  `tools/progkeys-uat.mjs` (every program a renderer compiles, with its
+  #defines and light counts, and a Δ against the last of its family) and
+  `tools/progdelete-uat.mjs` (createProgram/deleteProgram with call
+  stacks) named three ways a warmed scene compiles again, all fixed:
+  (1) **hiding a group that holds lights.** Three keys every lit program
+  on the visible light set; `group.visible=false` on the ship (four
+  lights) recompiled the whole canvas, and showing it recompiled it back —
+  the Touchdown paid ~2 s twice, the Starship the same in the galaxy.
+  Drivers call `ShipHandle.setShown()` (hides the airframe group only;
+  the engine lamp lives outside it and goes to intensity 0). Never toggle
+  `visible` on a light or its ancestor; never mount a light late.
+  (2) **R3F's default shadow type.** `shadows` (boolean) sets
+  PCFSoftShadowMap; three r185 swaps it for PCF on the first shadow pass,
+  and that is in every key — the whole scene compiled again one frame
+  after warm-up. Canvases with shadows pass `shadows="percentage"`.
+  (3) **materials born without the map.** A canvas mounting after the
+  bake got the env map a frame later, React replaced the four ship
+  materials, the first set was disposed and the second compiled
+  synchronously. `shipEnvIfReady` now hands a later renderer its
+  `fromBaked()` copy synchronously, materials that want the map carry
+  `userData.wantsEnv`, and `WarmShaders` waits (bounded) until none is
+  without it. And the one that "could not be warmed": (4) **linked is not
+  compiled on ANGLE.** PMREM's GGX program passed `compileAsync` and still
+  blocked 1.8 s at first use (`getProgramParameter(ACTIVE_UNIFORMS)` —
+  `glblock-uat` now names the query and the caller). Three keys on the
+  geometry's attribute set (`HAS_NORMAL`: PMREM's planes have no normal,
+  a PlaneGeometry does) and the D3D11 driver builds per-input/output-layout
+  executables at DRAW time. `shipEnv.ts` warms on a plane with PMREM's
+  exact attributes, DRAWS each material once into a HalfFloat linear
+  target, and polls a `fenceSync` before the real pass. Result: zero
+  blocking GL queries through boot and a full home scroll; the env map is
+  back on every canvas at "high". Run `CHROME=1 BOOT=1 node
+  tools/progkeys-uat.mjs /` after touching lights, shadows, materials or
+  env maps: a family that appears twice on one renderer is a bug.
+- *Style and layout, per frame* (2026-09-20, later). `tools/layout-uat.mjs`
+  (a Chrome trace: forced Layout/UpdateLayoutTree by initiator,
+  invalidation reasons by node, main-thread animations with Blink's
+  reasons, long tasks) showed the scroll sampler was blamed for layout
+  that CSS animations dirtied: a CSS `transform` animation on an SVG
+  child (robot jets, drone rotors) is a layout per frame, on or off
+  screen; `offset-path` (the Debrief masses), `top`, `transform-origin`
+  and `var()` in keyframes run on the main thread. Rules: animate SVG
+  children with opacity only; decorative loops on objects outside
+  `.flies` pause off screen (`useOnScreen` → `data-off` →
+  `animation-play-state: paused`; RobotGuide, Singularity); sweeps use
+  translate, not top; the drop hint keeps a fixed origin.
+  `contain-intrinsic-size` is the two-axis form `none auto Npx` — the
+  one-value form reserved the WIDTH too and a 320px phone overflowed
+  /field-notes by 104px (rows clipped their titles).
+- *DumbMoney* (2026-09-20). Ali: founder & CPO, "I need a dedicated
+  page." `/dumbmoney` is a venture page in the report's shape (hologram
+  of the live site, manifest with the link and the co-founder, results
+  strip honestly pending, ownership, rows, the two blog posts beside a
+  phone capture). Facts in PROFILE.md "Venture"; the site's own public
+  counters disagree with each other and are not results. In the nav after
+  Studio, the palette, the sitemap, the flight log (`experience[0]`, org
+  linked), the home opener and the /about lede. Founding date and the old
+  résumé's numbers still wait on Ali.
+- *More objects* (2026-09-20). Ali: "we need more elements like the
+  spaceship" and "drones can be better looking." `Satellite`
+  (`SatelliteModel`/`SatelliteScene`, PBR relay: foil bus, solar wings,
+  gold dish, emerald beacon) is the /contact header figure —
+  `PageHeader figureWidth` widens the slot. The drone SVG was redrawn
+  (sculpted shell, motor cans, rotor rims, gimbal, LED seam, lit nav
+  lamps) — same viewBox, same slots. A photoreal object per place is the
+  pattern; one `View`-style shared canvas is the next step if drones go 3D.
+- *The launch screen replays.* `?launch` on any URL forces it; the palette
+  has "Replay the launch sequence." Ali reloaded the same tab and could
+  not find it — the session flag is per tab.
+- *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
+  layout (no-ops off Vercel, no cookies). `main` is the deployment branch
+  (fast-forwarded from `redesign/interactive` 2026-09-20).
+
 **Page map (each page is a place).**
-Home = one mission in ten legs (2026-09-20, above): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel. Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
+Home = one mission in ten legs (2026-09-20, above): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
 
 Context for Claude Code working in this repo. Read this first, every session.
 

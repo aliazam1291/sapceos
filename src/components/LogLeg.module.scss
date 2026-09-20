@@ -50,7 +50,7 @@
   align-items: start;
   // Its own content-box minimum, so the .flies reservation matches (see
   // CLAUDE.md, "A leg holds the frame").
-  contain-intrinsic-size: auto 105px;
+  contain-intrinsic-size: none auto 105px;
 }
 
 // The waypoint: a diamond on the route, lit for the current role.

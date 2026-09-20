@@ -31,7 +31,7 @@
   // guesses moved the whole page under the reader. Size the placeholder
   // to the real thing (auto: the last rendered size once it has one).
   // Measured 2026-09-20 at 1440: 203-249px rendered.
-  contain-intrinsic-size: auto 250px;
+  contain-intrinsic-size: none auto 250px;
   position: relative;
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr);
@@ -142,7 +142,7 @@
   gap: var(--space-6);
 
   .beacon {
-    contain-intrinsic-size: auto 150px;
+    contain-intrinsic-size: none auto 150px;
   }
 
   .call {

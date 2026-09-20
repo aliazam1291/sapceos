@@ -18,6 +18,8 @@ import { profile } from "@/content/profile";
 import { siteUrl } from "@/lib/site";
 import { jsonLd, personJsonLd, websiteJsonLd } from "@/lib/seo";
 import { allKeywords } from "@/lib/keywords";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/styles/tailwind.css";
 import "@/styles/globals.scss";
 
@@ -124,6 +126,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SectionGuide />
         <main id="main">{children}</main>
         <Footer />
+        {/* Vercel Analytics + Speed Insights (2026-09-20, Ali: "so that I see my
+            visits"). Both no-op outside a Vercel deployment; neither sets a
+            cookie, so the footer line still holds. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

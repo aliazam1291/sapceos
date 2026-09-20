@@ -13,7 +13,7 @@
   // renders (growth is below the viewport, invisible; shrink pulls content up).
   // The generic 420px guess shifted /missions ~550px as rows
   // came in (measured 2026-09-18).
-  contain-intrinsic-size: auto 655px;
+  contain-intrinsic-size: none auto 655px;
   position: relative;
   display: grid;
   grid-template-columns: 1fr;

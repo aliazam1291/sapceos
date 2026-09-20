@@ -6,7 +6,7 @@
   gap: var(--space-8);
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -68,7 +68,7 @@
 
 .row {
   // Measured: rows sum to 428px each in layout; the generic .flies guess is 420px.
-  contain-intrinsic-size: auto 380px;
+  contain-intrinsic-size: none auto 380px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(var(--space-6), 3vw, var(--space-12));

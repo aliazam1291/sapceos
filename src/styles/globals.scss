@@ -321,7 +321,10 @@ html.booting {
 // rendered 233, and pulled the page up 192px under the reader (2026-09-20).
 :where(.flies, .objectRow) {
   content-visibility: auto;
-  contain-intrinsic-size: auto 420px;
+  // Height only (2026-09-20): the one-value form reserved the WIDTH too, so
+  // every skipped row had a 380-680px minimum width — /field-notes overflowed
+  // a 320px phone by 104px and clipped its titles (tools/mobile-uat.mjs).
+  contain-intrinsic-size: none auto 420px;
 }
 
 /*

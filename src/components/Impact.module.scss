@@ -18,6 +18,13 @@
   padding: clamp(var(--space-5), 2.6vw, var(--space-8));
 
   @include panel(20px);
+
+  // The table scrolls inside the panel on phones (see .table).
+  @media (max-width: 640px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
 }
 
 .panelHead {
@@ -109,7 +116,7 @@
 .rowIndex {
   grid-area: index;
   @include mono-label;
-  font-size: 0.625rem;
+  font-size: max(0.625rem, var(--micro-floor));
   font-variant-numeric: tabular-nums;
   align-self: start;
   padding-top: 0.45em;
@@ -195,6 +202,14 @@
   table-layout: fixed;
   font-size: var(--type-small);
 
+  // Phones (2026-09-20, tools/mobile-uat.mjs): five 3rem columns left the
+  // mission column ~100px, and the name links collapsed to 16–25px wide —
+  // unreadable and untappable. The matrix keeps its columns and scrolls
+  // sideways inside its own panel instead; the mission column holds 11rem.
+  @media (max-width: 640px) {
+    min-width: 34rem;
+  }
+
   th,
   td {
     padding: var(--space-3) var(--space-2);
@@ -245,6 +260,12 @@
   align-items: baseline;
   column-gap: var(--space-3);
   min-width: 0;
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-1);
+    min-width: 11rem;
+  }
 }
 
 .missionLink {
@@ -253,6 +274,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+  // A finger-sized hit area without moving the text.
+  display: inline-block;
+  max-width: 100%;
+  padding-block: 0.45rem;
+  margin-block: -0.45rem;
+  vertical-align: baseline;
   transition: color var(--dur-fast) var(--ease-out);
 
   @include hover-only {

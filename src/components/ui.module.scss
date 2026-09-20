@@ -1309,7 +1309,7 @@
 
 .projectorCell {
   // Measured 677px rendered; the generic .flies guess is 420px.
-  contain-intrinsic-size: auto 680px;
+  contain-intrinsic-size: none auto 680px;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
