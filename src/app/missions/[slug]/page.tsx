@@ -118,6 +118,19 @@ export default async function MissionReport({ params }: Params) {
               <dd>{sig.value}</dd>
             </div>
           ))}
+          {mission.links?.length ? (
+            <div className={ui.manifestCell}>
+              <dt>Open it</dt>
+              <dd>
+                {mission.links.map((l) => (
+                  <a key={l.href} href={l.href} target="_blank" rel="noreferrer noopener" className={ui.manifestLink}>
+                    {l.label}
+                    <span aria-hidden="true"> ↗</span>
+                  </a>
+                ))}
+              </dd>
+            </div>
+          ) : null}
           <div className={`${ui.manifestCell} ${ui.manifestWide}`}>
             <dt>Stack</dt>
             <dd>

@@ -403,6 +403,22 @@
   }
 }
 
+.manifestLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+  padding-block: 0.3rem;
+  margin-block: -0.3rem;
+
+  @include hover-only {
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
 .manifestWide {
   flex-basis: 100%;
 }

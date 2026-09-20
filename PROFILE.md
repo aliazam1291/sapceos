@@ -89,13 +89,13 @@ All at MapMyIndia/Gtropy. Ali owns frontend, UI/UX, cross-functional collaborati
 | Project | Detail |
 |---|---|
 | **Vahan Shakti** | Vehicle tracking & analytics. React map components for live location, custom markers, route plotting, clustering, heatmaps. 200,000+ users. Live on Play Store. |
-| **Intouch** | Cross-platform logistics management app. Optimised for 10,000+ active vehicles, scaling to 50,000. Live on Play Store. |
+| **Intouch** | Cross-platform logistics management app. Optimised for 10,000+ active vehicles, scaling to 50,000. Live on Play Store: https://play.google.com/store/apps/details?id=intouch.mappls.app (Ali, 2026-09-20). |
 | **Locate (Manufacturer Backend)** | Independently led frontend. Real-time vehicle monitoring, web + mobile dashboards, 20,000+ vehicles across Maharashtra. |
 | **Control Tower** | Real-time alert management & ticketing platform. Map-based trip analysis, performance-optimised architecture. |
 | **Hermes** | Internal logistics & data management tool. Modular, component-driven UI, accessibility focus. |
 | **D3 Advanced Visuals** | Open-source enterprise analytics platform. D3.js, Next.js, TypeScript, dual-theme dashboards, reusable chart components. |
 | **FASTag Platform** | Full-stack FASTag registration + multi-vehicle management, OTP authentication. |
-| **Indane Yatra Mitra (IOCL)** | Enterprise fleet tracking for IOCL LPG tanker operations — live tracking, safety alarms, geofencing, route playback, role-based access. Live on Play Store. |
+| **Indane Yatra Mitra (IOCL)** | Enterprise fleet tracking for IOCL LPG tanker operations — live tracking, safety alarms, geofencing, route playback, role-based access. Live on Play Store: https://play.google.com/store/apps/details?id=iocl.cvtms.mappls (Ali, 2026-09-20). |
 | **Handwritten Text Recognition** | OCR pipeline, OpenCV + Tesseract, advanced preprocessing. |
 | **PUJ Obstruction Detection** | Deep learning medical imaging pipeline on ultrasound data. |
 | **Carbon Footprint Calculator** | Electricity-based carbon emissions estimator with offset visualisation. |

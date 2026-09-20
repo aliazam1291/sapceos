@@ -38,6 +38,8 @@ export type Mission = {
   featured?: boolean;
   /** Path under /public — a real screenshot or render of the shipped thing. */
   cover?: string;
+  /** Where the shipped thing can be opened — store listings, live URLs. Proof, not decoration. */
+  links?: { label: string; href: string }[];
 };
 
 export type FieldNote = {

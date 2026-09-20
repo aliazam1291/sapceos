@@ -283,6 +283,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "intouch",
+    links: [{ label: "Google Play", href: "https://play.google.com/store/apps/details?id=intouch.mappls.app" }],
     results: [
       { value: "10,000+", label: "Active vehicles" },
       { value: "50,000", label: "Designed headroom" },
@@ -482,6 +483,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "indane-yatra-mitra",
+    links: [{ label: "Google Play", href: "https://play.google.com/store/apps/details?id=iocl.cvtms.mappls" }],
     results: [{ value: "Live", label: "On the Play Store", source: "IOCL LPG tanker operations" }],
     title: "Indane Yatra Mitra",
     org: "MapMyIndia [Gtropy] · for IOCL",

@@ -382,3 +382,18 @@
   .briefBody { transition: none; }
   .briefToggle::before { transition: none; }
 }
+
+.storeLink {
+  color: var(--accent);
+  text-decoration: none;
+  display: inline-block;
+  padding-block: 0.3rem;
+  margin-block: -0.3rem;
+
+  @include hover-only {
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}

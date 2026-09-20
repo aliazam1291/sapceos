@@ -81,6 +81,18 @@ export default function MissionRow({
               <dd>{signal.value}</dd>
             </div>
           ))}
+          {/* A live listing is the strongest signal a shipped thing has. */}
+          {mission.links?.map((l) => (
+            <div key={l.href}>
+              <dt>Open it</dt>
+              <dd>
+                <a href={l.href} target="_blank" rel="noreferrer noopener" className={styles.storeLink}>
+                  {l.label}
+                  <span aria-hidden="true"> ↗</span>
+                </a>
+              </dd>
+            </div>
+          ))}
         </dl>
 
         <div className={styles.meta}>
