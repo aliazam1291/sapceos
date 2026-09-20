@@ -52,6 +52,16 @@ const KIND_LABEL: Record<Kind, string> = {
   channel: "Channel",
 };
 const KIND_ORDER: Kind[] = ["page", "mission", "note", "studio", "lab", "channel"];
+// The 3D marks (public/icons, rendered from the site's own models by
+// tools/icons-build.mjs): a group is headed by the object it means — pages
+// by the ship, missions by a world, the channel by the relay, the studio by
+// the ringed giant. Notes are drones (SVG) and the lab has no model yet.
+const KIND_ICON: Partial<Record<Kind, string>> = {
+  page: "/icons/ship-128.png",
+  mission: "/icons/world-128.png",
+  studio: "/icons/giant-128.png",
+  channel: "/icons/satellite-128.png",
+};
 
 function buildEntries(): Entry[] {
   const pages: Entry[] = [
@@ -307,6 +317,10 @@ export default function CommandPalette() {
                 <li key={entry.id} role="presentation" className={styles.row}>
                   {heading ? (
                     <span className={styles.group} aria-hidden="true">
+                      {KIND_ICON[entry.kind] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={KIND_ICON[entry.kind]} alt="" width={28} height={28} className={styles.groupIcon} loading="lazy" decoding="async" />
+                      ) : null}
                       {heading}
                     </span>
                   ) : null}

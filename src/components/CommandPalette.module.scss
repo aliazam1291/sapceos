@@ -129,9 +129,20 @@
 
 .group {
   @include mono-label;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-3) var(--space-5) var(--space-1);
   color: var(--text-tertiary);
+}
+
+// The 3D mark beside a group heading (public/icons).
+.groupIcon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  transform: scale(1.35);
+  margin: -4px 0;
 }
 
 .option {

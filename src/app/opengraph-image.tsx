@@ -12,7 +12,12 @@ export const contentType = "image/png";
  * HUD language — mono label, big name, a horizon line, one emerald mark —
  * and it reads at thumbnail size in a LinkedIn or Slack unfurl.
  */
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  // The ship (public/icons/ship.png via tools/icons-compose.mjs), inlined:
+  // the edge runtime has no filesystem, but a URL relative to this module
+  // is bundled with it.
+  const ship = await fetch(new URL("./og-ship.png", import.meta.url)).then((r) => r.arrayBuffer());
+  const shipSrc = `data:image/png;base64,${Buffer.from(ship).toString("base64")}`;
   return new ImageResponse(
     (
       <div
@@ -26,17 +31,21 @@ export default function OpenGraphImage() {
           background: "radial-gradient(ellipse at 20% 0%, #0f2a20 0%, #060606 55%)",
           color: "#f2f5f8",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
+          position: "relative",
         }}
       >
+        {/* The ship, upper right, lit from the card's own warm corner. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={shipSrc} width={520} height={520} alt="" style={{ position: "absolute", right: 30, top: 10, opacity: 0.95 }} />
         <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 22, letterSpacing: 4, color: "#3cdd9e" }}>
           <div style={{ width: 10, height: 10, borderRadius: 999, background: "#3cdd9e" }} />
           SPACE OS · MISSION CONTROL
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-          <div style={{ fontSize: 88, fontWeight: 600, letterSpacing: -3, lineHeight: 1 }}>{profile.name}</div>
+          <div style={{ fontSize: 88, fontWeight: 600, letterSpacing: -3, lineHeight: 1, maxWidth: 720 }}>{profile.name}</div>
           <div style={{ fontSize: 36, color: "#8e9aa8", letterSpacing: -0.5 }}>{profile.title}</div>
-          <div style={{ fontSize: 30, color: "#f2f5f8", marginTop: 6 }}>{profile.oneLine}</div>
+          <div style={{ fontSize: 30, color: "#f2f5f8", marginTop: 6, maxWidth: 680 }}>{profile.oneLine}</div>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
