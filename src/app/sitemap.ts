@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { missions } from "@/content/missions";
 import { fieldNotes } from "@/content/field-notes";
+import { hostedWriting } from "@/content/writing";
 import { orbitHasContent } from "@/content/orbit";
 import { siteUrl } from "@/lib/site";
 
@@ -43,5 +44,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       priority: 0.7,
     })),
+    // Hosted writing: published pieces only — a draft is never advertised.
+    ...hostedWriting
+      .filter((p) => p.status === "published")
+      .map((p) => ({
+        url: `${siteUrl}/writing/${p.slug}`,
+        lastModified: new Date(p.date),
+        priority: 0.7,
+      })),
   ];
 }

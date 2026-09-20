@@ -1,6 +1,7 @@
 import { links, profile } from "@/content/profile";
 import type { FieldNote, Mission } from "@/content/types";
 import type { Venture } from "@/content/venture";
+import type { Piece } from "@/content/writing";
 import { siteUrl } from "./site";
 import { contentKeywords, domainKeywords, skillKeywords } from "./keywords";
 
@@ -111,6 +112,25 @@ export function ventureJsonLd(v: Venture) {
       isPartOf: { "@id": siteId },
       author: { "@id": personId },
     },
+  };
+}
+
+/** A piece written and hosted here (/writing/<slug>). */
+export function pieceJsonLd(p: Piece) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${siteUrl}/writing/${p.slug}`,
+    url: `${siteUrl}/writing/${p.slug}`,
+    headline: p.title,
+    description: p.line,
+    author: { "@id": personId },
+    publisher: { "@id": personId },
+    datePublished: p.date,
+    articleSection: p.kind,
+    inLanguage: "en",
+    isPartOf: { "@id": siteId },
+    wordCount: (p.body ?? []).join(" ").split(/s+/).length,
   };
 }
 

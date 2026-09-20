@@ -3,7 +3,7 @@ import Link from "next/link";
 import PageForm from "@/components/space/PageForm";
 import Comms from "@/components/Comms";
 import { NextStep, PageHeader, Section, SectionHead, ui } from "@/components/ui";
-import { writing } from "@/content/writing";
+import { listedWriting } from "@/content/writing";
 import { links } from "@/content/profile";
 import { breadcrumbJsonLd, jsonLd, personId } from "@/lib/seo";
 import { siteUrl } from "@/lib/site";
@@ -26,7 +26,7 @@ const medium = links.find((l) => l.label === "Medium")?.href ?? "https://medium.
 const fmt = (iso: string) => new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" });
 
 export default function WritingPage() {
-  const sorted = [...writing].sort((a, b) => (a.date < b.date ? 1 : -1));
+  const sorted = [...listedWriting].sort((a, b) => (a.date < b.date ? 1 : -1));
   return (
     <>
       <script
@@ -74,12 +74,22 @@ export default function WritingPage() {
                   <time dateTime={p.date}>{fmt(p.date)}</time>
                 </p>
                 <h3 className={styles.title}>
-                  <a href={p.href} target="_blank" rel="noreferrer noopener" className={styles.link}>
-                    {p.title}
-                    <span className={styles.arrow} aria-hidden="true">
-                      ↗
-                    </span>
-                  </a>
+                  {p.outlet === "Space OS" ? (
+                    <Link href={p.href} className={styles.link}>
+                      {p.title}
+                      {p.status === "draft" ? <span className={styles.draft}> · draft</span> : null}
+                      <span className={styles.arrow} aria-hidden="true">
+                        →
+                      </span>
+                    </Link>
+                  ) : (
+                    <a href={p.href} target="_blank" rel="noreferrer noopener" className={styles.link}>
+                      {p.title}
+                      <span className={styles.arrow} aria-hidden="true">
+                        ↗
+                      </span>
+                    </a>
+                  )}
                 </h3>
                 <p className={styles.line}>{p.line}</p>
                 {p.related ? (

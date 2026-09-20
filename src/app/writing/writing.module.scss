@@ -47,9 +47,15 @@
 .outlet {
   color: var(--text-secondary);
 
-  &[data-outlet="DumbMoney"] {
+  &[data-outlet="DumbMoney"],
+  &[data-outlet="Space OS"] {
     color: var(--accent);
   }
+}
+
+.draft {
+  color: var(--text-tertiary);
+  font-size: 0.8em;
 }
 
 .title {
