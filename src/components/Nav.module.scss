@@ -105,6 +105,8 @@
 .here,
 .cta,
 .toggle,
+.palette,
+.sound,
 .resume {
   display: flex;
   align-items: center;
@@ -120,6 +122,8 @@
 .brand,
 .cta,
 .toggle,
+.palette,
+.sound,
 .resume {
   position: relative;
 
@@ -169,6 +173,11 @@
   background: var(--accent);
   box-shadow: 0 0 10px var(--accent);
   animation: statusPulse 2.4s var(--ease-in-out) infinite;
+  // Composited (2026-09-17): an infinite loop on a non-composited element
+  // repainted its whole fixed layer every frame — the nav's 7px status dot
+  // alone cost 15fps on an Intel UHD.
+  will-change: transform, opacity;
+
 }
 
 @keyframes statusPulse {
@@ -256,6 +265,40 @@
   }
 }
 
+.palette {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding-inline: var(--space-3);
+
+  kbd {
+    @include mono-label;
+    letter-spacing: 0.08em;
+    text-transform: none;
+    color: inherit;
+    padding: 1px 6px;
+    border: 1px solid var(--line-strong);
+    line-height: 1.5;
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+
+      kbd {
+        border-color: var(--accent-line);
+      }
+    }
+  }
+
+  // Phones have no ⌘K; the palette is still there via the Overview.
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
 .toggle {
   @include mono-label;
   background: none;
@@ -328,6 +371,30 @@
 
   .dock {
     min-height: 48px;
+  }
+}
+
+/*
+ * The narrowest phones (320-400px). Measured 2026-09-20: at 320 the dock's
+ * natural width was 379px — the Overview toggle ran 59px past the edge and
+ * lost its right border. The toggle keeps its glyph (aria-expanded still
+ * names it) and drops the word; the CTA shortens its padding.
+ */
+@media (max-width: 400px) {
+  .toggle {
+    font-size: 0;
+    gap: 0;
+    padding-inline: var(--space-3);
+  }
+
+  .brandName {
+    display: none;
+  }
+
+  .cta,
+  .palette,
+  .sound {
+    padding-inline: var(--space-2);
   }
 }
 

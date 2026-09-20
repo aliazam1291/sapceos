@@ -1,14 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Decode from "@/components/Decode";
+import Comms from "@/components/Comms";
+import ScanReadout from "@/components/ScanReadout";
 import GalaxyNavigator from "@/components/GalaxyNavigator";
 import LocalTime from "@/components/LocalTime";
 import { Status } from "@/components/ui";
 import type { Mission } from "@/content/types";
-import { profile } from "@/content/profile";
+import { profile, proof } from "@/content/profile";
 import styles from "./MissionFlight.module.scss";
 
 /**
@@ -27,7 +28,16 @@ import styles from "./MissionFlight.module.scss";
 export default function MissionFlight({ missions }: { missions: Mission[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const [beat, setBeat] = useState(0);
+  // The last few percent of the pin: the flight is over and the ship climbs
+  // out to where the companion picks it up (top right).
+  const [leaving, setLeaving] = useState(false);
   const beats = missions.length + 1;
+  // Where the scroll wants to be; the shown beat walks toward it one system
+  // at a time on a clock, so a fast flick still flies past every world
+  // instead of cutting straight to the last one.
+  const wantBeat = useRef(0);
+  const shownBeat = useRef(0);
+  const beatAt = useRef(0);
 
   useEffect(() => {
     let ctx: { revert: () => void } | undefined;
@@ -56,10 +66,28 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
             // to a system rather than flickering between two mid-scroll.
             const raw = self.progress * (beats - 1);
             const next = Math.round(raw);
-            setBeat((b) => (Math.abs(raw - next) < 0.42 ? next : b));
+            if (Math.abs(raw - next) < 0.42) wantBeat.current = next;
+            setLeaving(self.progress > 0.965);
           },
         });
-        return () => st.kill();
+        // The pacer: one step toward the wanted beat, never sooner than the
+        // dwell after the last step. A reader who stops sees it catch up.
+        const DWELL = 900;
+        let raf = 0;
+        const pace = (now: number) => {
+          raf = requestAnimationFrame(pace);
+          const cur = shownBeat.current;
+          const want = wantBeat.current;
+          if (cur === want || now - beatAt.current < DWELL) return;
+          shownBeat.current = cur + Math.sign(want - cur);
+          beatAt.current = now;
+          setBeat(shownBeat.current);
+        };
+        raf = requestAnimationFrame(pace);
+        return () => {
+          cancelAnimationFrame(raf);
+          st.kill();
+        };
       });
       ctx = mm;
     })();
@@ -77,7 +105,7 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
       <div className={styles.stage} data-pin>
         <div className={styles.field} aria-hidden="true">
           <div className={styles.fieldInner}>
-            <GalaxyNavigator flightControlled flightTo={mission ? mission.slug : null} />
+            <GalaxyNavigator flightControlled flightTo={mission ? mission.slug : null} flightLeaving={leaving} />
           </div>
         </div>
 
@@ -122,9 +150,34 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
             ))}
           </ol>
 
-          <p className={styles.hint} aria-hidden="true">
-            {beat === 0 ? "Scroll to fly" : `System ${String(beat).padStart(2, "0")} / ${String(missions.length).padStart(2, "0")}`}
-          </p>
+          <div className={styles.foot}>
+            {/* The opener: who this is and why to keep reading, on screen
+                before anything moves. Dissolves once the flight starts. */}
+            <div className={styles.opener} data-away={beat > 0 || undefined}>
+              <p className={styles.openerPitch}>
+                <Decode delay={1100}>{profile.oneLine}</Decode>
+              </p>
+              <p className={styles.openerLine}>
+                {profile.title} &middot; targeting product roles &middot; {profile.location}
+              </p>
+              <p className={styles.openerLine}>
+                <Link href="/dumbmoney" className={styles.openerVenture}>
+                  Founder &amp; CPO, DumbMoney <span aria-hidden="true">&rarr;</span>
+                </Link>
+              </p>
+              <p className={styles.openerProof}>
+                <span>{proof.value}</span> {proof.label}
+              </p>
+            </div>
+
+            <p className={styles.hint} aria-hidden="true">
+              {beat === 0 ? "Scroll to fly" : `System ${String(beat).padStart(2, "0")} / ${String(missions.length).padStart(2, "0")}`}
+            </p>
+            {/* The 30-second path: past the flight, straight to the deck. */}
+            <a href="#hangar" className={styles.skip} data-away={beat > 0 || undefined} title="The ship will understand.">
+              Skip the flight &darr;
+            </a>
+          </div>
         </div>
 
         {/* The HUD: docks when a system is reached. */}
@@ -150,29 +203,16 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
 
               {/* Stat strip: the numbers a planet card would carry. */}
               <dl className={styles.stats}>
-                {mission.signals.slice(0, 3).map((s) => (
+                {mission.signals.slice(0, 2).map((s) => (
                   <div key={s.label} className={styles.stat}>
                     <dt>{s.label}</dt>
-                    <dd data-big={/\d/.test(s.value) || undefined}>{s.value}</dd>
+                    <dd data-big={/\d/.test(s.value) || undefined}>
+                      {/* Read on arrival: the number counts up as the ship scans the world. */}
+                      {/\d/.test(s.value) ? <ScanReadout value={s.value} /> : s.value}
+                    </dd>
                   </div>
                 ))}
               </dl>
-
-              <p className={styles.hudPremise}>{mission.premise}</p>
-
-              {mission.cover ? (
-                <div className={styles.callout}>
-                  <span className={styles.calloutLine} aria-hidden="true" />
-                  <div className={styles.hudCover}>
-                    <Image src={mission.cover} alt="" fill sizes="420px" className={styles.hudImg} />
-                    <span className={styles.hudTint} />
-                    <span className={styles.hudScan} />
-                    <span className={styles.coverTag}>
-                      <span>Interface</span> shipped
-                    </span>
-                  </div>
-                </div>
-              ) : null}
 
               <div className={styles.hudFoot}>
                 <p className={styles.hudOwned}>
@@ -184,19 +224,16 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
               </div>
             </div>
           ) : (
-            <div className={styles.hudInner}>
-              <p className={styles.hudIdle}>
-                <Decode>Mission control</Decode>
-              </p>
-              <p className={styles.hudPremise}>
-                {missions.length} systems on the flight plan. Scroll to fly to the first.
-              </p>
-            </div>
+            // Beat 0: mission control, in the air the HUD will dock into.
+            <Comms at="boarding" className={styles.comms} delay={1600} />
           )}
         </aside>
 
         {/* Touch and reduced-motion: no pin, so the systems list is the flight. */}
-        <ul className={styles.fallback}>
+        {/* data-nojs: the layout's <noscript> style shows this list when the
+            script never arrives — without JS the pinned flight cannot fly and
+            the five featured missions were unreachable on a desktop. */}
+        <ul className={styles.fallback} data-nojs>
           {missions.map((m, i) => (
             <li key={m.slug}>
               <Link href={`/missions/${m.slug}`} className={styles.fallbackItem}>

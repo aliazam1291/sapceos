@@ -1,7 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Comms from "./Comms";
 import { useEffect, useRef, useState } from "react";
+import { useOnScreen } from "@/lib/use-on-screen";
 import styles from "./Singularity.module.scss";
 
 const SingularityScene = dynamic(() => import("@/components/space/SingularityScene"), {
@@ -38,6 +40,9 @@ interface SingularityProps {
 export default function Singularity({ label, title, lede, masses }: SingularityProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [mount, setMount] = useState(false);
+  // The orbit is an offset-path animation — main thread, five bodies, every
+  // frame. Paused while the section is off screen (see use-on-screen.ts).
+  const onScreen = useOnScreen(ref, "30% 0px");
 
   useEffect(() => {
     const el = ref.current;
@@ -56,7 +61,7 @@ export default function Singularity({ label, title, lede, masses }: SingularityP
   }, []);
 
   return (
-    <section ref={ref} className={styles.field} aria-label={label} data-section={label}>
+    <section ref={ref} id="debrief" className={styles.field} aria-label={label} data-section={label.replace(/^\d+\s*\/\s*/, "")} data-off={onScreen ? undefined : ""}>
       <div className={styles.scene} aria-hidden="true">
         {mount ? <SingularityScene hostRef={ref} /> : null}
       </div>
@@ -65,11 +70,29 @@ export default function Singularity({ label, title, lede, masses }: SingularityP
         <p className={styles.label}>{label}</p>
         <h2 className={styles.title}>{title}</h2>
         {lede ? <p className={styles.lede}>{lede}</p> : null}
+        <p className={styles.hint} aria-hidden="true">
+          Drag to orbit · Hold to dive
+        </p>
+        <Comms at="debrief" className={styles.comms} />
       </div>
 
-      <ol className={styles.masses}>
+      {/* The measured numbers, for a screen reader: the orbit below is a
+          presentation of them — bodies that dim on the far side of the hole —
+          and a list that fades to 30% opacity is not how a fact is read. */}
+      <ul className="visually-hidden">
         {masses.map((m) => (
-          <li key={m.label} className={styles.mass} style={{ "--w": m.weight } as React.CSSProperties}>
+          <li key={m.label}>
+            {m.value} {m.label}
+          </li>
+        ))}
+      </ul>
+      <ol className={styles.masses} aria-hidden="true">
+        {masses.map((m, i) => (
+          <li
+            key={m.label}
+            className={styles.mass}
+            style={{ "--w": m.weight, "--ph": (i / masses.length).toFixed(2) } as React.CSSProperties}
+          >
             <span className={styles.massValue}>{m.value}</span>
             <span className={styles.massLabel}>{m.label}</span>
           </li>

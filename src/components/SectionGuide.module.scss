@@ -46,7 +46,24 @@
   background: var(--accent);
 }
 
+.leg {
+  @include mono-label;
+  margin: calc(var(--space-6) * -1 + var(--space-2)) 0 0;
+  font-size: 0.625rem;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+// The route: ticks on a dashed line, the ship marker riding it.
+.route {
+  position: relative;
+  // Tick pitch: 2px pad + 1px mark + 2px pad + 14px gap.
+  --pitch: 19px;
+}
+
 .ticks {
+  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -54,6 +71,33 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 14px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    right: 7px;
+    border-right: 1px dashed var(--line);
+    pointer-events: none;
+  }
+}
+
+// A small diamond — the flight log's waypoint mark — that slides to the
+// active tick. Scroll direction is read by which way it travels.
+.marker {
+  position: absolute;
+  right: 4px;
+  top: calc(var(--i, 0) * var(--pitch) + 2px);
+  width: 7px;
+  height: 7px;
+  transform: translateY(-50%) rotate(45deg);
+  background: var(--bg-primary);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 10px rgba(60, 221, 158, 0.55);
+  transition: top 0.55s var(--ease-out);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /*

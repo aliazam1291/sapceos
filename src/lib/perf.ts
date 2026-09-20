@@ -10,9 +10,38 @@
  */
 export type PerfLevel = "high" | "medium" | "low";
 
-export const perf: { level: PerfLevel; fps: number } = { level: "high", fps: 60 };
+export const perf: { level: PerfLevel; fps: number; software: boolean } = {
+  level: "high",
+  fps: 60,
+  /** True when WebGL is running on the CPU (SwiftShader, llvmpipe, …). */
+  software: false,
+};
 
 let decided = false;
+
+/*
+ * Is WebGL a real GPU or a software rasteriser? Headless auditors
+ * (Lighthouse, PageSpeed, most CI) and some locked-down desktops run
+ * SwiftShader or llvmpipe, where every draw call is main-thread CPU time:
+ * measured 2026-09-19, the galaxy alone produced 10-second long tasks and a
+ * 31 s Total Blocking Time on the mobile audit. The fps probe would have
+ * caught it, but only after ~4 s of that — too late for a page load. One
+ * throwaway context, released immediately, answers it before any scene
+ * mounts.
+ */
+function detectSoftwareGL(): boolean {
+  try {
+    const c = document.createElement("canvas");
+    const gl = (c.getContext("webgl2") ?? c.getContext("webgl")) as WebGLRenderingContext | null;
+    if (!gl) return true;
+    const ext = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return /swiftshader|llvmpipe|softpipe|software|mesa offscreen|microsoft basic render/i.test(renderer);
+  } catch {
+    return false;
+  }
+}
 
 export function decidePerfLevel(): PerfLevel {
   if (decided || typeof window === "undefined") return perf.level;
@@ -28,6 +57,10 @@ export function decidePerfLevel(): PerfLevel {
   } catch {}
   if (saveData || cores <= 4 || mem <= 4) perf.level = "low";
   else if (coarse || cores <= 6) perf.level = perf.level === "low" ? "low" : "medium";
+  perf.software = detectSoftwareGL();
+  if (perf.software) perf.level = "low";
+  document.documentElement.dataset.perf = perf.level;
+  if (perf.software) document.documentElement.dataset.gl = "software";
   return perf.level;
 }
 
@@ -47,6 +80,7 @@ export function reportFrame(dt: number) {
     try {
       localStorage.setItem("space-os:perf", perf.level);
     } catch {}
+    document.documentElement.dataset.perf = perf.level;
     window.dispatchEvent(new CustomEvent("space:perf", { detail: perf.level }));
   }
 }

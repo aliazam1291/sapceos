@@ -115,12 +115,19 @@ export default function MatrixPortrait({
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
+    // 30 fps (2026-09-20): ~3,100 fillText calls per frame was 5 ms of main
+    // thread every frame the portrait was on screen, and a scan band does
+    // not need sixty of them. Skipped frames still advance the clock.
+    let acc = 0;
     const draw = (now: number) => {
       raf = requestAnimationFrame(draw);
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
       if (!visible || !lum || !rgb) return;
-      t += dt;
+      acc += dt;
+      if (acc < 1 / 31) return;
+      t += acc;
+      acc = 0;
 
       pointer.x = damp(pointer.x, target.on ? target.x : pointer.x, 8, dt);
       pointer.y = damp(pointer.y, target.on ? target.y : pointer.y, 8, dt);

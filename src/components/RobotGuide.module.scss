@@ -40,6 +40,7 @@
 }
 
 .bot {
+  will-change: transform;
   width: 96px;
   height: auto;
   flex: none;
@@ -119,7 +120,7 @@
 
 .name {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--accent);
 }
 
@@ -161,13 +162,28 @@
   50% { opacity: 0.35; }
 }
 
+// Opacity only (2026-09-20): the scaleY it had was a CSS transform on an
+// SVG <ellipse>, which Blink cannot composite — it re-laid the SVG out four
+// times a frame for as long as the page was open. A flicker reads the same.
 @keyframes jet {
-  from { transform: scaleY(0.8); opacity: 0.4; }
-  to { transform: scaleY(1.3); opacity: 0.7; }
+  from { opacity: 0.35; }
+  to { opacity: 0.8; }
 }
 
 @keyframes point {
   0% { transform: rotate(0deg); }
   60% { transform: rotate(-40deg); }
   100% { transform: rotate(-30deg); }
+}
+
+:global(html[data-perf="low"]) {
+  .jet, .lamp, .antenna, .eyes { animation: none !important; }
+}
+
+// Off screen (RobotGuide.tsx sets data-off): every loop holds. The arrival
+// and speech animations are not loops and are never running off screen.
+.guide[data-off] {
+  .bot, .jet, .lamp, .antenna, .eyes, .caret {
+    animation-play-state: paused;
+  }
 }

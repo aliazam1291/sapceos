@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { DRAFT } from "@/content/types";
 import TextReveal from "./TextReveal";
 import Decode from "./Decode";
+import Counter from "./Counter";
 import styles from "./ui.module.scss";
 
 export function Section({
@@ -64,11 +65,16 @@ export function PageHeader({
       <p className={styles.labelRule}>
         <Decode>{label}</Decode>
       </p>
-      {/* The page title is the one piece of type per route that earns a
-          line-by-line reveal; everything below it uses the cheaper fade. */}
-      <TextReveal as="h1" className={styles.pageTitle} start="top 92%">
-        {title}
-      </TextReveal>
+      {/* The page title rises at FIRST PAINT, in CSS (2026-09-19). It was a
+          GSAP SplitText reveal: the server-rendered title painted, then GSAP
+          arrived, hid it and raised it line by line — on a throttled phone
+          that second paint landed 1-2 s later and was the route's LCP on
+          every secondary page (Lighthouse: 5 s mobile). One masked rise from
+          frame one keeps the entrance and costs nothing. Section titles are
+          scrolled to, so TextReveal still suits them. */}
+      <h1 className={styles.pageTitle}>
+        <span className={styles.pageTitleInner}>{title}</span>
+      </h1>
       {/* No `data-reveal` on the lede. The page header is, by definition, the
           first thing on the route — it is never scrolled to, so a scroll reveal
           only held the opening sentence back until hydration. It was the LCP
@@ -103,7 +109,15 @@ export function DraftFlag({ note }: { note?: string }) {
 }
 
 /** Renders report/note copy, swapping the DRAFT sentinel for a visible flag. */
-export function Body({ value }: { value: string | string[] }) {
+export function Body({
+  value,
+  // A note's copy sits straight under the page h1, so its "## " subheads
+  // are h2 there; inside a report's rows they stay h3.
+  subheadLevel: Sub = "h3",
+}: {
+  value: string | string[];
+  subheadLevel?: "h2" | "h3";
+}) {
   const parts = Array.isArray(value) ? value : [value];
   return (
     <div className={styles.rowBody}>
@@ -115,9 +129,9 @@ export function Body({ value }: { value: string | string[] }) {
         ) : part.startsWith("## ") ? (
           // A long note needs structure; a "## " prefix is the one bit of
           // markup content is allowed, and it becomes a real subheading.
-          <h3 key={i} className={styles.rowSubhead}>
+          <Sub key={i} className={styles.rowSubhead}>
             {part.slice(3)}
-          </h3>
+          </Sub>
         ) : (
           <p key={i}>{part}</p>
         ),
@@ -204,6 +218,96 @@ export function NextStep({
         {premise ? <span className={styles.nextPremise}>{premise}</span> : null}
       </div>
     </Link>
+  );
+}
+
+/**
+ * The pager — where this entry sits in its sequence, and the two beside it.
+ *
+ * Reports and notes had a "next" door at the very end and nothing else: a
+ * reader who opened the fourth mission could not tell there were ten, or
+ * step back to the third without the index. One hairline strip under the
+ * header: previous, the position as a bay number, next. Wraps at the ends
+ * so the sequence is a loop, like the hangar it indexes.
+ */
+export function Pager({
+  index,
+  total,
+  prev,
+  next,
+  unit = "Bay",
+}: {
+  index: number;
+  total: number;
+  prev: { href: string; title: string };
+  next: { href: string; title: string };
+  /** What one entry is called: "Bay" on the deck, "Note" in the drone bay. */
+  unit?: string;
+}) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <nav className={styles.pager} aria-label={`${unit} sequence`}>
+      <Link href={prev.href} className={styles.pagerLink} rel="prev">
+        <span className={styles.pagerArrow} aria-hidden="true">
+          ←
+        </span>
+        <span className={styles.pagerKicker}>Previous</span>
+        <span className={styles.pagerTitle}>{prev.title}</span>
+      </Link>
+      <span className={styles.pagerPos} aria-label={`${unit} ${index + 1} of ${total}`}>
+        <span className={styles.pagerUnit}>{unit}</span>
+        <span className={styles.pagerNum}>
+          {pad(index + 1)}
+          <span className={styles.pagerOf}> / {pad(total)}</span>
+        </span>
+        <span className={styles.pagerTicks} aria-hidden="true">
+          {Array.from({ length: total }, (_, i) => (
+            <i key={i} data-on={i === index || undefined} />
+          ))}
+        </span>
+      </span>
+      <Link href={next.href} className={`${styles.pagerLink} ${styles.pagerNext}`} rel="next">
+        <span className={styles.pagerKicker}>Next</span>
+        <span className={styles.pagerTitle}>{next.title}</span>
+        <span className={styles.pagerArrow} aria-hidden="true">
+          →
+        </span>
+      </Link>
+    </nav>
+  );
+}
+
+/**
+ * A readout — a strip of measured numbers, counted up on arrival.
+ *
+ * The index pages opened on a title and a filter and told the reader
+ * nothing about the size of what they were looking at. This is the HUD
+ * version of "ten missions, three active, two hundred thousand users":
+ * hairline cells, mono labels, numbers big in the signal colour. Every
+ * value comes from content transcribed from PROFILE.md; a cell with a
+ * `note` says where the number is from.
+ */
+export function Readout({
+  items,
+  label,
+}: {
+  items: { value: number; label: string; prefix?: string; suffix?: string; note?: string }[];
+  label?: string;
+}) {
+  return (
+    <dl className={styles.readout} aria-label={label}>
+      {items.map((it) => (
+        <div key={it.label} className={styles.readoutCell}>
+          <dd className={styles.readoutValue}>
+            <Counter value={it.value} prefix={it.prefix} suffix={it.suffix} />
+          </dd>
+          <dt className={styles.readoutLabel}>
+            {it.label}
+            {it.note ? <span className={styles.readoutNote}> · {it.note}</span> : null}
+          </dt>
+        </div>
+      ))}
+    </dl>
   );
 }
 

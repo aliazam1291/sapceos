@@ -30,7 +30,7 @@ export default function NoteFlight({ notes }: { notes: FieldNote[] }) {
         {notes.map((note, i) => {
           const draft = note.body.every((p) => p.startsWith(DRAFT));
           return (
-            <li key={note.slug} className={styles.row} data-side={i % 2 === 0 ? "left" : "right"}>
+            <li key={note.slug} className={`${styles.row} flies`} data-flight={i % 2 === 0 ? "left" : "right"} data-side={i % 2 === 0 ? "left" : "right"}>
               {/* The drone descends onto this row when the reader reaches it. */}
               <ArrivalGate host="parent" threshold={0.45} />
               {/* The case study, carried in: a drone with the cover slung

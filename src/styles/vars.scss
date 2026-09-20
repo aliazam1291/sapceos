@@ -51,8 +51,13 @@
 
   // Ink
   --text-primary: #f5f5f5;
-  --text-secondary: #8c8c8c;
-  --text-tertiary: #5a5a5a;
+  // Both greys clear WCAG AA on every ground in use (2026-09-19): tertiary
+  // was #5a5a5a, 2.9:1 on the page ground, and was the one thing every
+  // Lighthouse contrast failure on the site pointed at (labels, status
+  // pills, filter chips, beacon indices). #7f7f7f is 5.1:1 on #060606 and
+  // 4.6:1 on the raised panel; secondary keeps a visible step above it.
+  --text-secondary: #9a9a9a;
+  --text-tertiary: #7f7f7f;
 
   // Signal — emerald. Active states, telemetry, orbit paths, CTAs.
   --accent: #3cdd9e;
@@ -71,6 +76,9 @@
   --type-body: clamp(1rem, 1.05vw, 1.125rem);
   --type-small: 0.9375rem;
   --type-micro: 0.6875rem;
+  // The floor under every hard-coded micro size (max(0.5625rem, floor) in
+  // the modules): 0 on a desktop, 11px on a phone.
+  --micro-floor: 0rem;
 
   --leading-tight: 1.04;
   --leading-snug: 1.25;
@@ -135,6 +143,16 @@
  * Raising the ceilings here rather than in the base clamps keeps every smaller
  * screen byte-identical to what it was.
  */
+// Phones: the smallest mono labels (K-7's tag, the flight-plan stops, the
+// beacons' "where") were 9-11px at arm's length. One step up, and nothing
+// on a desktop changes.
+@media (max-width: 640px) {
+  :root {
+    --type-micro: 0.75rem;
+    --micro-floor: 0.6875rem;
+  }
+}
+
 @media (min-width: 1700px) {
   :root {
     --type-massive: clamp(3.2rem, 3vw, 4.2rem);

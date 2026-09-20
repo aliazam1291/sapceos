@@ -3,11 +3,12 @@ import { ButtonLink, PageHeader, Section, Status, ui } from "@/components/ui";
 import CopyLink from "@/components/CopyLink";
 import PageForm from "@/components/space/PageForm";
 import GravityGrid from "@/components/space/GravityGrid";
-import { links, profile } from "@/content/profile";
+import { links, lookingFor, profile } from "@/content/profile";
+import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
   title: "Open Channel",
-  description: `Get in touch with Ali Azam Kazmi — ${profile.email}, or book a slot directly.`,
+  description: `Get in touch with Ali Azam Kazmi about product roles or platform work — ${profile.email}, or book a slot on Calendly directly.`,
   alternates: { canonical: "/contact" },
 };
 
@@ -29,6 +30,9 @@ export default function ContactPage() {
           <PageForm form="planet" label="A slowly turning faceted wireframe planet." size={240} />
         }
       />
+      <div className={ui.pageComms}>
+        <Comms at="contact" />
+      </div>
 
       {/* Every way to reach the operator, as masses — click one to open it. */}
       <GravityGrid
@@ -58,6 +62,9 @@ export default function ContactPage() {
             </div>
             <h2 className={ui.vcardName}>{profile.name}</h2>
             <p className={ui.vcardTitle}>{profile.title}</p>
+            <p className={ui.vcardLooking}>
+              <span>Looking for</span> {lookingFor} &middot; currently {profile.currentRole}, {profile.currentOrg}
+            </p>
           </div>
 
           <div className={ui.vcardActions}>

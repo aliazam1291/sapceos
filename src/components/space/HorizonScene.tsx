@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { WarmShaders } from "./useWarmShaders";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { damp } from "@/lib/scroll-signal";
 import { useSceneFrameloop } from "@/lib/use-scene-frameloop";
+import { quietGL } from "@/lib/gl";
 
 /**
  * The closing beat: a planetary surface running out to a horizon.
@@ -322,11 +324,12 @@ export default function HorizonScene() {
     typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameloop = useSceneFrameloop(canvasRef);
+  const [warm, setWarm] = useState(false);
 
   return (
     <Canvas
       ref={canvasRef}
-      frameloop={frameloop}
+      frameloop={warm ? frameloop : "never"}
       /*
        * Camera height and aim are set by where the HORIZON LINE lands, not by
        * what looks good in isolation: at eye level it crossed the link columns
@@ -338,9 +341,13 @@ export default function HorizonScene() {
       dpr={coarse ? 1 : [1, 1.6]}
       gl={{ antialias: !coarse, alpha: true, powerPreference: "low-power" }}
       style={{ position: "absolute", inset: 0 }}
-      onCreated={({ camera }) => camera.lookAt(0, -0.35, -14)}
+      onCreated={(state) => {
+          quietGL(state);
+          state.camera.lookAt(0, -0.35, -14);
+        }}
     >
       <Terrain coarse={coarse} />
+      <WarmShaders onWarm={() => setWarm(true)} />
     </Canvas>
   );
 }

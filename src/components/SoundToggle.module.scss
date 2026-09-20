@@ -1,0 +1,70 @@
+@use "../styles/tokens.scss" as *;
+
+// The speaker: body filled, the three arcs are the meter. Off, the arcs
+// are hairlines; on, they light in sequence and the last one pulses — the
+// dock's one animated thing besides the status dot, and it stops under
+// reduced motion.
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding-inline: var(--space-3);
+
+  svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: none;
+
+    path:first-child {
+      fill: currentColor;
+      stroke: none;
+    }
+  }
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  &[data-on] {
+    color: var(--accent);
+
+    .arc {
+      opacity: 1;
+    }
+
+    .arc:nth-of-type(4) {
+      animation: soundPulse 1.6s ease-in-out infinite;
+      will-change: opacity;
+    }
+  }
+}
+
+.arc {
+  opacity: 0.3;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.text {
+  @include mono-label;
+  color: inherit;
+}
+
+@keyframes soundPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle[data-on] .arc:nth-of-type(4) { animation: none; }
+}
+
+html[data-perf="low"] .toggle[data-on] .arc:nth-of-type(4) { animation: none; }

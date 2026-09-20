@@ -1,0 +1,36 @@
+@use "../styles/tokens.scss" as *;
+
+// The beacons take the left half; the right half is sky for the ship's
+// hero pass (Companion HOME_PLAN, s 1.5). Keep it empty — a waypoint over
+// copy is a bug.
+.leg {
+  display: grid;
+  gap: 0;
+  align-content: center;
+  // A leg holds the frame (2026-09-18): shorter than a viewport, this one
+  // went by in a second at reading pace.
+  min-height: calc(100vh - var(--space-16) * 2);
+}
+
+.comms {
+  margin: calc(var(--space-12) * -1 + var(--space-4)) 0 var(--space-8);
+}
+
+.route {
+  max-width: min(100%, 44rem);
+
+  @media (min-width: 1100px) {
+    width: 52%;
+  }
+}
+
+.all {
+  @include mono-label;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+
+  @include hover-only {
+    &:hover { color: var(--text-primary); }
+  }
+}

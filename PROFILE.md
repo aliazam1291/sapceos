@@ -50,6 +50,17 @@ All at MapMyIndia/Gtropy. Ali owns frontend, UI/UX, cross-functional collaborati
 
 ---
 
+## Venture
+
+**DumbMoney** (https://dumbmoney.in) — **Founder & CPO**. Confirmed by Ali on 2026-09-20 ("I am the founder and CPO, and there is a link"). Has a dedicated page on the site (/dumbmoney).
+- What it is (from dumbmoney.in, read 2026-09-20): a coupon and deals platform for Indian online shoppers — verified coupon codes, promo codes and cashback offers from Indian retailers, browsable by store or category, copy the code at checkout, no signup. Tagline on the site: "India's most trusted coupon platform. We verify every deal so you save more, every day."
+- Run by co-founders **Akshat Somani** and **Ali Kazmi** (dumbmoney.in/about-dumbmoney). Every coupon is attributed to whichever founder checked it; verification combines automated expiry/duplicate checks with human review before a code goes live; the site says it does not yet manually test every code at checkout.
+- Ali writes on its blog (dumbmoney.in/author/ali): "How to Use Coupons During Big Billion Days & Great Indian Festival" (15 Sep 2026), "Why Coupon Codes Stop Working (And How to Avoid Expired Ones)" (10 Sep 2026).
+- An earlier design concept for the brand is on Behance: https://www.behance.net/gallery/217772229/Dumb-Money
+- ⚠️ No outcome number is confirmed. The older resume's "profitable in its first quarter, 37+ partner brands" stays unverified (below); the site's own public counters disagree with each other (home: "2,436+ verified deals from 62+ Indian brands"; about: "10,000+ Active Deals") and are not to be used as results. Founding date not confirmed by Ali — the older resume says 2026.
+
+---
+
 ## Work experience
 
 **MapMyIndia [Gtropy]** — Associate Software Developer, Product & Platform · Sep 2024–present · New Delhi
@@ -134,7 +145,7 @@ Linear vs Jira · The AI Code Assistant Adoption Paradox · Apple Ecosystem Frag
 ## Unverified — DO NOT USE without confirmation
 
 - **"Sunder Masala"** (legacy brand modernisation) — appears in the creative brief but nowhere in Ali's actual history. Do not build a case study for it until confirmed.
-- **DumbMoney** (dumbmoney.in) — appears on an older resume as a coupon/cashback platform founded 2026, reportedly profitable in its first quarter with 37+ partner brands. Not currently on the live portfolio. Confirm current status before featuring.
+- **DumbMoney outcomes** — the older resume's "profitable in its first quarter with 37+ partner brands" and the founding year (2026) are not confirmed. The venture itself IS confirmed (see "Venture" above); only these numbers and the date wait on Ali.
 - Outcome metrics for the three Active missions.
 - Orbit topics / reading list / music — no verified data. Must come from Ali directly.
 

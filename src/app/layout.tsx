@@ -9,9 +9,11 @@ import Atmosphere from "@/components/Atmosphere";
 import DeepSpace from "@/components/space/DeepSpace";
 import CometCursor from "@/components/space/CometCursor";
 import WarpOnNavigate from "@/components/space/WarpOnNavigate";
-import Companion from "@/components/space/Companion";
+import CompanionLoader from "@/components/space/CompanionLoader";
 import BootScreen from "@/components/BootScreen";
 import Transition from "@/components/Transition";
+import CommandPalette from "@/components/CommandPalette";
+import SoundSystem from "@/components/SoundSystem";
 import { profile } from "@/content/profile";
 import { siteUrl } from "@/lib/site";
 import { jsonLd, personJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -25,11 +27,11 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", dis
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${profile.name} — ${profile.title} · Product Manager Portfolio`,
+    default: `${profile.name} — Product Manager Portfolio · New Delhi`,
     template: `%s — ${profile.name}`,
   },
   description:
-    "Ali Azam Kazmi — product engineer and UX strategist in New Delhi. Enterprise fleet and telematics platforms serving 200,000+ users, product case studies, and PRDs. Open to product management roles.",
+    "Ali Azam Kazmi, product engineer and UX strategist, New Delhi: fleet platforms for 200,000+ users, the PRDs behind them, six case studies. Open to PM roles.",
   applicationName: "Space OS",
   authors: [{ name: profile.name, url: siteUrl }],
   creator: profile.name,
@@ -94,7 +96,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <noscript>
           <style
             dangerouslySetInnerHTML={{
-              __html: "[data-reveal]{opacity:1!important;transform:none!important}",
+              __html:
+                "[data-reveal]{opacity:1!important;transform:none!important}[data-nojs]{display:grid!important}",
             }}
           />
         </noscript>
@@ -104,15 +107,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* The launch sequence, first visit of a session. */}
         <BootScreen />
         <MotionProvider />
+        {/* The room tone and the ship's engines. Opt-in; see SoundToggle. */}
+        <SoundSystem />
         <SmoothScroll />
         <DeepSpace />
         <CometCursor />
         <WarpOnNavigate />
-        {/* The ship that travels with you, every route. */}
-        <Companion />
+        {/* The ship that travels with you, every route. Loaded after first
+            paint: it is the only scene that used to ride in the layout bundle. */}
+        <CompanionLoader />
         <Atmosphere />
         <Transition />
         <Nav />
+        {/* Mission control: ⌘K, every destination from one field. */}
+        <CommandPalette />
         <SectionGuide />
         <main id="main">{children}</main>
         <Footer />

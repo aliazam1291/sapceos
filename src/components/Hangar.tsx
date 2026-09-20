@@ -16,9 +16,9 @@ import styles from "./Hangar.module.scss";
 export default function Hangar({ missions }: { missions: Mission[] }) {
   return (
     <Section id="hangar" data-section="Hangar">
-      <SectionHead label="02 / Hangar" title="Also shipped" />
+      <SectionHead label="03 / Hangar" title="Also shipped. Less photogenic, equally real." />
       <RobotGuide
-        idle="Hangar chief. Five projectors online — hover one and I'll read its tag."
+        idle="Hangar chief. Five projectors online. Hover one and I'll read its tag — it's most of what I do."
         lines={Object.fromEntries(
           missions.map((m, i) => {
             const num = m.signals.find((sig) => /\d/.test(sig.value));
@@ -31,7 +31,7 @@ export default function Hangar({ missions }: { missions: Mission[] }) {
         {missions.map((m, i) => {
           const numeric = m.signals.find((sig) => /\d/.test(sig.value));
           return (
-          <li key={m.slug} className={styles.bay} data-bay={m.slug}>
+          <li key={m.slug} className={`${styles.bay} objectRow`} data-bay={m.slug}>
             <article className={styles.cell}>
               <Hologram src={m.cover} seed={m.slug} tag={`H-${String(i + 1).padStart(2, "0")}`} className={styles.holo} />
               <div className={styles.meta}>

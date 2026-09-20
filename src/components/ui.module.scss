@@ -82,6 +82,12 @@
  * and the lede sits in the right, baseline-aligned to it — the width is used,
  * and the two roles read as distinct rather than as one stacked paragraph.
  */
+// The comms transcript under a page header: shell-padded, one beat of air.
+.pageComms {
+  @include shell;
+  padding-block: var(--space-6) 0;
+}
+
 .pageHeader {
   @include shell;
   padding-block: clamp(var(--space-12), 8vw, 6rem) var(--space-12);
@@ -131,6 +137,29 @@
   letter-spacing: -0.035em;
   margin: 0;
   max-width: 20ch;
+  // The mask for the first-paint rise below. Negative insets so ascenders
+  // and descenders are not shaved off once the line has landed.
+  clip-path: inset(-0.25em -0.1em -0.3em -0.1em);
+}
+
+// One block rising out of the mask from the first frame — no JS, no
+// dependency on GSAP arriving, so the title is the LCP at ~FCP.
+.pageTitleInner {
+  display: block;
+  animation: pageTitleRise 1s var(--ease-out) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes pageTitleRise {
+  from {
+    transform: translateY(112%);
+  }
+  to {
+    transform: none;
+  }
 }
 
 .pageHeader > .lede {
@@ -353,7 +382,8 @@
 
   dt {
     @include mono-label;
-    font-size: 0.5625rem;
+    // Was 0.5625rem (9px) — unreadable on a phone; the label is content.
+    font-size: var(--type-micro);
     color: var(--text-tertiary);
   }
 
@@ -375,6 +405,177 @@
 
 .manifestWide {
   flex-basis: 100%;
+}
+
+// ── Pager (report / note sequence) ──────────────────────────────────────────
+// One hairline strip under the header: previous, the bay number with a tick
+// per entry, next. A panel for text, so it may have edges.
+.pager {
+  @include shell;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 1px;
+  background: var(--line);
+  border-block: 1px solid var(--line);
+  padding-inline: 0;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr 1fr;
+
+    .pagerPos {
+      grid-column: 1 / -1;
+      order: -1;
+      justify-content: center;
+    }
+  }
+}
+
+.pagerLink {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "arrow kicker"
+    "arrow title";
+  column-gap: var(--space-3);
+  align-content: center;
+  padding: var(--space-4) var(--shell-pad);
+  background: var(--bg-primary);
+  text-decoration: none;
+  color: var(--text-secondary);
+  min-width: 0;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 6%, var(--bg-primary));
+      color: var(--text-primary);
+
+      .pagerArrow {
+        color: var(--accent);
+        transform: translateX(-4px);
+      }
+    }
+  }
+}
+
+.pagerNext {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "kicker arrow"
+    "title arrow";
+  text-align: right;
+
+  @include hover-only {
+    &:hover .pagerArrow {
+      transform: translateX(4px);
+    }
+  }
+}
+
+.pagerArrow {
+  grid-area: arrow;
+  align-self: center;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+  transition: transform var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.pagerKicker {
+  grid-area: kicker;
+  @include mono-label;
+}
+
+.pagerTitle {
+  grid-area: title;
+  font-size: var(--type-small);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pagerPos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--bg-primary);
+  white-space: nowrap;
+}
+
+.pagerUnit {
+  @include mono-label;
+}
+
+.pagerNum {
+  font-family: var(--font-mono);
+  font-size: var(--type-small);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.pagerOf {
+  color: var(--text-tertiary);
+}
+
+.pagerTicks {
+  display: flex;
+  gap: 3px;
+
+  i {
+    display: block;
+    width: 3px;
+    height: 10px;
+    background: var(--line-strong);
+
+    &[data-on] {
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent-line);
+    }
+  }
+}
+
+// ── Readout (index pages) ───────────────────────────────────────────────────
+// The HUD strip of measured numbers: the grid's 1px background is the
+// divider, the numbers are big and mono in the signal colour.
+.readout {
+  display: grid;
+  // Two columns on a phone (a four-row stack was a screen of numbers), four
+  // across on a desktop.
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 1px;
+  margin: 0 0 var(--space-10);
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.readoutCell {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  background: var(--bg-primary);
+  min-width: 0;
+}
+
+.readoutValue {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(1.35rem, 2.6vw, 2.4rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.readoutLabel {
+  @include mono-label;
+  color: var(--text-secondary);
+}
+
+.readoutNote {
+  color: var(--text-tertiary);
+  text-transform: none;
+  letter-spacing: 0.06em;
 }
 
 .metaRow {
@@ -567,6 +768,10 @@
 }
 
 .dot {
+  // Composited (2026-09-17): an infinite loop on a non-composited element
+  // repainted its whole fixed layer every frame — the nav's 7px status dot
+  // alone cost 15fps on an Intel UHD.
+  will-change: transform, opacity;
   position: relative;
   width: 6px;
   height: 6px;
@@ -578,6 +783,7 @@
   &::after {
     content: "";
     position: absolute;
+    will-change: transform, opacity;
     inset: 0;
     border-radius: 50%;
     background: currentColor;
@@ -1073,6 +1279,13 @@
   }
 }
 
+.footerAside {
+  color: var(--text-tertiary);
+  text-transform: none;
+  letter-spacing: 0.06em;
+  flex-basis: 100%;
+}
+
 .footerRow {
   display: flex;
   flex-wrap: wrap;
@@ -1095,6 +1308,8 @@
 }
 
 .projectorCell {
+  // Measured 677px rendered; the generic .flies guess is 420px.
+  contain-intrinsic-size: auto 680px;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -1221,6 +1436,20 @@
   font-size: var(--type-small);
 }
 
+.vcardLooking {
+  margin: var(--space-2) 0 0;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-width: 44ch;
+
+  span {
+    @include mono-label;
+    color: var(--accent);
+    margin-right: var(--space-2);
+  }
+}
+
 .vcardActions {
   display: flex;
   flex-wrap: wrap;
@@ -1252,5 +1481,150 @@
 
   @media (max-width: 900px) {
     width: min(64vw, 260px);
+  }
+}
+
+/*
+ * Results strip on a mission report (2026-09-17). Measured numbers at
+ * display size on a hairline grid; a pending mission shows what will be
+ * measured as a checklist with empty ticks — success data, or the honest
+ * absence of it, never a guess.
+ */
+.results {
+  margin-top: var(--space-6);
+  border: 1px solid var(--line);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  display: grid;
+  gap: var(--space-4);
+
+  &[data-state="measured"] {
+    border-color: var(--accent-line);
+  }
+}
+
+.resultsLabel {
+  @include mono-label;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--text-secondary);
+}
+
+.resultsState {
+  color: var(--text-tertiary);
+  [data-state="measured"] & { color: var(--accent); }
+}
+
+.resultsGrid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 1px;
+  background: var(--line);
+}
+
+.resultCell {
+  background: var(--bg-primary);
+  padding: var(--space-3) var(--space-4) var(--space-4) 0;
+  display: grid;
+  gap: var(--space-2);
+  &:not(:first-child) { padding-left: var(--space-4); }
+}
+
+.resultValue {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.resultLabel {
+  @include mono-label;
+  color: var(--text-secondary);
+}
+
+.resultSource {
+  color: var(--text-tertiary);
+}
+
+.measureList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.measureItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--type-small);
+  color: var(--text-secondary);
+}
+
+.measureTick {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--line-strong);
+  flex: none;
+}
+
+.measureNote {
+  margin: 0;
+  font-size: var(--type-small);
+  color: var(--text-tertiary);
+}
+
+// Ownership: three cells with 1px seams, same instrument as the results strip.
+.ownership {
+  margin-top: var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.ownCell {
+  background: var(--bg-primary);
+  padding: var(--space-4) var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.ownLabel {
+  @include mono-label;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.ownList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--type-small);
+  color: var(--text-primary);
+  line-height: 1.5;
+
+  li {
+    padding-left: var(--space-4);
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 8px;
+      height: 1px;
+      background: var(--accent);
+    }
   }
 }

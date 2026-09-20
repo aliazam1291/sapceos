@@ -1,0 +1,61 @@
+@use "../styles/tokens.scss" as *;
+
+// A transcript, not a panel: no fill, a hairline down the left, mono
+// micro type. Small enough to live in a caption corner without taking
+// the sky.
+.log {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-3);
+  display: grid;
+  gap: var(--space-2);
+  border-left: 1px solid var(--line);
+  max-width: 44ch;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: var(--type-micro);
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  // Laid out but invisible until its cue (Comms.tsx).
+  visibility: hidden;
+
+  &[data-shown] {
+    visibility: visible;
+    animation: line-in 0.35s var(--ease-out) both;
+  }
+}
+
+.stamp {
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.who {
+  color: var(--accent);
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+
+  &[data-who="SHIP"] { color: var(--text-primary); }
+  &[data-who="PAD"] { color: var(--text-secondary); }
+}
+
+.text {
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+@keyframes line-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line[data-shown] { animation: none; }
+}

@@ -1,5 +1,6 @@
 import { links, profile } from "@/content/profile";
 import type { FieldNote, Mission } from "@/content/types";
+import type { Venture } from "@/content/venture";
 import { siteUrl } from "./site";
 import { contentKeywords, domainKeywords, skillKeywords } from "./keywords";
 
@@ -90,6 +91,29 @@ export function missionJsonLd(mission: Mission) {
   };
 }
 
+/** The venture: an Organization with Ali as founder, and the page as its report. */
+export function ventureJsonLd(v: Venture) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}/dumbmoney#org`,
+    name: v.title,
+    url: v.url,
+    description: v.premise,
+    image: `${siteUrl}${v.cover}`,
+    founder: [{ "@id": personId }, { "@type": "Person", name: v.cofounder.name }],
+    areaServed: { "@type": "Country", name: "India" },
+    subjectOf: {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/dumbmoney`,
+      url: `${siteUrl}/dumbmoney`,
+      name: `${v.title} — ${v.role}`,
+      isPartOf: { "@id": siteId },
+      author: { "@id": personId },
+    },
+  };
+}
+
 export function noteJsonLd(note: FieldNote) {
   return {
     "@context": "https://schema.org",
@@ -108,6 +132,20 @@ export function noteJsonLd(note: FieldNote) {
     // Wordcount helps the crawler weigh it as a real article, not a stub.
     wordCount: note.body.join(" ").split(/\s+/).length,
   };
+}
+
+/**
+ * A meta description that fits the snippet. Google shows ~155 characters
+ * and cuts the rest mid-word; every generated description here ran 180-310
+ * (2026-09-20 audit). Clips at a word boundary and closes the sentence.
+ */
+export function clipDescription(text: string, max = 155) {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  const at = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf(", "), cut.lastIndexOf(" "));
+  const head = cut.slice(0, at > 60 ? at : max - 1).replace(/[,;:\s]+$/, "");
+  return /[.!?]$/.test(head) ? head : head + "…";
 }
 
 /** Renders one or more JSON-LD graphs as a script tag's text. */

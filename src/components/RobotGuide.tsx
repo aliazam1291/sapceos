@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./RobotGuide.module.scss";
 import { confirmInView } from "./ArrivalGate";
+import { useOnScreen } from "@/lib/use-on-screen";
 
 interface RobotGuideProps {
   /** What the robot says when nothing is hovered. */
@@ -32,6 +33,9 @@ export default function RobotGuide({ idle, lines, name = "K-7" }: RobotGuideProp
   const [busy, setBusy] = useState(false);
   const [arrived, setArrived] = useState(false);
   const [typed, setTyped] = useState(0);
+  // Decorative loops (jets, lamps, blink, bob, caret) pause while the robot
+  // is off screen — they were ticking for the whole page (use-on-screen.ts).
+  const onScreen = useOnScreen(ref, "40% 0px");
 
   // Arrive when the section does — the robot flies in, then speaks.
   useEffect(() => {
@@ -112,7 +116,7 @@ export default function RobotGuide({ idle, lines, name = "K-7" }: RobotGuideProp
   }, [idle, lines]);
 
   return (
-    <div ref={ref} className={styles.guide} data-busy={busy || undefined} data-arrived={arrived || undefined} style={{ "--look": look } as React.CSSProperties}>
+    <div ref={ref} className={styles.guide} data-busy={busy || undefined} data-arrived={arrived || undefined} data-off={onScreen ? undefined : ""} style={{ "--look": look } as React.CSSProperties}>
       <svg viewBox="0 0 120 140" className={styles.bot} aria-hidden="true">
         <defs>
           <linearGradient id="rg-shell" x1="0" y1="0" x2="1" y2="1">

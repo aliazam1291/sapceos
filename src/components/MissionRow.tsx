@@ -57,7 +57,7 @@ export default function MissionRow({
   };
 
   return (
-    <article className={styles.row} onPointerMove={onMove} data-reveal>
+    <article className={`${styles.row} flies`} onPointerMove={onMove} data-bay={mission.slug}>
       <div className={styles.index}>{String(index + 1).padStart(2, "0")}</div>
 
       <div className={styles.body}>

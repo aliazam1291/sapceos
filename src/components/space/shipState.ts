@@ -20,4 +20,11 @@ export const shipState = {
   /** 1 while the Touchdown section is in view: the ship is on the pad, so
    *  the companion hides (written by Landing, read by Companion). */
   landed: 0,
+  /** 1 while the black hole has the ship (Singularity in view): the
+   *  companion hides and the ship in the scene takes over. */
+  captured: 0,
 };
+
+if (typeof window !== "undefined") {
+  (window as unknown as { __shipState: typeof shipState }).__shipState = shipState;
+}

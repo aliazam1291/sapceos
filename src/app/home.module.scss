@@ -332,14 +332,20 @@
     width: 1px;
     height: 28px;
     background: linear-gradient(var(--accent), transparent);
+    transform-origin: 50% 0;
+    will-change: transform;
     animation: drop 2.2s var(--ease-in-out) infinite;
   }
 }
 
+// Fixed origin (2026-09-20): animating transform-origin is not
+// compositable. Grow from the top, then slide down while shrinking — the
+// top edge falls, the bottom edge stays — which is what the old origin
+// switch drew.
 @keyframes drop {
-  0% { transform: scaleY(0); transform-origin: 50% 0; }
-  50% { transform: scaleY(1); transform-origin: 50% 0; }
-  100% { transform: scaleY(0); transform-origin: 50% 100%; }
+  0% { transform: translateY(0) scaleY(0); }
+  50% { transform: translateY(0) scaleY(1); }
+  100% { transform: translateY(100%) scaleY(0); }
 }
 
 .heroLede {

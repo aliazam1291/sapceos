@@ -69,7 +69,7 @@
 
 .groupNote {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
 }
 
 .rows {
@@ -147,7 +147,7 @@
 
 .rowSource {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
 }
 
 .bar {
@@ -264,7 +264,7 @@
 
 .statusTag {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
 
   &[data-status="active"] {
     color: var(--accent);

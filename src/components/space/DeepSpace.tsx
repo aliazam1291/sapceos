@@ -253,7 +253,10 @@ export default function DeepSpace() {
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const { stars, clusters } = buildField(coarse ? 560 : 1500);
+    // Star count by level: the sky is the first thing a struggling machine
+    // thins, and the last thing a reader notices thinning.
+    const level = decidePerfLevel();
+    const { stars, clusters } = buildField(coarse || level === "low" ? 700 : level === "medium" ? 1100 : 1500);
     const glows = TINTS.map(buildGlow);
     const stars9 = TINTS.map((t) => buildStar(t, false));
     const bright9 = TINTS.map((t) => buildStar(t, true));
@@ -263,7 +266,9 @@ export default function DeepSpace() {
     // to resolve, and a phone gets none of it.
     decidePerfLevel();
     // A background does not need retina; the fill it saves goes to the scenes.
-    const dprCap = coarse || perf.level !== "high" ? 1 : 1.25;
+    // Low: three-quarter resolution — a quarter fewer pixels to fill and
+    // upload each frame; stars are soft at that size anyway.
+    const dprCap = level === "low" ? 0.75 : coarse || level !== "high" ? 1 : 1.25;
     let w = 0;
     let h = 0;
     let cx = 0;
@@ -294,6 +299,34 @@ export default function DeepSpace() {
     let gw = 0;
     let gh = 0;
 
+    /*
+     * Depth bands (2026-09-17, "a lot of lag while scrolling"). Drawing
+     * 1500 sprites additively every frame cost ~250ms of main thread per
+     * second on an integrated GPU — a quarter of the frame budget before
+     * anything else ran. Now the faint majority of the field is baked into
+     * five offscreen layers by depth (log-spaced in parallax), each panned
+     * as one drawImage with its band's parallax and re-baked once a second
+     * in rotation (so drift and twinkle still happen, just not per frame).
+     * Only the bright stars — the ones that streak — are drawn live.
+     */
+    const BANDS = 5;
+    const BAKE_EVERY = 12;
+    const BRIGHT_SIZE = 3.0;
+    const bands = Array.from({ length: BANDS }, () => ({
+      c: document.createElement("canvas"),
+      g: null as CanvasRenderingContext2D | null,
+      panX: 0,
+      panY: 0,
+      k: 1,
+      baked: false,
+    }));
+    const kMin = () => focal / Z_FAR;
+    const kMax = () => focal / Z_NEAR;
+    const bandOf = (k: number) => {
+      const t = Math.log(k / kMin()) / Math.log(kMax() / kMin());
+      return Math.min(BANDS - 1, Math.max(0, Math.floor(t * BANDS)));
+    };
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
       w = window.innerWidth;
@@ -303,6 +336,13 @@ export default function DeepSpace() {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      for (const b of bands) {
+        b.c.width = canvas.width;
+        b.c.height = canvas.height;
+        b.g = b.c.getContext("2d", { alpha: true });
+        b.g?.setTransform(dpr, 0, 0, dpr, 0, 0);
+        b.baked = false;
+      }
       // The glow buffer is sized off CSS pixels, not dpr: it is deliberately
       // low-resolution, and scaling it with the display would undo the saving.
       gw = Math.max(Math.round(w * GLOW_SCALE), 1);
@@ -324,6 +364,7 @@ export default function DeepSpace() {
      * everything else is derived from it.
      */
     let camZ = 0;
+    let frameIx = 0;
     let throttle = 0;
     let lastY = window.scrollY;
     let clock = 0;
@@ -362,8 +403,14 @@ export default function DeepSpace() {
     let panTargetX = 0;
     let panTargetY = 0;
 
+    let firstDraw = true;
     const draw = (dt: number) => {
       clock += dt;
+      // The launch screen's progress counts this as "star field seeded".
+      if (firstDraw) {
+        firstDraw = false;
+        window.dispatchEvent(new Event("space:stars"));
+      }
 
       ctx.clearRect(0, 0, w, h);
 
@@ -427,9 +474,58 @@ export default function DeepSpace() {
        * overlapped. Additive is what lets cores burn to white and dense knots
        * build up, which is the entire point of clustering them.
        */
+      // ── The faint field: bake one band this frame if it is due, then lay
+      // every band down panned by its own parallax.
+      const due = frameIx % BAKE_EVERY === 0 ? Math.floor(frameIx / BAKE_EVERY) % BANDS : -1;
+      for (let bi = 0; bi < BANDS; bi++) {
+        const b = bands[bi];
+        if (!b.g) continue;
+        if (bi !== due && b.baked) continue;
+        const g = b.g;
+        g.clearRect(0, 0, w, h);
+        g.globalCompositeOperation = "lighter";
+        let kSum = 0;
+        let n = 0;
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
+          if (s.size > BRIGHT_SIZE) continue;
+          const z = ((((s.z - camZ - Z_NEAR) % Z_RANGE) + Z_RANGE) % Z_RANGE) + Z_NEAR;
+          const k = focal / z;
+          if (bandOf(k) !== bi) continue;
+          const sx = cx + (s.x - panX) * k;
+          const sy = cy + (s.y - panY) * k;
+          if (sx < -12 || sx > w + 12 || sy < -12 || sy > h + 12) continue;
+          const fade = smoothstep(Z_NEAR, Z_NEAR + 0.42, z) * smoothstep(Z_FAR, Z_FAR - 1.0, z);
+          if (fade <= 0.004) continue;
+          const depth = 1 - Math.min(s.size / 3.2, 1) * 0.7;
+          // Mid-twinkle, baked: the band shimmers as a whole when it re-bakes.
+          const twinkle = 1 - depth * 0.45 * (0.5 - 0.5 * Math.sin(clock * s.rate + s.phase));
+          const a = s.bright * fade * twinkle;
+          if (a <= 0.012) continue;
+          const r = Math.min(Math.max(s.size * k * 0.0042, 1.1), 6);
+          g.globalAlpha = Math.min(a, 1);
+          g.drawImage(stars9[s.tint], sx - r * 2.5, sy - r * 2.5, r * 5, r * 5);
+          kSum += k;
+          n++;
+        }
+        g.globalAlpha = 1;
+        b.panX = panX;
+        b.panY = panY;
+        b.k = n ? kSum / n : 1;
+        b.baked = true;
+      }
       ctx.globalCompositeOperation = "lighter";
+      ctx.globalAlpha = 1;
+      for (let bi = 0; bi < BANDS; bi++) {
+        const b = bands[bi];
+        if (!b.baked) continue;
+        ctx.drawImage(b.c, (b.panX - panX) * b.k, (b.panY - panY) * b.k, w, h);
+      }
+
+      // ── The bright stars, live: they twinkle, drift and streak per frame.
       for (let i = 0; i < stars.length; i++) {
         const s = stars[i];
+        if (s.size <= BRIGHT_SIZE) continue;
         const z = ((((s.z - camZ - Z_NEAR) % Z_RANGE) + Z_RANGE) % Z_RANGE) + Z_NEAR;
         const k = focal / z;
         const sx = cx + (s.x - panX) * k;
@@ -523,7 +619,6 @@ export default function DeepSpace() {
 
     let raf = 0;
     let prev = performance.now();
-    let frameIx = 0;
 
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
@@ -570,6 +665,13 @@ export default function DeepSpace() {
       reportFrame(dt);
       frameIx++;
       // Half rate behind a heavy scene, or whenever the machine is struggling.
+      // Idle — no scroll, no burn, the ship parked — the sky only needs a
+      // few frames a second: the drift is slow and the twinkle is slow. Every
+      // frame the canvas is redrawn is a full-screen upload to the compositor,
+      // and on an integrated GPU that upload was most of the cost of "idle".
+      const idle = Math.abs(throttle) < 0.004 && warp < 0.01 && Math.abs(shipState.vx) + Math.abs(shipState.vy) < 0.05;
+      if (idle && frameIx % (perf.level === "high" ? 4 : 6)) return;
+      if (perf.level === "low" && frameIx % 3) return;
       if ((heavySceneLive() || perf.level !== "high") && (frameIx & 1)) return;
 
       draw(dt);

@@ -1,0 +1,117 @@
+@use "../styles/tokens.scss" as *;
+
+// The hangar's projector row, for the studio: same floor, same motion
+// (Hangar.module.scss), so the two decks read as one vocabulary.
+.comms {
+  margin: calc(var(--space-12) * -1 + var(--space-4)) 0 var(--space-8);
+}
+
+.all {
+  @include mono-label;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+
+  @include hover-only {
+    &:hover { color: var(--text-primary); }
+  }
+}
+
+.bays {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-8) var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
+.bay {
+  min-width: 0;
+
+  @supports (animation-timeline: view()) {
+    animation: studio-in linear both, studio-out linear both;
+    animation-timeline: view(), view();
+    animation-range: entry 0% entry calc(28% + var(--lag, 0%)), exit 35% exit 100%;
+  }
+}
+
+@keyframes studio-in {
+  from { opacity: 0; transform: translateY(16vh) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes studio-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-12vh) scale(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bay { animation: none; }
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-2) var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  transition: border-color var(--dur-base) var(--ease-out);
+
+  &:hover {
+    border-color: var(--accent-line);
+  }
+}
+
+.holo {
+  max-width: 220px;
+}
+
+.meta {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.titleLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: 1.0625rem;
+  letter-spacing: -0.015em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.link {
+  color: var(--text-primary);
+  text-decoration: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.premise {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.note {
+  color: var(--text-tertiary);
+}
+
+.kind {
+  @include mono-label;
+  margin: var(--space-2) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}

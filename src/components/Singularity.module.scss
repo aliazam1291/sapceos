@@ -3,9 +3,13 @@
 .field {
   position: relative;
   width: 100%;
-  height: clamp(460px, 68vh, 720px);
+  // A full frame (2026-09-18): the debrief was 68vh and the next leg's
+  // heading showed under it on arrival — no moment. A leg holds the screen.
+  height: clamp(560px, 100vh, 960px);
   overflow: hidden;
   background: #030303;
+  user-select: none;
+  touch-action: pan-y;
   // Dissolves into the page top and bottom; the scene paints its own sky,
   // so a hard edge here would read as a screenshot dropped into the page.
   mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
@@ -58,6 +62,16 @@
   margin: 0;
 }
 
+.hint {
+  @include mono-label;
+  margin: var(--space-4) 0 0;
+  color: var(--text-tertiary);
+}
+
+.comms {
+  margin-top: var(--space-4);
+}
+
 .lede {
   margin: var(--space-4) 0 0;
   color: var(--text-secondary);
@@ -66,23 +80,20 @@
 }
 
 /*
- * The masses, docked right. Weight sets both the value's size and its
- * opacity — the largest number is the loudest thing on the strip and the
- * smallest is a whisper. A thin rule ties them to the frame edge, the way
- * the flight HUD brackets do.
+ * The masses are bodies in orbit (2026-09-18). Each measured number rides
+ * an ellipse round the hole on its own period — the heavier the number,
+ * the wider and slower its orbit — and dims and shrinks on the far side,
+ * so the far half reads as behind. The ship (SingularityScene) passes
+ * through the same ring. Pure CSS: offset-path on an ellipse, one
+ * animation per body, all on the compositor. Where offset-path is not
+ * supported the strip docks right, as it did before.
  */
 .masses {
   position: absolute;
-  right: var(--shell-pad);
-  top: 50%;
-  transform: translateY(-50%);
+  inset: 0;
   margin: 0;
-  padding: 0 0 0 var(--space-4);
+  padding: 0;
   list-style: none;
-  display: grid;
-  gap: var(--space-4);
-  border-left: 1px solid var(--line-strong);
-  text-align: left;
   pointer-events: none;
 
   @media (max-width: 720px) {
@@ -91,9 +102,49 @@
 }
 
 .mass {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: grid;
   gap: 0.15rem;
-  opacity: calc(0.45 + var(--w) * 0.55);
+  text-align: center;
+  // Wider and slower with weight; the phase spreads the bodies round the ring.
+  // Sized so the widest near pass stays clear of the copy bottom-left and
+  // the masses top-right; the ring sits a little above centre.
+  --rx: calc(22% + var(--w) * 12%);
+  --ry: calc(8% + var(--w) * 6%);
+  --period: calc(34s + var(--w) * 30s);
+  offset-path: ellipse(var(--rx) var(--ry) at 50% 46%);
+  offset-rotate: 0deg;
+  animation:
+    orbit var(--period) linear infinite,
+    depth var(--period) linear infinite;
+  // A negative delay starts each body part-way round: --ph is 0..1.
+  animation-delay: calc(var(--ph, 0) * var(--period) * -1);
+  will-change: offset-distance, opacity, transform;
+}
+
+// Off screen, the bodies hold (Singularity.tsx sets data-off): an
+// offset-path animation ticks on the main thread for as long as it runs.
+.field[data-off] .mass {
+  animation-play-state: paused;
+}
+
+@keyframes orbit {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+
+// The ellipse starts at its right-most point and goes clockwise on screen:
+// the near pass is the lower half (25–75%), the far pass the upper half.
+// The far pass dims to 0.6, not 0.32: a measured number is still a number
+// on the far side of the hole, and 0.6 keeps the value above 4.5:1 on the
+// ground (2026-09-19). Depth now comes more from the scale than the fade.
+@keyframes depth {
+  0%, 100% { opacity: 0.72; transform: scale(0.9); }
+  25% { opacity: 0.6; transform: scale(0.7); }
+  50% { opacity: 0.76; transform: scale(0.92); }
+  75% { opacity: 1; transform: scale(1.06); }
 }
 
 .massValue {
@@ -102,10 +153,43 @@
   letter-spacing: -0.02em;
   color: var(--text-primary);
   line-height: 1;
+  // Legible over the disc's bright rim: a dark halo under the emerald glow.
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 0.9),
+    0 0 14px rgba(0, 0, 0, 0.8),
+    0 0 18px rgba(60, 221, 158, 0.35);
 }
 
 .massLabel {
   @include mono-label;
-  font-size: 0.5625rem;
-  color: var(--text-tertiary);
+  font-size: max(0.5625rem, var(--micro-floor));
+  // Light enough to clear 4.5:1 at the far pass's 0.6 opacity; the value
+  // above it is bigger and brighter, so the hierarchy holds.
+  color: #d9d9d9;
 }
+
+// Fallback: no offset-path, dock right as a strip.
+@supports not (offset-path: ellipse(1px 1px at 50% 50%)) {
+  .masses {
+    inset: auto var(--shell-pad) auto auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-left: var(--space-4);
+    display: grid;
+    gap: var(--space-4);
+    border-left: 1px solid var(--line-strong);
+  }
+  .mass {
+    position: static;
+    text-align: left;
+    animation: none;
+    offset-path: none;
+    opacity: calc(0.45 + var(--w) * 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mass { animation: none; }
+}
+
+html[data-perf="low"] .mass { animation-play-state: paused; }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Drone from "./Drone";
+import Comms from "./Comms";
 import ArrivalGate from "./ArrivalGate";
 import { Section, SectionHead } from "./ui";
 import type { FieldNote } from "@/content/types";
@@ -18,13 +19,14 @@ import styles from "./DroneBay.module.scss";
 export default function DroneBay({ notes }: { notes: FieldNote[] }) {
   return (
     <Section id="notes" data-section="Field notes">
-      <SectionHead label="05 / Field notes" title="Case studies, in flight" />
+      <SectionHead label="09 / Field notes" title="Case studies, in flight" />
+      <Comms at="notes" className={styles.comms} />
       <ArrivalGate />
       <ol className={styles.bay}>
         {notes.map((note, i) => {
           const draft = note.body.every((p) => p.startsWith(DRAFT));
           return (
-            <li key={note.slug} className={styles.slot}>
+            <li key={note.slug} className={`${styles.slot} objectRow`}>
               <article className={styles.cell}>
                 {/* The title rides on the crate: the drone is carrying the
                     study, not a picture of it. */}

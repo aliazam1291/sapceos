@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import type { FormName } from "./forms";
 import SurfacedForm from "./SurfacedForm";
+import { quietGL } from "@/lib/gl";
 
 /** Per-form framing, so no page has to hand-tune a camera. */
 type Framing = { z: number; scale: number; spin: number; tilt: [number, number, number] };
@@ -38,6 +39,7 @@ export default function FormScene({
 
   return (
     <Canvas
+      onCreated={quietGL}
       camera={{ position: [0, 0, framing.z], fov: 42, near: 0.1, far: 30 }}
       dpr={coarse ? 1.25 : [1, 1.75]}
       // Scrolled out of view costs nothing: the loop stops entirely.

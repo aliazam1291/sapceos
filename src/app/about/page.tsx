@@ -5,14 +5,17 @@ import MatrixPortrait from "@/components/space/MatrixPortrait";
 import CareerLoop from "@/components/CareerLoop";
 import Impact from "@/components/Impact";
 import LoopSequence from "@/components/LoopSequence";
+import Landing from "@/components/Landing";
 import ClientGrid from "@/components/ClientGrid";
+import Transmissions from "@/components/Transmissions";
 import { identityKeywords, keywordsFor, placeKeywords, roleKeywords } from "@/lib/keywords";
 import { jsonLd, personId } from "@/lib/seo";
+import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
   title: "About — Product Engineer & UX Strategist",
   description:
-    "Ali Azam Kazmi: Associate Software Developer (Product & Platform) at MapMyIndia, founder of Smaak.ux, B.Tech CSE from SRM. Frontend, UI/UX and PRD ownership across enterprise fleet platforms. Based in New Delhi, open to product roles.",
+    "Ali Azam Kazmi: product and platform developer at MapMyIndia, founder of Smaak.ux, B.Tech CSE (SRM). Frontend, UX and PRD ownership on fleet platforms.",
   keywords: keywordsFor(identityKeywords, roleKeywords, placeKeywords, ["about Ali Azam Kazmi", "product engineer bio", "Smaak.ux founder"]),
   alternates: { canonical: "/about" },
 };
@@ -34,9 +37,12 @@ export default function AboutPage() {
       <PageHeader
         label="About the Operator"
         title={profile.name}
-        lede={`${profile.title} · ${profile.location}`}
+        lede={`${profile.title} · Founder & CPO, DumbMoney · ${profile.location}`}
         figure={<MatrixPortrait src="/images/ali.jpg" alt={profile.name} size={220} cells={56} />}
       />
+      <div className={ui.pageComms}>
+        <Comms at="about" />
+      </div>
 
       <Section>
 
@@ -65,6 +71,11 @@ export default function AboutPage() {
         </div>
       </Section>
 
+      {/* The airframe: the ship lands and its parts introduce the operator,
+          with the loadout underneath. The same walkaround as the end of the
+          home page — this is the operator's page, so it belongs here too. */}
+      <Landing label="The airframe" section="Airframe" />
+
       {/* The ledger and the ownership matrix, then the operating loop — both
           moved here when the home page was cut to the flight. */}
       <Section id="impact" data-section="Impact">
@@ -74,8 +85,16 @@ export default function AboutPage() {
 
       <LoopSequence />
 
-      <Section>
-        <SectionHead label="Smaak.ux · since 2023" title="Ten clients, eight of them here" />
+      <Section id="studio" data-section="Studio">
+        <SectionHead
+          label="Smaak.ux · since 2023 · freelance"
+          title="Ten clients, eight of them here"
+          action={
+            <ButtonLink href="/studio" primary>
+              Open the studio
+            </ButtonLink>
+          }
+        />
         <ClientGrid />
       </Section>
 
@@ -83,7 +102,7 @@ export default function AboutPage() {
           one piece of PROFILE.md that states the differentiator outright.
           Placed straight after the prose, before the credentials — it belongs
           with the argument, not with the record. */}
-      <Section>
+      <Section id="loop" data-section="The loop">
         <SectionHead
           label="How the work goes"
           title="Problem in, problem out"
@@ -92,7 +111,7 @@ export default function AboutPage() {
         <CareerLoop />
       </Section>
 
-      <Section>
+      <Section id="education" data-section="Education">
         <SectionHead label="Education" title="Where the foundations came from" />
         <div className={ui.rows}>
           <Row label={education.period}>
@@ -109,7 +128,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section>
+      <Section id="leadership" data-section="Leadership">
         <SectionHead label="Leadership" title="Running things that had to actually happen" />
         <div className={ui.rows}>
           {leadership.map((item) => (
@@ -128,7 +147,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section>
+      <Section id="capabilities" data-section="Capabilities">
         <SectionHead label="Capabilities" title="What I reach for" />
         <div className={ui.rows}>
           {skills.map((group) => (
@@ -141,10 +160,15 @@ export default function AboutPage() {
         </div>
       </Section>
 
+      <Transmissions />
+
       <Section>
         <div className={ui.buttonRow} data-reveal>
           <ButtonLink href="/mission-history" primary>
             Full mission history
+          </ButtonLink>
+          <ButtonLink href="/Ali_Azam_Kazmi_.pdf" external>
+            Résumé (PDF)
           </ButtonLink>
           <ButtonLink href="/contact">Open a channel</ButtonLink>
         </div>

@@ -1,6 +1,7 @@
 .layer {
   position: fixed;
   inset: 0;
+  overflow: hidden;
   // Above the Atmosphere vignette (9997): the ship lives in the corners,
   // exactly where the vignette darkens, and was disappearing into it.
   z-index: 9998;
@@ -16,16 +17,23 @@
 
 // The engine light on the page. Screen-blended so it only ever brightens;
 // sized to feel like a lamp a few metres away, not a spotlight.
+// A 720px disc translated on the compositor (2026-09-17): the old
+// full-viewport gradient repainted every frame the ship moved.
 .light {
-  --lx: 80%;
-  --ly: 80%;
   --li: 0;
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: 0;
+  width: 720px;
+  height: 720px;
+  margin: -360px 0 0 -360px;
+  border-radius: 50%;
   pointer-events: none;
   opacity: var(--li);
-  background: radial-gradient(circle 360px at var(--lx) var(--ly), rgba(255, 179, 90, 0.42), rgba(255, 179, 90, 0.1) 45%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 179, 90, 0.42), rgba(255, 179, 90, 0.1) 45%, transparent 70%);
   transition: opacity 0.2s linear;
+  will-change: transform, opacity;
+  transform: translate3d(80vw, 80vh, 0);
 }
 
 // Phones: the ship would cover copy at the default station, so it rides

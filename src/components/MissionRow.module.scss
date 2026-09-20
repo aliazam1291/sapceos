@@ -7,6 +7,13 @@
  * structure, and the hologram's own light is the only fill.
  */
 .row {
+  // Honest placeholder for the .flies content-visibility skip: a row renders
+  // 737-827px border-box, ~80px of that padding; contain-intrinsic-size is the
+  // content box, and the placeholder is the minimum so a row can only grow when it
+  // renders (growth is below the viewport, invisible; shrink pulls content up).
+  // The generic 420px guess shifted /missions ~550px as rows
+  // came in (measured 2026-09-18).
+  contain-intrinsic-size: auto 655px;
   position: relative;
   display: grid;
   grid-template-columns: 1fr;

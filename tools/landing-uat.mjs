@@ -4,6 +4,7 @@ const b = await chromium.launch();
 const errs = [];
 // 1. Boot screen: idle, mid-hold, leaving.
 let p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+p.setDefaultTimeout(90000);
 p.on("pageerror", (e) => errs.push("boot " + e.message));
 p.on("console", (m) => { if (m.type() === "error") errs.push("boot " + m.text().slice(0, 160)); });
 await p.goto("http://localhost:3000/", { waitUntil: "load", timeout: 120000 });

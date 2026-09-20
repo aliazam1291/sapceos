@@ -9,6 +9,10 @@ export type ShipPart = {
   id: string;
   /** Position on the airframe, ShipModel local units. */
   at: [number, number, number];
+  /** The ShipModel part it rides on (EXPLODE key), so the marker follows the dismantle. */
+  part: string;
+  /** The loadout group this part lights up (profile `skills` group). */
+  loadout: "Product" | "Design" | "Technical";
   /** Which side the label sits on, in screen space. */
   side: "left" | "right" | "up";
   system: string;
@@ -19,6 +23,8 @@ export type ShipPart = {
 export const shipParts: ShipPart[] = [
   {
     id: "sensors",
+    loadout: "Product",
+    part: "fuselage",
     at: [0, 0.01, -0.72],
     side: "left",
     system: "Nose · sensors",
@@ -27,6 +33,8 @@ export const shipParts: ShipPart[] = [
   },
   {
     id: "canopy",
+    loadout: "Design",
+    part: "canopy",
     at: [0, 0.1, -0.3],
     side: "right",
     system: "Canopy · operator",
@@ -35,6 +43,8 @@ export const shipParts: ShipPart[] = [
   },
   {
     id: "canards",
+    loadout: "Product",
+    part: "canard",
     at: [-0.2, 0.02, -0.16],
     side: "left",
     system: "Canards · control",
@@ -43,6 +53,8 @@ export const shipParts: ShipPart[] = [
   },
   {
     id: "wing",
+    loadout: "Technical",
+    part: "wing",
     at: [0.52, 0.0, 0.34],
     side: "up",
     system: "Wing · lift",
@@ -51,6 +63,8 @@ export const shipParts: ShipPart[] = [
   },
   {
     id: "engines",
+    loadout: "Technical",
+    part: "engines",
     at: [0, 0.0, 0.56],
     side: "right",
     system: "Engines · thrust",
@@ -59,6 +73,8 @@ export const shipParts: ShipPart[] = [
   },
   {
     id: "fins",
+    loadout: "Design",
+    part: "finL",
     at: [-0.1, 0.14, 0.3],
     side: "left",
     system: "Fins · stability",

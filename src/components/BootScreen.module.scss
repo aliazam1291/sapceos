@@ -4,9 +4,8 @@
   position: fixed;
   inset: 0;
   z-index: 20000;
-  display: grid;
-  place-items: center;
   background: #030303;
+  overflow: hidden;
   color: var(--text-primary);
   transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
 
@@ -17,37 +16,11 @@
   }
 }
 
-// A faint HUD grid, so the black is a surface and not a void.
-.grid {
+// The scene is the screen.
+.pad {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(60, 221, 158, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(60, 221, 158, 0.05) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 30%, transparent 100%);
-}
-
-.inner {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: var(--space-4);
-  text-align: center;
-  padding: var(--space-8);
-}
-
-// The ship on the pad, above the log. Fades in from black so the first
-// frame of a cold canvas is never a pop.
-.pad {
-  position: relative;
-  width: min(560px, 92vw);
-  height: clamp(200px, 32vh, 300px);
-  margin-bottom: var(--space-2);
-  mask-image: radial-gradient(ellipse 70% 80% at 50% 55%, #000 45%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 55%, #000 45%, transparent 100%);
-  animation: padIn 1.2s var(--ease-out) both;
+  animation: padIn 1.4s var(--ease-out) both;
 }
 
 @keyframes padIn {
@@ -55,11 +28,152 @@
   to { opacity: 1; }
 }
 
+// Edges fall to black so the HUD reads and the pad has a horizon.
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(3, 3, 3, 0.7), transparent 28%, transparent 70%, rgba(3, 3, 3, 0.85)),
+    radial-gradient(ellipse 70% 60% at 62% 55%, transparent 40%, rgba(3, 3, 3, 0.75) 100%);
+}
+
+.corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--accent-line);
+  pointer-events: none;
+  &[data-at="tl"] { top: 18px; left: 18px; border-right: 0; border-bottom: 0; }
+  &[data-at="tr"] { top: 18px; right: 18px; border-left: 0; border-bottom: 0; }
+  &[data-at="bl"] { bottom: 18px; left: 18px; border-right: 0; border-top: 0; }
+  &[data-at="br"] { bottom: 18px; right: 18px; border-left: 0; border-top: 0; }
+}
+
+.head {
+  position: absolute;
+  top: clamp(1.75rem, 4vh, 3rem);
+  left: clamp(1.75rem, 4vw, 3.5rem);
+  display: grid;
+  gap: 0.35rem;
+}
+
+// Top-right: pad label, the big number, a progress rule, a sub line.
+.readout {
+  position: absolute;
+  top: clamp(1.75rem, 4vh, 3rem);
+  right: clamp(1.75rem, 4vw, 3.5rem);
+  display: grid;
+  justify-items: end;
+  gap: 0.35rem;
+  text-align: right;
+}
+
+.padLabel {
+  @include mono-label;
+  margin: 0;
+  color: var(--text-tertiary);
+}
+
+.pct {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 4.2vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--dur-base) var(--ease-out);
+
+  &[data-ready] {
+    color: var(--accent);
+  }
+}
+
+.pctLabel {
+  font-size: 0.45em;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+  vertical-align: 0.5em;
+}
+
+.bar {
+  display: block;
+  width: clamp(120px, 14vw, 200px);
+  height: 1px;
+  background: var(--line-strong);
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+  will-change: transform;
+}
+
+.readoutSub {
+  @include mono-label;
+  font-size: max(0.5625rem, var(--micro-floor));
+  margin: 0;
+  color: var(--text-tertiary);
+}
+
+// The scan: a hairline of light sweeping down the pad every few seconds.
+// A transform on the compositor, nothing else.
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(60, 221, 158, 0.35) 30%, rgba(60, 221, 158, 0.55) 50%, rgba(60, 221, 158, 0.35) 70%, transparent);
+  animation: scanSweep 4.2s linear infinite;
+  will-change: transform, opacity;
+  opacity: 0.8;
+}
+
+@keyframes scanSweep {
+  0% { transform: translateY(-2px); opacity: 0; }
+  6% { opacity: 0.8; }
+  94% { opacity: 0.6; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan { animation: none; display: none; }
+}
+
+@media (max-width: 640px) {
+  .pct { font-size: 1.75rem; }
+  .bar { width: 96px; }
+}
+
+// The HUD: the log bottom-left, the control bottom-right.
+.inner {
+  position: absolute;
+  left: clamp(1.75rem, 4vw, 3.5rem);
+  right: clamp(1.75rem, 4vw, 3.5rem);
+  bottom: clamp(1.75rem, 5vh, 3.5rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 .title {
   @include mono-label;
   color: var(--accent);
   letter-spacing: 0.4em;
-  margin: var(--space-2) 0 0;
+  margin: 0;
 }
 
 .sub {
@@ -70,7 +184,7 @@
 
 .log {
   list-style: none;
-  margin: var(--space-6) 0 0;
+  margin: 0;
   padding: 0;
   display: grid;
   gap: 0.35rem;
@@ -85,7 +199,13 @@
 .line {
   display: flex;
   gap: 0.6rem;
-  animation: lineIn 0.35s ease-out both;
+  // Occupies its row before it is "typed"; see BootScreen.tsx.
+  visibility: hidden;
+
+  &[data-shown] {
+    visibility: visible;
+    animation: lineIn 0.35s ease-out both;
+  }
 }
 
 .tick {
@@ -97,13 +217,25 @@
   color: var(--accent);
 }
 
+.control {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+}
+
+// The audio switch above the hold ring.
+.sound {
+  padding-inline: var(--space-2);
+}
+
 /* The hold. A ring that fills clockwise with --fill; the label inside. */
 .launch {
   --fill: 0deg;
   position: relative;
   width: 132px;
   height: 132px;
-  margin-top: var(--space-6);
+  margin: 0;
   border-radius: 50%;
   border: 0;
   background: transparent;
@@ -150,13 +282,13 @@
 
 .launchLabel {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   max-width: 5.5rem;
   line-height: 1.4;
 }
 
 .launchPlain {
-  margin-top: var(--space-6);
+  margin: 0;
   padding: var(--space-3) var(--space-6);
   border: 1px solid var(--accent-line);
   background: transparent;
@@ -167,11 +299,14 @@
 }
 
 .skip {
-  margin-top: var(--space-2);
+  position: absolute;
+  right: 0;
+  bottom: -1.9rem;
+  margin: 0;
   background: none;
   border: 0;
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--text-tertiary);
   cursor: pointer;
   padding: var(--space-2) var(--space-3);
@@ -179,11 +314,6 @@
   &:hover {
     color: var(--text-secondary);
   }
-}
-
-@keyframes breathe {
-  0%, 100% { box-shadow: 0 0 40px rgba(60, 221, 158, 0.12); }
-  50% { box-shadow: 0 0 60px rgba(60, 221, 158, 0.28); }
 }
 
 @keyframes lineIn {

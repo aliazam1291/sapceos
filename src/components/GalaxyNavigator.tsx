@@ -27,9 +27,12 @@ const DynamicInteractiveGalaxy = dynamic(() => import("@/components/space/Intera
 export default function GalaxyNavigator({
   flightTo = null,
   flightControlled = false,
+  flightLeaving = false,
 }: {
   flightTo?: string | null;
   flightControlled?: boolean;
+  /** The flight is ending: the ship climbs out and hands off to the companion. */
+  flightLeaving?: boolean;
 }) {
   const [ready, setReady] = useState(false);
 
@@ -55,6 +58,7 @@ export default function GalaxyNavigator({
       allowFullscreen={false}
       flightTo={flightTo}
       flightControlled={flightControlled}
+      flightLeaving={flightLeaving}
     />
   );
 }

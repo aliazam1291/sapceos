@@ -14,6 +14,8 @@ interface DroneProps {
   /** The manifest: what the drone is carrying, printed on the crate. */
   label?: string;
   sub?: string;
+  /** The route's header drone: its cover is fetched eagerly (it is the LCP). */
+  priority?: boolean;
   className?: string;
 }
 
@@ -30,7 +32,7 @@ interface DroneProps {
  * SVG for the airframe (shaded, not flat), CSS for every motion. The one
  * piece of JS writes two custom properties for the tilt.
  */
-export default function Drone({ src, seed, tag, label, sub, className }: DroneProps) {
+export default function Drone({ src, seed, tag, label, sub, className, priority }: DroneProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -134,7 +136,7 @@ export default function Drone({ src, seed, tag, label, sub, className }: DronePr
         <span className={`${styles.cable} ${styles.cableR}`} />
         <div className={styles.payload}>
           {src ? (
-            <Image src={src} alt="" fill sizes="(max-width: 900px) 100vw, 560px" className={styles.img} />
+            <Image src={src} alt="" fill sizes="(max-width: 900px) 100vw, 560px" className={styles.img} priority={priority} />
           ) : (
             <MissionSignature seed={seed} className={styles.trace} />
           )}

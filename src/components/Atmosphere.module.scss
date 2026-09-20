@@ -8,9 +8,11 @@
  * 50% past the right edge and contributing to the document's scroll width.
  * The oversize is kept; it just cannot widen the page any more.
  */
+// inset was -50% (four viewports of fill composited every frame, for a
+// seam that a fixed layer never shows). One viewport (2026-09-17).
 .grain {
   position: fixed;
-  inset: -50%;
+  inset: 0;
   z-index: 9998;
   pointer-events: none;
   opacity: 0.025;

@@ -33,7 +33,9 @@ export default function Counter({
         const duration = 1100;
         const start = performance.now();
         const step = (now: number) => {
-          const t = Math.min((now - start) / duration, 1);
+          // Clamped at 0 too (see ScanReadout): a rAF timestamp can precede
+          // the performance.now() taken when the observer fired.
+          const t = Math.min(Math.max((now - start) / duration, 0), 1);
           // easeOutExpo — fast commit, long settle.
           const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
           setDisplay(Math.round(value * eased));
@@ -52,11 +54,22 @@ export default function Counter({
     };
   }, [value]);
 
+  // The final value holds the width while the count runs (2026-09-20): a
+  // number growing from "0" to "6,00,000+" reflowed its cell — on the
+  // two-column phone readout it wrapped mid-count and moved the row below.
+  // Both spans share one grid cell; the hidden one sizes it.
   return (
-    <span ref={ref}>
-      {prefix}
-      {display.toLocaleString("en-IN")}
-      {suffix}
+    <span ref={ref} style={{ display: "inline-grid", whiteSpace: "nowrap" }}>
+      <span aria-hidden="true" style={{ gridArea: "1 / 1", visibility: "hidden" }}>
+        {prefix}
+        {value.toLocaleString("en-IN")}
+        {suffix}
+      </span>
+      <span style={{ gridArea: "1 / 1" }}>
+        {prefix}
+        {display.toLocaleString("en-IN")}
+        {suffix}
+      </span>
     </span>
   );
 }

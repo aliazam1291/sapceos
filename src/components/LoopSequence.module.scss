@@ -88,7 +88,7 @@
 
 .hudHint {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
 
   @media (max-width: 768px) {
     display: none;
@@ -240,7 +240,7 @@
 .evidenceLabel {
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--accent);
 }
 
@@ -289,7 +289,7 @@
 
   dt {
     @include mono-label;
-    font-size: 0.5625rem;
+    font-size: max(0.5625rem, var(--micro-floor));
   }
 
   dd {

@@ -106,10 +106,12 @@ export default function Impact() {
                 </th>
                 {m.owns.map((on, ci) => (
                   <td key={ci} className={styles.cell} data-on={on || undefined}>
+                    {/* role=img: aria-label is prohibited on a bare span. */}
                     <span
                       className={styles.dot}
                       data-on={on || undefined}
-                      aria-label={on ? `Owned ${ownershipColumns[ci].label}` : "—"}
+                      role="img"
+                      aria-label={on ? `Owned ${ownershipColumns[ci].label}` : "Not owned"}
                     />
                   </td>
                 ))}

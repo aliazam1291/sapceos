@@ -11,6 +11,32 @@
 
 .bay {
   min-width: 0;
+
+  // In motion with the scroll (2026-09-16): a projector rises into the
+  // frame as it enters and lifts away as the reader scrolls past — so the
+  // objects travel with the ship rather than sitting on the page. Scroll-
+  // driven, reversible, one lag step per column.
+  @supports (animation-timeline: view()) {
+    animation: bay-in linear both, bay-out linear both;
+    animation-timeline: view(), view();
+    animation-range: entry 0% entry calc(28% + var(--lag, 0%)), exit 35% exit 100%;
+  }
+  &:nth-child(2) { --lag: 10%; }
+  &:nth-child(3) { --lag: 20%; }
+  &:nth-child(4) { --lag: 30%; }
+}
+
+@keyframes bay-in {
+  from { opacity: 0; transform: translateY(16vh) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes bay-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-12vh) scale(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bay { animation: none; }
 }
 
 // No panel. The projector stands on the floor and the label sits beneath
@@ -94,7 +120,7 @@
 
 .signalLabel {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--text-tertiary);
 }
 

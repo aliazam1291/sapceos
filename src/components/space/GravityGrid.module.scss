@@ -35,6 +35,6 @@
   left: var(--shell-pad);
   bottom: var(--space-3);
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   pointer-events: none;
 }

@@ -1,7 +1,8 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
+import { shipEnvIfReady, warmShipEnv } from "./shipEnv";
 import * as THREE from "three";
 import { getGlowTexture } from "./glowTexture";
 
@@ -145,6 +146,36 @@ const LIGHT = new THREE.SphereGeometry(0.006, 8, 8);
 // Exhaust: an open cone pointing aft, additive, scaled by thrust. The sprite
 // at the nozzle is the hot core; this is the visible jet behind it.
 const PLUME = new THREE.ConeGeometry(0.028, 1, 18, 1, true);
+// Landing gear: a strut hanging from y=0 and a foot. Scaled in y by the
+// gear amount, so retracted it is inside the hull and extended it stands.
+const STRUT = new THREE.CylinderGeometry(0.006, 0.007, 0.12, 6).translate(0, -0.06, 0);
+const FOOT = new THREE.CylinderGeometry(0.022, 0.026, 0.008, 10).translate(0, -0.12, 0);
+
+/*
+ * The exploded view. Each part's offset, in the ship's frame, at full
+ * dismantle: things come apart along the directions they were attached —
+ * canopy up, wing down and aft, canards forward, fins out and up, engines
+ * aft. Keyed by part; shipParts.ts uses the same keys to keep its markers
+ * on the parts as they move.
+ */
+export const EXPLODE: Record<string, [number, number, number]> = {
+  fuselage: [0, 0, 0],
+  spine: [0, 0.3, 0],
+  wing: [0, -0.28, 0.12],
+  canard: [0, 0.26, -0.1],
+  finL: [-0.3, 0.22, 0.08],
+  finR: [0.3, 0.22, 0.08],
+  canopy: [0, 0.38, -0.06],
+  engines: [0, 0.1, 0.42],
+  mast: [0, 0.3, 0.1],
+  intakeL: [-0.22, -0.06, 0.05],
+  intakeR: [0.22, -0.06, 0.05],
+};
+const GEAR: [number, number, number][] = [
+  [0, -0.02, -0.45],
+  [-0.14, -0.02, 0.2],
+  [0.14, -0.02, 0.2],
+];
 PLUME.translate(0, -0.5, 0);
 PLUME.rotateX(-Math.PI / 2);
 
@@ -205,8 +236,22 @@ function panelled<T extends THREE.MeshStandardMaterial>(mat: T, scale: number): 
 
 export interface ShipHandle {
   group: THREE.Group | null;
+  /**
+   * Show or hide the airframe. Never set `group.visible` from a driver:
+   * the group carries the ship's four lights, and three keys every lit
+   * program in the scene on the visible light set — hiding the group
+   * recompiled every material on the canvas, synchronously, and showing
+   * it again recompiled them all back (2026-09-20, tools/progkeys-uat.mjs:
+   * the Touchdown paid ~2 s twice; the boot pad the same). The lights stay;
+   * only the meshes go.
+   */
+  setShown(on: boolean): void;
   /** 0 idle … 1 full burn; drives plume length and nozzle glow. */
   setThrust(v: number): void;
+  /** 0 assembled … 1 fully dismantled (see EXPLODE). */
+  setExplode(v: number): void;
+  /** 0 retracted … 1 down and locked. */
+  setGear(v: number): void;
 }
 
 interface ShipModelProps {
@@ -227,67 +272,75 @@ const ShipModel = forwardRef<ShipHandle, ShipModelProps>(function ShipModel({ ke
   const jetL = useRef<THREE.Mesh>(null);
   const jetR = useRef<THREE.Mesh>(null);
   const thrust = useRef(0);
+  const explode = useRef(0);
+  const gear = useRef(0);
+  const parts = useRef<Record<string, THREE.Group | null>>({});
+  const airframe = useRef<THREE.Group>(null);
+  const engineLight = useRef<THREE.PointLight>(null);
+  const gearRefs = useRef<(THREE.Group | null)[]>([]);
   const glow = getGlowTexture();
   const gl = useThree((s) => s.gl);
 
-  // A space environment, not a studio: black, one hot sun, a faint cool
-  // sky band. Reflections on the hull are then one hard highlight and a
-  // lot of dark — which is what metal in vacuum looks like. RoomEnvironment
-  // (bright walls all round) is what made it look like plastic.
-  const env = useMemo(() => {
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#020304");
-    const sun = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 12), new THREE.MeshBasicMaterial({ color: new THREE.Color(14, 12, 9) }));
-    sun.position.set(-6, 9, 8);
-    scene.add(sun);
-    const sky = new THREE.Mesh(
-      new THREE.SphereGeometry(30, 24, 16),
-      new THREE.MeshBasicMaterial({ color: new THREE.Color(0.05, 0.08, 0.1), side: THREE.BackSide }),
-    );
-    sky.position.y = -22;
-    scene.add(sky);
-    const pmrem = new THREE.PMREMGenerator(gl);
-    const tex = pmrem.fromScene(scene, 0.02).texture;
-    pmrem.dispose();
-    return tex;
+  // The environment map — see shipEnv.ts. Built once per renderer, off the
+  // main thread's critical path; every ShipModel on a canvas shares it. It
+  // used to be generated here in a useMemo, synchronously, per instance.
+  const [env, setEnv] = useState<THREE.Texture | null>(() => shipEnvIfReady(gl));
+  useEffect(() => {
+    let live = true;
+    warmShipEnv(gl).then((t) => {
+      if (live) setEnv(t);
+    });
+    return () => {
+      live = false;
+    };
   }, [gl]);
 
+  // The four materials that carry the map are tagged so WarmShaders can
+  // wait until the mapped set is in the scene before it compiles.
+  const wantsEnv = <M extends THREE.Material>(m: M): M => {
+    m.userData.wantsEnv = true;
+    return m;
+  };
   const hull = useMemo(
     () =>
-      panelled(
-        new THREE.MeshPhysicalMaterial({
-          color: HULL,
-          metalness: 0.45,
-          roughness: 0.42,
-          clearcoat: 0.12,
-          clearcoatRoughness: 0.5,
-          envMap: env,
-          envMapIntensity: 1.0,
-        }),
-        14,
+      wantsEnv(
+        panelled(
+          new THREE.MeshPhysicalMaterial({
+            color: HULL,
+            metalness: 0.45,
+            roughness: 0.42,
+            clearcoat: 0.12,
+            clearcoatRoughness: 0.5,
+            envMap: env,
+            envMapIntensity: 1.0,
+          }),
+          14,
+        ),
       ),
     [env],
   );
   const hullDark = useMemo(
-    () => panelled(new THREE.MeshStandardMaterial({ color: HULL_DARK, metalness: 0.85, roughness: 0.35, envMap: env, envMapIntensity: 0.7 }), 20),
+    () => wantsEnv(panelled(new THREE.MeshStandardMaterial({ color: HULL_DARK, metalness: 0.85, roughness: 0.35, envMap: env, envMapIntensity: 0.7 }), 20)),
     [env],
   );
-  const edge = useMemo(() => new THREE.MeshStandardMaterial({ color: HULL_EDGE, metalness: 0.7, roughness: 0.35, envMap: env, envMapIntensity: 0.6 }), [env]);
+  const edge = useMemo(() => wantsEnv(new THREE.MeshStandardMaterial({ color: HULL_EDGE, metalness: 0.7, roughness: 0.35, envMap: env, envMapIntensity: 0.6 })), [env]);
   const canopy = useMemo(
     () =>
-      new THREE.MeshPhysicalMaterial({
-        color: "#16302a",
-        metalness: 0.7,
-        roughness: 0.05,
-        clearcoat: 1,
-        clearcoatRoughness: 0.05,
-        emissive: EMERALD,
-        emissiveIntensity: 0.1,
-        transparent: true,
-        opacity: 0.92,
-        envMap: env,
-        envMapIntensity: 1.4,
-      }),
+      wantsEnv(
+        new THREE.MeshPhysicalMaterial({
+          color: "#16302a",
+          metalness: 0.7,
+          roughness: 0.05,
+          clearcoat: 1,
+          clearcoatRoughness: 0.05,
+          emissive: EMERALD,
+          emissiveIntensity: 0.1,
+          transparent: true,
+          opacity: 0.92,
+          envMap: env,
+          envMapIntensity: 1.4,
+        }),
+      ),
     [env],
   );
   const bell = useMemo(
@@ -311,6 +364,18 @@ const ShipModel = forwardRef<ShipHandle, ShipModelProps>(function ShipModel({ ke
     setThrust(v: number) {
       thrust.current = THREE.MathUtils.clamp(v, 0, 1);
     },
+    setExplode(v: number) {
+      explode.current = THREE.MathUtils.clamp(v, 0, 1);
+    },
+    setGear(v: number) {
+      gear.current = THREE.MathUtils.clamp(v, 0, 1);
+    },
+    setShown(on: boolean) {
+      if (airframe.current) airframe.current.visible = on;
+      // A hidden ship does not light the scene either — intensity is a
+      // uniform, so this costs nothing.
+      if (engineLight.current) engineLight.current.intensity = on ? 0.9 : 0;
+    },
   }));
 
   useFrame((state) => {
@@ -320,7 +385,13 @@ const ShipModel = forwardRef<ShipHandle, ShipModelProps>(function ShipModel({ ke
 
     // Engines: a flicker under a thrust envelope. Plumes stretch aft with burn.
     const f = 0.85 + Math.sin(t * 23.0) * 0.06 + Math.sin(t * 41.0 + 1.3) * 0.05;
-    const burn = 0.35 + thrust.current * 0.65;
+    // Below a whisper the engines are off: no plume, nozzles dark.
+    const off = thrust.current < 0.02;
+    const burn = off ? 0 : 0.35 + thrust.current * 0.65;
+    if (plumeL.current) plumeL.current.visible = !off;
+    if (plumeR.current) plumeR.current.visible = !off;
+    if (jetL.current) jetL.current.visible = !off;
+    if (jetR.current) jetR.current.visible = !off;
     const w = 0.12 * f * (0.7 + burn * 0.6);
     const len = 0.12 * f * (0.4 + burn * 2.4);
     if (plumeL.current) plumeL.current.scale.set(w, w * 0.8, 1);
@@ -332,7 +403,32 @@ const ShipModel = forwardRef<ShipHandle, ShipModelProps>(function ShipModel({ ke
     ring.emissiveIntensity = (1.0 + f * 0.6) * (0.5 + burn);
     strobe.opacity = Math.sin(t * 2.4) > 0.94 ? 1 : 0.12;
     strobe.transparent = true;
+
+    // Dismantle: each part slides out along its own offset.
+    const e = explode.current;
+    for (const key in parts.current) {
+      const g = parts.current[key];
+      const o = EXPLODE[key];
+      if (g && o) g.position.set(o[0] * e, o[1] * e, o[2] * e);
+    }
+    // The engine lamp rides the engines out (it lives outside the airframe
+    // group, see setShown).
+    if (engineLight.current) {
+      const o = EXPLODE.engines;
+      engineLight.current.position.set(o[0] * e, o[1] * e, o[2] * e + 0.62);
+    }
+    // Gear: the struts extend from inside the hull.
+    const gr = gear.current;
+    for (let i = 0; i < gearRefs.current.length; i++) {
+      const g = gearRefs.current[i];
+      if (!g) continue;
+      g.visible = gr > 0.03;
+      g.scale.set(1, Math.max(gr, 0.01), 1);
+    }
   });
+  const part = (key: string) => (el: THREE.Group | null) => {
+    parts.current[key] = el;
+  };
 
   return (
     <group ref={group}>
@@ -360,56 +456,89 @@ const ShipModel = forwardRef<ShipHandle, ShipModelProps>(function ShipModel({ ke
       <directionalLight ref={fill} intensity={fillIntensity} color="#9fb8c0" target={target} position={[-2, 1, -3]} />
       <primitive object={target} />
       <hemisphereLight intensity={0.1} color="#5a7f88" groundColor="#050607" />
+      {/* The engines light the tail: a warm point at the nozzles, short
+          throw. Self-illumination is one of the strongest real-object cues.
+          Outside the airframe group on purpose — see ShipHandle.setShown. */}
+      <pointLight ref={engineLight} position={[0, 0.0, 0.62]} intensity={0.9} color={AMBER} distance={0.7} decay={2} />
 
-      {/* Airframe */}
-      <mesh geometry={FUSELAGE} material={hull} castShadow receiveShadow />
-      <mesh geometry={SPINE} material={hull} position={[0, 0.048, 0]} castShadow receiveShadow />
-      <mesh geometry={WING} material={hull} position={[0, -0.01, 0]} castShadow receiveShadow />
-      <mesh geometry={CANARD} material={hull} position={[0, 0.012, 0]} castShadow receiveShadow />
-      <mesh geometry={FIN} material={hull} position={[-0.075, 0.055, 0]} rotation={[0, 0, 0.5]} castShadow receiveShadow />
-      <mesh geometry={FIN} material={hull} position={[0.075, 0.055, 0]} rotation={[0, 0, -0.5]} castShadow receiveShadow />
-
-      {/* Lit edge strips: emerald along the wing leading edges and down the
-          chine. The one thing that says "this is from later than now". */}
-      <mesh geometry={STRIP} material={strip} position={[0, 0.076, 0.1]} rotation={[0, Math.PI / 2, 0]} scale={[0.5, 1, 1]} />
+      {/* Airframe — everything a driver may hide. */}
+      <group ref={airframe}>
+      <group ref={part("fuselage")}>
+        <mesh geometry={FUSELAGE} material={hull} castShadow receiveShadow />
+        {/* Landing gear, nose and two mains. */}
+        {GEAR.map((g, i) => (
+          <group
+            key={i}
+            position={g}
+            ref={(el) => {
+              gearRefs.current[i] = el;
+            }}
+          >
+            <mesh geometry={STRUT} material={hullDark} castShadow />
+            <mesh geometry={FOOT} material={hullDark} castShadow />
+          </group>
+        ))}
+      </group>
+      <group ref={part("spine")}>
+        <mesh geometry={SPINE} material={hull} position={[0, 0.048, 0]} castShadow receiveShadow />
+        {/* Lit edge strip down the chine. The one thing that says "this is
+            from later than now". */}
+        <mesh geometry={STRIP} material={strip} position={[0, 0.076, 0.1]} rotation={[0, Math.PI / 2, 0]} scale={[0.5, 1, 1]} />
+        <mesh geometry={LIGHT} material={strobe} position={[0, 0.16, 0.44]} />
+      </group>
+      <group ref={part("wing")}>
+        <mesh geometry={WING} material={hull} position={[0, -0.01, 0]} castShadow receiveShadow />
+        {/* Nav lights: red port, green starboard. */}
+        <mesh geometry={LIGHT} material={navRed} position={[-0.6, -0.01, 0.42]} />
+        <mesh geometry={LIGHT} material={navGreen} position={[0.6, -0.01, 0.42]} />
+      </group>
+      <group ref={part("canard")}>
+        <mesh geometry={CANARD} material={hull} position={[0, 0.012, 0]} castShadow receiveShadow />
+      </group>
+      <group ref={part("finL")}>
+        <mesh geometry={FIN} material={hull} position={[-0.075, 0.055, 0]} rotation={[0, 0, 0.5]} castShadow receiveShadow />
+      </group>
+      <group ref={part("finR")}>
+        <mesh geometry={FIN} material={hull} position={[0.075, 0.055, 0]} rotation={[0, 0, -0.5]} castShadow receiveShadow />
+      </group>
 
       {/* Canopy and intakes */}
-      <mesh geometry={CANOPY} material={canopy} position={[0, 0.07, -0.3]} scale={[0.75, 0.55, 2.6]} />
+      <group ref={part("canopy")}>
+        <mesh geometry={CANOPY} material={canopy} position={[0, 0.07, -0.3]} scale={[0.75, 0.55, 2.6]} />
+      </group>
       {([-1, 1] as const).map((side) => (
-        <mesh key={side} material={hullDark} position={[side * 0.11, 0.0, 0.12]}>
-          <boxGeometry args={[0.05, 0.036, 0.3]} />
-        </mesh>
-      ))}
-
-      {/* The engines light the tail: a warm point at the nozzles, short
-          throw. Self-illumination is one of the strongest real-object cues. */}
-      <pointLight position={[0, 0.0, 0.62]} intensity={0.9} color={AMBER} distance={0.7} decay={2} />
-      {/* Engines */}
-      {([-1, 1] as const).map((side) => (
-        <group key={side} position={[side * 0.06, 0.0, 0.48]}>
-          <mesh geometry={NOZZLE} material={hullDark} />
-          <mesh geometry={THROAT} material={ring} position={[0, 0, 0.075]} />
+        <group key={side} ref={part(side < 0 ? "intakeL" : "intakeR")}>
+          <mesh material={hullDark} position={[side * 0.11, 0.0, 0.12]}>
+            <boxGeometry args={[0.05, 0.036, 0.3]} />
+          </mesh>
         </group>
       ))}
-      {glow && (
-        <>
-          <sprite ref={plumeL} position={[-0.06, 0, 0.58]}>
-            <spriteMaterial map={glow} color={AMBER} transparent blending={THREE.AdditiveBlending} depthWrite={false} opacity={0.6} />
-          </sprite>
-          <sprite ref={plumeR} position={[0.06, 0, 0.58]}>
-            <spriteMaterial map={glow} color={AMBER} transparent blending={THREE.AdditiveBlending} depthWrite={false} opacity={0.6} />
-          </sprite>
-          <mesh ref={jetL} geometry={PLUME} material={jet} position={[-0.06, 0, 0.57]} />
-          <mesh ref={jetR} geometry={PLUME} material={jet} position={[0.06, 0, 0.57]} />
-        </>
-      )}
 
-      <mesh geometry={MAST} material={hullDark} position={[0, 0.1, 0.36]} />
+      <group ref={part("engines")}>
+        {([-1, 1] as const).map((side) => (
+          <group key={side} position={[side * 0.06, 0.0, 0.48]}>
+            <mesh geometry={NOZZLE} material={hullDark} />
+            <mesh geometry={THROAT} material={ring} position={[0, 0, 0.075]} />
+          </group>
+        ))}
+        {glow && (
+          <>
+            <sprite ref={plumeL} position={[-0.06, 0, 0.58]}>
+              <spriteMaterial map={glow} color={AMBER} transparent blending={THREE.AdditiveBlending} depthWrite={false} opacity={0.6} />
+            </sprite>
+            <sprite ref={plumeR} position={[0.06, 0, 0.58]}>
+              <spriteMaterial map={glow} color={AMBER} transparent blending={THREE.AdditiveBlending} depthWrite={false} opacity={0.6} />
+            </sprite>
+            <mesh ref={jetL} geometry={PLUME} material={jet} position={[-0.06, 0, 0.57]} />
+            <mesh ref={jetR} geometry={PLUME} material={jet} position={[0.06, 0, 0.57]} />
+          </>
+        )}
+      </group>
 
-      {/* Nav lights: red port, green starboard, white strobe on the fin. */}
-      <mesh geometry={LIGHT} material={navRed} position={[-0.6, -0.01, 0.42]} />
-      <mesh geometry={LIGHT} material={navGreen} position={[0.6, -0.01, 0.42]} />
-      <mesh geometry={LIGHT} material={strobe} position={[0, 0.16, 0.44]} />
+      <group ref={part("mast")}>
+        <mesh geometry={MAST} material={hullDark} position={[0, 0.1, 0.36]} />
+      </group>
+      </group>
     </group>
   );
 });

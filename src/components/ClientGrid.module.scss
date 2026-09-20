@@ -1,15 +1,16 @@
 @use "../styles/tokens.scss" as *;
 
-// 1px seams from the container background — the house grid.
+// 1px seams drawn by the cells, not the container: eight clients in a
+// five-column row leave two empty tracks, and a container painted in the
+// seam colour lit them up as a blank panel (2026-09-19). With the seams on
+// the cells the unfilled tracks stay sky.
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 1px;
-  background: var(--line);
   list-style: none;
   margin: 0;
   padding: 0;
-  border: 1px solid var(--line);
 }
 
 .cell {
@@ -17,6 +18,7 @@
   gap: var(--space-2);
   padding: var(--space-5);
   background: var(--bg-primary);
+  outline: 1px solid var(--line);
   transition: background var(--dur-base) var(--ease-out);
 
   @include hover-only {

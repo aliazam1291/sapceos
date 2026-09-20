@@ -12,6 +12,19 @@ export const profile = {
   oneLine: "Give me a problem. I'll figure out what to do next.",
 };
 
+/** What the site is for (PROFILE.md "Positioning"). Shown on the channel and the nav signal. */
+export const lookingFor = "Product Management / product roles";
+
+/**
+ * Received transmissions — references from people Ali worked with. Empty
+ * until real ones exist; the section renders nothing while empty. A quote
+ * needs a name and a role. Never paraphrase or invent one.
+ */
+export const references: { quote: string; name: string; role: string; org?: string }[] = [];
+
+/** The one measured number the first screen leads with (PROFILE.md, Vahan Shakti). */
+export const proof = { value: "200,000+", label: "users on a platform I built the map for" };
+
 /**
  * How Ali works — the mindset, as four principles. Editorial framing of the
  * core story in PROFILE.md; every `evidence` line is a fact from that file.
@@ -114,6 +127,19 @@ export const links = [
 
 export const experience = [
   {
+    org: "DumbMoney",
+    role: "Founder & CPO",
+    // The founding date is not confirmed (PROFILE.md "Venture"); "present"
+    // is. Fill the start in when Ali gives it.
+    period: "Now",
+    place: "dumbmoney.in",
+    href: "/dumbmoney",
+    points: [
+      "A coupon and deals platform for Indian online shoppers, run with co-founder Akshat Somani.",
+      "Own the product: what DumbMoney is for, what ships, and the verification standard — automated expiry and duplicate checks, then a person, before a code goes live.",
+    ],
+  },
+  {
     org: "MapMyIndia [Gtropy]",
     role: "Associate Software Developer — Product & Platform",
     period: "Sep 2024 — present",
@@ -128,7 +154,7 @@ export const experience = [
   },
   {
     org: "Smaak.ux",
-    role: "Founder & Product Designer",
+    role: "Founder & Product Designer · freelance",
     period: "2023 — present",
     place: "Remote",
     points: [

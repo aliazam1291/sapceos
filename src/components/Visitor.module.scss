@@ -28,6 +28,7 @@
 }
 
 .saucer {
+  will-change: transform;
   position: absolute;
   left: 0;
   bottom: 26px;
@@ -69,7 +70,7 @@
   max-width: 18rem;
   text-align: left;
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--text-secondary);
   animation: caption 11s ease-in-out both;
 
@@ -117,4 +118,8 @@
   0%, 34% { opacity: 0; transform: translateX(6px); }
   42%, 76% { opacity: 1; transform: translateX(0); }
   84%, 100% { opacity: 0; transform: translateX(-4px); }
+}
+
+:global(html[data-perf="low"]) {
+  .lights g, .arm, .alien { animation: none !important; }
 }

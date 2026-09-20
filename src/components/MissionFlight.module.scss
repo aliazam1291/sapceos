@@ -1,9 +1,10 @@
 @use "../styles/tokens.scss" as *;
 
+// No rule under the flight: the galaxy dissolves into the page's own sky
+// (mask below), so the reader leaves the flight without crossing a line.
 .section {
   position: relative;
   width: 100%;
-  border-bottom: 1px solid var(--line);
 }
 
 .stage {
@@ -24,14 +25,11 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 78%, rgba(6, 6, 6, 0.7) 100%);
-    pointer-events: none;
-  }
+  // The canvas is opaque (the composer needs it); the bottom quarter is
+  // masked away so the galaxy's dust hands over to DeepSpace's stars with
+  // no seam, and the next section rises out of the same sky.
+  mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
 }
 
 .fieldInner {
@@ -156,10 +154,96 @@
   }
 }
 
-.hint {
+// Bottom-left stack: the opener, the hint, the way past.
+.foot {
   grid-column: 1;
   grid-row: 3;
   align-self: end;
+  display: grid;
+  gap: var(--space-4);
+  max-width: 34ch;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.opener {
+  display: grid;
+  gap: var(--space-2);
+  transition:
+    opacity 0.6s var(--ease-out),
+    transform 0.6s var(--ease-out);
+
+  &[data-away] {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+}
+
+.openerPitch {
+  margin: 0;
+  // A caption that names the operator, not a headline over the galaxy.
+  font-size: clamp(1.25rem, 1.8vw, 1.55rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+.openerLine {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.openerVenture {
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+  }
+}
+
+.openerProof {
+  margin: 0;
+  @include mono-label;
+  color: var(--text-secondary);
+
+  span {
+    font-size: 1.125rem;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    margin-right: var(--space-2);
+  }
+}
+
+.skip {
+  @include mono-label;
+  width: fit-content;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: opacity 0.4s var(--ease-out), color var(--dur-base) var(--ease-out);
+
+  &[data-away] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @include hover-only {
+    &:hover { color: var(--accent); }
+  }
+}
+
+.hint {
   @include mono-label;
   display: flex;
   align-items: center;
@@ -171,18 +255,20 @@
     width: 1px;
     height: 28px;
     background: linear-gradient(var(--accent), transparent);
+    transform-origin: 50% 0;
+    will-change: transform;
     animation: drop 2.2s var(--ease-in-out) infinite;
-  }
-
-  @media (max-width: 768px) {
-    display: none;
   }
 }
 
+// Fixed origin (2026-09-20): animating transform-origin is not
+// compositable. Grow from the top, then slide down while shrinking — the
+// top edge falls, the bottom edge stays — which is what the old origin
+// switch drew.
 @keyframes drop {
-  0% { transform: scaleY(0); transform-origin: 50% 0; }
-  50% { transform: scaleY(1); transform-origin: 50% 0; }
-  100% { transform: scaleY(0); transform-origin: 50% 100%; }
+  0% { transform: translateY(0) scaleY(0); }
+  50% { transform: translateY(0) scaleY(1); }
+  100% { transform: translateY(100%) scaleY(0); }
 }
 
 // ── HUD ──────────────────────────────────────────────────────────────────────
@@ -193,7 +279,8 @@
   // Clear of the section rail on the right edge.
   right: max(var(--shell-pad), 9rem);
   transform: translateY(-50%);
-  width: min(400px, 32vw);
+  // Narrow: a readout in the corner of the sky, not a panel over it.
+  width: min(300px, 22vw);
   pointer-events: none;
 
   @media (max-width: 768px) {
@@ -201,15 +288,26 @@
   }
 }
 
-// A targeting panel, not a card: translucent, squared, bracket corners,
-// hairline seams between stat cells — the reference's HUD language.
+// Beat 0's transcript sits where the HUD will dock; it dissolves with the
+// opener when the flight starts (the aside re-renders with the HUD).
+.comms {
+  pointer-events: none;
+  // Above the disc: the aside is centred on the frame; the transcript rides
+  // up into the empty top-right sky. Below it is the outer worlds and the
+  // companion's boarding station — both taken.
+  transform: translateY(-26vh);
+}
+
+// A targeting reticle, not a card: no fill — the stars and the ship read
+// straight through it — squared, bracket corners, hairline seams between
+// stat cells. Only a faint wash behind the type keeps it legible over dust.
 .hudInner {
   position: relative;
   display: grid;
-  gap: var(--space-4);
-  padding: var(--space-6) var(--space-5);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4);
   pointer-events: auto;
-  background: linear-gradient(180deg, rgba(10, 12, 12, 0.9), rgba(6, 6, 6, 0.82));
+  background: linear-gradient(180deg, rgba(6, 6, 6, 0.28), rgba(6, 6, 6, 0.12));
   border: 1px solid rgba(190, 230, 215, 0.14);
   animation: dock 0.55s var(--ease-out) both;
 }
@@ -240,12 +338,14 @@
 .stat {
   display: grid;
   gap: 3px;
-  padding: var(--space-3);
-  background: rgba(6, 6, 6, 0.6);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(6, 6, 6, 0.22);
 
   dt {
     @include mono-label;
-    font-size: 0.5625rem;
+    font-size: max(0.5625rem, var(--micro-floor));
+    // Over dust the tertiary grey vanishes; the readout has no fill to help it.
+    color: var(--text-secondary);
   }
 
   dd {
@@ -298,7 +398,7 @@
   right: 0;
   bottom: 0;
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--text-secondary);
   padding: 4px var(--space-2);
   background: rgba(6, 6, 6, 0.8);
@@ -342,7 +442,7 @@
 
 .hudStatus {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -437,7 +537,7 @@
   span {
     text-transform: uppercase;
     letter-spacing: 0.16em;
-    font-size: 0.5625rem;
+    font-size: max(0.5625rem, var(--micro-floor));
     color: var(--accent);
     margin-right: var(--space-2);
   }

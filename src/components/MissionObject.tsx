@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useSceneFrameloop } from "@/lib/use-scene-frameloop";
+import { quietGL } from "@/lib/gl";
 
 /**
  * A wireframe form generated from the mission slug — the 3D counterpart to the
@@ -131,6 +132,7 @@ export default function MissionObject({ seed }: { seed: string }) {
 
   return (
     <Canvas
+      onCreated={quietGL}
       ref={canvasRef}
       frameloop={frameloop}
       camera={{ position: [0, 0, 3.4], fov: 40 }}

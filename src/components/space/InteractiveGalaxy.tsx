@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import GalaxyParticles from "./GalaxyParticles";
@@ -12,6 +12,8 @@ import { cameraFocus } from "./cameraFocus";
 import { GALAXY_NODES, type GalaxyNode, type StarCategory } from "./galaxyData";
 import styles from "./InteractiveGalaxy.module.scss";
 import { useSceneFrameloop } from "@/lib/use-scene-frameloop";
+import { decidePerfLevel, perf } from "@/lib/perf";
+import { WarmShaders } from "./useWarmShaders";
 import { registerHeavyScene } from "@/lib/scene-load";
 import GalaxyShip from "./GalaxyShip";
 import Starship from "./Starship";
@@ -21,6 +23,7 @@ import ShootingStars from "./ShootingStars";
 import Cinematic from "./Cinematic";
 import { spaceSound } from "@/lib/spaceSound";
 import { signal, decay } from "@/lib/scroll-signal";
+import { quietGL } from "@/lib/gl";
 
 // Pulled back from (0, 5, 7.5). The outermost hub nodes sit at ~3.8 units and
 // their HTML labels extend further still, so the tighter framing clipped
@@ -32,6 +35,11 @@ const DEFAULT_DIST = DEFAULT_CAM_POS.length();
 /** Module-scope scratch, reused by the camera rig every frame. */
 const _pos = new THREE.Vector3();
 const _look = new THREE.Vector3();
+const _arc = new THREE.Vector3();
+const _side = new THREE.Vector3();
+const UP = new THREE.Vector3(0, 1, 0);
+/** Seconds a transit between systems takes; the camera eases along an arc. */
+const TRANSIT = 1.6;
 
 /*
  * Pointer position, -1..1 across the viewport, tracked at WINDOW level.
@@ -163,15 +171,24 @@ function CameraController({
   hoveredNode,
   zoomScale,
   flight = false,
+  leaving = false,
 }: {
   focusedNode: GalaxyNode | null;
   hoveredNode: GalaxyNode | null;
   zoomScale: number;
   /** Flight mode: approach a system, don't park on top of it. */
   flight?: boolean;
+  /** The flight is ending: drop the flight flag so the companion can take over. */
+  leaving?: boolean;
 }) {
   const { camera, gl } = useThree();
   const currentLookAt = useRef(new THREE.Vector3(0, 0, 0));
+  // Where a transit started (camera and look-at), so the path between two
+  // systems can be a curve on a clock rather than a straight damped slide.
+  const transitFrom = useRef(new THREE.Vector3());
+  const transitLookFrom = useRef(new THREE.Vector3());
+  // Alternates each transit so the flight banks left, then right.
+  const transitSide = useRef(1);
   // Is the canvas actually on screen? The frameloop keeps running a little
   // past the edge (its observer has a margin), and the last beat's focus
   // never clears — so without this the flight flag stayed raised into the
@@ -194,6 +211,9 @@ function CameraController({
     if (focusedNode?.id !== lastFocusId.current) {
       lastFocusId.current = focusedNode?.id ?? null;
       flightT.current = 0;
+      transitFrom.current.copy(camera.position);
+      transitLookFrom.current.copy(currentLookAt.current);
+      transitSide.current = -transitSide.current;
     }
     // Clamped so a backgrounded tab resuming does not hand us a one-second
     // delta and teleport the rig.
@@ -233,6 +253,34 @@ function CameraController({
           nz + Math.cos(azimuth) * radius,
         );
         targetLookAt.set(nx + 0.5, ny + 0.05, nz);
+
+        /*
+         * The transit is a flight, not a slide (2026-09-18). For the first
+         * TRANSIT seconds after a beat change the target itself travels from
+         * where the camera was to the new system's orbit on a smoothstep —
+         * real acceleration and deceleration — along an arc that swings
+         * out to the side and climbs over the dust, alternating sides each
+         * leg so the flight banks left, then right. The damped camera below
+         * follows this moving target; after the transit the orbit above
+         * takes over untouched.
+         */
+        if (t < TRANSIT) {
+          const u = t / TRANSIT;
+          const e = u * u * (3 - 2 * u);
+          _arc.subVectors(targetPos, transitFrom.current);
+          const len = _arc.length();
+          _side.crossVectors(_arc.normalize(), UP).normalize().multiplyScalar(transitSide.current);
+          const amp = Math.min(len * 0.22, 1.6);
+          // sin² not sin: zero slope at both ends, so the path leaves toward
+          // the destination and swings out mid-way — a sin bump starts the
+          // camera moving sideways, and the ship (nose along its velocity)
+          // turned broadside to the lens on every departure.
+          const sb = Math.sin(u * Math.PI);
+          const bump = sb * sb;
+          targetPos.lerpVectors(transitFrom.current, targetPos, e).addScaledVector(_side, bump * amp);
+          targetPos.y += bump * amp * 0.4;
+          targetLookAt.lerpVectors(transitLookFrom.current, targetLookAt, e);
+        }
       } else {
         const offset = Math.max(3.4 / zoomScale, MIN_FOCUS_DIST);
         targetPos.set(nx, ny + 0.7, nz + offset);
@@ -312,12 +360,21 @@ function CameraController({
      */
     // Focus follows the subject. Bodies and dust read this to go soft
     // when they are off the focal plane.
-    const inFlight = flight && focusedNode && onScreen.current ? 1 : 0;
+    const inFlight = flight && focusedNode && onScreen.current && !leaving ? 1 : 0;
     cameraFocus.on += (inFlight - cameraFocus.on) * damp(3, dt);
+    // The galaxy's ship has the frame from boarding until the climb-out.
+    const shipLive = flight && onScreen.current && !leaving ? 1 : 0;
+    // Snapped on the first frame: the companion reads this to yield, and a
+    // one-second ramp from 0 let it fly in and fade out again while the
+    // galaxy was boarding (two ships at the right edge, 2026-09-19). The
+    // damp is for the hand-off at the climb-out, where it should ease.
+    if (!cameraFocus.tick) cameraFocus.ship = shipLive;
+    else cameraFocus.ship += (shipLive - cameraFocus.ship) * damp(3, dt);
     const nowMs = performance.now();
     if (cameraFocus.tick) cameraFocus.frameMs += (Math.min(nowMs - cameraFocus.tick, 2000) - cameraFocus.frameMs) * 0.2;
-    // First frame: the launch sequence (BootScreen) waits for this.
-    if (!cameraFocus.tick) window.dispatchEvent(new Event("space:ready"));
+    // (`space:ready` — the launch screen's galaxy milestone — now fires from
+    // WarmRoot once the shaders have compiled, not on this first frame: the
+    // first frame draws nothing while the compile is in flight.)
     cameraFocus.tick = nowMs;
     if (focusedNode) {
       const [fx, fy, fz] = focusedNode.position;
@@ -344,6 +401,21 @@ function CameraController({
 }
 
 /** The bright nucleus, built from the shared radial-falloff sprite. */
+/**
+ * Hands the R3F `invalidate` out to the component that owns the frameloop
+ * decision, so a "demand" canvas can be ticked from outside the Canvas.
+ */
+function InvalidateBridge({ target }: { target: React.MutableRefObject<(() => void) | null> }) {
+  const invalidate = useThree((s) => s.invalidate);
+  useEffect(() => {
+    target.current = invalidate;
+    return () => {
+      target.current = null;
+    };
+  }, [invalidate, target]);
+  return null;
+}
+
 function CoreGlow() {
   const glowMap = getGlowTexture();
   const inner = useRef<THREE.Sprite>(null);
@@ -436,6 +508,8 @@ interface InteractiveGalaxyProps {
   flightTo?: string | null;
   /** When true, the page drives focus and the detail drawer stays closed. */
   flightControlled?: boolean;
+  /** The flight is ending: the ship climbs out and the companion takes over. */
+  flightLeaving?: boolean;
 }
 
 export default function InteractiveGalaxy({
@@ -444,6 +518,7 @@ export default function InteractiveGalaxy({
   embedded = false,
   flightTo = null,
   flightControlled = false,
+  flightLeaving = false,
 }: InteractiveGalaxyProps) {
   const [category, setCategory] = useState<StarCategory>("all");
   const [focusedNode, setFocusedNode] = useState<GalaxyNode | null>(null);
@@ -505,7 +580,13 @@ export default function InteractiveGalaxy({
   const [zoomScale, setZoomScale] = useState<number>(embedded ? 1.2 : 1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Mirrors the site-wide switch (lib/spaceSound.ts); the HUD's button is
+  // one more place to flip it.
   const [isMuted, setIsMuted] = useState(true);
+  useEffect(() => {
+    setIsMuted(spaceSound.getMutedState());
+    return spaceSound.subscribe((on) => setIsMuted(!on));
+  }, []);
   const [telemetryLogs, setTelemetryLogs] = useState<string[]>([
     "COGNITIVE INTERFACE INITIALIZED.",
     "SYSTEM OVERSEER CAPABILITY: ACTIVE.",
@@ -524,17 +605,9 @@ export default function InteractiveGalaxy({
 
   const handleToggleMute = () => {
     const nextMute = !isMuted;
-    setIsMuted(nextMute);
     spaceSound.toggleMute(nextMute);
     addTelemetryLog(nextMute ? "[SYS] AUDIO TRANSCEIVER DEACTIVATED." : "[SYS] AUDIO COMM-LINK OPERATIONAL.");
   };
-
-  useEffect(() => {
-    return () => {
-      // Auto-mute audio context on route change
-      spaceSound.toggleMute(true);
-    };
-  }, []);
 
   // Device capabilities — resolved client-side only to avoid hydration mismatch
   // Reduced motion is no longer read here — useSceneFrameloop folds it into the
@@ -606,7 +679,59 @@ export default function InteractiveGalaxy({
   }, [isFullscreen]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const frameloop = useSceneFrameloop(canvasRef);
+  const visibleLoop = useSceneFrameloop(canvasRef);
+  // The quality level, decided once at mount (see lib/perf.ts). Point and
+  // rock counts cannot change live; dpr and the frame cap can.
+  const [level] = useState(() => (typeof window === "undefined" ? "high" : decidePerfLevel()));
+  const low = level === "low";
+  // The frame cap is for a software rasteriser only (Lighthouse, PageSpeed):
+  // a real GPU at a low level keeps every vsync — a 20 fps hero scene made the
+  // lead ship stutter on an Intel iGPU (Ali, 2026-09-19).
+  const throttle = perf.software;
+  /*
+   * Two reasons to stop drawing every frame (2026-09-19):
+   *  - the launch screen is up: it covers this canvas completely, and the
+   *    galaxy only needs its FIRST frame drawn (that frame fires
+   *    `space:ready`, which the boot log waits for). Rendering the whole
+   *    scene at full rate behind an opaque overlay for the 3-8 s a reader
+   *    spends there was the single largest cost of a first visit;
+   *  - a low level: on a software rasteriser or a weak GPU the scene runs
+   *    on demand at ~20 fps instead of on every vsync — a third of the work,
+   *    and the flight still reads as motion.
+   * Both go through R3F's "demand" mode and a ticker that decides when the
+   * next frame is worth drawing, the same shape as the Companion's loop.
+   */
+  const [booting, setBooting] = useState(false);
+  useEffect(() => {
+    const read = () => setBooting(document.documentElement.hasAttribute("data-booting"));
+    read();
+    const mo = new MutationObserver(read);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-booting"] });
+    return () => mo.disconnect();
+  }, []);
+  // Nothing draws until the shaders have compiled in parallel (WarmShaders);
+  // `space:ready` — the launch screen's galaxy milestone — fires then.
+  const [warm, setWarm] = useState(false);
+  const onWarm = useCallback(() => {
+    setWarm(true);
+    window.dispatchEvent(new Event("space:ready"));
+  }, []);
+  const frameloop = !warm ? "never" : visibleLoop === "always" && (booting || throttle) ? "demand" : visibleLoop;
+  const invalidateRef = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    if (frameloop !== "demand" || !throttle || booting) return;
+    let raf = 0;
+    let last = 0;
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick);
+      if (now - last >= 50) {
+        last = now;
+        invalidateRef.current?.();
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [frameloop, throttle, booting]);
 
   // While this scene is running, the always-on 2D layers back off (see
   // lib/scene-load.ts): they are mostly hidden behind it anyway.
@@ -619,14 +744,16 @@ export default function InteractiveGalaxy({
   // read as dust and gas rather than as sparkles.
   // A galaxy is a haze of tens of thousands of pinpricks, not thousands of
   // discs. Points are near-free on the GPU; the cost was never count.
-  const starCount = isCoarse ? 9000 : embedded ? 26000 : 20000;
+  const starCount = low ? 6000 : isCoarse ? 9000 : embedded ? 26000 : 20000;
   /*
    * Fill-rate is the whole cost of this scene — thousands of additive point
    * sprites — and it scales with the square of the pixel ratio. 1.75 was
    * ~2x the pixels of 1.25 for no visible gain on a field of sub-pixel
    * dust. The hero, which is full-frame, sits at the lower cap.
    */
-  const dpr: [number, number] = isCoarse ? [1, 1.25] : [1, 1.35];
+  // 1.25 on every level (was 1.35 on high): the hero scrolled at 30 fps on
+  // an Intel iGPU that reports "high" by cores and memory alone (2026-09-20).
+  const dpr: [number, number] = low ? [0.75, 1] : [1, 1.25];
 
   return (
     <div
@@ -642,6 +769,7 @@ export default function InteractiveGalaxy({
         * AND the list would just announce everything twice.
         */}
       <Canvas
+        onCreated={quietGL}
         ref={canvasRef}
         aria-hidden="true"
         frameloop={frameloop}
@@ -671,11 +799,15 @@ export default function InteractiveGalaxy({
         // MSAA moves into the composer (multisampling={4} in Cinematic).
         gl={{ antialias: false, powerPreference: embedded ? "high-performance" : "low-power" }}
       >
+        {/* Clear to the page ground, so a masked edge is invisible. */}
+        <color attach="background" args={["#060606"]} />
+        <InvalidateBridge target={invalidateRef} />
         <CameraController
           focusedNode={focusedNode}
           hoveredNode={hoveredNode}
           zoomScale={zoomScale}
           flight={flightControlled}
+          leaving={flightLeaving}
         />
 
         {/* The ship and its scan cone are a map-view prop; at flight
@@ -701,9 +833,9 @@ export default function InteractiveGalaxy({
             a hard-edged white blob sitting on top of the star field. */}
         <CoreGlow />
         {/* The operator's ship flies lead through the mission flight. */}
-        <Starship visible={flightControlled && focusedNode !== null} />
+        <Starship phase={!flightControlled ? "off" : flightLeaving ? "leaving" : focusedNode ? "flight" : "boarding"} />
         {/* Rocks: lit, opaque, tumbling — the occluders the field lacked. */}
-        <AsteroidField count={isCoarse ? 160 : 320} />
+        <AsteroidField count={low ? 90 : isCoarse ? 160 : 320} />
 
         {filteredNodes.map((node) => (
           <StarSystemNode
@@ -727,6 +859,7 @@ export default function InteractiveGalaxy({
         {/* The lens: bloom, depth of field on the flight subject, a touch of
             chromatic fringing. See Cinematic.tsx. */}
         <Cinematic />
+        <WarmShaders onWarm={onWarm} />
       </Canvas>
 
       {/* Vignette and grain over the render — see .lens in the module. */}

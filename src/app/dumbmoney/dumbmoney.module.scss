@@ -1,0 +1,127 @@
+@use "../../styles/tokens.scss" as *;
+
+// The venture page reuses the report's manifest / results / ownership /
+// rows from ui.module.scss. These are the lines it adds: the link cell,
+// and the phone-beside-the-writing block at the end.
+
+.dim {
+  color: var(--text-tertiary);
+}
+
+.siteLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+
+  @include hover-only {
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+.tagline {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+// The phone stands on the floor line; the posts sit beside it.
+.writing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: end;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: var(--space-12);
+  }
+}
+
+.phone {
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  position: relative;
+  // The floor line: the object stands on the page, no card around it.
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line-strong);
+
+  img {
+    display: block;
+    width: min(60vw, 240px);
+    height: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: 22px;
+    box-shadow:
+      0 30px 60px -30px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(60, 221, 158, 0.08);
+  }
+}
+
+.phoneCaption {
+  @include mono-label;
+  color: var(--text-tertiary);
+}
+
+.posts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.post {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  grid-template-areas:
+    "index link"
+    "index meta";
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--line);
+
+  &:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+.postIndex {
+  @include mono-label;
+  grid-area: index;
+  color: var(--accent);
+  padding-top: 0.2em;
+}
+
+.postLink {
+  grid-area: link;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  max-width: 44ch;
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+}
+
+.postMeta {
+  @include mono-label;
+  grid-area: meta;
+  color: var(--text-tertiary);
+}
+
+.postLineage .postLink {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}

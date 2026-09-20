@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { profile } from "@/content/profile";
+import { lookingFor, profile } from "@/content/profile";
 import { orbitHasContent } from "@/content/orbit";
 import { lockScroll } from "@/lib/lenis";
+import { scrollMax } from "@/lib/scroll-signal";
 import NavOverview from "./NavOverview";
+import SoundToggle from "./SoundToggle";
 import styles from "./Nav.module.scss";
 
 // `plain` is what the label means if you ignore the metaphor entirely.
@@ -14,12 +16,15 @@ const routes = [
   { href: "/missions", label: "Missions", plain: "Projects" },
   { href: "/galaxy", label: "Galaxy 3D", plain: "Interactive Map" },
   { href: "/lab", label: "Lab", plain: "Experiments" },
+  { href: "/studio", label: "Studio", plain: "Freelance work" },
+  { href: "/dumbmoney", label: "DumbMoney", plain: "Venture · Founder & CPO" },
   // Listed only once /orbit has real content — see src/content/orbit.ts.
   // The route always works; this is the link, not the page.
   ...(orbitHasContent
     ? [{ href: "/orbit", label: "Orbit", plain: "Interests" }]
     : []),
   { href: "/field-notes", label: "Field Notes", plain: "Case studies" },
+  { href: "/decisions", label: "Flight Rules", plain: "How I decide" },
   { href: "/about", label: "About", plain: "About" },
   { href: "/mission-history", label: "Mission History", plain: "Resume" },
   { href: "/contact", label: "Open Channel", plain: "Contact" },
@@ -61,9 +66,10 @@ export default function Nav() {
 
     const read = () => {
       raf = 0;
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - doc.clientHeight;
-      const y = doc.scrollTop;
+      // Cached in scroll-signal: reading scrollHeight here every frame forced
+      // a layout per scroll event (2026-09-20).
+      const max = scrollMax();
+      const y = window.scrollY;
       const dy = y - lastY;
       lastY = y;
 
@@ -151,7 +157,7 @@ export default function Nav() {
           </span>
 
           {/* Live signal. Decorative, so it is hidden from AT. */}
-          <span className={styles.status} aria-hidden="true">
+          <span className={styles.status} aria-hidden="true" title={`Accepting transmissions — looking for ${lookingFor}`}>
             <span className={styles.statusDot} />
           </span>
 
@@ -171,6 +177,22 @@ export default function Nav() {
             <span className={styles.hereLabel}>At</span>
             <span className={styles.hereValue}>{here}</span>
           </span>
+
+          {/* Mission control: the ⌘K palette. Every destination from one
+              field; the key legend is the label, so a keyboard reader sees
+              the shortcut and everyone else sees a control. */}
+          <button
+            type="button"
+            className={styles.palette}
+            onClick={() => window.dispatchEvent(new Event("space:palette"))}
+            aria-label="Open mission control (Command or Control K)"
+            title="Go anywhere — ⌘K"
+          >
+            <kbd aria-hidden="true">⌘K</kbd>
+          </button>
+
+          {/* The room tone: off until asked. */}
+          <SoundToggle className={styles.sound} label={false} />
 
           {/* Contact is promoted out of the list into the trailing action. */}
           <Link

@@ -40,7 +40,7 @@
 
 .railNote {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
 }
 
 .railLine {
@@ -59,7 +59,16 @@
   gap: clamp(var(--space-8), 6vh, var(--space-16));
 }
 
+.rows {
+  // Rows bank in from a side (.flies); until they enter, the transform
+  // reaches past the viewport edge. Clip here so the page never measures
+  // wider than the screen (mobile audit, 2026-09-20).
+  overflow-x: clip;
+}
+
 .row {
+  // Measured: rows sum to 428px each in layout; the generic .flies guess is 420px.
+  contain-intrinsic-size: auto 380px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(var(--space-6), 3vw, var(--space-12));
@@ -96,8 +105,10 @@
       enterLeft linear both,
       leaveLeft linear forwards;
     animation-timeline: view(), view();
+    // Pixels, like globals .flies (2026-09-20): the row straddling the fold
+    // at load was half-faded on every static contrast audit of /field-notes.
     animation-range:
-      entry 0% entry 55%,
+      entry -120px entry 200px,
       exit 45% exit 100%;
 
     &[data-side="right"] {
@@ -147,16 +158,18 @@
 // The cover slot holds a drone carrying the cover. It descends onto the
 // row when the row is reached (data-arrived, set by ArrivalGate), straight
 // down, checks its drop, settles — the load's own swing is in Drone.
+// Holding high and dim before arrival (2026-09-18) — never an empty row
+// for a fast scroller; the descent starts from here.
 .cover {
   position: relative;
   display: block;
   overflow: visible;
-  opacity: 0;
-  transform: translateY(-60vh);
+  opacity: 0.28;
+  transform: translateY(-18vh) scale(0.96);
 }
 
 .row[data-arrived] .cover {
-  animation: descend 1.7s cubic-bezier(0.3, 0.75, 0.25, 1) 0.15s both;
+  animation: descend 1.3s cubic-bezier(0.3, 0.75, 0.25, 1) 0.1s both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -169,16 +182,18 @@
   }
 }
 
+// The copy never waits for the choreography (2026-09-18): it is readable
+// on arrival; the drone landing is the accent, not the reveal.
 .body {
-  opacity: 0;
+  opacity: 0.72;
 }
 
 .row[data-arrived] .body {
-  animation: bodyIn 0.6s ease-out 1.55s both;
+  animation: bodyIn 0.6s ease-out 0.9s both;
 }
 
 @keyframes bodyIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0.72; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
 }
 
@@ -188,7 +203,7 @@
 }
 
 @keyframes descend {
-  0% { opacity: 0; transform: translateY(-60vh) translateX(0.8vw) rotate(1deg); }
+  0% { opacity: 0.28; transform: translateY(-18vh) translateX(0.8vw) rotate(1deg) scale(0.96); }
   18% { opacity: 1; }
   55% { transform: translateY(1.4vh) translateX(-0.4vw) rotate(-0.6deg); }
   78% { transform: translateY(-0.4vh) rotate(0.2deg); }
@@ -259,7 +274,7 @@
 
 .draft {
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: #e0b341;
   border: 1px dashed rgba(224, 179, 65, 0.4);
   padding: 1px var(--space-2);

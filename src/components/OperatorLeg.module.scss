@@ -1,0 +1,144 @@
+@use "../styles/tokens.scss" as *;
+
+// The operator's leg: portrait left, the copy right; the loop as a strip
+// of numbered steps; the facts as a hairline list. Panels only around
+// text; the matrix stands on open floor.
+.leg {
+  display: grid;
+  align-content: center;
+  min-height: calc(100vh - var(--space-16) * 2);
+}
+
+.comms {
+  margin: calc(var(--space-12) * -1 + var(--space-4)) 0 var(--space-8);
+}
+
+.all {
+  @include mono-label;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+
+  @include hover-only {
+    &:hover { color: var(--text-primary); }
+  }
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-10);
+  align-items: start;
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    gap: var(--space-16);
+  }
+}
+
+.figure {
+  display: flex;
+  justify-content: center;
+
+  @media (min-width: 900px) {
+    justify-content: flex-start;
+    position: sticky;
+    top: var(--space-16);
+  }
+}
+
+.copy {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 64ch;
+}
+
+.statement {
+  margin: 0;
+  font-size: var(--type-medium);
+  line-height: 1.22;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+
+.story {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  max-width: 58ch;
+}
+
+// The loop: eight numbered steps on one line, wrapping on phones, joined
+// by hairline dashes — an instrument strip, not eight cards.
+.loop {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-4) 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  border-block: 1px solid var(--line);
+}
+
+.loopStep {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+
+  &:not(:last-child)::after {
+    content: "→";
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    margin-left: var(--space-1);
+  }
+}
+
+.loopIndex {
+  @include mono-label;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.loopName {
+  @include mono-label;
+  color: var(--text-primary);
+  letter-spacing: 0.14em;
+}
+
+.facts {
+  margin: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+
+  > div {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-primary);
+
+    @media (min-width: 640px) {
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: var(--space-4);
+      align-items: baseline;
+    }
+  }
+
+  dt {
+    @include mono-label;
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--type-small);
+    color: var(--text-primary);
+    line-height: 1.45;
+  }
+}
+
+.accent {
+  color: var(--accent) !important;
+}

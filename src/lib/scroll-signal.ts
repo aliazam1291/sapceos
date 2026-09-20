@@ -21,10 +21,33 @@ export const signal: ScrollSignal = { progress: 0, delta: 0, velocity: 0 };
 let last = 0;
 let started = false;
 
+/*
+ * The scrollable height, cached (2026-09-20). `scrollHeight` and
+ * `clientHeight` force a synchronous layout whenever style is dirty — and
+ * with scroll-driven animations it is dirty on every frame — so reading them
+ * on every scroll event cost 1.4 s of main thread across one reading-pace
+ * scroll of the home page (tools/profile-uat.mjs SCROLL=1: this function was
+ * the second-hottest on the page). It changes only when the document does:
+ * a ResizeObserver on <body> and the resize event keep it current.
+ */
+let cachedMax = 0;
+let maxDirty = true;
+export function scrollMax() {
+  if (maxDirty) {
+    const doc = document.documentElement;
+    cachedMax = Math.max(0, doc.scrollHeight - doc.clientHeight);
+    maxDirty = false;
+  }
+  return cachedMax;
+}
+function invalidateMax() {
+  maxDirty = true;
+}
+
 function sample() {
-  const doc = document.documentElement;
-  const max = doc.scrollHeight - doc.clientHeight;
-  const y = doc.scrollTop;
+  const max = scrollMax();
+  // window.scrollY does not force layout; documentElement.scrollTop can.
+  const y = window.scrollY;
 
   signal.progress = max > 0 ? y / max : 0;
   signal.delta = y - last;
@@ -54,15 +77,25 @@ export function startScrollSignal() {
   if (started || typeof window === "undefined") return () => {};
   started = true;
 
-  last = document.documentElement.scrollTop;
+  last = window.scrollY;
+  const onResize = () => {
+    invalidateMax();
+    sample();
+  };
+  // Content height changes (a lazy scene mounting, a pin spacer, a section
+  // growing) — without this the progress would be measured against a stale
+  // height until the next resize.
+  const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(invalidateMax) : null;
+  ro?.observe(document.body);
   sample();
 
   window.addEventListener("scroll", sample, { passive: true });
-  window.addEventListener("resize", sample, { passive: true });
+  window.addEventListener("resize", onResize, { passive: true });
 
   return () => {
     window.removeEventListener("scroll", sample);
-    window.removeEventListener("resize", sample);
+    window.removeEventListener("resize", onResize);
+    ro?.disconnect();
     started = false;
   };
 }

@@ -51,6 +51,20 @@ the open channel; the one joke; keep it the only one).
   the sections arrive around it. In the galaxy, `Starship` aims its nose
   at the beat's subject (`cameraFocus.target`) and sits large, low-left.
   Keep the plan when sections move: a waypoint over copy is a bug.
+  `PAGE_PLAN`'s waypoints are fixed **screen fractions**, so they land in
+  the same relative spot on every device — on a short mobile viewport
+  that put the rest position (p=0, p=1) at 80% down the first screen and
+  the sweep waypoint (p=0.5) at vertical centre, both landing on live
+  text on every secondary page (`/about`, `/contact`, `/mission-history`,
+  `/decisions`, found 2026-09-18). A single mobile text column runs
+  nearly edge to edge, so there is no interior spot free of copy — fixed
+  with `PAGE_PLAN_COARSE`, selected below 768px width (`narrow` state,
+  not `coarse`/touch — a narrow desktop window has the same problem): the
+  ship stays parked top-right beside the heading all the way down the
+  page, pushed past where the text wraps rather than over it. Check with
+  `tools/ship-plan-uat.mjs` (rest position, every secondary page) and
+  `tools/ship-midscroll-uat.mjs` (p≈0.5, the sweep waypoint) before
+  touching either plan.
 - *The ship flies calm* (2026-09-16, after the dzinr reference). The plan
   is a Catmull-Rom spline, damped hard (progress 1.6, position 2.4): no
   pitch flip on scroll reversal, no barrel roll, small bank/heading gains.
@@ -85,8 +99,13 @@ the open channel; the one joke; keep it the only one).
   beat: s 1.5, the sentence a caption in the lower left. `InteractiveGalaxy` drops the
   flight flag when its canvas leaves the screen, so the companion is never
   hidden in the hangar.
-- *The launch sequence* (`BootScreen`): first visit of a session, the ship
-  on the pad (`BootShip`, same `ShipModel`), boot log tied to real
+- *The launch sequence* (`BootScreen`): first visit of a session. The
+  scene IS the screen (2026-09-17): `BootShip` full-bleed — the ship on
+  the lit platform, front three-quarter, masts, fog, a vignette and corner
+  brackets — with the HUD in the corners (mark top-left, "Pad 01 ·
+  pre-flight / cleared for launch" top-right, the log bottom-left, the
+  hold bottom-right). Never a framed canvas in the middle of a black
+  screen. Boot log tied to real
   readiness (`space:ready` from the galaxy's first frame), HOLD TO LAUNCH
   fills on a wall clock and throttles the engines; at full the ship lifts
   off and `space:warp` fires. Harnesses set `sessionStorage
@@ -100,8 +119,101 @@ the open channel; the one joke; keep it the only one).
   frame; the walkaround cycles itself, hover/tap picks a part. While the
   section is in view `shipState.landed` is raised and `Companion` hides:
   one ship, now on the ground. The CTA lives on the pad; there is no
-  separate closing block. Check with `tools/landing-uat.mjs` and
-  `tools/parts-uat.mjs`.
+  separate closing block. Later the same day: gear comes down through the
+  descent (`ShipModel.setGear`), a dust ring fires on contact, fog and a
+  ground grid make it a place; DISMANTLE (button, or click the ship) is an
+  exploded view — `ShipModel.setExplode` slides every part along
+  `EXPLODE`, markers ride their parts, every part wears a tag and the
+  active one opens; the **loadout** (profile `skills`, the tools) sits
+  under the stage and lights the group the speaking part stands for.
+  `Landing` is reusable (`label`, `section`) and is also the airframe
+  section on `/about`. Check with `tools/landing-uat.mjs`,
+  `tools/parts-uat.mjs`, `tools/dismantle-uat.mjs`.
+  The stage is an instrument (2026-09-16, late): bordered, corner
+  brackets, caption bottom-left (label, one line, a phase readout — on
+  approach / gear down / on the pad / dismantled), the part index top-right
+  (the one corner the airframe never reaches), the HUD strip along the
+  bottom (index, ticks, DISMANTLE), the loadout as three bordered columns
+  beneath. The ship sits right of centre (`_look.x −0.3`) so the caption
+  owns the left; engines shut down within a second of contact
+  (`ShipModel` hides plumes below thrust 0.02).
+- *The pad is a platform* (2026-09-16, late). `Pad` is a raised gunmetal
+  deck (PBR, chamfered), a recessed emerald inset ring, a chase of sixteen
+  rim beacons (every fourth amber), wireframe apron markings on top, three
+  floodlight masts kept out of the camera's quadrant (`masts={false}` on
+  the launch screen), on a matte ground that takes the shadow. The ship
+  stands on its gear (`REST_Y = 0.14 × scale`); the boot ship raises its
+  gear as it climbs.
+- *The black hole is interactive and has the ship* (2026-09-16, late).
+  `SingularityScene`: drag orbits the camera (`uOrbit`, persistent), a
+  hold dives toward the horizon (`uDist` 46 → 22, released it throws you
+  back); the copy carries the hint "Drag to orbit · Hold to dive". A
+  second transparent Canvas over the marcher flies `ShipModel` round the
+  mass on scroll progress through the section (`orbitAt`: near pass low in
+  front of the disc, far pass high over the lensed far side, lit by an
+  amber point at the hole; a dive pulls the orbit in). While the hole is
+  on screen `shipState.captured` is raised and the companion hides — the
+  hole has the ship. Check with `tools/hole-uat.mjs` (wait for the
+  section's canvas first: dev compiles the chunk lazily).
+- *Sections are continuous* (2026-09-17). Ali: "all these sections should
+  look continuous". No hairline rules between scenes; a scene's canvas
+  clears to the page ground (`#060606`) and its bottom is masked into the
+  sky (`MissionFlight` `.field` mask, 68% → transparent) so the next
+  section rises out of the same star field. When adding a scene: clear to
+  the ground, mask the edge, no border.
+- *Success data* (2026-09-17). `Mission.results` are measured numbers
+  transcribed from PROFILE.md (Vahan Shakti 200,000+ users, Intouch
+  10,000+ / 50,000 headroom, Locate 20,000+, GeoRTD 30,000+, Play Store
+  listings); `Mission.measure` is what WILL be measured where nothing is
+  yet (the three active missions, and the shipped ones with no public
+  metric). The report page renders a Results strip after the manifest:
+  big numbers when measured, a checklist with empty ticks when pending.
+  PROFILE.md line 49 stands: never estimate an outcome.
+- *Every page's objects fly* (2026-09-16, late): the global `.flies`
+  utility (globals.scss; `data-flight="left|right"` banks in from a side,
+  `--lag` staggers) is on `/missions` rows, `/field-notes` rows and
+  `/lab` projector cells; K-7 now works the `/missions` deck too
+  (`data-bay` on `MissionRow`). New object rows: add `flies`, nothing
+  else.
+- *Objects move with the scroll* (2026-09-16). Hangar projectors rise in
+  and lift away, drone-bay slots bank in and climb out — `animation-timeline:
+  view()` on the `li`, reversible, staggered by column (`--lag`) — while the
+  first-arrival timed sequences still run inside them. New object rows get
+  the same pair (`*-in` on entry, `*-out` on exit); nothing sits still on
+  the page while the ship flies past it.
+- *Nose first* (2026-09-17). Ali: "the plane direction in the entire home
+  page is not correct". `Companion` now aims its nose along its smoothed
+  screen velocity (`setFromUnitVectors(−Z, aim)`), blended toward a
+  resting three-quarter (`REST_AIM`) as it slows — down the page when the
+  reader scrolls down, across when the plan crosses. `LandingScene` flies an
+  approach (quadratic Bézier `P0→P1→P2`, nose along the path, a flare that
+  grows toward touchdown, the last quarter turning onto the parking
+  heading) instead of dropping like a lift. Any new ship driver: orient
+  from velocity, never from a fixed yaw.
+- *Lag, measured* (2026-09-17, Intel UHD, the desktop app's browser pane,
+  `tools`-style rAF probes run in-page). Findings, so nobody re-derives
+  them: (1) 129 CSS animations ran at once, on and off screen — every
+  hologram flicker, every rotor; `.flies`/`.objectRow` now carry
+  `content-visibility: auto` so off-screen objects do no work at all, and
+  `html[data-perf="low"]` stops the decorative loops. (2) A single
+  non-composited infinite animation (the nav's 7px status dot) repainted
+  its fixed layer every frame and cost ~15fps — every infinite loop now has
+  `will-change: transform, opacity` (status dots, robot, saucer, drone
+  bob/sway, hologram plate/sweep/cone). (3) `DeepSpace` drawing 1500
+  sprites per frame cost ~250ms/s of main thread; the faint field is baked
+  into five depth-band layers re-baked in rotation, only bright stars draw
+  live, and the whole canvas idles at 10–15fps when nothing moves. (4)
+  The companion's lamp was a full-viewport gradient repainted per frame —
+  now a 720px disc on the compositor; grain is one viewport not four; the
+  companion has no shadow pass and runs 30fps while scrolling unless high;
+  the Singularity's layout read moved into its frame loop. Star count,
+  ray-march steps, landing dpr/shadows all scale with `perf.level`.
+  Result on that machine, production build: scrolling 13 → 23–30fps.
+  Still not smooth there; the next lever is the 2D star canvas → a WebGL
+  points layer, and fewer full-screen fixed layers. Measure before and
+  after with the in-page probe (idle rAF rate at a scroll position; a 3s
+  programmatic scroll), not by eye, and note that `next dev` numbers are
+  ~30% worse than `next build`.
 - *Palette*: black ground (`#060606`), emerald signal (`#3CDD9E`) for UI,
   warm amber for engines/core/planets. One primary accent event per screen.
 - *Performance is a feature.* `src/lib/perf.ts` decides a level; DoF only
@@ -109,8 +221,356 @@ the open channel; the one joke; keep it the only one).
   no blend modes on full-viewport layers. Every new WebGL layer must gate on
   visibility (`useSceneFrameloop`) or run on demand.
 
+- *One mission, six legs* (2026-09-18). Ali: "the flow can be much
+  greater". The home page is now briefed in order — **00 Board** (boot +
+  the opener: pitch, "targeting product roles", one measured number, "Skip
+  the flight") → **01 Flight** (the HUD's number counts up on arrival,
+  `ScanReadout`; beats are paced one system at a time on a 900ms dwell so
+  a flick still flies past every world) → **02 Deck** (Hangar) → **03
+  Debrief** (`Singularity`: the measured numbers orbit the hole as bodies —
+  `offset-path: ellipse()`, wider and slower with weight, dim on the far
+  side; the ship threads the ring) → **04 Rules** (`RulesLeg`: three
+  beacons from `/decisions` in compact mode, the ship's hero pass in the
+  empty right half) → **05 Notes** (drones already holding high and dim
+  before arrival — never an empty sky — then descending one by one) →
+  **06 Touchdown** (the landed ship says the operator's sentence,
+  `Landing statement`). The operator statement section was cut. The rail
+  (`SectionGuide`) is the route: current leg, "Leg N / 06", a dashed line,
+  a diamond marker riding it — every section on every page needs an `id`
+  plus `data-section` or the rail skips it. The galaxy HUD is a readout
+  (no fill, 300px, no premise/cover); the Starship's nose is on the world
+  while a beat holds and along the path on a transit, never at the lens
+  (`MIN_FORWARD`). Check with `tools/legs-uat.mjs`, `tools/nose-uat.mjs`,
+  `tools/additions-uat.mjs`; re-plot `HOME_PLAN` from
+  `tools/sections-uat.mjs` when a leg moves.
+- *A leg holds the frame* (2026-09-18). Ali: "when we are scrolling
+  things are not coming and the user misses things." Measured with
+  `tools/reader-uat.mjs` (a human-paced scroll, shot on arrival and 3s
+  later): the three middle legs were each shorter than a viewport
+  (Debrief 612px, Rules 948, Notes 792), so a reader crossed all three in
+  ~3s while their arrival sequences were still running. Not more
+  sections — more frame per leg: Debrief is 100vh, Rules and Notes
+  `min-height` a viewport. Arrival is front-loaded: the first comms
+  line at 120ms (gap 1.1s), drones 0.55s apart and 1.3s down, `.flies`
+  objects fully in by 26% of the viewport (was 42%), note copy readable
+  at 0.72 before the drone lands. Two bugs found the same way: (1)
+  `--lag` must be a **percentage** — a bare number invalidates the
+  whole `animation-range` and both fly-in and fly-out run across the
+  element's entire time on screen (Rule 01 was mid-fly-out on arrival);
+  (2) `contain-intrinsic-size: auto 420px` on `.flies` is a guess, and
+  three compact beacons over-reserved ~840px so the page jumped up under
+  the reader — every `.flies` row now sets its own content-box minimum
+  (beacon 260/150, MissionRow 655, NoteFlight 380, projectorCell 680).
+  `tools/shift-uat.mjs` measures it: a page may grow below the fold,
+  it must never shrink. Re-plot `HOME_PLAN` when a leg's height changes.
+- *The galaxy flight is a flight* (2026-09-18/19). Ali: "when it moves
+  in the galaxy it can be better." The camera used to lerp in a straight
+  line with exponential damping (a spike, then a creep) and the ship was
+  glued to a fixed lens offset — a sticker on a sliding galaxy. Now:
+  `Starship` has four phases — **boarding** (at station on the overview,
+  nose on the core, there before anything moves), **flight** (a transit
+  is an arc on a clock, `InteractiveGalaxy` `TRANSIT` 1.6s, smoothstep,
+  a `sin²` bump that swings out and climbs over the dust, alternating
+  sides; the ship *leads* — an underdamped spring on the camera's own
+  velocity pulls it ahead and toward the destination, then it rejoins
+  station with a settle), **leaving** (the last 3.5% of the pin raises
+  `flightLeaving` → it climbs out top-right and forward, full burn, to
+  where the companion enters), **off**. `cameraFocus.ship` (not `on`,
+  which is the lens state) is what the companion yields to, so boarding
+  is one ship. Nose cone is `MIN_FORWARD` 0.72 (≈44°): at a beat change
+  the subject snaps to the next world before the camera turns, and a
+  wider cone pointed the ship broadside at the lens. A `sin` bump
+  (steepest at the ends) did the same via velocity — hence `sin²`.
+  Film it with `tools/transit-uat.mjs`; SwiftShader's screenshot
+  latency (seconds) makes sub-second choreography unverifiable there —
+  use the desktop app's browser pane for timing.
+- *Secondary-page plans, by kind* (2026-09-19). One `PAGE_PLAN` parked
+  the ship on a report's manifest cell at rest and on its navigation
+  rail mid-page. Every page header leaves the air above its title free
+  (figure right, title ~48% down), so all kinds rest there (`REST`);
+  the middle is per kind — `report` (sweep low-left under the sticky
+  rail), `deck` (missions, lab, field-notes, **about**: small high pass),
+  `prose` (hold the right). `pagePlanFor(pathname)`. Checked with
+  `VW=1440 VH=900 node tools/ship-plan-uat.mjs` / `ship-midscroll-uat.mjs`.
+- *No number below zero* (2026-09-19). A rAF timestamp can precede the
+  `performance.now()` taken when an effect ran; `ScanReadout` counted
+  "-7,026+" on the HUD. Both counters clamp `t` at 0.
+- *The rail needs every section named* (2026-09-19). `/about` read
+  "Leg 03 / 03" with five sections still to come; `/mission-history` had
+  no rail at all. Every `Section` with a head now has `id` +
+  `data-section`. The active missions' Outcome rows no longer render the
+  editorial `DRAFT` flag ("⚠ Needs input") to visitors — they say "in
+  progress; nothing measured yet, so nothing claimed" and list what will
+  be measured. `ClientGrid` seams moved onto the cells (an unfilled row
+  showed the container's seam colour as a lit blank panel).
+- *The voice* (2026-09-18). Ali: "I want humor in my content." The
+  humour is mission control's, and it lives in the instruments — never
+  in a fact. `content/voice.ts` holds every line (rules at the top: dry,
+  one beat, never about a number, never undermines the operator; the 404
+  page set the register — "Checked under the couch cushions of the
+  router"). `Comms` is the layout for it: a two-line mono transcript
+  with callsigns (CAPCOM / SHIP / PAD) and T+ stamps, the same instrument
+  as the boot log and the 404 log, typed on arrival (intersection +
+  350ms confirm). Placed: home beat 0 (top-right sky, in the `aside`
+  the HUD docks into, `translateY(-26vh)` — the low-right is the
+  companion's boarding station and the outer worlds), the Debrief copy,
+  under the Rules and Notes heads, the Touchdown caption once landed (a
+  different line when dismantled), and under every secondary page's
+  header (`ui.pageComms`). Also: the footer's one visible line, one boot
+  log beat, K-7's idles, the "Skip the flight" tooltip, the Hangar
+  title, the results note. Adding a joke: put the line in `voice.ts`,
+  give it a callsign, keep it to one beat. Do not add a second kind of
+  humour (mascot, emoji, exclamation). Check with `tools/voice-uat.mjs`.
+- *A PM's site, not just a ship* (2026-09-17). `/decisions` ("Flight
+  rules": `Beacons`, seven calls each with its PROFILE.md evidence),
+  `Mission.ownership` (I decided / I built / With the team — only where
+  PROFILE.md speaks to it), `Transmissions` (references; renders nothing
+  until `profile.references` has real quotes), `lookingFor` on the
+  channel and the nav dot, the résumé on the pad and at the end of every
+  report and `/about`. Nothing here is inferred; add content only from
+  PROFILE.md.
+- *Scores, measured* (2026-09-19). Ali: "increase the website scores".
+  Lighthouse 13 on the production build (`tools/lighthouse-uat.mjs`,
+  desktop + mobile, every route) before: performance 59-91 desktop /
+  32-52 mobile, accessibility 93-97, best-practices and SEO 100. What the
+  audits pointed at, and the rule each left behind:
+  (1) **three.js was in the layout bundle** — `Companion` was the one
+  scene imported statically (layout.tsx), so the 230 KiB three chunk was
+  on the critical path of every route. `CompanionLoader` dynamic-imports
+  it after `requestIdleCallback` and after the boot screen has cleared.
+  Every scene stays behind `next/dynamic`; check with the "Is Three.js
+  reachable from the first-paint bundle?" item below before adding one.
+  (2) **The page title was the LCP and waited for GSAP** — SplitText
+  painted the server-rendered h1, hid it, and raised it 1-2 s later on a
+  throttled phone (LCP 5 s mobile on every secondary page). `PageHeader`
+  now rises the title in CSS from the first frame (`.pageTitleInner`,
+  one masked block); `TextReveal` stays for section titles, which are
+  scrolled to. Never put a JS-gated reveal on anything above the fold.
+  (3) **`data-reveal` waited for hydration** — in browsers with
+  `animation-timeline: view()` it is now a CSS scroll-driven fade
+  (globals.scss, `entry 0% → 40%`), so content on screen at first paint
+  is simply visible; `MotionProvider`'s IntersectionObserver remains the
+  fallback. (4) **One token failed every contrast audit** —
+  `--text-tertiary` was #5a5a5a (2.9:1); it is #7f7f7f (5.1:1 on the
+  ground, 4.6:1 on a raised panel) and `--text-secondary` moved to
+  #9a9a9a to keep the step. (5) **Typed logs shifted layout** — the boot
+  log and every `Comms` transcript mounted lines one at a time; all
+  lines are laid out from the start and revealed with `visibility`
+  (`data-shown`), CLS 0.05-0.19 → ≤0.005. (6) `aria-label` is
+  prohibited on a bare span (Impact dots: `role="img"`); `Beacons`
+  takes `headingLevel` so /decisions has no h1→h3 skip. (7) Header
+  figures (`Hologram`/`Drone` `priority`) load eagerly — the header's
+  own cover was the LCP on the index pages and arrived 1.2 s late lazily.
+  (8) `experimental.inlineCss` was tried for the four render-blocking
+  stylesheets (320-620 ms mobile) and REJECTED: Next serialises the
+  inlined CSS into the RSC flight payload too, /missions went 29 → 119
+  KiB gzipped and mobile FCP 1.2 → 4.5 s. Leave the stylesheets as links.
+  (9) **Software WebGL** — `perf.ts` `detectSoftwareGL()` (one
+  throwaway context, `UNMASKED_RENDERER`) forces level `low` when the
+  rasteriser is SwiftShader/llvmpipe, which is what PageSpeed's servers
+  run: the galaxy then draws on demand at 20 fps, 6000 points, dpr ≤1,
+  90 rocks. (10) **The galaxy is paused behind the boot screen** —
+  `html[data-booting]` (set by `BootScreen`, cleared the instant the
+  launch starts) switches its frameloop to demand after the first frame;
+  it was rendering at full rate behind an opaque overlay for the whole
+  launch sequence. Measure with the desktop app's browser pane on a
+  blank page: the pane's own galaxy on the same iGPU turned one TBT
+  reading from 2 s into 13 s. Local headless Chrome uses the real GPU
+  (ANGLE D3D11), so the software path only shows on PSI.
+- *The ship has mass* (2026-09-19). Ali: "spaceship motion needs to be
+  better". `Companion` is a damped spring now (ω 3.1, ζ 0.78; stiffer on
+  a departure), not a lerp — velocity is a state, so the ship has an
+  **entrance** (from beyond the top edge on the station's own side,
+  `enter("above")`, or from the top-right where `Starship` climbed out
+  on the home hand-off), a **departure** (on `space:warp` it goes full
+  burn ahead and up out of the frame, shrinking; the new route's
+  entrance brings it back), a soft overshoot on every station change,
+  thrust from acceleration (`acc`) not just speed, and a little
+  z-push toward the lens with scroll speed. Every appearance is an
+  entrance; it never fades up in place. Two guards: on the home page
+  the companion presumes the flight live until the galaxy has drawn a
+  frame (`cameraFocus.tick`, 8 s ceiling) — the lazy galaxy chunk used
+  to arrive after the companion and there were two ships for ~2 s; and
+  while `html[data-booting]` it hides (the pad has the ship).
+  **Copy avoidance** (`copyAt`): every 120 ms the plan's station is
+  hit-tested on a 5×3 grid of the hull (`elementFromPoint`, then the
+  caret API's text node, confirmed against its glyph rects — the caret
+  snaps to the nearest text in the hit element, a column away); if it is
+  over words, the first clear offset from a ranked list wins (up; up and
+  toward the open sky; further out; never past 0.42 of the width), a
+  new pick needs two agreeing samples, and it eases back onto the plan
+  when clear. The plans stay the route; this is what "never crosses
+  copy" actually enforces. `window.__cameraFocus` / `__shipState` are
+  exposed for the harnesses. Avoidance is OFF below 768px: a single
+  full-width column has no clear interior, and the search pulled the
+  ship off the right margin onto the manifest looking for one. Check
+  with `tools/pageshot-uat.mjs` (a route at scroll positions),
+  `tools/copyhit-uat.mjs` (what the hit-test sees, as a map) and
+  `tools/boot-uat.mjs` (boot → hold → launch, with the galaxy/ship
+  flags at each beat: expect one ship on home, the companion arriving on
+  a secondary page); the desktop pane is too contended to screenshot
+  mid-flight — use Playwright for stills.
+- *Mission control* (2026-09-19). Ali: "more good UI components". Three
+  instruments, all panels for text, none a card: **`CommandPalette`**
+  (⌘K / Ctrl+K / "/" or the `⌘K` key in the dock; a dialog holding a
+  combobox over a listbox — pages, the ten missions, the six notes, the
+  bench, the résumé and the channel, ranked prefix → substring →
+  subsequence, grouped only when unfiltered; selecting fires
+  `space:warp` so the ship departs first; its two lines live in
+  `voice.ts` `palette`). **`Pager`** (ui.tsx) under every report and
+  note header: previous, "Bay 04 / 10" with a tick per entry, next, wrapping.
+  **`Readout`** (ui.tsx) on /missions: hairline cells with counted
+  numbers — bays, active, shipped, the largest measured deployment —
+  every value from content. Adding to the palette: a new content type
+  gets a `Kind`, a group label, and `keywords` for what the label does
+  not say.
+
+- *Nose first was backwards* (2026-09-19). Ali: "the motion of the
+  spaceship in the galaxy is not correct." `Object3D.lookAt()` points an
+  object's **+Z** at the target — only cameras and lights use −Z — and the
+  ship's nose is −Z (ShipModel). `Starship` and `SingularityScene` used
+  `lookAt`, so the lead ship flew tail-first into every world and the
+  black-hole ship orbited backwards; the Companion (`setFromUnitVectors`)
+  and Landing (quaternions) were right, which is why they looked right.
+  Both now build the frame with `Matrix4.lookAt(eye, target, up)` +
+  `setFromRotationMatrix`. Any new ship driver: never `g.lookAt()`.
+  Verified with `tools/transit-uat.mjs` — read the frames for the
+  nozzle rings (aft) and the needle (fore), not the silhouette; the fins
+  read as a nose at thumbnail size and that is how this shipped. With the
+  nose forward the hull reached over the opener's pitch, so `STATION` is
+  up −0.1 (was −0.24). Also: `cameraFocus.ship` is snapped on the
+  galaxy's first frame (the one-second ramp let the companion fly in and
+  out during boarding), and the galaxy's 20 fps demand cap applies only
+  to a software rasteriser (`perf.software`) — on a real GPU at a low
+  level the hero scene keeps every vsync.
+- *The studio* (2026-09-19). Ali, three times: "you didn't add my
+  freelancing experience." Smaak.ux was a logo grid; `/studio` is a deck
+  now — the eight PROFILE.md clients (deliverable exactly as PROFILE.md
+  words it; a client without a Behance cover projects its MARK,
+  `Hologram fit="contain"`) and six brand/product pieces from Behance
+  (`public/studio/*.png`, downloaded from behance.net/aliak8 at Ali's
+  instruction; posters and templates are linked in the foot, not
+  projected). `content/studio.ts` is the source and every `brief` is a
+  description of what was made — no outcome is written because none is
+  on file. It is in the nav (plain: "Freelance work"), the palette
+  (`studio` group), the sitemap, the deck flight plan, and `/about`'s
+  Studio section hands off to it. The PM line: PROFILE.md still says
+  "Product Engineer & UX Strategist, targeting product roles"; Ali has
+  said the MapMyIndia PM move is coming — it goes on the site the moment
+  it is in PROFILE.md, not before.
+- *Sound* (2026-09-19). Ali: "we need sound too in the website."
+  `lib/spaceSound.ts` is the whole instrument, synthesised in Web Audio
+  (no files): an ambient pad + air, the ship's **engine** (sub oscillator
+  + exhaust hiss following `shipState.thrust` — scrolling burns, a
+  departure roars), and one-shots (tick, click, open/close, log, warp,
+  launch, land, ping). **Opt-in, always** — the speaker in the dock
+  (`SoundToggle`) or on the launch screen; preference in localStorage
+  `space-os:sound`; a saved "on" arms on the first gesture
+  (`SoundSystem`); reduced motion never auto-enables. Components dispatch
+  `space:sfx {detail}` (or `sfx()`), never import the graph. The
+  galaxy's HUD mute mirrors the same state and no longer silences the
+  site on unmount. Levels are a room tone (master 0.16); do not add a
+  soundtrack or a voice.
+- *The launch screen is a countdown, not a gate* (2026-09-19). Ali: "a
+  great loading screen." Progress is real — fonts, `space:stars`
+  (DeepSpace's first draw), `space:pad` (BootShip's first frame),
+  `space:ready` (galaxy; a 1.2 s floor off the home page) — shown as a
+  percentage top-right that creeps but never lies. Once ready a launch
+  window opens: **T−05 → T−00 and the ship launches itself**; the hold
+  still launches sooner (and pauses the count), Skip still cuts through,
+  reduced motion auto-launches at 2 s. A scan line sweeps the pad while
+  it waits. Log lines blip, the hold spools a tone, launch is a whoosh —
+  if sound is on. The typing timer never lowers `lines` (readiness can
+  reveal them all first). Check with `tools/boot-uat.mjs` (auto-launch)
+  and `HOLD=1 node tools/boot-uat.mjs`.
+
+- *Ten legs, not six* (2026-09-20). Ali: "home page content is too less
+  — sections." The 2026-09-18 cut left the front door with no person, no
+  ledger, no résumé and no studio. Four legs came back, each a place with
+  an object and every line PROFILE.md's: **02 Operator** (`OperatorLeg`:
+  the portrait matrix, the core story in three lines, the operating loop
+  as one numbered strip, a hairline fact list — role, desk, studio,
+  looking for, base), **05 Impact** (the `Impact` ledger + ownership
+  matrix, shared with `/about`), **07 Flight log** (`LogLeg`: the six
+  roles on a dashed route with diamond waypoints, first point of each),
+  **08 Studio** (`StudioLeg`: four Smaak.ux projectors, the door to
+  `/studio`). Leg numbers are hard-coded in each component's
+  `SectionHead` label (Hangar 03, Debrief 04, Rules 06, Notes 09,
+  Touchdown 10) — renumber them when a leg moves. `HOME_PLAN` was
+  re-plotted from `tools/sections-uat.mjs` (H 16472 at 1440×900):
+  operator and log hold the copy left and give the ship the right; impact
+  and studio are full-width panels/projectors and get the small high
+  pass. Copy avoidance now sees the fixed chrome too (the rail's "Leg 07 /
+  10" counted as sky and the ship sat on it). "Less page, more sky" still
+  governs TYPE — nothing here scaled the type up; the page got longer, not
+  louder.
+
+- *The audit sweep* (2026-09-20). Ali: "do all audits and complete it."
+  Five harnesses now cover what a release needs, all against the
+  production server on :3210 (`BUILD_DIR=.next-prod`):
+  `tools/seo-uat.mjs` (every sitemap route: status, title ≤65,
+  description 70-165, one h1, canonical, og:image/title, valid JSON-LD,
+  img alt, no DRAFT/undefined in copy, every internal link resolves),
+  `tools/console-uat.mjs` (every route loaded and scrolled: page errors,
+  console errors, failed requests — the only noise is three's
+  `THREE.Clock` deprecation and a Next CSS preload for the deferred
+  ship), `tools/mobile-uat.mjs` (375 and 320: sideways pan, elements past
+  the edge, text under 11px, taps under 36px, top+mid shots),
+  `tools/reserve-uat.mjs` (each `.flies` row's reserved vs rendered
+  height — names the row behind a `shift-uat` finding) and
+  `tools/lighthouse-uat.mjs`. What they found and the rules left behind:
+  (1) every meta description ran 180-310 chars and three titles passed
+  75 — `clipDescription()` in seo.ts clips at a word boundary, reports and
+  notes use absolute titles (`Title — Ali Azam Kazmi`), every static
+  description is under 158; (2) missions without a cover had no og:image —
+  a route that sets its own `openGraph` does NOT inherit the root
+  `opengraph-image`, so it is named explicitly as the fallback;
+  (3) the global `.flies` reserve (420px) tied with a module's own on
+  specificity and won on load order — /decisions reserved 420 per beacon
+  against 233 rendered and pulled the page up 192px; the global rule is
+  `:where(...)` now (zero specificity) so a module's reserve always
+  wins; (4) at 320px the dock ran 59px past the edge — below 400px the
+  Overview toggle is its glyph and the brand its mark; (5) mono labels
+  hard-coded at 8-9px were unreadable on a phone — every such size is
+  `max(0.5625rem, var(--micro-floor))`, and the floor is 11px under
+  640px (`--type-micro` 12px there), 0 on a desktop; (6) without JS the
+  five featured missions were unreachable on a desktop (the flight's
+  fallback list is display:none above 768px) — `data-nojs` on the list
+  and a rule in the layout's `<noscript>` show it; (7) the ship's lamp
+  and the note rows' fly-in transforms measured wider than the viewport —
+  the companion layer and the note list clip (`overflow: hidden/clip`),
+  no reader could pan but the audit could. Run the five before a release;
+  the SEO and console ones should read "clean" and "silent".
+
+- *Shaders compile off the main thread* (2026-09-20). Profiling
+  (`tools/profile-uat.mjs`, real Chrome via `CHROME=1`, and
+  `tools/glblock-uat.mjs`, which times every blocking GL query and names
+  the shader it waited on) found the last long tasks on every first
+  visit: 1.1–2.9 s of synchronous shader compilation the moment a scene
+  first drew. Four causes, four rules:
+  (1) `renderer.debug.checkShaderErrors` is OFF in production
+  (`lib/gl.ts` `quietGL`, on every `<Canvas onCreated>`) — with it on,
+  `onFirstUse` reads the info logs, which waits for the compile;
+  (2) every scene compiles through `WarmShaders` (`useWarmShaders.ts`):
+  `renderer.compileAsync` (KHR_parallel_shader_compile, which ANGLE
+  D3D11 has), and the Canvas holds `frameloop="never"` until it resolves
+  — nothing may render before, and nothing may be `visible=false` during
+  (`compile()` gathers lights with `traverseVisible`; a hidden root
+  compiled light-less programs that the real render replaced, synchronously);
+  (3) the ship's environment map (`shipEnv.ts`) is built once per
+  renderer, before the materials compile, with PMREM's own materials
+  pre-compiled on real planes with a render target bound — and it is
+  built only at the **high** perf level: PMREM's GGX convolution program
+  could not be warmed (its key differs from any pre-compile; ~550 ms per
+  canvas on an iGPU, ×4 under the mobile audit) and a 375px hull does not
+  show the reflection; (4) any new `<Canvas>` gets `onCreated={quietGL}`,
+  a `WarmShaders` child and the `warm`-gated frameloop. Result on
+  /field-notes mobile emulation, real Chrome: long tasks 749+1544+2960 ms
+  → 53+213+63 ms, zero blocking GL queries. `window.__gls` lists every
+  renderer for the harnesses (`tools/programs-uat.mjs`).
+
 **Page map (each page is a place).**
-Home = the flight, cut to five places and a door (2026-09-16): galaxy → Hangar → black hole (results, the showreel move) → Drone bay → Touchdown (the ship lands, its parts introduce the operator, the door out is on the pad). Signals, Ticker, Impact and the Operating loop left the home page; Impact and the loop live on `/about`. `/missions` = the hangar deck. `/lab` = the bench. `/field-notes` = the drone bay. `/about` = the operator (portrait matrix). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel. Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
+Home = one mission in ten legs (2026-09-20, above): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel. Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
 
 Context for Claude Code working in this repo. Read this first, every session.
 

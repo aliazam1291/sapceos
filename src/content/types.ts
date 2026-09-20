@@ -20,6 +20,20 @@ export type Mission = {
   stack: string[];
   /** Verified scale facts only. Empty when none exist. */
   signals: { label: string; value: string }[];
+  /**
+   * Success data. `results` are measured numbers transcribed from PROFILE.md
+   * (never inferred); `measure` is what WILL be measured where nothing is
+   * yet — the honest state of an active mission. A mission may have either,
+   * both, or (shipped, no public metric) neither.
+   */
+  results?: { value: string; label: string; source?: string }[];
+  measure?: string[];
+  /**
+   * Ownership, split three ways so a reader never assumes solo-dev or
+   * assumes a PM who only wrote the doc. Every line is a PROFILE.md fact;
+   * omit a key rather than guess it.
+   */
+  ownership?: { decided?: string[]; built?: string[]; withTeam?: string[] };
   report: ReportSection[];
   featured?: boolean;
   /** Path under /public — a real screenshot or render of the shipped thing. */

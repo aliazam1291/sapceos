@@ -1,12 +1,16 @@
-import { DRAFT, type Mission } from "./types";
+import type { Mission } from "./types";
 
 // Facts, scale numbers, roles and dates come only from PROFILE.md.
 // Framing and phrasing are editorial. Anything that would require a metric,
-// outcome or research finding Ali has not confirmed is left as DRAFT.
+// outcome or research finding Ali has not confirmed is stated as not yet
+// measured — in words a visitor can read, never an estimate. (The DRAFT
+// sentinel used to sit in the three active Outcomes; it rendered as an
+// editorial "needs input" flag to the public, 2026-09-19.)
 
 export const missions: Mission[] = [
   {
     slug: "technician-app",
+    measure: ["Time per job, installation to close", "Error rate on job state changes", "Technician adoption across regions"],
     title: "Technician App",
     org: "MapMyIndia [Gtropy]",
     role: "Frontend · UI/UX · PRD · cross-functional delivery",
@@ -17,6 +21,11 @@ export const missions: Mission[] = [
       "Field operations run on people who are never at a desk. The app had to work the way a technician's day actually works.",
     stack: ["Angular", "Ionic", "TypeScript", "REST APIs"],
     signals: [{ label: "Stage", value: "Building end to end" }],
+    ownership: {
+      decided: ["The PRD — problem statement, user stories, acceptance criteria, edge cases", "The UX: installation, replacement and rectification as three distinct jobs"],
+      built: ["The app, end to end"],
+      withTeam: ["Cross-functional delivery"],
+    },
     report: [
       {
         label: "Brief",
@@ -57,7 +66,7 @@ export const missions: Mission[] = [
       },
       { label: "Technology", body: "Angular and Ionic for a single cross-platform build against the existing platform APIs." },
       { label: "Build", body: "In progress. Ali owns frontend implementation, UI/UX, the PRD, and coordination across the teams involved." },
-      { label: "Outcome", body: `${DRAFT} — time saved, error rate and adoption are not yet measured.` },
+      { label: "Outcome", body: "In progress; nothing measured yet, so nothing claimed. What gets measured on the next release: time per job from installation to close, the error rate on job state changes, and technician adoption across regions." },
       {
         label: "Learnings",
         body: "Writing the PRD for a field product means interviewing for the exceptions, not the happy path. The happy path is the same everywhere; the exceptions are the product.",
@@ -66,6 +75,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "mappls-shop-admin",
+    measure: ["Billing cycle time, manual vs automated", "Invoice error rate", "Adoption by shop admins"],
     title: "Mappls Shop Admin & Automated Billing",
     org: "MapMyIndia [Gtropy]",
     role: "UI/UX owner · PRD author · cross-functional delivery",
@@ -76,6 +86,11 @@ export const missions: Mission[] = [
       "Billing was done by hand. The interesting part was not automating the maths — it was finding every place a human was quietly making a decision.",
     stack: ["React", "TypeScript", "REST APIs"],
     signals: [{ label: "Replaces", value: "A fully manual billing process" }],
+    ownership: {
+      decided: ["The PRD", "The UI/UX"],
+      built: ["The web app frontend"],
+      withTeam: ["Cross-functional delivery"],
+    },
     report: [
       {
         label: "Brief",
@@ -119,7 +134,7 @@ export const missions: Mission[] = [
         body: "React and TypeScript over the platform's REST APIs; the billing rules live server-side so that the admin surface and any future automation share one source of truth.",
       },
       { label: "Build", body: "Ali owns the UI/UX, wrote the PRD, and drives delivery across the teams involved." },
-      { label: "Outcome", body: `${DRAFT} — outcome metrics are not yet measured.` },
+      { label: "Outcome", body: "In progress; nothing measured yet, so nothing claimed. What gets measured once it runs: billing cycle time, manual against automated; invoice error rate; adoption by shop admins." },
       {
         label: "Learnings",
         body: "The PRD's most valuable section was the list of things the previous process decided silently. Making those decisions explicit was most of the product work; the code was the smaller part.",
@@ -128,6 +143,8 @@ export const missions: Mission[] = [
   },
   {
     slug: "iocl-geortd",
+    results: [{ value: "30,000+", label: "Routes injected", source: "Amazon S3 pipeline" }],
+    measure: ["Route accuracy against ground truth", "Pipeline throughput per run"],
     title: "IOCL GeoRTD Pipeline",
     org: "MapMyIndia [Gtropy]",
     role: "Frontend · UI/UX · cross-functional delivery",
@@ -138,6 +155,11 @@ export const missions: Mission[] = [
       "Thirty thousand routes is not a data problem you solve once. It is a pipeline you have to trust every time it runs.",
     stack: ["Geospatial data", "Amazon S3", "TypeScript"],
     signals: [{ label: "Routes injected", value: "30,000+" }],
+    ownership: {
+      decided: ["The UI/UX"],
+      built: ["The frontend; 30,000+ routes injected into the S3 bucket"],
+      withTeam: ["Cross-functional delivery"],
+    },
     report: [
       { label: "Brief", body: "Geospatial route data creation for Indian Oil — GeoRTD generation at scale." },
       {
@@ -178,7 +200,7 @@ export const missions: Mission[] = [
       },
       { label: "Technology", body: "Route data generated and injected into an Amazon S3 bucket — 30,000+ routes." },
       { label: "Build", body: "In progress." },
-      { label: "Outcome", body: `${DRAFT} — outcome metrics are not yet measured.` },
+      { label: "Outcome", body: "30,000+ routes injected so far; the pipeline is live and still being measured. What gets measured: route accuracy against ground truth, and throughput per run." },
       {
         label: "Learnings",
         body: "Data pipelines are products with a user of one team. They deserve the same discovery — what does the person running this need to know, and when — as anything customer-facing.",
@@ -187,6 +209,10 @@ export const missions: Mission[] = [
   },
   {
     slug: "vahan-shakti",
+    results: [
+      { value: "200,000+", label: "Users", source: "Government fleet programme" },
+      { value: "Live", label: "On the Play Store" },
+    ],
     cover: "/missions/vahan-shakti.jpg",
     title: "Vahan Shakti",
     org: "MapMyIndia [Gtropy]",
@@ -202,6 +228,9 @@ export const missions: Mission[] = [
       { label: "Distribution", value: "Live on Play Store" },
       { label: "Sector", value: "Government" },
     ],
+    ownership: {
+      built: ["React map components — live location, custom markers, route plotting, clustering, heatmaps"],
+    },
     report: [
       { label: "Brief", body: "Vehicle tracking and analytics for a government fleet programme." },
       {
@@ -254,6 +283,11 @@ export const missions: Mission[] = [
   },
   {
     slug: "intouch",
+    results: [
+      { value: "10,000+", label: "Active vehicles" },
+      { value: "50,000", label: "Designed headroom" },
+      { value: "Live", label: "On the Play Store" },
+    ],
     cover: "/missions/intouch.jpg",
     title: "Intouch",
     org: "MapMyIndia [Gtropy]",
@@ -318,6 +352,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "locate",
+    results: [{ value: "20,000+", label: "Vehicles monitored", source: "Across Maharashtra" }],
     cover: "/missions/locate.jpg",
     title: "Locate — Manufacturer Backend",
     org: "MapMyIndia [Gtropy]",
@@ -331,6 +366,10 @@ export const missions: Mission[] = [
       { label: "Vehicles", value: "20,000+" },
       { label: "Coverage", value: "Maharashtra" },
     ],
+    ownership: {
+      decided: ["Frontend direction, independently"],
+      built: ["Real-time vehicle monitoring; web and mobile dashboards"],
+    },
     report: [
       { label: "Brief", body: "Real-time vehicle monitoring for an OEM — web and mobile dashboards." },
       {
@@ -380,6 +419,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "control-tower",
+    measure: ["Time from alert to ticket", "Tickets resolved per operator"],
     cover: "/missions/control-tower.jpg",
     title: "Control Tower",
     org: "MapMyIndia [Gtropy]",
@@ -442,6 +482,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "indane-yatra-mitra",
+    results: [{ value: "Live", label: "On the Play Store", source: "IOCL LPG tanker operations" }],
     title: "Indane Yatra Mitra",
     org: "MapMyIndia [Gtropy] · for IOCL",
     role: "Frontend · UI/UX",
@@ -503,6 +544,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "fastag-platform",
+    measure: ["Registration completion rate", "OTP failure rate"],
     cover: "/missions/fastag-platform.jpg",
     title: "FASTag Platform",
     org: "MapMyIndia [Gtropy]",
@@ -568,6 +610,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "hermes",
+    measure: ["Time per data task", "Errors per batch"],
     cover: "/missions/hermes.jpg",
     title: "Hermes",
     org: "MapMyIndia [Gtropy]",

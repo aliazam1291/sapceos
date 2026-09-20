@@ -1,0 +1,177 @@
+@use "../styles/tokens.scss" as *;
+
+// The route: a dashed line down the left, beacons standing on it.
+.route {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  display: grid;
+  // Explicit, capped-at-0 track: an implicit "auto" column sizes to its
+  // widest child's min-content (a beacon's full sentence), which can
+  // exceed the container and silently overflow past the viewport edge
+  // since the page clips rather than scrolls. minmax(0, 1fr) makes the
+  // track — and everything nested inside it — respect the container.
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 20px;
+    border-left: 1px dashed var(--line-strong);
+  }
+}
+
+.beacon {
+  // The .flies utility skips off-screen work with content-visibility and
+  // guesses 420px per item; a beacon is far shorter, and three wrong
+  // guesses moved the whole page under the reader. Size the placeholder
+  // to the real thing (auto: the last rendered size once it has one).
+  // Measured 2026-09-20 at 1440: 203-249px rendered.
+  contain-intrinsic-size: auto 250px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+
+  @media (max-width: 640px) {
+    gap: var(--space-4);
+  }
+}
+
+.mast {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-primary);
+
+  svg {
+    display: block;
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.lamp {
+  fill: var(--accent);
+  stroke: none;
+  animation: blink 2.8s var(--ease-in-out) infinite;
+  animation-delay: var(--blink, 0s);
+  will-change: opacity;
+}
+
+.halo {
+  stroke: var(--accent);
+  opacity: 0.35;
+  animation: blink 2.8s var(--ease-in-out) infinite;
+  animation-delay: var(--blink, 0s);
+  will-change: opacity;
+}
+
+.body {
+  display: grid;
+  // Grid items default to min-width: auto (content's min-content); a body
+  // sitting in .beacon's minmax(0, 1fr) column still needs its own reset
+  // or its content (the .index row) pushes it back out.
+  min-width: 0;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  max-width: 60ch;
+}
+
+.index {
+  @include mono-label;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+}
+
+.where {
+  color: var(--text-tertiary);
+}
+
+.measured {
+  color: var(--accent);
+}
+
+.call {
+  margin: 0;
+  font-size: var(--type-large);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  text-wrap: balance;
+  max-width: 22ch;
+}
+
+.fact {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 44ch;
+  text-wrap: pretty;
+}
+
+.evidence {
+  margin: 0;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--line);
+
+  span {
+    @include mono-label;
+    color: var(--text-secondary);
+    margin-right: var(--space-2);
+  }
+}
+
+// Compact: the home leg. The rule is a caption beside the sky, not a
+// headline over it; the full size lives on /decisions.
+.compact {
+  gap: var(--space-6);
+
+  .beacon {
+    contain-intrinsic-size: auto 150px;
+  }
+
+  .call {
+    font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+    max-width: 30ch;
+  }
+
+  .fact {
+    font-size: var(--type-small);
+    max-width: 48ch;
+  }
+
+  .evidence {
+    display: none;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.25; }
+  8%, 20% { opacity: 1; }
+  30% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp, .halo { animation: none; opacity: 1; }
+}
+
+html[data-perf="low"] .lamp,
+html[data-perf="low"] .halo {
+  animation: none;
+  opacity: 1;
+}

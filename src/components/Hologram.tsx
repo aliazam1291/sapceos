@@ -12,6 +12,18 @@ interface HologramProps {
   /** Short mono tag drawn on the emitter, e.g. "M-04". */
   tag?: string;
   className?: string;
+  /**
+   * The route's header figure: fetched eagerly with high priority. Every
+   * other hologram is lazy. next/image lazy-loads by default, and on the
+   * index pages the header's own cover was the LCP element and arrived
+   * ~1.2 s late on a throttled phone because of it.
+   */
+  priority?: boolean;
+  /**
+   * "cover" (default) fills the plate with an interface screenshot;
+   * "contain" projects a mark — a client's logo — whole, with air around it.
+   */
+  fit?: "cover" | "contain";
 }
 
 /*
@@ -28,7 +40,7 @@ interface HologramProps {
  * two custom properties. Reduced motion: it holds still and stops
  * flickering, still a hologram.
  */
-export default function Hologram({ src, seed, tag, className }: HologramProps) {
+export default function Hologram({ src, seed, tag, className, priority, fit = "cover" }: HologramProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,17 +69,17 @@ export default function Hologram({ src, seed, tag, className }: HologramProps) {
   }, []);
 
   return (
-    <div ref={ref} className={`${styles.holo} ${className ?? ""}`} aria-hidden="true">
+    <div ref={ref} className={`${styles.holo} ${className ?? ""}`} aria-hidden="true" data-fit={fit}>
       <div className={styles.stage}>
         {/* Ghost copies give the projection its chromatic fringe. */}
         <div className={`${styles.plate} ${styles.ghostA}`}>
-          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} /> : <MissionSignature seed={seed} className={styles.trace} />}
+          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} loading={priority ? "eager" : undefined} /> : <MissionSignature seed={seed} className={styles.trace} />}
         </div>
         <div className={`${styles.plate} ${styles.ghostB}`}>
-          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} /> : <MissionSignature seed={seed} className={styles.trace} />}
+          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} loading={priority ? "eager" : undefined} /> : <MissionSignature seed={seed} className={styles.trace} />}
         </div>
         <div className={styles.plate}>
-          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} /> : <MissionSignature seed={seed} className={styles.trace} />}
+          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} priority={priority} /> : <MissionSignature seed={seed} className={styles.trace} />}
           <span className={styles.scanlines} />
           <span className={styles.sweep} />
           <span className={styles.edge} />

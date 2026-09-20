@@ -148,6 +148,45 @@ p {
   }
 
   [data-reveal].is-visible { opacity: 1; transform: none; }
+
+  /*
+   * Where the browser can drive the reveal from the scroll position itself
+   * (Chrome 115+, Safari 26), no script is involved (2026-09-19). An element
+   * already on screen at first paint is past its entry range and is simply
+   * visible, so the opener of a route never waits for hydration — measured:
+   * "element render delay" of 1.1-2.2 s on a throttled phone was the
+   * IntersectionObserver arriving. Below the fold the effect is the same
+   * fade-up, finished by the time the element is 40% into the viewport.
+   * Browsers without view() keep the IntersectionObserver path above.
+   */
+  @supports (animation-timeline: view()) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      animation: revealIn linear both;
+      animation-timeline: view();
+      // In PIXELS, not percent: a percent range is relative to the element's
+      // own height, so a two-screen prose block spent 400px of scroll
+      // half-transparent (and its first lines were at 10% opacity on load).
+      // This starts 140px before the top edge crosses into view and is done
+      // 60px after — every element, whatever its height, is fully in once
+      // it is 60px inside the frame, and what is on screen at first paint
+      // is simply visible.
+      animation-range: entry -140px entry 60px;
+    }
+  }
+}
+
+@keyframes revealIn {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -216,4 +255,80 @@ html.has-reticle textarea {
    stays native-free; the sequence has its own controls. */
 html.booting {
   overflow: hidden;
+}
+
+/*
+ * Objects fly with the scroll (2026-09-16). Anything that is a thing in
+ * space — a hologram row, a drone row, a projector cell — rises into the
+ * frame as it enters and lifts away as the reader scrolls past, so the
+ * page moves with the ship instead of sitting still under it. Scroll-
+ * driven and reversible; `data-flight="right"` banks in from the side.
+ * `--lag` staggers siblings. Reduced motion: nothing moves.
+ */
+@supports (animation-timeline: view()) {
+  .flies {
+    animation: flight-in linear both, flight-out linear both;
+    animation-timeline: view(), view();
+    // Fully in by a quarter of the viewport (was 42%): at reading pace an
+    // object that is still fading at mid-screen is an object the reader
+    // scrolled past (2026-09-18).
+    // Pixels for the entry (2026-09-20), like [data-reveal]: a percent range
+    // is relative to the row's own height, and the row straddling the fold
+    // at load was half-faded — a static contrast audit read it as grey
+    // text (/field-notes mobile, every run). Starts 120px before the top
+    // edge crosses in, done 200px after; siblings still stagger by --lag.
+    animation-range: entry -120px entry calc(200px + var(--lag, 0%)), exit 35% exit 100%;
+  }
+  .flies[data-flight="right"] {
+    animation-name: flight-in-right, flight-out;
+  }
+  .flies[data-flight="left"] {
+    animation-name: flight-in-left, flight-out;
+  }
+}
+@keyframes flight-in {
+  from { opacity: 0; transform: translateY(14vh) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes flight-in-right {
+  from { opacity: 0; transform: translate(6vw, 5vh) rotate(1.5deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes flight-in-left {
+  from { opacity: 0; transform: translate(-6vw, 5vh) rotate(-1.5deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes flight-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-14vh) scale(0.97); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flies { animation: none; }
+}
+
+/*
+ * Off-screen objects cost nothing (2026-09-17, "a lot of lag"). Measured
+ * on an Intel UHD: 129 CSS animations were running at once — every
+ * hologram's flicker, every drone's rotors, on and off screen — and the
+ * page idled at 20fps; with animations off it idled at 50. Object rows
+ * (`.flies`, the Hangar/Drone-bay slots) now use content-visibility, so
+ * Chrome skips style, layout, paint AND animation ticks for whatever is
+ * not near the viewport. contain-intrinsic-size keeps the scrollbar honest.
+ */
+// :where() — zero specificity, so a module's own reserve (Beacons 250px,
+// NoteFlight 380px…) always wins. As plain classes this rule tied with the
+// module's and won on load order: /decisions reserved 420px per beacon,
+// rendered 233, and pulled the page up 192px under the reader (2026-09-20).
+:where(.flies, .objectRow) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
+/*
+ * Decorative loops (the on-screen ones) are what a struggling machine
+ * drops first: hologram flicker and sweep, rotor spin, robot jets, the
+ * visitor's blink. The scene still reads; it just holds still.
+ */
+html[data-perf="low"] .decor {
+  animation: none !important;
 }

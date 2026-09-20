@@ -103,7 +103,7 @@
 .evidenceLabel {
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--accent);
 }
 
@@ -144,7 +144,7 @@
   right: 6px;
   bottom: 4px;
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--accent);
 }
 

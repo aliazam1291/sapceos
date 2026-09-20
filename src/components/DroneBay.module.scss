@@ -1,6 +1,14 @@
 @use "../styles/tokens.scss" as *;
 
+.comms {
+  margin: calc(var(--space-12) * -1 + var(--space-4)) 0 var(--space-10);
+}
+
+// A leg holds the frame (2026-09-18); the drones need the air above
+// their marks to descend through, and the section was 792px tall.
 .bay {
+  min-height: calc(100vh - 14rem);
+  align-content: start;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -11,6 +19,31 @@
 
 .slot {
   min-width: 0;
+
+  // In motion with the scroll: each slot banks in from the right as the
+  // bay enters, and the drone lifts off and climbs out as the reader
+  // scrolls past. The timed descent (below, on `.carry`) still runs the
+  // first time the reader arrives; this is the flight either side of it.
+  @supports (animation-timeline: view()) {
+    animation: slot-in linear both, slot-out linear both;
+    animation-timeline: view(), view();
+    animation-range: entry 0% entry calc(26% + var(--lag, 0%)), exit 30% exit 100%;
+  }
+  &:nth-child(2) { --lag: 12%; }
+  &:nth-child(3) { --lag: 24%; }
+}
+
+@keyframes slot-in {
+  from { opacity: 0; transform: translate(7vw, 6vh) rotate(2deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slot-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-34vh) rotate(-3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot { animation: none; }
 }
 
 /*
@@ -41,25 +74,27 @@
  * with the next one starting as the previous one docks. However fast the
  * reader scrolled, they see the sequence.
  */
-// The frame comes empty. The drone descends into it carrying the study;
-// the caption appears only once the load is down.
+// The drones are already here, holding high and dim above their marks —
+// never an empty sky for a fast scroller (2026-09-18). On arrival each one
+// lights up and descends carrying the study; the caption appears only once
+// the load is down.
 .carry {
-  opacity: 0;
-  transform: translateY(-70vh) scale(0.96);
+  opacity: 0.28;
+  transform: translateY(-18vh) scale(0.94);
 }
 
 
 // --delay is inherited by the Drone inside, which times its brake and the
 // swing of the load off the same clock.
-.slot:nth-child(2) { --delay: 0.9s; }
-.slot:nth-child(3) { --delay: 1.8s; }
+.slot:nth-child(2) { --delay: 0.55s; }
+.slot:nth-child(3) { --delay: 1.1s; }
 
 :global([data-arrived]) .carry {
-  animation: swoop 1.7s cubic-bezier(0.3, 0.75, 0.25, 1) var(--delay, 0s) both;
+  animation: swoop 1.3s cubic-bezier(0.3, 0.75, 0.25, 1) var(--delay, 0s) both;
 }
 
 :global([data-arrived]) .meta {
-  animation: caption 0.6s ease-out calc(var(--delay, 0s) + 1.5s) both;
+  animation: caption 0.6s ease-out calc(var(--delay, 0s) + 1.1s) both;
 }
 
 @keyframes caption {
@@ -83,7 +118,7 @@
 // its mark, checks its descent just above it, settles. The slight lateral
 // sway is the airframe correcting; the load's own swing is in Drone.
 @keyframes swoop {
-  0% { opacity: 0; transform: translateY(-70vh) translateX(1.2vw) rotate(1.5deg) scale(0.96); }
+  0% { opacity: 0.28; transform: translateY(-18vh) translateX(1.2vw) rotate(1.5deg) scale(0.94); }
   18% { opacity: 1; }
   55% { transform: translateY(1.6vh) translateX(-0.6vw) rotate(-1deg) scale(1.01); }
   78% { transform: translateY(-0.5vh) translateX(0.2vw) rotate(0.3deg) scale(1); }
@@ -99,7 +134,7 @@
 .kind {
   margin: 0;
   @include mono-label;
-  font-size: 0.5625rem;
+  font-size: max(0.5625rem, var(--micro-floor));
   color: var(--accent);
 }
 

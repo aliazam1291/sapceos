@@ -39,15 +39,21 @@ export default function TextReveal({
     let split: { revert: () => void } | undefined;
     let cancelled = false;
 
+    /*
+     * Arrival is an IntersectionObserver, not a ScrollTrigger (2026-09-20).
+     * A ScrollTrigger per title — ten on the home page — re-measured layout
+     * on every scroll event; GSAP's scroll handler showed 1.4 s of main
+     * thread across one reading-pace scroll of the page. The observer
+     * fires once, at the same place `start` used to ("top 88%" ≈ the
+     * element's top crossing 88% of the viewport), and costs nothing between.
+     */
+    const pct = Number((start.match(/(\d+)%/) ?? [])[1] ?? 88);
+    let io: IntersectionObserver | undefined;
+    let armed = false;
     (async () => {
-      const [{ gsap }, { SplitText }, { ScrollTrigger }] = await Promise.all([
-        import("gsap"),
-        import("gsap/SplitText"),
-        import("gsap/ScrollTrigger"),
-      ]);
+      const [{ gsap }, { SplitText }] = await Promise.all([import("gsap"), import("gsap/SplitText")]);
       if (cancelled || !ref.current) return;
-
-      gsap.registerPlugin(SplitText, ScrollTrigger);
+      gsap.registerPlugin(SplitText);
 
       split = SplitText.create(ref.current, {
         type: "lines",
@@ -57,20 +63,28 @@ export default function TextReveal({
         autoSplit: true,
         aria: "auto",
         // Returning the tween lets GSAP swap it out cleanly on each re-split.
-        onSplit: (self: { lines: Element[] }) =>
-          gsap.from(self.lines, {
-            yPercent: 115,
-            duration: 0.95,
-            ease: "power3.out",
-            stagger,
-            delay,
-            scrollTrigger: { trigger: ref.current as Element, start, once: true },
-          }),
+        onSplit: (self: { lines: Element[] }) => {
+          const tween = gsap.from(self.lines, { yPercent: 115, duration: 0.95, ease: "power3.out", stagger, delay, paused: !armed });
+          if (!io) {
+            io = new IntersectionObserver(
+              ([e]) => {
+                if (!e.isIntersecting) return;
+                armed = true;
+                tween.play();
+                io?.disconnect();
+              },
+              { rootMargin: `0px 0px -${100 - pct}% 0px`, threshold: 0 },
+            );
+            io.observe(ref.current as Element);
+          }
+          return tween;
+        },
       });
     })();
 
     return () => {
       cancelled = true;
+      io?.disconnect();
       split?.revert();
     };
   }, [delay, stagger, start]);

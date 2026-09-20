@@ -11,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "", priority: 1 },
     { path: "/missions", priority: 0.9 },
     { path: "/lab", priority: 0.7 },
+    { path: "/studio", priority: 0.8 },
+    { path: "/dumbmoney", priority: 0.9 },
     // Submitted only once it has content — same gate as the Nav and Footer
     // links (src/content/orbit.ts). A page whose four rows all read "needs
     // input" should not be handed to a search engine either; the route stays
@@ -18,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...(orbitHasContent ? [{ path: "/orbit", priority: 0.5 }] : []),
     { path: "/field-notes", priority: 0.8 },
     { path: "/galaxy", priority: 0.5 },
+    { path: "/decisions", priority: 0.8 },
     { path: "/about", priority: 0.8 },
     { path: "/mission-history", priority: 0.8 },
     { path: "/contact", priority: 0.6 },

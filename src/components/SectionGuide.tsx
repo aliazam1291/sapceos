@@ -25,13 +25,28 @@ export default function SectionGuide() {
 
   // ── Discover the page's sections ──────────────────────────────────────────
   useEffect(() => {
-    const found = [...document.querySelectorAll<HTMLElement>("[data-section]")]
-      .filter((el) => el.id)
-      .map((el) => ({ id: el.id, label: el.dataset.section ?? el.id }));
-
-    setEntries(found);
+    const discover = () => {
+      const found = [...document.querySelectorAll<HTMLElement>("[data-section]")]
+        .filter((el) => el.id)
+        .map((el) => ({ id: el.id, label: el.dataset.section ?? el.id }));
+      setEntries((prev) => (prev.length === found.length && prev.every((p, i) => p.id === found[i].id) ? prev : found));
+    };
+    discover();
     setActive(0);
     activeRef.current = 0;
+    // The HTML streams: this effect can run while the tail of the page is
+    // still arriving, and the rail then read "Leg 01 / 06" on a ten-leg page
+    // (2026-09-20). Look again when the document has fully loaded and
+    // whenever a section is added later.
+    window.addEventListener("load", discover);
+    const mo = new MutationObserver((muts) => {
+      if (muts.some((m) => [...m.addedNodes].some((n) => n instanceof HTMLElement && (n.hasAttribute("data-section") || n.querySelector("[data-section]"))))) discover();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      window.removeEventListener("load", discover);
+      mo.disconnect();
+    };
   }, [pathname]);
 
   // ── Track which one is on screen ──────────────────────────────────────────
@@ -89,7 +104,14 @@ export default function SectionGuide() {
         <span className={styles.dash} />
         {entries[active]?.label}
       </p>
+      {/* The leg counter: where on the route, out of how many. */}
+      <p className={styles.leg} aria-hidden="true">
+        Leg {String(active + 1).padStart(2, "0")} / {String(entries.length).padStart(2, "0")}
+      </p>
 
+      <div className={styles.route} style={{ "--i": active } as React.CSSProperties}>
+        {/* The ship marker rides the route between ticks. */}
+        <span className={styles.marker} aria-hidden="true" />
       <ol className={styles.ticks}>
         {entries.map((e, i) => (
           <li key={e.id}>
@@ -107,6 +129,7 @@ export default function SectionGuide() {
           </li>
         ))}
       </ol>
+      </div>
     </nav>
   );
 }
