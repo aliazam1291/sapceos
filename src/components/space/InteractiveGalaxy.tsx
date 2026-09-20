@@ -687,7 +687,16 @@ export default function InteractiveGalaxy({
   // The frame cap is for a software rasteriser only (Lighthouse, PageSpeed):
   // a real GPU at a low level keeps every vsync — a 20 fps hero scene made the
   // lead ship stutter on an Intel iGPU (Ali, 2026-09-19).
-  const throttle = perf.software;
+  // …and a power saver (battery low and not charging, or reduced data) caps
+  // the hero at 30 fps: the one place the GPU burns, on a phone that is
+  // trying not to (2026-09-21). Level is untouched; this is power, not speed.
+  const [saver, setSaver] = useState(perf.saver);
+  useEffect(() => {
+    const on = (e: Event) => setSaver(Boolean((e as CustomEvent<boolean>).detail));
+    window.addEventListener("space:power", on);
+    return () => window.removeEventListener("space:power", on);
+  }, []);
+  const throttle = perf.software || saver;
   /*
    * Two reasons to stop drawing every frame (2026-09-19):
    *  - the launch screen is up: it covers this canvas completely, and the
@@ -724,7 +733,7 @@ export default function InteractiveGalaxy({
     let last = 0;
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
-      if (now - last >= 50) {
+      if (now - last >= (perf.software ? 50 : 33)) {
         last = now;
         invalidateRef.current?.();
       }

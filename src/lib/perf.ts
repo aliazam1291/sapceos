@@ -10,11 +10,18 @@
  */
 export type PerfLevel = "high" | "medium" | "low";
 
-export const perf: { level: PerfLevel; fps: number; software: boolean } = {
+export const perf: { level: PerfLevel; fps: number; software: boolean; saver: boolean } = {
   level: "high",
   fps: 60,
   /** True when WebGL is running on the CPU (SwiftShader, llvmpipe, …). */
   software: false,
+  /**
+   * Power saver (2026-09-21): the battery is low and not charging, or the
+   * reader asked for reduced data. Not a speed problem — the device may be
+   * fast — so it does not lower `level`; the hero scene caps its frame rate
+   * instead (InteractiveGalaxy), which is the one place the GPU burns.
+   */
+  saver: false,
 };
 
 let decided = false;
@@ -61,7 +68,36 @@ export function decidePerfLevel(): PerfLevel {
   if (perf.software) perf.level = "low";
   document.documentElement.dataset.perf = perf.level;
   if (perf.software) document.documentElement.dataset.gl = "software";
+  watchPower();
   return perf.level;
+}
+
+/** Battery and reduced-data signals, kept current; announces changes as `space:power`. */
+function watchPower() {
+  const set = (on: boolean) => {
+    if (perf.saver === on) return;
+    perf.saver = on;
+    if (on) document.documentElement.dataset.power = "saver";
+    else delete document.documentElement.dataset.power;
+    window.dispatchEvent(new CustomEvent("space:power", { detail: on }));
+  };
+  const reducedData = window.matchMedia?.("(prefers-reduced-data: reduce)");
+  let battery = false;
+  const update = () => set(battery || reducedData?.matches === true);
+  reducedData?.addEventListener?.("change", update);
+  const nav = navigator as Navigator & { getBattery?: () => Promise<{ level: number; charging: boolean; addEventListener: (t: string, f: () => void) => void }> };
+  nav.getBattery?.()
+    .then((b) => {
+      const read = () => {
+        battery = !b.charging && b.level <= 0.2;
+        update();
+      };
+      b.addEventListener("levelchange", read);
+      b.addEventListener("chargingchange", read);
+      read();
+    })
+    .catch(() => update());
+  update();
 }
 
 let lowFrames = 0;
