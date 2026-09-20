@@ -13,6 +13,8 @@ export type Piece = {
   href: string;
   line: string;
   kind: "case study" | "essay" | "guide";
+  /** Where on this site the piece connects — the venture, a case study, the deck. Only real relations. */
+  related?: { label: string; href: string };
 };
 
 export const writing: Piece[] = [
@@ -23,6 +25,7 @@ export const writing: Piece[] = [
     href: "https://dumbmoney.in/blog/how-to-use-coupons-big-billion-days-great-indian-festival",
     line: "A shopper's guide to the two biggest sale weeks of the Indian year, and how to use a coupon during them.",
     kind: "guide",
+    related: { label: "DumbMoney, the venture", href: "/dumbmoney" },
   },
   {
     title: "Why Coupon Codes Stop Working (And How to Avoid Expired Ones)",
@@ -31,6 +34,7 @@ export const writing: Piece[] = [
     href: "https://dumbmoney.in/blog/why-coupon-codes-stop-working",
     line: "Why a code fails at checkout, and how to avoid the expired ones.",
     kind: "essay",
+    related: { label: "DumbMoney, the venture", href: "/dumbmoney" },
   },
   {
     title: "Cosmic Orange and the New “Pro”: A Case Study in Color-Led Strategy, Personas, and Accessible UX",
@@ -39,6 +43,7 @@ export const writing: Piece[] = [
     href: "https://medium.com/@aliazamkazmi1291/cosmic-orange-and-the-new-pro-a-case-study-in-color-led-strategy-personas-and-accessible-ux-54bfa3b86d6b",
     line: "A colour as product strategy: how one finish turns “Pro” into a visible signal, and what that asks of accessibility.",
     kind: "case study",
+    related: { label: "More teardowns: the field notes", href: "/field-notes" },
   },
   {
     title: "No-Code vs. Custom Coding: What’s Best for Small Businesses in 2025?",
@@ -63,6 +68,7 @@ export const writing: Piece[] = [
     href: "https://medium.com/@aliazamkazmi1291/frontend-development-roadmap-a-comprehensive-guide-8434644228d3",
     line: "A structured route through frontend engineering, from the fundamentals to the tooling that changes every year.",
     kind: "guide",
+    related: { label: "The stack in use: the missions", href: "/missions" },
   },
   {
     title: "The Art of Balancing Aesthetics and Functionality: UI Design and Coding",
@@ -71,5 +77,6 @@ export const writing: Piece[] = [
     href: "https://medium.com/@aliazamkazmi1291/the-art-of-balancing-aesthetics-and-functionality-understanding-the-differences-between-ui-design-1ace225629d5",
     line: "Where UI and UX are not the same job, and what changes when the designer is also the one writing the code.",
     kind: "essay",
+    related: { label: "The design work: Smaak.ux", href: "/studio" },
   },
 ];

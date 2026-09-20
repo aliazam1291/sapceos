@@ -113,3 +113,21 @@
     }
   }
 }
+
+.related {
+  @include mono-label;
+  margin: var(--space-1) 0 0;
+
+  a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+
+    @include hover-only {
+      &:hover {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+    }
+  }
+}

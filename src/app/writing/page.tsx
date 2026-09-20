@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageForm from "@/components/space/PageForm";
 import Comms from "@/components/Comms";
 import { NextStep, PageHeader, Section, SectionHead, ui } from "@/components/ui";
@@ -81,6 +82,11 @@ export default function WritingPage() {
                   </a>
                 </h3>
                 <p className={styles.line}>{p.line}</p>
+                {p.related ? (
+                  <p className={styles.related}>
+                    <Link href={p.related.href}>{p.related.label} →</Link>
+                  </p>
+                ) : null}
               </div>
             </li>
           ))}

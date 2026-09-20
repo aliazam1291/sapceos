@@ -144,6 +144,7 @@ export const experience = [
     role: "Associate Software Developer — Product & Platform",
     period: "Sep 2024 — present",
     place: "New Delhi",
+    href: "/missions",
     points: [
       "Built and scaled enterprise fleet and telematics platforms: Vahan Shakti (government, 200,000+ users), OEM platforms (20,000+ users), fleet operators (10,000+ vehicles).",
       "5+ live production projects; owned operational and analytics dashboards covering vehicle health, trips, delays, alerts and compliance.",
@@ -157,6 +158,7 @@ export const experience = [
     role: "Founder & Product Designer · freelance",
     period: "2023 — present",
     place: "Remote",
+    href: "/studio",
     points: [
       "Product and design studio. 10+ clients across SaaS, creator brands, e-commerce, home décor and services.",
       "Clients: Atmos (brand identity), Mintair (investor pitch deck), Ravenouxs (responsive website), Lean Multiverse (brand identity and web UI for a creator-led brand with 600K+ followers), Ekal (brand identity, pitch decks), Urban Livin (product catalogues), Sorted Blinds (website, Australia), Posh Dikur (marketing creatives).",
