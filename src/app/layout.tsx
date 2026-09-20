@@ -30,7 +30,7 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", dis
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${profile.name} — Product Manager Portfolio · New Delhi`,
+    default: `${profile.name} — Product Engineer & UX Strategist, New Delhi`,
     template: `%s — ${profile.name}`,
   },
   description:

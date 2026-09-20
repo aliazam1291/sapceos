@@ -19,9 +19,13 @@ import { results } from "@/content/results";
 import { allKeywords } from "@/lib/keywords";
 
 export const metadata: Metadata = {
-  title: { absolute: `${profile.name} — Product Manager Portfolio · New Delhi` },
+  // Title and description match the H1 (Product Engineer & UX Strategist)
+  // and lead with what was built — the external SEO audit's one fair point
+  // (2026-09-20). This page's metadata overrides the layout's, so it is set
+  // here too.
+  title: { absolute: `${profile.name} — Product Engineer & UX Strategist, New Delhi` },
   description:
-    "Ali Azam Kazmi, product engineer and UX strategist, New Delhi: fleet platforms for 200,000+ users, the PRDs behind them, six case studies. Open to PM roles.",
+    "Ali Azam Kazmi — product engineer, UX strategist and founder (DumbMoney), New Delhi. Fleet platforms for 200,000+ users, the PRDs behind them, six case studies.",
   keywords: allKeywords,
   alternates: { canonical: "/" },
 };
