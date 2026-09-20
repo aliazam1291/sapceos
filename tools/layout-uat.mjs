@@ -104,13 +104,35 @@ for (const [k, n] of [...inval.entries()].sort((a, b) => b[1] - a[1]).slice(0, 2
 // Which CSS animations run on the main thread, and why Blink would not
 // composite them (the Animation trace events carry the failure reasons).
 const REASONS = ['AcceleratedAnimationsDisabled', 'EffectSuppressedByDevtools', 'InvalidAnimationOrEffect', 'EffectHasUnsupportedTimingParameters', 'EffectHasNonReplaceCompositeMode', 'TargetHasInvalidCompositingState', 'TargetHasIncompatibleAnimations', 'TargetHasCSSOffset', 'AnimationAffectsNonCSSProperties', 'TransformRelatedPropertyCannotBeAcceleratedOnTarget', 'TransformRelatedPropertyDependsOnBoxSize', 'FilterRelatedPropertyMayMovePixels', 'UnsupportedCSSProperty', 'MixedKeyframeValueTypes', 'TimelineSourceHasInvalidCompositingState', 'AnimationHasNoVisibleChange', 'AffectsImportantProperty', 'SVGTargetHasIndependentTransformProperty'];
+// The events carry a backend node id, not a name: resolve them through the
+// DOM domain so the table names the element and its class.
+const nodeNames = new Map();
+{
+  const ids = [...new Set(events.filter((e) => e.name === 'Animation' && e.args?.data?.compositeFailed && e.args.data.nodeId).map((e) => e.args.data.nodeId))];
+  if (ids.length) {
+    try {
+      await cdp.send('DOM.enable');
+      await cdp.send('DOM.getDocument', { depth: 0 });
+      const { nodeIds } = await cdp.send('DOM.pushNodesByBackendIdsToFrontend', { backendNodeIds: ids });
+      for (let i = 0; i < ids.length; i++) {
+        if (!nodeIds[i]) continue;
+        try {
+          const { node } = await cdp.send('DOM.describeNode', { nodeId: nodeIds[i] });
+          const attrs = node.attributes ?? [];
+          const cls = attrs[attrs.indexOf('class') + 1];
+          nodeNames.set(ids[i], `<${node.localName || node.nodeName}${cls && attrs.indexOf('class') >= 0 ? ' .' + cls.split(' ').map((c) => c.replace(/^.*__/, '')).join('.') : ''}>`);
+        } catch {}
+      }
+    } catch {}
+  }
+}
 const anims = new Map();
 for (const e of events) {
   if (e.name !== 'Animation' || !e.args?.data) continue;
   const d = e.args.data;
   if (!d.compositeFailed) continue;
   const why = REASONS.filter((_, i) => d.compositeFailed & (1 << i)).join('+') || `0x${d.compositeFailed.toString(16)}`;
-  const k = `<${d.nodeName ?? '?'}> ${d.displayName ?? d.name ?? ''} · ${why}${d.unsupportedProperties?.length ? ' · ' + d.unsupportedProperties.join(',') : ''}`;
+  const k = `${nodeNames.get(d.nodeId) ?? `<${d.nodeName ?? '?'}>`} ${d.displayName ?? d.name ?? ''} · ${why} (0x${d.compositeFailed.toString(16)})${d.unsupportedProperties?.length ? ' · ' + d.unsupportedProperties.join(',') : ''}`;
   anims.set(k, (anims.get(k) ?? 0) + 1);
 }
 if (anims.size) {

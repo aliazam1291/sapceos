@@ -71,6 +71,41 @@ function buildScene() {
 
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
 
+/*
+ * A plane with exactly PMREM's vertex layout — position(3), uv(2),
+ * faceIndex(1), no normal. Three keys a program on the geometry's attribute
+ * set (HAS_NORMAL), and ANGLE compiles a vertex executable per input layout
+ * and a pixel executable per output layout at DRAW time, not at link — so a
+ * warm-up has to draw with the same layout into a target of the same
+ * format, or the first real draw compiles again (2026-09-20).
+ */
+function pmremPlane() {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 1, -1, 0, 0, 1, 0]), 3));
+  g.setAttribute("uv", new THREE.BufferAttribute(new Float32Array([0, 0, 1, 0, 0.5, 1]), 2));
+  g.setAttribute("faceIndex", new THREE.BufferAttribute(new Float32Array([0, 0, 0]), 1));
+  return g;
+}
+
+/** Resolve when the GPU has executed everything issued so far — polled, never blocking. */
+async function gpuIdle(gl: THREE.WebGLRenderer, maxMs = 6000) {
+  const ctx = gl.getContext() as WebGL2RenderingContext;
+  if (typeof ctx.fenceSync !== "function") {
+    await frame();
+    return;
+  }
+  const sync = ctx.fenceSync(ctx.SYNC_GPU_COMMANDS_COMPLETE, 0);
+  ctx.flush();
+  const t0 = performance.now();
+  if (sync) {
+    while (performance.now() - t0 < maxMs) {
+      if (ctx.getSyncParameter(sync, ctx.SYNC_STATUS) === ctx.SIGNALED) break;
+      await frame();
+    }
+    ctx.deleteSync(sync);
+  }
+}
+
 /** The env texture for this renderer, once it has been built. */
 export function shipEnvIfReady(gl: THREE.WebGLRenderer): THREE.Texture | null {
   const hit = cache.get(gl);
@@ -151,12 +186,10 @@ export function warmShipEnv(gl: THREE.WebGLRenderer): Promise<THREE.Texture | nu
         // after a "successful" warm-up). toneMapped=false pins it to None in
         // both, so the key matches and the render finds a linked program.
         m.toneMapped = false;
-        // An EMPTY geometry, as three's own _compileMaterial uses: r185 keys a
-        // program on whether the geometry has a normal attribute (HAS_NORMAL),
-        // and PMREM's lod planes have none. A PlaneGeometry here compiled a
-        // program with normals that the GGX pass never used — it still
-        // blocked 560 ms (tools/progkeys-uat.mjs, 2026-09-20).
-        warmScene.add(new THREE.Mesh(new THREE.BufferGeometry(), m));
+        // PMREM's own vertex layout, no normal: r185 keys a program on the
+        // geometry's attribute set (HAS_NORMAL), and ANGLE compiles per
+        // input layout at draw time — see pmremPlane().
+        warmScene.add(new THREE.Mesh(pmremPlane(), m));
       }
     }
     const scene = buildScene();
@@ -171,10 +204,37 @@ export function warmShipEnv(gl: THREE.WebGLRenderer): Promise<THREE.Texture | nu
       // compile against the screen produced programs PMREM never used and the
       // GGX pass still blocked ~550 ms. Compiling with a throwaway target set
       // gives the same keys PMREM will ask for.
-      const rt = new THREE.WebGLRenderTarget(4, 4);
+      // The same format PMREM renders into (HalfFloat RGBA, linear, no
+      // depth): output colour space is in three's key, and the output
+      // layout is in ANGLE's.
+      const rt = new THREE.WebGLRenderTarget(4, 4, {
+        type: THREE.HalfFloatType,
+        format: THREE.RGBAFormat,
+        colorSpace: THREE.LinearSRGBColorSpace,
+        depthBuffer: false,
+        generateMipmaps: false,
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+      });
       gl.setRenderTarget(rt);
       await Promise.all([r.compileAsync(scene, cam).catch(() => null), r.compileAsync(warmScene, cam).catch(() => null)]);
+      // Linked is not compiled, on ANGLE/D3D11: the GGX convolution still
+      // blocked the main thread ~1.8 s at its first draw with every program
+      // "ready" (tools/glblock-uat.mjs: getProgramParameter(ACTIVE_UNIFORMS),
+      // 2026-09-20). Draw each material once, into this target, and wait on a
+      // fence — polled — so the driver does its draw-time work off the main
+      // thread and PMREM's real pass finds everything built.
+      const oldAutoClear = gl.autoClear;
+      gl.autoClear = true;
+      try {
+        gl.render(warmScene, cam);
+        gl.render(scene, cam);
+      } catch {
+        // A material that cannot draw with empty uniforms just skips its warm-up.
+      }
+      gl.autoClear = oldAutoClear;
       gl.setRenderTarget(null);
+      await gpuIdle(gl);
       rt.dispose();
     }
     warmScene.traverse((o) => (o as THREE.Mesh).geometry?.dispose?.());

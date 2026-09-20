@@ -49,6 +49,12 @@
 .navL, .navR { animation: blink 1.4s steps(1) infinite; }
 .navR { animation-delay: 0.7s; }
 .strobe { animation: strobe 2s steps(1) infinite; }
+/* The seam of light along the belly breathes slowly. */
+.strip { animation: breathe 3.2s ease-in-out infinite; }
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
 
 /* Spotlight cone from the gimbal down onto the load. */
 .beam {
@@ -234,5 +240,5 @@
 
 // A struggling machine parks the rotors and lights (see globals).
 :global(html[data-perf="low"]) {
-  .rotor, .navL, .navR, .strobe { animation: none !important; }
+  .rotor, .navL, .navR, .strobe, .strip { animation: none !important; }
 }

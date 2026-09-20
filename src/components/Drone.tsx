@@ -65,65 +65,127 @@ export default function Drone({ src, seed, tag, label, sub, className, priority 
       <div className={styles.airframe}>
         <svg viewBox="0 0 320 120" className={styles.svg}>
           <defs>
+            {/* Shell: a hard top highlight, a mid tone, a dark underside. */}
             <linearGradient id="d-body" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#b7bdc6" />
-              <stop offset="0.5" stopColor="#4a5058" />
+              <stop offset="0" stopColor="#d5dae1" />
+              <stop offset="0.22" stopColor="#8b939d" />
+              <stop offset="0.55" stopColor="#3f454d" />
+              <stop offset="1" stopColor="#121417" />
+            </linearGradient>
+            <linearGradient id="d-side" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#2a2f36" />
+              <stop offset="0.5" stopColor="#4f565f" />
+              <stop offset="1" stopColor="#23272d" />
+            </linearGradient>
+            {/* Carbon arms: a specular line along the top edge. */}
+            <linearGradient id="d-arm" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#7c848e" />
+              <stop offset="0.3" stopColor="#3b4047" />
               <stop offset="1" stopColor="#15181c" />
             </linearGradient>
-            <linearGradient id="d-arm" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#5f656d" />
-              <stop offset="1" stopColor="#1d2025" />
+            {/* Motor cans: cylindrical shading across. */}
+            <linearGradient id="d-motor" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#1a1d22" />
+              <stop offset="0.35" stopColor="#5a616a" />
+              <stop offset="0.55" stopColor="#9aa2ab" />
+              <stop offset="0.8" stopColor="#3a3f46" />
+              <stop offset="1" stopColor="#15181c" />
             </linearGradient>
+            {/* Rotor disc: a translucent blur ring with a brighter rim. */}
             <radialGradient id="d-rotor" cx="0.5" cy="0.5" r="0.5">
-              <stop offset="0" stopColor="#c9ced5" stopOpacity="0.05" />
-              <stop offset="0.75" stopColor="#c9ced5" stopOpacity="0.16" />
-              <stop offset="0.9" stopColor="#e8ebef" stopOpacity="0.32" />
-              <stop offset="1" stopColor="#e8ebef" stopOpacity="0" />
+              <stop offset="0" stopColor="#c9ced5" stopOpacity="0.02" />
+              <stop offset="0.55" stopColor="#c9ced5" stopOpacity="0.08" />
+              <stop offset="0.86" stopColor="#dfe3e8" stopOpacity="0.2" />
+              <stop offset="0.95" stopColor="#f2f5f8" stopOpacity="0.38" />
+              <stop offset="1" stopColor="#f2f5f8" stopOpacity="0" />
             </radialGradient>
-            <radialGradient id="d-lens" cx="0.35" cy="0.35" r="0.7">
-              <stop offset="0" stopColor="#9fd9ff" />
-              <stop offset="0.5" stopColor="#1b3a4a" />
-              <stop offset="1" stopColor="#050a0d" />
+            <radialGradient id="d-lens" cx="0.35" cy="0.32" r="0.72">
+              <stop offset="0" stopColor="#bfe6ff" />
+              <stop offset="0.35" stopColor="#2a5a72" />
+              <stop offset="0.7" stopColor="#0b1a22" />
+              <stop offset="1" stopColor="#03070a" />
             </radialGradient>
+            <radialGradient id="d-glowR" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stopColor="#ff5a4a" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#ff5a4a" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="d-glowG" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stopColor="#3cdd9e" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#3cdd9e" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="d-strip" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#3cdd9e" stopOpacity="0" />
+              <stop offset="0.2" stopColor="#3cdd9e" stopOpacity="0.9" />
+              <stop offset="0.8" stopColor="#3cdd9e" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#3cdd9e" stopOpacity="0" />
+            </linearGradient>
           </defs>
 
-          {/* Rear arms + rotors (behind the body). */}
+          {/* Rear arms + motors + rotors (behind the body). */}
           <g className={styles.rear}>
-            <path d="M120 58 L60 40" stroke="url(#d-arm)" strokeWidth="6" strokeLinecap="round" />
-            <path d="M200 58 L260 40" stroke="url(#d-arm)" strokeWidth="6" strokeLinecap="round" />
-            <circle cx="60" cy="40" r="5" fill="#2a2e34" />
-            <circle cx="260" cy="40" r="5" fill="#2a2e34" />
-            <ellipse cx="60" cy="38" rx="44" ry="9" fill="url(#d-rotor)" className={styles.rotor} />
-            <ellipse cx="260" cy="38" rx="44" ry="9" fill="url(#d-rotor)" className={styles.rotor} />
+            <path d="M124 56 L64 41 L66 36 L128 51 z" fill="url(#d-arm)" />
+            <path d="M196 56 L256 41 L254 36 L192 51 z" fill="url(#d-arm)" />
+            <rect x="55" y="33" width="14" height="10" rx="2" fill="url(#d-motor)" />
+            <rect x="251" y="33" width="14" height="10" rx="2" fill="url(#d-motor)" />
+            <ellipse cx="62" cy="33" rx="7" ry="1.6" fill="#8e969f" />
+            <ellipse cx="258" cy="33" rx="7" ry="1.6" fill="#8e969f" />
+            <ellipse cx="62" cy="32" rx="46" ry="8.5" fill="url(#d-rotor)" className={styles.rotor} />
+            <ellipse cx="258" cy="32" rx="46" ry="8.5" fill="url(#d-rotor)" className={styles.rotor} />
+            <ellipse cx="62" cy="32" rx="30" ry="5.4" fill="none" stroke="#e8ebef" strokeOpacity="0.12" strokeWidth="0.8" />
+            <ellipse cx="258" cy="32" rx="30" ry="5.4" fill="none" stroke="#e8ebef" strokeOpacity="0.12" strokeWidth="0.8" />
+            <circle cx="62" cy="32" r="1.6" fill="#c9ced5" />
+            <circle cx="258" cy="32" r="1.6" fill="#c9ced5" />
           </g>
 
-          {/* Body: a shaded shell with a dark belly and a camera gimbal. */}
-          <path d="M112 62 q48 -26 96 0 l6 14 q-54 14 -108 0 z" fill="url(#d-body)" />
-          <path d="M118 76 q42 12 84 0 l-4 10 q-38 8 -76 0 z" fill="#0f1114" />
-          <path d="M132 54 q28 -10 56 0" stroke="#dfe3e8" strokeOpacity="0.5" strokeWidth="1.2" fill="none" />
-          <rect x="150" y="46" width="20" height="4" rx="1" fill="#1b1e23" />
-          {/* Gimbal + lens */}
-          <circle cx="160" cy="88" r="9" fill="#1a1d22" stroke="#3a3f46" strokeWidth="1" />
-          <circle cx="160" cy="88" r="5" fill="url(#d-lens)" />
-          <circle cx="158" cy="86" r="1.2" fill="#e8f6ff" />
+          {/* Body: a sculpted shell — side panels, top deck, dark belly, a seam of light. */}
+          <path d="M106 66 q54 -34 108 0 l8 14 q-62 18 -124 0 z" fill="url(#d-side)" />
+          <path d="M112 62 q48 -28 96 0 l4 9 q-52 12 -104 0 z" fill="url(#d-body)" />
+          <path d="M126 56 q34 -14 68 0 l-2 4 q-32 -10 -64 0 z" fill="#e6e9ee" fillOpacity="0.55" />
+          <path d="M118 76 q42 12 84 0 l-4 10 q-38 8 -76 0 z" fill="#0b0d10" />
+          <path d="M122 72 q38 9 76 0" stroke="url(#d-strip)" strokeWidth="1.4" fill="none" className={styles.strip} />
+          {/* Vents and a sensor bar. */}
+          <rect x="146" y="47" width="28" height="3.5" rx="1" fill="#0f1114" />
+          <rect x="149" y="48" width="4" height="1.6" fill="#3a3f46" />
+          <rect x="156" y="48" width="4" height="1.6" fill="#3a3f46" />
+          <rect x="163" y="48" width="4" height="1.6" fill="#3a3f46" />
+          <path d="M134 66 h-10 M186 66 h10" stroke="#9aa2ab" strokeOpacity="0.5" strokeWidth="0.8" />
 
-          {/* Front arms + rotors (over the body). */}
+          {/* Gimbal: a two-axis yoke under the nose, lens toward the payload. */}
+          <path d="M152 80 v6 h16 v-6" stroke="#3a3f46" strokeWidth="2" fill="none" />
+          <circle cx="160" cy="89" r="9.5" fill="#15181c" stroke="#4a5058" strokeWidth="1" />
+          <circle cx="160" cy="89" r="7" fill="#0a0c0f" />
+          <circle cx="160" cy="89" r="5" fill="url(#d-lens)" />
+          <circle cx="157.8" cy="86.8" r="1.4" fill="#eaf7ff" />
+          <circle cx="162.5" cy="91.5" r="0.7" fill="#9fd9ff" fillOpacity="0.7" />
+
+          {/* Front arms + motors + rotors (over the body). */}
           <g className={styles.front}>
-            <path d="M126 70 L48 84" stroke="url(#d-arm)" strokeWidth="7" strokeLinecap="round" />
-            <path d="M194 70 L272 84" stroke="url(#d-arm)" strokeWidth="7" strokeLinecap="round" />
-            <circle cx="48" cy="84" r="6" fill="#2a2e34" />
-            <circle cx="272" cy="84" r="6" fill="#2a2e34" />
-            <ellipse cx="48" cy="82" rx="50" ry="10" fill="url(#d-rotor)" className={styles.rotor} />
-            <ellipse cx="272" cy="82" rx="50" ry="10" fill="url(#d-rotor)" className={styles.rotor} />
-            {/* Nav lights: red port, green starboard, white tail strobe. */}
-            <circle cx="46" cy="90" r="2.4" fill="#ff5a4a" className={styles.navL} />
-            <circle cx="274" cy="90" r="2.4" fill="#3cdd9e" className={styles.navR} />
-            <circle cx="160" cy="60" r="1.8" fill="#ffffff" className={styles.strobe} />
+            <path d="M128 70 L50 84 L48 78 L124 64 z" fill="url(#d-arm)" />
+            <path d="M192 70 L270 84 L272 78 L196 64 z" fill="url(#d-arm)" />
+            <rect x="40" y="76" width="16" height="12" rx="2.5" fill="url(#d-motor)" />
+            <rect x="264" y="76" width="16" height="12" rx="2.5" fill="url(#d-motor)" />
+            <ellipse cx="48" cy="76" rx="8" ry="1.8" fill="#9aa2ab" />
+            <ellipse cx="272" cy="76" rx="8" ry="1.8" fill="#9aa2ab" />
+            <ellipse cx="48" cy="75" rx="52" ry="10" fill="url(#d-rotor)" className={styles.rotor} />
+            <ellipse cx="272" cy="75" rx="52" ry="10" fill="url(#d-rotor)" className={styles.rotor} />
+            <ellipse cx="48" cy="75" rx="34" ry="6.4" fill="none" stroke="#e8ebef" strokeOpacity="0.14" strokeWidth="0.8" />
+            <ellipse cx="272" cy="75" rx="34" ry="6.4" fill="none" stroke="#e8ebef" strokeOpacity="0.14" strokeWidth="0.8" />
+            <circle cx="48" cy="75" r="1.8" fill="#d5dae1" />
+            <circle cx="272" cy="75" r="1.8" fill="#d5dae1" />
+            {/* Nav lights with their glow: red port, green starboard, white tail strobe. */}
+            <circle cx="46" cy="91" r="7" fill="url(#d-glowR)" className={styles.navL} />
+            <circle cx="46" cy="91" r="1.9" fill="#ff8a7d" className={styles.navL} />
+            <circle cx="274" cy="91" r="7" fill="url(#d-glowG)" className={styles.navR} />
+            <circle cx="274" cy="91" r="1.9" fill="#8af0c8" className={styles.navR} />
+            <circle cx="160" cy="58" r="1.6" fill="#ffffff" className={styles.strobe} />
           </g>
 
-          {/* Landing skids */}
-          <path d="M136 84 l-6 18 h16" stroke="#3a3f46" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-          <path d="M184 84 l6 18 h-16" stroke="#3a3f46" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          {/* Landing gear: two tubular struts with pads. */}
+          <path d="M138 86 l-7 18" stroke="#4a5058" strokeWidth="3" strokeLinecap="round" />
+          <path d="M138 86 l-7 18" stroke="#9aa2ab" strokeOpacity="0.35" strokeWidth="1" strokeLinecap="round" />
+          <path d="M182 86 l7 18" stroke="#4a5058" strokeWidth="3" strokeLinecap="round" />
+          <path d="M182 86 l7 18" stroke="#9aa2ab" strokeOpacity="0.35" strokeWidth="1" strokeLinecap="round" />
+          <path d="M124 104 h16 M180 104 h16" stroke="#2a2e34" strokeWidth="3" strokeLinecap="round" />
         </svg>
       </div>
 

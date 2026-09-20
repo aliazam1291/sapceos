@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { DRAFT } from "@/content/types";
 import TextReveal from "./TextReveal";
 import Decode from "./Decode";
@@ -53,12 +53,15 @@ export function PageHeader({
   title,
   lede,
   figure,
+  figureWidth,
 }: {
   label: string;
   title: string;
   lede?: string;
   /** The route's signature object — sits in the right column above the lede. */
   figure?: ReactNode;
+  /** Widest the figure may be, px (default 260 — see .pageFigure). */
+  figureWidth?: number;
 }) {
   return (
     <div className={styles.pageHeader} data-figure={figure ? "" : undefined}>
@@ -81,7 +84,9 @@ export function PageHeader({
           element on several routes because of it. */}
       {figure ? (
         <div className={styles.pageAside}>
-          <div className={styles.pageFigure}>{figure}</div>
+          <div className={styles.pageFigure} style={figureWidth ? ({ "--figure-w": `${figureWidth}px` } as CSSProperties) : undefined}>
+            {figure}
+          </div>
           {lede ? <p className={styles.lede}>{lede}</p> : null}
         </div>
       ) : lede ? (

@@ -190,7 +190,7 @@
 }
 
 .pageFigure {
-  width: min(100%, 260px);
+  width: min(100%, var(--figure-w, 260px));
   // Pulls the object up into the title's vertical space so the header does
   // not grow taller just to fit it.
   margin-top: calc(-1 * clamp(var(--space-6), 4vw, var(--space-12)));

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ButtonLink, PageHeader, Section, Status, ui } from "@/components/ui";
 import CopyLink from "@/components/CopyLink";
-import PageForm from "@/components/space/PageForm";
+import Satellite from "@/components/space/Satellite";
 import GravityGrid from "@/components/space/GravityGrid";
 import { links, lookingFor, profile } from "@/content/profile";
 import Comms from "@/components/Comms";
@@ -26,9 +26,10 @@ export default function ContactPage() {
         label="Open Channel"
         title="The channel is open"
         lede="Product roles, platform work, or an argument about something on this site. All three are welcome."
-        figure={
-          <PageForm form="planet" label="A slowly turning faceted wireframe planet." size={240} />
-        }
+        // The channel is a relay: a comms satellite holding station beside the
+        // title (2026-09-20, Ali: "more elements like the spaceship").
+        figure={<Satellite label="A comms relay satellite holding station: gold dish, two solar wings, an emerald beacon." size={340} />}
+        figureWidth={340}
       />
       <div className={ui.pageComms}>
         <Comms at="contact" />
