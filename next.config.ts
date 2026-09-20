@@ -21,8 +21,17 @@ const nextConfig: NextConfig = {
       { source: "/work/:slug", destination: "/missions/:slug", permanent: true },
       { source: "/case-studies", destination: "/missions", permanent: true },
       { source: "/case-studies/:slug", destination: "/missions/:slug", permanent: true },
-      { source: "/blog", destination: "/field-notes", permanent: true },
+      { source: "/blog", destination: "/writing", permanent: true },
       { source: "/blog/:slug", destination: "/field-notes/:slug", permanent: true },
+      // The URLs people guess (and an external SEO audit proposed), mapped
+      // onto the places that exist (2026-09-20).
+      { source: "/projects", destination: "/missions", permanent: true },
+      { source: "/projects/:slug", destination: "/missions/:slug", permanent: true },
+      { source: "/experience", destination: "/mission-history", permanent: true },
+      { source: "/resume", destination: "/Ali_Azam_Kazmi_.pdf", permanent: false },
+      { source: "/cv", destination: "/Ali_Azam_Kazmi_.pdf", permanent: false },
+      { source: "/smaak-ux", destination: "/studio", permanent: true },
+      { source: "/smaak", destination: "/studio", permanent: true },
     ];
   },
 };

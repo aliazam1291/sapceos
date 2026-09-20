@@ -34,7 +34,9 @@ export const metadata: Metadata = {
     template: `%s — ${profile.name}`,
   },
   description:
-    "Ali Azam Kazmi, product engineer and UX strategist, New Delhi: fleet platforms for 200,000+ users, the PRDs behind them, six case studies. Open to PM roles.",
+    // Leads with the substance, not the job search (external SEO audit,
+    // 2026-09-20): what was built, for whom, and the venture.
+    "Ali Azam Kazmi — product engineer, UX strategist and founder (DumbMoney), New Delhi. Fleet platforms for 200,000+ users, the PRDs behind them, six case studies.",
   applicationName: "Space OS",
   authors: [{ name: profile.name, url: siteUrl }],
   creator: profile.name,

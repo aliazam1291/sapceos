@@ -26,7 +26,7 @@ export function personJsonLd() {
     image: `${siteUrl}/images/ali.jpg`,
     jobTitle: profile.title,
     description:
-      "Product engineer and UX strategist building enterprise fleet and telematics platforms; targeting product management roles.",
+      "Product engineer and UX strategist building enterprise fleet and telematics platforms at MapMyIndia; founder and CPO of DumbMoney, a coupon platform for Indian shoppers.",
     worksFor: {
       "@type": "Organization",
       name: "MapMyIndia",
