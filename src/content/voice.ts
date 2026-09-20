@@ -66,6 +66,10 @@ export const comms = {
   studio: [
     { who: "CAPCOM", line: "Studio deck. Every piece here began as a brief and a founder who wanted it by Tuesday." },
   ],
+  // /writing — the log of published pieces.
+  writing: [
+    { who: "CAPCOM", line: "Seven transmissions on record. All of them were proofread; one of them twice." },
+  ],
   // /dumbmoney — the venture.
   venture: [
     { who: "CAPCOM", line: "Operator's own vessel. Copy the code before it expires; the ship has tried." },

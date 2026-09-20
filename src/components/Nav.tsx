@@ -24,6 +24,7 @@ const routes = [
     ? [{ href: "/orbit", label: "Orbit", plain: "Interests" }]
     : []),
   { href: "/field-notes", label: "Field Notes", plain: "Case studies" },
+  { href: "/writing", label: "Writing", plain: "Essays" },
   { href: "/decisions", label: "Flight Rules", plain: "How I decide" },
   { href: "/about", label: "About", plain: "About" },
   { href: "/mission-history", label: "Mission History", plain: "Resume" },

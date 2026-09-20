@@ -61,6 +61,7 @@ function buildEntries(): Entry[] {
     { id: "/lab", kind: "page", label: "Lab", meta: "Experiments · the bench", href: "/lab", keywords: "open source experiments side projects" },
     { id: "/studio", kind: "page", label: "Studio", meta: "Smaak.ux · freelance work", href: "/studio", keywords: "freelance design brand smaak clients behance figma" },
     { id: "/dumbmoney", kind: "page", label: "DumbMoney", meta: "Venture · Founder & CPO", href: "/dumbmoney", keywords: "dumb money startup coupon deals founder cpo company venture dumbmoney.in" },
+    { id: "/writing", kind: "page", label: "Writing", meta: "Essays, guides, a case study", href: "/writing", keywords: "blog medium articles essays posts published" },
     { id: "/decisions", kind: "page", label: "Flight rules", meta: "How I decide", href: "/decisions", keywords: "decisions principles judgement" },
     { id: "/about", kind: "page", label: "About", meta: "The operator", href: "/about", keywords: "bio profile who" },
     { id: "/mission-history", kind: "page", label: "Mission history", meta: "Résumé · the flight log", href: "/mission-history", keywords: "resume cv experience career" },

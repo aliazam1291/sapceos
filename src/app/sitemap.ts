@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/lab", priority: 0.7 },
     { path: "/studio", priority: 0.8 },
     { path: "/dumbmoney", priority: 0.9 },
+    { path: "/writing", priority: 0.7 },
     // Submitted only once it has content — same gate as the Nav and Footer
     // links (src/content/orbit.ts). A page whose four rows all read "needs
     // input" should not be handed to a search engine either; the route stays

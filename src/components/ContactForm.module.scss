@@ -1,0 +1,168 @@
+@use "../styles/tokens.scss" as *;
+
+// The transmission form: a wireframe instrument (panel, mono labels,
+// hairline fields), not a SaaS card. Emerald is the one signal — the
+// transmit button and the focused field.
+
+.form {
+  @include panel(20px);
+  display: grid;
+  gap: var(--space-6);
+  padding: clamp(var(--space-5), 2.6vw, var(--space-8));
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.label {
+  @include mono-label;
+  color: var(--accent);
+}
+
+.meta {
+  @include mono-label;
+  color: var(--text-tertiary);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+
+  @media (min-width: 640px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.wide {
+  @media (min-width: 640px) {
+    grid-column: 1 / -1;
+  }
+}
+
+.fieldLabel {
+  @include mono-label;
+  color: var(--text-secondary);
+}
+
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: rgba(6, 6, 6, 0.6);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--type-small);
+  outline: none;
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  &:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(60, 221, 158, 0.35);
+  }
+}
+
+select.input {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: var(--space-10);
+
+  option {
+    background: #0d0d0d;
+    color: var(--text-primary);
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 9rem;
+  line-height: 1.55;
+}
+
+.station {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--accent-line);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--type-small);
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+
+  @include hover-only {
+    &:hover:not(:disabled) {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #060606;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+
+  &[data-live] {
+    animation: pulse 0.9s ease-in-out infinite;
+    will-change: opacity;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.status {
+  margin: 0;
+  @include mono-label;
+  color: var(--text-secondary);
+  min-height: 1.2em;
+}

@@ -5,6 +5,7 @@ import Satellite from "@/components/space/Satellite";
 import GravityGrid from "@/components/space/GravityGrid";
 import { links, lookingFor, profile } from "@/content/profile";
 import Comms from "@/components/Comms";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Open Channel",
@@ -76,6 +77,12 @@ export default function ContactPage() {
               Book a slot
             </ButtonLink>
           </div>
+        </div>
+
+        {/* The form: a transmission, delivered by the relay (api/contact) or
+            handed to the reader's mail client if the relay is offline. */}
+        <div style={{ marginTop: "var(--space-6)" }}>
+          <ContactForm />
         </div>
 
         <div className={ui.instrumentGrid} style={{ marginTop: "var(--space-6)" }}>

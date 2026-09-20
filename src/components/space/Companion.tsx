@@ -95,7 +95,8 @@ const PAGE_PLAN_REPORT: Waypoint[] = [REST, { p: 0.5, x: -0.36, y: -0.32, s: 0.7
 const PAGE_PLAN_DECK: Waypoint[] = [REST, { p: 0.5, x: 0.1, y: 0.4, s: 0.5 }, END];
 const PAGE_PLAN_PROSE: Waypoint[] = [REST, { p: 0.5, x: 0.32, y: 0.3, s: 0.62 }, END];
 function pagePlanFor(pathname: string): Waypoint[] {
-  if (/^\/(missions|field-notes)\/[^/]+/.test(pathname)) return PAGE_PLAN_REPORT;
+  // The venture page has a report's shape (manifest, sticky rail, rows).
+  if (/^\/(missions|field-notes)\/[^/]+/.test(pathname) || pathname === "/dumbmoney") return PAGE_PLAN_REPORT;
   if (/^\/(missions|field-notes|lab|studio|about)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
   return PAGE_PLAN_PROSE;
 }

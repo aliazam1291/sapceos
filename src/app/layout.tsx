@@ -19,6 +19,7 @@ import { siteUrl } from "@/lib/site";
 import { jsonLd, personJsonLd, websiteJsonLd } from "@/lib/seo";
 import { allKeywords } from "@/lib/keywords";
 import { Analytics } from "@vercel/analytics/next";
+import Telemetry from "@/components/Telemetry";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/styles/tailwind.css";
 import "@/styles/globals.scss";
@@ -131,6 +132,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             cookie, so the footer line still holds. */}
         <Analytics />
         <SpeedInsights />
+        <Telemetry />
       </body>
     </html>
   );

@@ -14,6 +14,7 @@ const nav = [
   // it, and this reverses itself the moment there is content.
   ...(orbitHasContent ? [{ href: "/orbit", label: "Orbit" }] : []),
   { href: "/field-notes", label: "Field Notes" },
+  { href: "/writing", label: "Writing" },
   { href: "/decisions", label: "Flight Rules" },
   { href: "/about", label: "About" },
   { href: "/mission-history", label: "Mission History" },
