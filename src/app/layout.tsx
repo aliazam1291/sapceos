@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Nav from "@/components/Nav";
+import MobileShell from "@/components/MobileShell";
 import SectionGuide from "@/components/SectionGuide";
 import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
@@ -29,6 +30,10 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", dis
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  // Installable (2026-09-22): the phone shell is an app shell, so the site
+  // can go on a home screen as one — standalone, the ship as its icon.
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Space OS" },
   title: {
     default: `${profile.name} — Product Manager Portfolio · New Delhi`,
     template: `%s — ${profile.name}`,
@@ -74,6 +79,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#060606",
   colorScheme: "dark",
+  // The app shell draws into the notch and home-indicator areas itself
+  // (safe-area insets on both bars).
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -124,6 +132,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Atmosphere />
         <Transition />
         <Nav />
+        <MobileShell />
         {/* Mission control: ⌘K, every destination from one field. */}
         <CommandPalette />
         <SectionGuide />

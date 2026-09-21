@@ -60,6 +60,15 @@
 
 /* ── The panel ────────────────────────────────────────────────────────────── */
 
+// Phones have the app shell (MobileShell: top bar + tab bar); the floating
+// dock is a desktop instrument and steps aside. The header stays — the
+// overview panel it opens is shared with the tab bar's Menu.
+@media (max-width: 767px) {
+  .dock {
+    display: none;
+  }
+}
+
 .dock {
   position: relative;
   // Above the Overview panel, which is a sibling inside this same header. See

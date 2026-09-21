@@ -446,3 +446,47 @@
     &[data-on] { background: var(--accent); }
   }
 }
+
+/*
+ * Phones (2026-09-22, the app shell pass). The stage is the full width of
+ * the screen: the caption owns the width (it was capped at 40% and the
+ * title broke a word a line), the readout stays one line with the part's
+ * name clipped rather than wrapped into "02 ALI / AZAM / 06 KAZMI", and the
+ * ticks go — the index is enough.
+ */
+@media (max-width: 720px) {
+  .stage {
+    height: clamp(480px, 72svh, 640px);
+  }
+
+  .caption {
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: 3.75rem;
+    max-width: none;
+    gap: var(--space-2);
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .hud {
+    padding: 0.6rem var(--space-4);
+  }
+
+  .readout {
+    min-width: 0;
+    gap: var(--space-3);
+    white-space: nowrap;
+  }
+
+  .readoutSystem {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ticks {
+    display: none;
+  }
+}

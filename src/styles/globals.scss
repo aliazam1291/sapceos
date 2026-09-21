@@ -78,6 +78,23 @@ footer {
   padding-bottom: clamp(4.5rem, 9vh, 6rem);
 }
 
+/* The phone app shell (MobileShell): the page scrolls between a top bar
+   and a tab bar, so it starts below one and ends above the other, and an
+   anchor jump lands under the top bar, not behind it. */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: calc(var(--app-top) + env(safe-area-inset-top, 0px) + 0.5rem);
+  }
+
+  main {
+    padding-top: calc(var(--app-top) + env(safe-area-inset-top, 0px));
+  }
+
+  footer {
+    padding-bottom: calc(var(--app-bottom) + env(safe-area-inset-bottom, 0px) + 1.5rem);
+  }
+}
+
 img,
 svg,
 video,

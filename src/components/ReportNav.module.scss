@@ -39,6 +39,13 @@
       display: none;
     }
   }
+
+  // Under the phone app bar (MobileShell), flush to it: at 64px a strip of
+  // the report showed through the gap between the two.
+  @media (max-width: 767px) {
+    top: calc(var(--app-top) + env(safe-area-inset-top, 0px));
+    background: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+  }
 }
 
 .item {

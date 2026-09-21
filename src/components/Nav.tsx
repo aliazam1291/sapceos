@@ -47,6 +47,13 @@ export default function Nav() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // The phone tab bar's Menu (MobileShell) opens the same overview.
+  useEffect(() => {
+    const onOverview = () => setOpen((v) => !v);
+    window.addEventListener("space:overview", onOverview);
+    return () => window.removeEventListener("space:overview", onOverview);
+  }, []);
+
   /*
    * Scroll state + progress rail.
    *

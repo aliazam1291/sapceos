@@ -118,6 +118,27 @@ const PAGE_PLAN_COARSE: Waypoint[] = [
   { p: 1.0, x: 0.44, y: 0.3, s: 0.4 },
 ];
 /*
+ * Docked (2026-09-22, the app shell). Below 768px the page has a top bar
+ * (MobileShell) whose right end is left empty as the ship's berth, and the
+ * ship holds there for the whole page, every page, home included — the
+ * PAGE_PLAN_COARSE margin pass still crossed every heading's last word,
+ * and on the home page the desktop plan flew it over the operator's copy,
+ * the ownership matrix and the footer links (phone sheets, tools/
+ * mobile-shots.mjs). Fractions are computed from the viewport so the
+ * station is the berth's centre in pixels: 46px in from the right, 31px
+ * below the safe-area inset (measured: at 52/26 the fin tips clipped the
+ * top edge and the exhaust reached the search glyph).
+ */
+function dockedPlan(w: number, h: number, safeTop: number): Waypoint[] {
+  const x = 0.5 - 46 / w;
+  const y = 0.5 - (safeTop + 31) / h;
+  const s = 0.26;
+  return [
+    { p: 0.0, x, y, s },
+    { p: 1.0, x, y, s },
+  ];
+}
+/*
  * Is there readable text under this screen point? The ship must never sit
  * on copy (2026-09-19). The flight plans keep it clear at the positions
  * they were measured at, but a page's content scrolls under fixed screen
@@ -569,15 +590,25 @@ export default function Companion() {
   const warp = useRef(0);
   const light = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const plan = pathname === "/" ? HOME_PLAN : narrow ? PAGE_PLAN_COARSE : pagePlanFor(pathname);
+  const [docked, setDocked] = useState<Waypoint[] | null>(null);
+  const plan = narrow && docked ? docked : pathname === "/" ? HOME_PLAN : narrow ? PAGE_PLAN_COARSE : pagePlanFor(pathname);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     setCoarse(window.matchMedia("(pointer: coarse)").matches);
-    const narrowQuery = window.matchMedia("(max-width: 768px)");
+    const narrowQuery = window.matchMedia("(max-width: 767px)");
+    const measureDock = () => {
+      const safeTop = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--safe-top")) || 0;
+      setDocked(dockedPlan(window.innerWidth, window.innerHeight, safeTop));
+    };
     setNarrow(narrowQuery.matches);
-    const onNarrowChange = (e: MediaQueryListEvent) => setNarrow(e.matches);
+    if (narrowQuery.matches) measureDock();
+    const onNarrowChange = (e: MediaQueryListEvent) => {
+      setNarrow(e.matches);
+      if (e.matches) measureDock();
+    };
     narrowQuery.addEventListener("change", onNarrowChange);
+    window.addEventListener("resize", measureDock, { passive: true });
     // CompanionLoader has already waited for idle; this is only so the
     // canvas is not created in the same frame the chunk finishes parsing.
     const id = window.setTimeout(() => setEnabled(true), 250);
@@ -593,6 +624,7 @@ export default function Companion() {
     return () => {
       window.clearTimeout(id);
       narrowQuery.removeEventListener("change", onNarrowChange);
+      window.removeEventListener("resize", measureDock);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("space:warp", onWarp);
     };

@@ -640,6 +640,30 @@ the open channel; the one joke; keep it the only one).
 - *The launch screen replays.* `?launch` on any URL forces it; the palette
   has "Replay the launch sequence." Ali reloaded the same tab and could
   not find it — the session flag is per tab.
+- *The app shell* (2026-09-22). Ali: "the site is not at all mobile
+  responsive … same UI but it should look more like a mobile application."
+  Phone sheets (`tools/mobile-shots.mjs`: viewport frames per route
+  stitched into one contact sheet — a full-page shot repeats sticky
+  sections and times out on canvases) showed the companion over the
+  operator's copy, the ownership matrix and the footer links, and the
+  desktop dock floating over the flight list. Below 768px `MobileShell`
+  is the chrome: a top bar (mark, "At · <screen>", search → the palette,
+  and an empty right end — the ship's **berth**) and a five-tab bar
+  (Home = ship, Missions = world, Operator = landed ship, Channel =
+  satellite — the icon-lab renders — and Menu, a wireframe glyph, which
+  dispatches `space:overview` so Nav opens the shared overview). The dock
+  is `display: none` there; `main` pads for the bars (`--app-top`,
+  `--app-bottom`, safe-area insets, `viewportFit: cover`); the report
+  rail sticks under the bar. `Companion` on a narrow viewport flies
+  `dockedPlan()` — the berth's centre in pixels, every page, home
+  included — so the one ship is docked in the chrome like a status icon
+  instead of crossing a full-width text column. The site is installable
+  (`public/manifest.webmanifest`, ship icons `public/icons/app-*.png`,
+  `appleWebApp`). Landing's stage caption owns the width on phones and
+  the readout stays one line. Check with `tools/mobile-shots.mjs` and
+  `tools/mobile-uat.mjs`; the CRLF trap: `globals.scss` is CRLF, so a
+  multi-line string replace from Node silently misses — use Edit.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

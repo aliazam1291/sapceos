@@ -1,0 +1,178 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * The app shell — phones only. Both bars are instruments: the page ground,
+ * one hairline, mono labels; no blur (never over a live canvas), no radius.
+ * Heights are published on :root (globals.scss --app-top / --app-bottom) so
+ * main's padding and the companion's berth agree with them.
+ */
+
+.appBar,
+.tabBar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .appBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    // Under the companion layer (9998) — the ship docks over the berth —
+    // and over everything the page draws (SectionGuide, the vignette).
+    z-index: 9990;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto var(--app-berth);
+    align-items: center;
+    column-gap: var(--space-3);
+    height: calc(var(--app-top) + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) var(--space-4) 0;
+    background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+    border-bottom: 1px solid transparent;
+    transition: background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+
+    &[data-scrolled] {
+      background: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+      border-bottom-color: var(--line);
+    }
+  }
+
+  .tabBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9990;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    height: calc(var(--app-bottom) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+    border-top: 1px solid var(--line);
+  }
+}
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--space-1);
+  margin-inline: calc(var(--space-1) * -1);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.screen {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.screenLabel {
+  color: var(--text-tertiary);
+}
+
+.screenName {
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:active {
+    color: var(--accent);
+  }
+}
+
+.berth {
+  display: block;
+  height: 100%;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 44px;
+  margin: 0;
+  padding: var(--space-1) 0 0;
+  border: 0;
+  background: none;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-active] {
+    color: var(--accent);
+  }
+
+  &[data-active] .tabIcon,
+  &[data-active] .tabGlyph {
+    filter: none;
+    opacity: 1;
+  }
+}
+
+.tabIcon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.72;
+  filter: grayscale(0.35);
+  transition: opacity var(--dur-fast) linear;
+}
+
+.tabLabel {
+  font-family: var(--font-mono);
+  font-size: max(0.5625rem, var(--micro-floor));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+// The one wireframe glyph: a 2×2 of the site's corner brackets.
+.tabGlyph {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  width: 22px;
+  height: 22px;
+  margin: 3px 0;
+  opacity: 0.55;
+
+  i {
+    display: block;
+    border: 1.2px solid currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appBar,
+  .tabIcon {
+    transition: none;
+  }
+}

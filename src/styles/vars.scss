@@ -120,6 +120,13 @@
    */
   --shell-max: min(max(77.5rem, 76vw), 120rem);
   --shell-pad: clamp(1.25rem, 5vw, 4rem);
+  // The phone app shell (MobileShell, 2026-09-22): bar heights and the
+  // ship's berth width at the top bar's right end. Read by globals (main's
+  // padding) and Companion (the docked station); zero above 767px.
+  --app-top: 52px;
+  --app-bottom: 58px;
+  --app-berth: 72px;
+  --safe-top: env(safe-area-inset-top, 0px);
 
   // Motion — Level 01 only. Levels 02/03 are driven by GSAP.
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
