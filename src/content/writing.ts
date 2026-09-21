@@ -77,7 +77,7 @@ export const writing: Piece[] = [
     date: "2026-09-21",
     slug: "prds-as-an-engineer",
     href: "/writing/prds-as-an-engineer",
-    status: "draft",
+    status: "published",
     kind: "essay",
     line: "Writing the document and then building what it says: what changes in a PRD when the author is also the one who ships it.",
     related: { label: "The missions the PRDs were for", href: "/missions" },
