@@ -612,7 +612,15 @@ export default function InteractiveGalaxy({
   // Device capabilities — resolved client-side only to avoid hydration mismatch
   // Reduced motion is no longer read here — useSceneFrameloop folds it into the
   // one `frameloop` value, so there is a single decision point for this canvas.
-  const [isCoarse, setIsCoarse] = useState(false);
+  // Decided BEFORE the first render, not in an effect (2026-09-22): this
+  // component is `ssr: false` (GalaxyNavigator), so there is nothing to
+  // mismatch — and an effect-time flip rebuilt the scene (the map ship
+  // unmounted, particle count and dpr changed, every world went compact)
+  // one frame after WarmShaders had compiled the mouse-pointer scene. The
+  // real first draw then compiled 14 new programs synchronously: measured
+  // with tools/tick-probe.cjs on a phone viewport, 16 → 30 programs at the
+  // first frame and the hero black for 7 s after warm-up said go.
+  const [isCoarse, setIsCoarse] = useState(() => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches);
   useEffect(() => {
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     setIsCoarse(coarse);

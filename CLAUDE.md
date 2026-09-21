@@ -663,6 +663,24 @@ the open channel; the one joke; keep it the only one).
   the readout stays one line. Check with `tools/mobile-shots.mjs` and
   `tools/mobile-uat.mjs`; the CRLF trap: `globals.scss` is CRLF, so a
   multi-line string replace from Node silently misses — use Edit.
+  Second pass, same day: the home flight on phones is one screen of
+  galaxy (the stage was growing to ~1350px around the list inside it,
+  canvas and all) with the opener over it, then the five systems as an
+  **app list** under the stage (index, title, two lines, chevron,
+  hairlines); the ownership matrix is rows below 640px (`Impact`
+  `.stack`: title, status, the four columns as tags, struck through
+  when not owned) — a sideways-scrolling table is a spreadsheet. And a
+  warm-up bug only a phone showed: `InteractiveGalaxy` decided
+  `isCoarse` in an effect, so WarmShaders compiled the mouse scene and
+  the real first draw compiled the touch scene synchronously
+  (`tools/progdiff-probe.cjs`: 14 → 30 programs at the first frame). It
+  is decided in the initial state now (`ssr: false`, nothing to
+  mismatch). `useWarmShaders` `settled()` also has a 1.5 s grace after
+  which a program with LINK_STATUS true counts as ready —
+  COMPLETION_STATUS_KHR stayed false for ever on one galaxy program.
+  `window.__warmAt` lists each canvas's release time;
+  `tools/tick-probe.cjs` traces pending programs → warm → first frame.
+  Timing on this machine is only meaningful when Ali's Chrome is idle.
 
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch

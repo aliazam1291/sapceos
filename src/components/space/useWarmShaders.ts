@@ -78,17 +78,30 @@ export function WarmShaders({ onWarm }: { onWarm: () => void }) {
        * 8 s: a synchronous compile on first draw is a stutter; a black scene
        * is a bug.
        */
-      const settled = async (limitMs: number) => {
+      /*
+       * With a grace period (2026-09-22). On a phone-sized viewport one
+       * galaxy program (a ShaderMaterial shared by fifteen meshes) reported
+       * COMPLETION_STATUS_KHR false for ever while LINK_STATUS was already
+       * true — ANGLE's completion flag is not reliable for every program —
+       * and the hero sat black for the full 8 s cap on every mobile visit.
+       * After `graceMs` a program still "pending" is asked for LINK_STATUS
+       * instead: that query blocks until the link is actually done, which by
+       * then it is, and the polling loop is released.
+       */
+      const settled = async (limitMs: number, graceMs = 1500) => {
         const t0 = performance.now();
+        const ctx = r.getContext();
         while (performance.now() - t0 < limitMs) {
           if (cancelled) return;
+          const patient = performance.now() - t0 < graceMs;
           let pending = false;
           for (const pr of r.info.programs ?? []) {
+            const p = pr as unknown as { isReady: () => boolean; program?: WebGLProgram };
             try {
-              if (!(pr as unknown as { isReady: () => boolean }).isReady()) {
-                pending = true;
-                break;
-              }
+              if (p.isReady()) continue;
+              if (!patient && p.program && ctx.getProgramParameter(p.program, ctx.LINK_STATUS)) continue;
+              pending = true;
+              break;
             } catch {
               // A program torn down mid-poll: not ours to wait for.
             }
@@ -127,7 +140,11 @@ export function WarmShaders({ onWarm }: { onWarm: () => void }) {
           warm.traverse((o) => (o as THREE.Mesh).geometry?.dispose?.());
         }
       }
-      if (!cancelled) onWarm();
+      if (cancelled) return;
+      // For the harnesses: when each canvas was released to draw.
+      const w = window as unknown as { __warmAt?: number[] };
+      (w.__warmAt ??= []).push(Math.round(performance.now()));
+      onWarm();
     })();
     return () => {
       cancelled = true;

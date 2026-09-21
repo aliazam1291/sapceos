@@ -136,6 +136,39 @@ export default function Impact() {
             </tr>
           </tfoot>
         </table>
+        {/* Phones (2026-09-22): the same matrix as rows — a sideways scroller
+            inside a panel is a spreadsheet, not an app. Each mission is a row
+            with the columns it owns as tags; the totals close the list. */}
+        <ul className={styles.stack} aria-label="Ownership by mission">
+          {matrix.map((m) => (
+            <li key={m.slug} className={styles.stackRow}>
+              <div className={styles.stackHead}>
+                <Link href={`/missions/${m.slug}`} className={styles.stackLink}>
+                  {m.title}
+                </Link>
+                <span className={styles.statusTag} data-status={m.status}>
+                  {m.status}
+                </span>
+              </div>
+              <ul className={styles.stackTags} aria-label="Owned">
+                {ownershipColumns.map((c, ci) => (
+                  <li key={c.key} className={styles.stackTag} data-on={m.owns[ci] || undefined}>
+                    {c.label}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+          <li className={styles.stackTotals}>
+            <span className={styles.totalLabel}>Owned on</span>
+            {totals.map((n, ci) => (
+              <span key={ci} className={styles.stackTotal}>
+                {ownershipColumns[ci].label} <b>{n}</b>
+                <span className={styles.totalOf}>/{missions.length}</span>
+              </span>
+            ))}
+          </li>
+        </ul>
         <p className={styles.footnote}>
           Every dot is a literal match against that mission&rsquo;s role line — nothing is
           claimed here that the report itself does not say.

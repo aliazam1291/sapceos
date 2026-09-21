@@ -229,22 +229,35 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
           )}
         </aside>
 
-        {/* Touch and reduced-motion: no pin, so the systems list is the flight. */}
-        {/* data-nojs: the layout's <noscript> style shows this list when the
-            script never arrives — without JS the pinned flight cannot fly and
-            the five featured missions were unreachable on a desktop. */}
-        <ul className={styles.fallback} data-nojs>
-          {missions.map((m, i) => (
-            <li key={m.slug}>
-              <Link href={`/missions/${m.slug}`} className={styles.fallbackItem}>
-                <span className={styles.hudIndex}>SYS&#8209;{String(i + 1).padStart(2, "0")}</span>
+      </div>
+
+      {/* Phones and reduced motion: no pin, so the galaxy is the first screen
+          and the systems are the list under it — an app list (2026-09-22:
+          index, title, one line, a chevron; hairlines, no cards), not five
+          panels floating over a stretched canvas. */}
+      {/* data-nojs: the layout's <noscript> style shows this list when the
+          script never arrives — without JS the pinned flight cannot fly and
+          the five featured missions were unreachable on a desktop. */}
+      <ul className={styles.fallback} data-nojs aria-label="Featured systems">
+        <li className={styles.fallbackHead} aria-hidden="true">
+          <span className={styles.hudIndex}>Systems</span>
+          <span>{String(missions.length).padStart(2, "0")} on the route</span>
+        </li>
+        {missions.map((m, i) => (
+          <li key={m.slug}>
+            <Link href={`/missions/${m.slug}`} className={styles.fallbackItem}>
+              <span className={styles.hudIndex}>SYS&#8209;{String(i + 1).padStart(2, "0")}</span>
+              <span className={styles.fallbackBody}>
                 <span className={styles.fallbackTitle}>{m.title}</span>
                 <span className={styles.hudPremise}>{m.premise}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+              </span>
+              <span className={styles.fallbackGo} aria-hidden="true">
+                &#8250;
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

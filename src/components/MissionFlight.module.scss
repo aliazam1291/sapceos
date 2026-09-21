@@ -13,9 +13,12 @@
   min-height: 620px;
   overflow: hidden;
 
-  @media (max-width: 768px) {
-    height: auto;
-    min-height: 100svh;
+  // Phones: one screen of galaxy (the stage used to grow to ~1350px around
+  // the list inside it, and the canvas with it — 526×1828 at dpr 1.35).
+  // The app shell's bars are outside this height.
+  @media (max-width: 767px) {
+    height: calc(100svh - var(--app-top) - env(safe-area-inset-top, 0px));
+    min-height: 520px;
   }
 }
 
@@ -50,6 +53,13 @@
   padding: clamp(var(--space-6), 4vh, var(--space-10)) var(--shell-pad) 6.5rem;
   padding-right: max(var(--shell-pad), 6.5rem);
   pointer-events: none;
+
+  // The stage is one screen tall and the tab bar sits over its last 58px:
+  // the opener's proof line ends above it.
+  @media (max-width: 767px) {
+    padding-right: var(--shell-pad);
+    padding-bottom: calc(var(--app-bottom) + env(safe-area-inset-bottom, 0px) + var(--space-5));
+  }
 
   > * {
     pointer-events: auto;
@@ -163,8 +173,17 @@
   gap: var(--space-4);
   max-width: 34ch;
 
+  // Phones (2026-09-22): the opener stays — it is the first screen's copy,
+  // over the galaxy — and the scroll hint and the skip go: there is no
+  // flight to skip, the systems are the list right under the stage.
   @media (max-width: 768px) {
-    display: none;
+    max-width: none;
+    gap: var(--space-3);
+
+    .hint,
+    .skip {
+      display: none;
+    }
   }
 }
 
@@ -562,31 +581,70 @@
 }
 
 // ── Fallback list (touch / reduced motion) ───────────────────────────────────
+// An app list: hairline rows, edge to edge within the gutter, index left,
+// chevron right. Panels are for text-only content; these are rows.
 .fallback {
   display: none;
   position: relative;
   z-index: 2;
   list-style: none;
   margin: 0;
-  padding: 48vh var(--shell-pad) var(--space-12);
-  gap: var(--space-3);
+  padding: var(--space-4) var(--shell-pad) var(--space-10);
 
   @media (max-width: 768px) {
     display: grid;
   }
 }
 
+.fallbackHead {
+  @include mono-label;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--line-strong);
+}
+
 .fallbackItem {
   display: grid;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 64px;
+  padding: var(--space-4) 0;
   color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  -webkit-tap-highlight-color: transparent;
 
-  @include panel(14px);
+  &:active {
+    background: linear-gradient(90deg, transparent, rgba(60, 221, 158, 0.05));
+  }
+}
+
+.fallbackBody {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+
+  .hudPremise {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.fallbackGo {
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-tertiary);
 }
 
 .fallbackTitle {
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   font-weight: 500;
+  line-height: 1.25;
   color: var(--text-primary);
 }

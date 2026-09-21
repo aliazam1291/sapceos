@@ -60,14 +60,6 @@
 
 /* ── The panel ────────────────────────────────────────────────────────────── */
 
-// Phones have the app shell (MobileShell: top bar + tab bar); the floating
-// dock is a desktop instrument and steps aside. The header stays — the
-// overview panel it opens is shared with the tab bar's Menu.
-@media (max-width: 767px) {
-  .dock {
-    display: none;
-  }
-}
 
 .dock {
   position: relative;
@@ -456,5 +448,15 @@
   .toggleGlyph i {
     animation: none;
     transition: none;
+  }
+}
+
+// Phones have the app shell (MobileShell: top bar + tab bar); the floating
+// dock is a desktop instrument and steps aside. The header stays — the
+// overview panel it opens is shared with the tab bar's Menu. Last in the
+// file on purpose: `.dock` sets display:flex above at the same specificity.
+@media (max-width: 767px) {
+  .dock {
+    display: none;
   }
 }
