@@ -51,7 +51,11 @@ export function WarmShaders({ onWarm }: { onWarm: () => void }) {
       await frame();
       if (cancelled) return;
       if (shipEnvIfReady(gl as THREE.WebGLRenderer)) {
-        for (let i = 0; i < 12; i++) {
+        // Up to ~1 s of frames: on a loaded machine React's commit of the
+        // mapped materials landed after the 12 this used to allow, the
+        // warm-up compiled the OLD set, the swap deleted those programs, and
+        // compileAsync polled the ghosts forever — a black hero (2026-09-21).
+        for (let i = 0; i < 60; i++) {
           let pending = false;
           scene.traverse((o) => {
             const m = (o as THREE.Mesh).material as (THREE.MeshStandardMaterial & { userData: { wantsEnv?: boolean } }) | undefined;
@@ -62,9 +66,44 @@ export function WarmShaders({ onWarm }: { onWarm: () => void }) {
         }
         if (cancelled) return;
       }
-      const r = gl as THREE.WebGLRenderer & { compileAsync?: (s: THREE.Object3D, c: THREE.Camera) => Promise<unknown> };
-      if (typeof r.compileAsync === "function") {
-        await r.compileAsync(scene, camera).catch(() => null);
+      const r = gl as THREE.WebGLRenderer & { compile: (s: THREE.Object3D, c: THREE.Camera) => unknown };
+      /*
+       * Not renderer.compileAsync (2026-09-21). It captures the materials at
+       * call time and polls each one's program until KHR_parallel_shader_compile
+       * says it linked — but a material React replaces meanwhile (the env map
+       * arriving, a prop change) has its old program DELETED, and a deleted
+       * program never reports ready, so the promise never resolves and the
+       * canvas never draws. This polls the renderer's LIVE program list
+       * instead (three drops deleted programs from it), and gives up after
+       * 8 s: a synchronous compile on first draw is a stutter; a black scene
+       * is a bug.
+       */
+      const settled = async (limitMs: number) => {
+        const t0 = performance.now();
+        while (performance.now() - t0 < limitMs) {
+          if (cancelled) return;
+          let pending = false;
+          for (const pr of r.info.programs ?? []) {
+            try {
+              if (!(pr as unknown as { isReady: () => boolean }).isReady()) {
+                pending = true;
+                break;
+              }
+            } catch {
+              // A program torn down mid-poll: not ours to wait for.
+            }
+          }
+          if (!pending) return;
+          await new Promise((res) => setTimeout(res, 16));
+        }
+      };
+      if (typeof r.compile === "function") {
+        try {
+          r.compile(scene, camera);
+        } catch {
+          // A material that cannot compile here compiles on its first draw.
+        }
+        await settled(8000);
         // Shadow maps draw with their own depth materials, which compile()
         // never sees; on a canvas with shadows the first shadow pass was one
         // more synchronous compile. Warm the two default variants with a
@@ -77,7 +116,12 @@ export function WarmShaders({ onWarm }: { onWarm: () => void }) {
           warm.add(new T.Mesh(new T.PlaneGeometry(1, 1), new T.MeshDistanceMaterial()));
           const rt = new T.WebGLRenderTarget(4, 4);
           r.setRenderTarget(rt);
-          await r.compileAsync(warm, camera).catch(() => null);
+          try {
+            r.compile(warm, camera);
+          } catch {
+            // see above
+          }
+          await settled(3000);
           r.setRenderTarget(null);
           rt.dispose();
           warm.traverse((o) => (o as THREE.Mesh).geometry?.dispose?.());

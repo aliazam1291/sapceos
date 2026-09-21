@@ -88,7 +88,7 @@ function pmremPlane() {
 }
 
 /** Resolve when the GPU has executed everything issued so far — polled, never blocking. */
-async function gpuIdle(gl: THREE.WebGLRenderer, maxMs = 6000) {
+async function gpuIdle(gl: THREE.WebGLRenderer, maxMs = 2500) {
   const ctx = gl.getContext() as WebGL2RenderingContext;
   if (typeof ctx.fenceSync !== "function") {
     await frame();
@@ -141,8 +141,9 @@ export function warmShipEnv(gl: THREE.WebGLRenderer): Promise<THREE.Texture | nu
   }
   const entry: { texture: THREE.Texture | null; promise: Promise<THREE.Texture | null> } = { texture: null, promise: Promise.resolve(null) };
   entry.promise = (async () => {
-    // Another canvas is baking, or has baked: reuse.
-    if (baking) await baking;
+    // Another canvas is baking, or has baked: reuse. Never wait on it for
+    // more than 12 s — a bake that stalls must not black out every scene.
+    if (baking) await Promise.race([baking, new Promise<void>((res) => setTimeout(res, 12000))]);
     const reused = fromBaked();
     if (reused) {
       entry.texture = reused;
@@ -152,6 +153,9 @@ export function warmShipEnv(gl: THREE.WebGLRenderer): Promise<THREE.Texture | nu
     baking = new Promise<void>((res) => {
       finishBake = res;
     });
+    // If anything below throws, the waiters are still released.
+    const release = finishBake;
+    try {
     const pmrem = new THREE.PMREMGenerator(gl);
     // Issue the generator's shader compiles now, wait for the driver to
     // link them in parallel, then render — nothing here blocks.
@@ -217,7 +221,10 @@ export function warmShipEnv(gl: THREE.WebGLRenderer): Promise<THREE.Texture | nu
         magFilter: THREE.LinearFilter,
       });
       gl.setRenderTarget(rt);
-      await Promise.all([r.compileAsync(scene, cam).catch(() => null), r.compileAsync(warmScene, cam).catch(() => null)]);
+      await Promise.race([
+        Promise.all([r.compileAsync(scene, cam).catch(() => null), r.compileAsync(warmScene, cam).catch(() => null)]),
+        new Promise((res) => setTimeout(res, 8000)),
+      ]);
       // Linked is not compiled, on ANGLE/D3D11: the GGX convolution still
       // blocked the main thread ~1.8 s at its first draw with every program
       // "ready" (tools/glblock-uat.mjs: getProgramParameter(ACTIVE_UNIFORMS),
@@ -263,6 +270,10 @@ export function warmShipEnv(gl: THREE.WebGLRenderer): Promise<THREE.Texture | nu
     finishBake();
     entry.texture = texture;
     return texture;
+    } catch (err) {
+      release();
+      throw err;
+    }
   })();
   cache.set(gl, entry);
   return entry.promise;
