@@ -36,7 +36,7 @@ export default async function OpenGraphImage() {
       >
         {/* The ship, upper right, lit from the card's own warm corner. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={shipSrc} width={520} height={520} alt="" style={{ position: "absolute", right: 30, top: 10, opacity: 0.95 }} />
+        <img src={shipSrc} width={520} height={520} alt="The ship" style={{ position: "absolute", right: 30, top: 10, opacity: 0.95 }} />
         <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 22, letterSpacing: 4, color: "#3cdd9e" }}>
           <div style={{ width: 10, height: 10, borderRadius: 999, background: "#3cdd9e" }} />
           SPACE OS · MISSION CONTROL

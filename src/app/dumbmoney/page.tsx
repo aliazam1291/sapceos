@@ -59,7 +59,7 @@ export default function VenturePage() {
         label={`Venture · ${venture.role}`}
         title={venture.title}
         lede={venture.premise}
-        figure={<Hologram src={venture.cover} seed={venture.slug} tag="VENTURE" priority />}
+        figure={<Hologram src={venture.cover} seed={venture.slug} tag="VENTURE" alt="DumbMoney — the deals catalogue on dumbmoney.in" priority />}
       />
       <div className={ui.pageComms}>
         <Comms at="venture" />

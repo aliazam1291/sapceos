@@ -9,8 +9,8 @@ import ContactForm from "@/components/ContactForm";
 import RecruiterManifest from "@/components/RecruiterManifest";
 
 export const metadata: Metadata = {
-  title: "Open Channel",
-  description: `Get in touch with Ali Azam Kazmi about product roles or platform work — ${profile.email}, or book a slot on Calendly directly.`,
+  title: { absolute: "Contact — Hire a Product Manager, New Delhi · Ali Azam Kazmi" },
+  description: `Contact Ali Azam Kazmi about product manager, APM or technical PM roles in New Delhi / Delhi NCR — ${profile.email}, the form, or a Calendly slot.`,
   alternates: { canonical: "/contact" },
 };
 

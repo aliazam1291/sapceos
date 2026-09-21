@@ -41,7 +41,7 @@ export default function StudioLeg() {
         {pieces.map((p, i) => (
           <li key={p.slug} className={`${styles.bay} objectRow`} data-bay={p.slug} style={{ "--lag": `${i * 8}%` } as React.CSSProperties}>
             <article className={styles.cell}>
-              <Hologram src={p.cover ?? p.logo} seed={p.slug} tag={`S-${String(i + 1).padStart(2, "0")}`} fit={p.cover ? "cover" : "contain"} className={styles.holo} />
+              <Hologram src={p.cover ?? p.logo} seed={p.slug} tag={`S-${String(i + 1).padStart(2, "0")}`} alt={p.title} fit={p.cover ? "cover" : "contain"} className={styles.holo} />
               <div className={styles.meta}>
                 <div className={styles.titleLine}>
                   <h3 className={styles.title}>

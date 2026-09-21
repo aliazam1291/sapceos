@@ -319,7 +319,7 @@ export default function CommandPalette() {
                     <span className={styles.group} aria-hidden="true">
                       {KIND_ICON[entry.kind] ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={KIND_ICON[entry.kind]} alt="" width={28} height={28} className={styles.groupIcon} loading="lazy" decoding="async" />
+                        <img src={KIND_ICON[entry.kind]} alt={KIND_LABEL[entry.kind]} width={28} height={28} className={styles.groupIcon} loading="lazy" decoding="async" />
                       ) : null}
                       {heading}
                     </span>

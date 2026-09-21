@@ -146,6 +146,7 @@ export default function MissionRow({
         src={mission.cover}
         seed={mission.slug}
         tag={`M-${String(index + 1).padStart(2, "0")}`}
+        alt={`${mission.title} — interface`}
         className={styles.holo}
       />
 

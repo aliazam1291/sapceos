@@ -11,6 +11,8 @@ interface HologramProps {
   seed: string;
   /** Short mono tag drawn on the emitter, e.g. "M-04". */
   tag?: string;
+  /** What the projected image shows — the product's name. Search engines and readers with images off get this. */
+  alt?: string;
   className?: string;
   /**
    * The route's header figure: fetched eagerly with high priority. Every
@@ -40,7 +42,8 @@ interface HologramProps {
  * two custom properties. Reduced motion: it holds still and stops
  * flickering, still a hologram.
  */
-export default function Hologram({ src, seed, tag, className, priority, fit = "cover" }: HologramProps) {
+export default function Hologram({ src, seed, tag, alt, className, priority, fit = "cover" }: HologramProps) {
+  const altText = alt ?? (tag ? `${tag} — projected interface` : "Projected interface");
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -73,13 +76,13 @@ export default function Hologram({ src, seed, tag, className, priority, fit = "c
       <div className={styles.stage}>
         {/* Ghost copies give the projection its chromatic fringe. */}
         <div className={`${styles.plate} ${styles.ghostA}`}>
-          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} loading={priority ? "eager" : undefined} /> : <MissionSignature seed={seed} className={styles.trace} />}
+          {src ? <Image src={src} alt={altText} fill sizes="260px" className={styles.img} loading={priority ? "eager" : undefined} /> : <MissionSignature seed={seed} className={styles.trace} />}
         </div>
         <div className={`${styles.plate} ${styles.ghostB}`}>
-          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} loading={priority ? "eager" : undefined} /> : <MissionSignature seed={seed} className={styles.trace} />}
+          {src ? <Image src={src} alt={altText} fill sizes="260px" className={styles.img} loading={priority ? "eager" : undefined} /> : <MissionSignature seed={seed} className={styles.trace} />}
         </div>
         <div className={styles.plate}>
-          {src ? <Image src={src} alt="" fill sizes="260px" className={styles.img} priority={priority} /> : <MissionSignature seed={seed} className={styles.trace} />}
+          {src ? <Image src={src} alt={altText} fill sizes="260px" className={styles.img} priority={priority} /> : <MissionSignature seed={seed} className={styles.trace} />}
           <span className={styles.scanlines} />
           <span className={styles.sweep} />
           <span className={styles.edge} />

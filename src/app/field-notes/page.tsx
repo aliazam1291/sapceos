@@ -7,9 +7,9 @@ import { contentKeywords, identityKeywords, keywordsFor, roleKeywords } from "@/
 import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
-  title: "Field Notes — Product Case Studies",
+  title: { absolute: "Field Notes — Product Teardowns · Ali Azam Kazmi" },
   description:
-    "Six independent product case studies by Ali Azam Kazmi: Linear vs Jira, AI coding assistants, Apple's ecosystem, Flipkart, Uber retention, logistics.",
+    "Six PM-style product teardowns by Ali Azam Kazmi — Linear vs Jira, AI coding assistants, Apple, Flipkart, Uber retention, logistics — each ending in what to measure.",
   keywords: keywordsFor(identityKeywords, contentKeywords, roleKeywords),
   alternates: { canonical: "/field-notes" },
 };

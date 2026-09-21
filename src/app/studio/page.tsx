@@ -62,7 +62,7 @@ export default function StudioPage() {
         label={`${studio.name} · Studio · since ${studio.since}`}
         title="The studio"
         lede="A product and design practice on the side of the day job. Ten clients across SaaS, creator brands, e-commerce, home décor and services — each one a brief, a decision about what to say first, and a thing that shipped."
-        figure={<Hologram src={lead.cover} seed={lead.slug} tag="STUDIO" priority />}
+        figure={<Hologram src={lead.cover} seed={lead.slug} tag="STUDIO" alt={`${lead.title} — ${studioKindLabel[lead.kind]}`} priority />}
       />
       <div className={ui.pageComms}>
         <Comms at="studio" />
@@ -139,7 +139,7 @@ function Piece({ piece, index }: { piece: (typeof studioPieces)[number]; index: 
         <Status idle={piece.status !== "client"}>{piece.status === "client" ? "Client" : "Independent"}</Status>
       </div>
 
-      <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} fit={piece.cover ? "cover" : "contain"} />
+      <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} alt={`${piece.title} — ${studioKindLabel[piece.kind]}`} fit={piece.cover ? "cover" : "contain"} />
 
       <h3 className={ui.cardTitle}>{piece.title}</h3>
       <p className={ui.cardPremise}>

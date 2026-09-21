@@ -20,7 +20,7 @@ export default function LabPage() {
         label="Lab"
         title="Things built to find out whether they'd work"
         lede="No client, no deadline, no requirement to be useful. Some of these answered the question and stopped there — which was the point."
-        figure={<Hologram src={labEntries[0].cover} seed={labEntries[0].title} tag="BENCH" priority />}
+        figure={<Hologram src={labEntries[0].cover} seed={labEntries[0].title} tag="BENCH" alt={`${labEntries[0].title} — interface`} priority />}
       />
       <div className={ui.pageComms}>
         <Comms at="lab" />
@@ -40,7 +40,7 @@ export default function LabPage() {
                 <Status idle={entry.status !== "live"}>{entry.status.replace("-", " ")}</Status>
               </div>
 
-              <Hologram src={entry.cover} seed={entry.title} tag={`EXP-${String(i + 1).padStart(2, "0")}`} />
+              <Hologram src={entry.cover} seed={entry.title} tag={`EXP-${String(i + 1).padStart(2, "0")}`} alt={`${entry.title} — interface`} />
 
               <h2 className={ui.cardTitle}>{entry.title}</h2>
               <p className={ui.cardPremise}>{entry.premise}</p>

@@ -31,7 +31,7 @@ export default function ReportHero({
     <div className={ui.reportObject} data-cover={cover ? "" : undefined}>
       {cover ? (
         <div className={ui.reportHolo} aria-hidden="true">
-          <Hologram src={cover} seed={seed} tag="REPORT" />
+          <Hologram src={cover} seed={seed} tag="REPORT" alt={`${title} — interface`} />
         </div>
       ) : null}
       <Scene3D

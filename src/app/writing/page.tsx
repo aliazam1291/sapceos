@@ -17,8 +17,8 @@ import styles from "./writing.module.scss";
  * the header object is the wireframe truss — a transmitter.
  */
 export const metadata: Metadata = {
-  title: "Writing — Essays and Case Studies",
-  description: "Essays, guides and case studies by Ali Azam Kazmi on product strategy, UX and building software — on Medium and dumbmoney.in, newest first.",
+  title: { absolute: "Writing — PM Essays & PRDs · Ali Azam Kazmi" },
+  description: "Essays on product management practice by Ali Azam Kazmi: writing a PRD as an engineer, UX decisions in fleet software, the product standard at DumbMoney.",
   alternates: { canonical: "/writing" },
 };
 

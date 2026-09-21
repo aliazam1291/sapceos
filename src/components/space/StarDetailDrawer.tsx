@@ -18,7 +18,7 @@ export default function StarDetailDrawer({ node, onClose }: StarDetailDrawerProp
           {node.icon && (
             <Image
               src={node.icon}
-              alt=""
+              alt={`${node.title} app icon`}
               width={44}
               height={44}
               className={styles.drawerIcon}

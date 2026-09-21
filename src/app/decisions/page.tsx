@@ -7,9 +7,9 @@ import { breadcrumbJsonLd, jsonLd } from "@/lib/seo";
 import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
-  title: "Flight Rules — How I Decide",
+  title: { absolute: "Flight Rules — Product Decisions · Ali Azam Kazmi" },
   description:
-    "Seven rules behind Ali Azam Kazmi's product work — states before screens, PRDs written early, manual processes replaced, speed as a decision — with evidence.",
+    "Seven product management principles Ali Azam Kazmi used on shipped work — states before screens, PRDs early, manual processes replaced — each with evidence.",
   alternates: { canonical: "/decisions" },
 };
 

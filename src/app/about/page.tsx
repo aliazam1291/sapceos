@@ -14,9 +14,9 @@ import { jsonLd, personId } from "@/lib/seo";
 import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
-  title: "About — Product Engineer & UX Strategist",
+  title: { absolute: "About Ali Azam Kazmi — Product Manager & Engineer, New Delhi" },
   description:
-    "Ali Azam Kazmi: product and platform developer at MapMyIndia, founder of Smaak.ux, B.Tech CSE (SRM). Frontend, UX and PRD ownership on fleet platforms.",
+    "Writes the PRD, then builds it. Product & platform at MapMyIndia (fleet telematics, 200,000+ users), founder & CPO of DumbMoney, Smaak.ux. B.Tech CSE, SRM.",
   keywords: keywordsFor(identityKeywords, roleKeywords, placeKeywords, ["about Ali Azam Kazmi", "product engineer bio", "Smaak.ux founder"]),
   alternates: { canonical: "/about" },
 };

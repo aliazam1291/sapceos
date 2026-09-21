@@ -9,9 +9,9 @@ import { domainKeywords, identityKeywords, keywordsFor, roleKeywords, skillKeywo
 import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
-  title: "Missions — Product & Platform Projects",
+  title: { absolute: "Missions — Product Case Studies · Ali Azam Kazmi" },
   description:
-    "Ten fleet and telematics products by Ali Azam Kazmi — Vahan Shakti (200,000+ users), Intouch, Locate, FASTag — the problem, the decisions, what shipped.",
+    "Ten product case studies — Vahan Shakti (200,000+ users), Intouch, Locate, FASTag: the problem, the PRD, the prioritisation calls, what shipped, what it measured.",
   keywords: keywordsFor(identityKeywords, roleKeywords, domainKeywords, skillKeywords),
   alternates: { canonical: "/missions" },
 };
@@ -25,7 +25,7 @@ export default function MissionsPage() {
         lede="Enterprise fleet and telematics platforms, mostly. The interesting part is rarely the technology — it is deciding what the system should insist on."
         figure={
           // The hangar's first projector: the featured interface, projected.
-          <Hologram src={missions.find((m) => m.featured && m.cover)?.cover} seed="hangar" tag="HANGAR" priority />
+          <Hologram src={missions.find((m) => m.featured && m.cover)?.cover} seed="hangar" tag="HANGAR" alt={`${missions.find((m) => m.featured && m.cover)?.title ?? "Mission"} — interface`} priority />
         }
       />
       <div className={ui.pageComms}>

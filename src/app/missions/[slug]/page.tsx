@@ -34,7 +34,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const description = clipDescription(`${mission.premise}${facts ? ` ${facts}.` : ""} ${mission.title} at ${mission.org} — role: ${mission.role}.`);
   // Absolute: the layout's "— Ali Azam Kazmi" template pushed long mission
   // titles past 75 characters; Google truncates at ~60.
-  const title = clipDescription(`${mission.title} — Ali Azam Kazmi`, 62);
+  // Long product names drop the byline rather than truncate mid-name.
+  const full = `${mission.title} — Case Study · Ali Azam Kazmi`;
+  const title = full.length <= 62 ? full : `${mission.title} — Case Study`;
   return {
     title: { absolute: title },
     description,
@@ -87,7 +89,7 @@ export default async function MissionReport({ params }: Params) {
         label={`Mission Report · ${mission.org}`}
         title={mission.title}
         lede={mission.premise}
-        figure={<Hologram src={mission.cover} seed={mission.slug} tag="REPORT" priority />}
+        figure={<Hologram src={mission.cover} seed={mission.slug} tag="REPORT" alt={`${mission.title} — interface`} priority />}
       />
       {/* Where this bay sits on the deck, and the two beside it. */}
       <Pager

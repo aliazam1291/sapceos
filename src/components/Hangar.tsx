@@ -33,7 +33,7 @@ export default function Hangar({ missions }: { missions: Mission[] }) {
           return (
           <li key={m.slug} className={`${styles.bay} objectRow`} data-bay={m.slug}>
             <article className={styles.cell}>
-              <Hologram src={m.cover} seed={m.slug} tag={`H-${String(i + 1).padStart(2, "0")}`} className={styles.holo} />
+              <Hologram src={m.cover} seed={m.slug} tag={`H-${String(i + 1).padStart(2, "0")}`} alt={`${m.title} — interface`} className={styles.holo} />
               <div className={styles.meta}>
                 <div className={styles.titleLine}>
                   <h3 className={styles.title}>

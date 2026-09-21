@@ -198,7 +198,7 @@ export default function Drone({ src, seed, tag, label, sub, className, priority 
         <span className={`${styles.cable} ${styles.cableR}`} />
         <div className={styles.payload}>
           {src ? (
-            <Image src={src} alt="" fill sizes="(max-width: 900px) 100vw, 560px" className={styles.img} priority={priority} />
+            <Image src={src} alt={label ? `${label} — case study cover` : "Case study cover"} fill sizes="(max-width: 900px) 100vw, 560px" className={styles.img} priority={priority} />
           ) : (
             <MissionSignature seed={seed} className={styles.trace} />
           )}

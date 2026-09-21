@@ -30,13 +30,13 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", dis
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${profile.name} — Product Engineer & UX Strategist, New Delhi`,
+    default: `${profile.name} — Product Manager Portfolio · New Delhi`,
     template: `%s — ${profile.name}`,
   },
   description:
     // Leads with the substance, not the job search (external SEO audit,
     // 2026-09-20): what was built, for whom, and the venture.
-    "Ali Azam Kazmi — product engineer, UX strategist and founder (DumbMoney), New Delhi. Fleet platforms for 200,000+ users, the PRDs behind them, six case studies.",
+    "Product engineer, UX strategist and founder (DumbMoney) moving into product management: PRDs, roadmaps and shipped fleet platforms for 200,000+ users.",
   applicationName: "Space OS",
   authors: [{ name: profile.name, url: siteUrl }],
   creator: profile.name,
