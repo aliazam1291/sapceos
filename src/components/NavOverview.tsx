@@ -8,6 +8,9 @@ import styles from "./NavOverview.module.scss";
 
 export type Route = { href: string; label: string; plain: string };
 
+/** "MapMyIndia [Gtropy] · for IOCL" → "MapMyIndia · for IOCL": the cell is 2.5cm wide. */
+const shortOrg = (org: string) => org.replace(/\s*\[[^\]]*\]/, "");
+
 /**
  * The system manifest — a centred panel over a dimmed page.
  *
@@ -106,11 +109,7 @@ export default function NavOverview({
         <div className={styles.pages}>
           <div className={styles.identity}>
             <p className={styles.kicker}>{profile.currentOrg} · {profile.location}</p>
-            <p className={styles.wordmark}>
-              Space
-              <br />
-              OS
-            </p>
+            <p className={styles.wordmark}>Space OS</p>
           </div>
 
           <ul className={styles.pageList}>
@@ -161,7 +160,7 @@ export default function NavOverview({
                 <Link href={`/missions/${m.slug}`} className={styles.mission} onClick={onClose}>
                   <span className={styles.missionIndex}>{String(i + 1).padStart(2, "0")}</span>
                   <span className={styles.missionTitle}>{m.title}</span>
-                  <span className={styles.missionMeta}>{m.org}</span>
+                  <span className={styles.missionMeta}>{shortOrg(m.org)}</span>
                 </Link>
               </li>
             ))}
@@ -178,7 +177,7 @@ export default function NavOverview({
                     {String(active.length + i + 1).padStart(2, "0")}
                   </span>
                   <span className={styles.missionTitle}>{m.title}</span>
-                  <span className={styles.missionMeta}>{m.org}</span>
+                  <span className={styles.missionMeta}>{shortOrg(m.org)}</span>
                 </Link>
               </li>
             ))}

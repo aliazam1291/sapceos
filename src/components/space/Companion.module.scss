@@ -43,3 +43,10 @@
   z-index: 9998;
   opacity: 0.85;
 }
+
+// The system overview (Nav) is a dialog over the whole page; the ship
+// steps aside while it is open (html[data-overview], set by Nav).
+:global(html[data-overview]) .layer {
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}

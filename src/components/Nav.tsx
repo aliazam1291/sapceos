@@ -17,7 +17,7 @@ const routes = [
   { href: "/galaxy", label: "Galaxy 3D", plain: "Interactive Map" },
   { href: "/lab", label: "Lab", plain: "Experiments" },
   { href: "/studio", label: "Studio", plain: "Freelance work" },
-  { href: "/dumbmoney", label: "DumbMoney", plain: "Venture · Founder & CPO" },
+  { href: "/dumbmoney", label: "DumbMoney", plain: "Venture" },
   // Listed only once /orbit has real content — see src/content/orbit.ts.
   // The route always works; this is the link, not the page.
   ...(orbitHasContent
@@ -119,11 +119,15 @@ export default function Nav() {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     lockScroll(true); // overflow:hidden alone does not stop Lenis
+    // The companion flies above the header's stacking context (9998 vs 100),
+    // so it crossed the open panel; it steps aside while the map is up.
+    document.documentElement.setAttribute("data-overview", "");
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
       lockScroll(false);
+      document.documentElement.removeAttribute("data-overview");
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);
