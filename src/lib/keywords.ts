@@ -19,6 +19,10 @@ export const identityKeywords = [
   "Ali Azam Kazmi MapMyIndia",
   "Ali Azam Kazmi Smaak.ux",
   "Smaak.ux",
+  "Ali Azam Kazmi DumbMoney",
+  "DumbMoney founder",
+  "DumbMoney CPO",
+  "Chief Product Officer",
 ];
 
 export const roleKeywords = [

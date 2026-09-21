@@ -39,6 +39,20 @@ export function personJsonLd() {
     },
     email: `mailto:${profile.email}`,
     knowsAbout: ["Product management", "UX strategy", "Frontend engineering", ...domainKeywords, ...skillKeywords],
+    knowsLanguage: ["en", "hi"],
+    hasOccupation: [
+      {
+        "@type": "Occupation",
+        name: "Product Engineer",
+        occupationLocation: { "@type": "City", name: "New Delhi" },
+        skills: "PRD writing, user story mapping, roadmapping, prioritisation, A/B testing, stakeholder management, UX research, React, Next.js, Angular, TypeScript",
+      },
+      { "@type": "Occupation", name: "Chief Product Officer", occupationLocation: { "@type": "Country", name: "India" } },
+    ],
+    affiliation: [
+      { "@type": "Organization", name: "DumbMoney", url: "https://www.dumbmoney.in/" },
+      { "@type": "Organization", name: "Smaak.ux" },
+    ],
     alumniOf: { "@type": "CollegeOrUniversity", name: "SRM Institute of Science and Technology" },
     nationality: "IN",
     sameAs: links.map((l) => l.href),

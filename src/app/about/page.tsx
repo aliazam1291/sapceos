@@ -3,6 +3,7 @@ import { ButtonLink, PageHeader, Row, Section, SectionHead, TagRow, ui } from "@
 import { education, leadership, profile, skills } from "@/content/profile";
 import MatrixPortrait from "@/components/space/MatrixPortrait";
 import CareerLoop from "@/components/CareerLoop";
+import RecruiterManifest from "@/components/RecruiterManifest";
 import Impact from "@/components/Impact";
 import LoopSequence from "@/components/LoopSequence";
 import Landing from "@/components/Landing";
@@ -53,6 +54,10 @@ export default function AboutPage() {
             That has meant frontend one week and a PRD the next, usually on the same product.
           </span>
         </p>
+        {/* The at-a-glance manifest: the words a recruiter scans for, in plain sight. */}
+        <div style={{ marginTop: "var(--space-8)" }}>
+          <RecruiterManifest />
+        </div>
       </Section>
 
       <Section>

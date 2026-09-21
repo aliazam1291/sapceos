@@ -6,6 +6,7 @@ import GravityGrid from "@/components/space/GravityGrid";
 import { links, lookingFor, profile } from "@/content/profile";
 import Comms from "@/components/Comms";
 import ContactForm from "@/components/ContactForm";
+import RecruiterManifest from "@/components/RecruiterManifest";
 
 export const metadata: Metadata = {
   title: "Open Channel",
@@ -81,6 +82,10 @@ export default function ContactPage() {
 
         {/* The form: a transmission, delivered by the relay (api/contact) or
             handed to the reader's mail client if the relay is offline. */}
+        <div style={{ marginTop: "var(--space-6)" }}>
+          <RecruiterManifest />
+        </div>
+
         <div style={{ marginTop: "var(--space-6)" }}>
           <ContactForm />
         </div>
