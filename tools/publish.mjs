@@ -37,7 +37,20 @@ if (date) {
 fs.writeFileSync(file, s);
 console.log(`published ${slug}${date ? ` dated ${date}` : ''}`);
 
-const run = (cmd) => execSync(cmd, { stdio: 'inherit' });
+// Each git step is allowed to fail without losing the edit: on this machine
+// the push once threw from execSync (a shell/credential quirk) after the
+// commit had landed, and the script died before the IndexNow ping. Say what
+// did not happen and carry on to the wait — the push can be done by hand.
+const run = (cmd) => {
+  try {
+    execSync(cmd, { stdio: 'inherit', shell: process.env.ComSpec ?? true });
+    return true;
+  } catch (e) {
+    console.error(`
+! ${cmd} failed (${e.status ?? e.message}) — run it yourself, then this script keeps waiting for the deploy`);
+    return false;
+  }
+};
 run(`git add ${file}`);
 run(`git commit -q -m "Publish: ${slug}"`);
 run('git push origin main');
