@@ -26,6 +26,7 @@ const routes = [
   { href: "/field-notes", label: "Field Notes", plain: "Case studies" },
   { href: "/writing", label: "Writing", plain: "Essays" },
   { href: "/decisions", label: "Flight Rules", plain: "How I decide" },
+  { href: "/flight-data", label: "Flight Data", plain: "Portfolio analytics" },
   { href: "/about", label: "About", plain: "About" },
   { href: "/mission-history", label: "Mission History", plain: "Resume" },
   { href: "/contact", label: "Open Channel", plain: "Contact" },

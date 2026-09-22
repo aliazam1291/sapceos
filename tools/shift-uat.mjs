@@ -3,14 +3,15 @@
  * scroll. content-visibility placeholders that guess wrong move the page
  * while it is being read (found 2026-09-18: ~840px on the home page).
  *
- *   node tools/shift-uat.mjs   (BASE=http://localhost:3000)
+ *   node tools/shift-uat.mjs   (BASE=http://localhost:3000, ROUTES=/a,/b)
  */
 import { chromium } from "playwright";
 const BASE = process.env.BASE ?? "http://localhost:3000";
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
 await p.addInitScript(() => { try { sessionStorage.setItem("space-os:booted", "1"); } catch {} });
-for (const route of ["/", "/decisions", "/missions", "/field-notes", "/about"]) {
+const routes = (process.env.ROUTES ?? "/,/decisions,/missions,/field-notes,/about,/flight-data").split(",");
+for (const route of routes) {
   await p.goto(BASE + route, { waitUntil: "load" });
   await p.waitForTimeout(3000);
   // Layout positions only (offsetTop chains), not bounding rects: the fly-in

@@ -682,6 +682,31 @@ the open channel; the one joke; keep it the only one).
   `tools/tick-probe.cjs` traces pending programs → warm → first frame.
   Timing on this machine is only meaningful when Ali's Chrome is idle.
 
+- *Flight data* (2026-09-22). Ali: "do an audit … see if you have taken
+  all data abt me, create stats and data analytics on my projects."
+  `/flight-data` is the portfolio counting itself:
+  `src/content/analytics.ts` derives every series at build time from the
+  same content objects the site renders — inventory, technology frequency
+  across the ten missions, ownership per column, **evidence coverage**
+  (measured / named-but-not-measured / no public metric, per mission),
+  words written, and how complete the record is. `Bars` is the
+  instrument (hairline rows, a scaleX fill on the compositor, staggered
+  on arrival). Nothing here is a claim about an outcome — those stay in
+  `results.ts`, transcribed from PROFILE.md — and no number on the page
+  can be hand-edited, because there is no number in the page. Linked from
+  /about's Impact head and /missions' index head; deck flight plan (its
+  bar rows are full-width, and the counts at their right end are text).
+  `tools/profile-coverage.mjs` is the other half of that audit: it pulls
+  every named entity out of PROFILE.md (projects, employers, clients,
+  case studies, certifications, leadership, links, skills) and fails if
+  one is not in `src/content` — it found the Coursera link, six skills
+  (HTML, CSS, SQL, Git, Postman, Vite) and a truncated certificate name
+  that had never been transcribed. Run it with the five release
+  harnesses. Also fixed in the sweep: the footer links were 26×25 taps
+  (now a 36px floor) and `ClientGrid` `.work` was 10px on a phone —
+  the mobile audit now reads zero tiny text and zero small taps at both
+  375 and 320.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

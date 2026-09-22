@@ -97,7 +97,9 @@ const PAGE_PLAN_PROSE: Waypoint[] = [REST, { p: 0.5, x: 0.32, y: 0.3, s: 0.62 },
 function pagePlanFor(pathname: string): Waypoint[] {
   // The venture page has a report's shape (manifest, sticky rail, rows).
   if (/^\/(missions|field-notes)\/[^/]+/.test(pathname) || pathname === "/dumbmoney") return PAGE_PLAN_REPORT;
-  if (/^\/(missions|field-notes|lab|studio|about)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
+  // /flight-data's bar rows run the full width like a deck's object rows,
+  // and the numbers at their right end are text the ship would sit on.
+  if (/^\/(missions|field-notes|lab|studio|about|flight-data)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
   return PAGE_PLAN_PROSE;
 }
 // Phones (2026-09-18): the same low-right station is a fixed SCREEN

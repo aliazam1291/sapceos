@@ -121,6 +121,7 @@ export const links = [
   { label: "Figma", href: "https://www.figma.com/@aliak" },
   { label: "Medium", href: "https://medium.com/@aliazamkazmi1291" },
   { label: "HackerRank", href: "https://www.hackerrank.com/profile/aliazamkazmi1291" },
+  { label: "Coursera", href: "https://www.coursera.org/user/765f7d46ad857abfa027105fd0f33e4e" },
   { label: "Credly", href: "https://www.credly.com/users/ali-azam-kazmi/badges" },
   { label: "Holopin", href: "https://www.holopin.io/@aliazam1291" },
 ];
@@ -232,7 +233,7 @@ export const certifications = [
   { name: "AWS Academy Cloud Foundations", issuer: "AWS", date: "May 2023", image: "/certificates/aws-cloud.png" },
   { name: "Conduct UX Research and Test Early Concepts", issuer: "Google", date: "Mar 2023", image: "/certificates/ux-research.png" },
   { name: "Build Wireframes and Low-Fidelity Prototypes", issuer: "Google", date: "Feb 2023", image: "/certificates/low-fidelity-prototypes.png" },
-  { name: "Start the UX Design Process", issuer: "Google", date: "Feb 2023", image: "/certificates/ux-process.png" },
+  { name: "Start the UX Design Process: Empathize, Define, and Ideate", issuer: "Google", date: "Feb 2023", image: "/certificates/ux-process.png" },
   { name: "Foundations of User Experience (UX) Design", issuer: "Google", date: "Jan 2023", image: "/certificates/ux-foundations.png" },
   { name: "Blockchain Basics", issuer: "University at Buffalo", date: "Nov 2022", image: "/certificates/blockchain-basics.png" },
   { name: "Technical Product Management", issuer: "Aha!", date: "—" },
@@ -242,9 +243,10 @@ export const skills = [
   {
     group: "Technical",
     items: [
-      "JavaScript", "TypeScript", "React", "Next.js", "Angular", "Ionic", "Node.js",
-      "Nest.js", "Spring Boot", "Java", "Python", "C++", "RxJS", "D3.js", "Three.js",
-      "Mappls SDK", "OpenCV", "TensorFlow", "MongoDB", "MySQL", "REST APIs", "AWS S3",
+      "JavaScript", "TypeScript", "HTML", "CSS", "React", "Next.js", "Angular", "Ionic",
+      "Node.js", "Nest.js", "Spring Boot", "Java", "Python", "C++", "RxJS", "D3.js",
+      "Three.js", "Mappls SDK", "OpenCV", "TensorFlow", "MongoDB", "MySQL", "SQL",
+      "REST APIs", "Git", "Postman", "Vite", "AWS S3",
     ],
   },
   {

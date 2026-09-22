@@ -1,0 +1,94 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * Bar readout. Hairline rows, no panel around them — the section's own
+ * head is the frame. The fill is a scaleX on the compositor; `--w` is the
+ * fraction and `--lag` staggers the rows.
+ */
+.bars {
+  display: grid;
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr);
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+}
+
+.label {
+  @include mono-label;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.note {
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--font-sans);
+  font-size: var(--type-small);
+  color: var(--text-tertiary);
+}
+
+.value {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.track {
+  position: relative;
+  display: block;
+  height: 8px;
+  border: 1px solid var(--line-strong);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(60, 221, 158, 0.35), var(--accent));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  will-change: transform;
+  transition: transform 900ms var(--ease-out);
+  transition-delay: var(--lag, 0ms);
+
+  [data-on] & {
+    transform: scaleX(var(--w, 0));
+  }
+}
+
+.number {
+  @include mono-label;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  color: var(--text-tertiary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}

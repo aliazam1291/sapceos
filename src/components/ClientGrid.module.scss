@@ -59,5 +59,7 @@
 
 .work {
   @include mono-label;
-  font-size: 0.625rem;
+  // Never below the phone floor (--micro-floor is 11px under 640px):
+  // measured at 10px on /about by tools/mobile-uat.mjs.
+  font-size: max(0.625rem, var(--micro-floor));
 }

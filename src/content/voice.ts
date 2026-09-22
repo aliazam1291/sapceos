@@ -74,6 +74,10 @@ export const comms = {
   venture: [
     { who: "CAPCOM", line: "Operator's own vessel. Copy the code before it expires; the ship has tried." },
   ],
+  // /flight-data — the portfolio counting itself.
+  flightData: [
+    { who: "CAPCOM", line: "Telemetry on the operator's own record. Five of ten missions carry a number; the other five say so out loud." },
+  ],
   // Home — Operator, under the leg's head.
   operator: [
     { who: "CAPCOM", line: "Pilot on the flight deck. Writes the PRD, then builds the thing the PRD said." },

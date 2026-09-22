@@ -1,0 +1,93 @@
+@use "../../styles/tokens.scss" as *;
+
+/*
+ * Flight data. Rows and hairlines; the bars are the only fill on the page.
+ * No panels around the series — the section heads are the frames.
+ */
+
+.evidence {
+  list-style: none;
+  margin: var(--space-10) 0 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid var(--line-strong);
+}
+
+.evidenceRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+  // The state colour rides on the row so the link, the word and the tags
+  // agree without three separate rules.
+  --state: var(--text-tertiary);
+
+  &[data-state="measured"] {
+    --state: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    .evidenceTags {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.evidenceLink {
+  min-width: 0;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: var(--type-small);
+  line-height: 1.3;
+  padding-block: 0.4rem;
+  margin-block: -0.4rem;
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+}
+
+.evidenceState {
+  @include mono-label;
+  color: var(--state);
+  white-space: nowrap;
+}
+
+.evidenceTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.evidenceTag {
+  @include mono-label;
+  font-size: max(0.5625rem, var(--micro-floor));
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--line);
+  color: var(--text-tertiary);
+
+  &[data-on] {
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
+}
+
+.footnote {
+  margin-top: var(--space-6);
+  max-width: 62ch;
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--text-tertiary);
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--text-secondary);
+  }
+}

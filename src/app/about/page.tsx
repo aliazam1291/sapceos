@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ButtonLink, PageHeader, Row, Section, SectionHead, TagRow, ui } from "@/components/ui";
 import { education, leadership, profile, skills } from "@/content/profile";
 import MatrixPortrait from "@/components/space/MatrixPortrait";

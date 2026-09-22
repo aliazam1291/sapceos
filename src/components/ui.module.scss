@@ -29,6 +29,44 @@
   margin-bottom: var(--space-12);
 }
 
+/*
+ * A SectionHead's `action` slot, used as a sentence rather than a link:
+ * the note that says where a section's numbers come from (2026-09-22,
+ * /flight-data). Capped so it stays a caption beside the title, not a
+ * second column of body copy.
+ */
+.sectionNote {
+  max-width: 44ch;
+  margin: 0;
+  font-size: var(--type-small);
+  line-height: 1.55;
+  color: var(--text-secondary);
+
+  a {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--accent-line);
+    text-underline-offset: 3px;
+  }
+}
+
+/* A SectionHead `action` that IS a link — the door out of a section. */
+.headLink {
+  @include mono-label;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-block: 0.4rem;
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent-bright, var(--accent));
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+}
+
 .sectionTitle {
   // Display size (2026-09-16, after the dzinr reference): a section is a
   // sentence you can read from across the room, not a heading over a card.
@@ -1251,6 +1289,12 @@
   color: var(--text-secondary);
   font-size: var(--type-small);
   width: fit-content;
+  // A short label ("Lab") measured 26×25 — under the 36px floor the mobile
+  // audit enforces (2026-09-22). The padding buys the height without moving
+  // the text; the gap between rows absorbs it.
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
 
   @include hover-only {
     &:hover {

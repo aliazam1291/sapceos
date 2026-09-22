@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import MissionFilter from "@/components/MissionFilter";
 import RobotGuide from "@/components/RobotGuide";
 import Hologram from "@/components/Hologram";
+import Link from "next/link";
 import { NextStep, PageHeader, Readout, Section, SectionHead, ui } from "@/components/ui";
 import { missions } from "@/content/missions";
 import { results } from "@/content/results";
@@ -47,7 +48,15 @@ export default function MissionsPage() {
             })(),
           ]}
         />
-        <SectionHead label={`Index · ${missions.length}`} title="Filter the log" />
+        <SectionHead
+          label={`Index · ${missions.length}`}
+          title="Filter the log"
+          action={
+            <Link href="/flight-data" className={ui.headLink}>
+              The deck as data <span aria-hidden="true">&rarr;</span>
+            </Link>
+          }
+        />
         {/* K-7 works the deck: hover a bay and it reads the manifest. */}
         <RobotGuide
           name="K-7"
