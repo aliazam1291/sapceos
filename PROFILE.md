@@ -57,7 +57,9 @@ All at MapMyIndia/Gtropy. Ali owns frontend, UI/UX, cross-functional collaborati
 - Run by co-founders **Akshat Somani** and **Ali Kazmi** (dumbmoney.in/about-dumbmoney). Every coupon is attributed to whichever founder checked it; verification combines automated expiry/duplicate checks with human review before a code goes live; the site says it does not yet manually test every code at checkout.
 - Ali writes on its blog (dumbmoney.in/author/ali): "How to Use Coupons During Big Billion Days & Great Indian Festival" (15 Sep 2026), "Why Coupon Codes Stop Working (And How to Avoid Expired Ones)" (10 Sep 2026).
 - An earlier design concept for the brand is on Behance: https://www.behance.net/gallery/217772229/Dumb-Money
-- ⚠️ No outcome number is confirmed. The older resume's "profitable in its first quarter, 37+ partner brands" stays unverified (below); the site's own public counters disagree with each other (home: "2,436+ verified deals from 62+ Indian brands"; about: "10,000+ Active Deals") and are not to be used as results. Founding date not confirmed by Ali — the older resume says 2026.
+- "Serj Slavoj", the byline on the DumbMoney blog and deals guides, is a shared editorial voice the two co-founders write under — not a separate person (dumbmoney.in/about-dumbmoney, read 2026-09-23). Ali's own author page (dumbmoney.in/author/ali, "Ali Azam Kazmi") carries the two articles above.
+- **Re-read 2026-09-23.** The contradiction recorded on 2026-09-20 no longer exists on the live site: the home page no longer shows "2,436+ verified deals from 62+ Indian brands". The about page's panel now reads "India's Top Stores · 10,000+ Active Deals · Daily update frequency · Human-Reviewed verification". That 10,000+ is the platform's own public figure for CATALOGUE SIZE — it is not an outcome of Ali's product work, so it is used on /dumbmoney only as a manifest fact, attributed and dated, and the Results strip stays "not yet measured".
+- ⚠️ No outcome number is confirmed. The older resume's "profitable in its first quarter, 37+ partner brands" stays unverified (below) — searched 2026-09-23, nothing public supports it. Founding date still not confirmed by Ali and not public anywhere found; the older resume says 2026.
 
 ---
 
@@ -145,7 +147,8 @@ Linear vs Jira · The AI Code Assistant Adoption Paradox · Apple Ecosystem Frag
 ## Unverified — DO NOT USE without confirmation
 
 - **"Sunder Masala"** (legacy brand modernisation) — appears in the creative brief but nowhere in Ali's actual history. Do not build a case study for it until confirmed.
-- **DumbMoney outcomes** — the older resume's "profitable in its first quarter with 37+ partner brands" and the founding year (2026) are not confirmed. The venture itself IS confirmed (see "Venture" above); only these numbers and the date wait on Ali.
+- **DumbMoney outcomes** — the older resume's "profitable in its first quarter with 37+ partner brands" and the founding year (2026) are not confirmed. The venture itself IS confirmed (see "Venture" above); only these numbers and the date wait on Ali. A public search on 2026-09-23 found neither.
+- **Vahan Shakti's store listing** — Intouch and Indane Yatra Mitra have URLs Ali gave (above). A search on 2026-09-23 for Vahan Shakti returned several unrelated AIS-140 tracking apps by other publishers (com.dhundhoolite, com.ce.vahanshakti) and nothing identifiable as the MapMyIndia build. NOT added: linking the wrong company's app under Ali's name is worse than no link. Needs the URL from Ali.
 - Outcome metrics for the three Active missions.
 - Orbit topics / reading list / music — no verified data. Must come from Ali directly.
 

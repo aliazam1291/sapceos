@@ -88,6 +88,15 @@ export default function VenturePage() {
             <dt>Market</dt>
             <dd>{venture.market}</dd>
           </div>
+          {/* Catalogue size, the platform's own public figure — attributed
+              and dated, and deliberately not in the Results strip below. */}
+          <div className={ui.manifestCell}>
+            <dt>{venture.catalogue.label}</dt>
+            <dd>
+              {venture.catalogue.value}
+              <span className={styles.dim}> · {venture.catalogue.source}</span>
+            </dd>
+          </div>
           <div className={`${ui.manifestCell} ${ui.manifestWide}`}>
             <dt>Where</dt>
             <dd>
