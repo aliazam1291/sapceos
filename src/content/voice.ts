@@ -68,7 +68,7 @@ export const comms = {
   ],
   // /writing — the log of published pieces.
   writing: [
-    { who: "CAPCOM", line: "Seven transmissions on record. All of them were proofread; one of them twice." },
+    { who: "CAPCOM", line: "Transmissions on record. All of them were proofread; one of them twice." },
   ],
   // /dumbmoney — the venture.
   venture: [
