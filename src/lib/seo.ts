@@ -23,6 +23,37 @@ export function personJsonLd() {
     "@type": "Person",
     "@id": personId,
     name: profile.name,
+    /*
+     * Name search (2026-09-24). Ali asked for every possible form of the
+     * name in the meta. The honest split, so nobody re-litigates it later:
+     *
+     * - The <meta name="keywords"> tag is IGNORED by Google (since 2009)
+     *   and carries almost no weight in Bing. It is kept because it costs
+     *   nothing and a few smaller engines and internal site searches read
+     *   it, not because it ranks anything.
+     * - What actually makes a person findable by name is the entity: a
+     *   Person node with every alternate form of the name, tied to the
+     *   profiles that corroborate it via sameAs. That is what search
+     *   engines reconcile into "this is one human" - and it is the one
+     *   query class a personal site can genuinely own.
+     * - A bare "ali" is not winnable. It is one of the most common given
+     *   names on earth and the results are Muhammad Ali and AliExpress.
+     *   Chasing it would mean stuffing a term the page cannot support,
+     *   which is what engines score as spam. The winnable set is every
+     *   query with a second token in it, and that is what is listed here.
+     */
+    alternateName: [
+      "Ali Kazmi",
+      "Ali Azam",
+      "Azam Kazmi",
+      "A. A. Kazmi",
+      "Ali A. Kazmi",
+      "aliazamkazmi",
+      "aliazam1291",
+    ],
+    givenName: "Ali",
+    additionalName: "Azam",
+    familyName: "Kazmi",
     url: siteUrl,
     image: `${siteUrl}/images/ali.jpg`,
     jobTitle: profile.title,
@@ -38,7 +69,7 @@ export function personJsonLd() {
       addressCountry: "IN",
     },
     email: `mailto:${profile.email}`,
-    knowsAbout: ["Product management", "UX strategy", "Frontend engineering", ...domainKeywords, ...skillKeywords],
+    knowsAbout: ["Product management", "UX strategy", "Frontend engineering", "AI product management", "PRD writing", "Evaluation of LLM features", ...domainKeywords, ...skillKeywords],
     knowsLanguage: ["en", "hi"],
     hasOccupation: [
       {

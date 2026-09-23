@@ -11,17 +11,47 @@
  */
 
 export const identityKeywords = [
+  // Every form of the name a person might type, plus the handles he uses.
+  // Expanded 2026-09-24 at Ali's request: name search is the one query set
+  // where a personal site can genuinely win, because the competition for
+  // "Ali Azam Kazmi" is only other Ali Azam Kazmis. A bare "Ali" is not
+  // winnable by anyone and is left out on purpose - see the note in seo.ts.
   "Ali Azam Kazmi",
   "Ali Kazmi",
+  "Ali Azam",
+  "Azam Kazmi",
+  "A A Kazmi",
+  "Kazmi Ali Azam",
   "aliazamkazmi",
+  "aliazam1291",
+  "aliazamkazmi1291",
   "Ali Azam Kazmi portfolio",
+  "Ali Azam Kazmi website",
+  "Ali Azam Kazmi resume",
+  "Ali Azam Kazmi CV",
+  "Ali Azam Kazmi contact",
   "Ali Azam Kazmi product manager",
+  "Ali Azam Kazmi product engineer",
+  "Ali Azam Kazmi UX",
+  "Ali Azam Kazmi New Delhi",
+  "Ali Azam Kazmi India",
   "Ali Azam Kazmi MapMyIndia",
+  "Ali Azam Kazmi Gtropy",
+  "Ali Azam Kazmi Mappls",
+  "Ali Azam Kazmi SRM",
+  "Ali Azam Kazmi SRMIST",
   "Ali Azam Kazmi Smaak.ux",
-  "Smaak.ux",
   "Ali Azam Kazmi DumbMoney",
+  "Ali Kazmi product manager",
+  "Ali Kazmi DumbMoney",
+  "Ali Kazmi MapMyIndia",
+  "Ali Kazmi New Delhi",
+  "Kazmi product manager",
+  "Smaak.ux",
+  "Smaak ux",
   "DumbMoney founder",
   "DumbMoney CPO",
+  "DumbMoney Ali Kazmi",
   "Chief Product Officer",
 ];
 
