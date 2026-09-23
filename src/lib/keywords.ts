@@ -131,6 +131,44 @@ export const contentKeywords = [
   "product strategy",
 ];
 
+/*
+ * AI (2026-09-23). The site now carries five essays on AI product work and
+ * the keyword sets had two AI terms between them. Every phrase here maps to
+ * something actually written — the four jobs an "AI PM" posting means, the
+ * PRD for a non-deterministic feature, agents that act, AI inside an
+ * operational product, and the review bottleneck. Nothing aspirational:
+ * a term with no page behind it is the kind of thing engines score as spam.
+ */
+export const aiKeywords = [
+  "AI product manager",
+  "AI product management",
+  "AI product manager India",
+  "AI PM",
+  "AI PM roles",
+  "AI product manager portfolio",
+  "PRD for AI features",
+  "AI feature requirements",
+  "writing a PRD for an AI feature",
+  "LLM evals",
+  "evals for product managers",
+  "acceptance criteria for AI",
+  "non-deterministic software requirements",
+  "AI agents in production",
+  "agentic AI product management",
+  "enterprise AI agents",
+  "agent autonomy levels",
+  "human in the loop AI",
+  "AI in fleet software",
+  "AI in telematics",
+  "AI ranking alerts",
+  "AI code review bottleneck",
+  "AI assisted development",
+  "AI coding assistants",
+  "model powered features",
+  "AI product strategy",
+  "generative AI product",
+];
+
 export const genreKeywords = [
   "space themed portfolio",
   "3D portfolio website",
@@ -161,6 +199,7 @@ export const allKeywords = [
   ...domainKeywords,
   ...skillKeywords,
   ...contentKeywords,
+  ...aiKeywords,
   ...genreKeywords,
   ...placeKeywords,
 ];

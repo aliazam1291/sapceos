@@ -6,6 +6,7 @@ import { NextStep, PageHeader, Section, SectionHead, ui } from "@/components/ui"
 import { listedWriting } from "@/content/writing";
 import { links } from "@/content/profile";
 import { breadcrumbJsonLd, jsonLd, personId } from "@/lib/seo";
+import { aiKeywords, contentKeywords, identityKeywords, keywordsFor, roleKeywords } from "@/lib/keywords";
 import { siteUrl } from "@/lib/site";
 import styles from "./writing.module.scss";
 
@@ -17,8 +18,10 @@ import styles from "./writing.module.scss";
  * the header object is the wireframe truss — a transmitter.
  */
 export const metadata: Metadata = {
-  title: { absolute: "Writing — PM Essays & PRDs · Ali Azam Kazmi" },
-  description: "Essays on product management practice by Ali Azam Kazmi: writing a PRD as an engineer, UX decisions in fleet software, the product standard at DumbMoney.",
+  title: { absolute: "Writing — AI & Product Management Essays · Ali Azam Kazmi" },
+  description:
+    "Essays by Ali Azam Kazmi on AI product management: PRDs for non-deterministic features, agents in production, and AI inside fleet software.",
+  keywords: keywordsFor(aiKeywords, contentKeywords, identityKeywords, roleKeywords.slice(0, 8)),
   alternates: { canonical: "/writing" },
 };
 

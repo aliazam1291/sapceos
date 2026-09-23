@@ -5,7 +5,7 @@ import PageForm from "@/components/space/PageForm";
 import { Body, ButtonLink, DraftFlag, NextStep, PageHeader, Section, ui } from "@/components/ui";
 import { hostedWriting, isLive, writing } from "@/content/writing";
 import { breadcrumbJsonLd, clipDescription, jsonLd, pieceJsonLd } from "@/lib/seo";
-import { contentKeywords, identityKeywords, keywordsFor, roleKeywords } from "@/lib/keywords";
+import { contentKeywords, identityKeywords, keywordsFor, roleKeywords, aiKeywords } from "@/lib/keywords";
 import styles from "../writing.module.scss";
 
 /*
@@ -31,7 +31,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: { absolute: clipDescription(`${piece.title} — Ali Azam Kazmi`, 62) },
     description,
-    keywords: keywordsFor([piece.title], contentKeywords, identityKeywords, roleKeywords.slice(0, 6)),
+    // The AI set only on the pieces that are about AI — a keyword with no
+    // page behind it is what engines score as spam (2026-09-23).
+    keywords: keywordsFor(
+      [piece.title],
+      /\bAI\b|agent|PRD|model/i.test(`${piece.title} ${piece.line}`) ? aiKeywords : [],
+      contentKeywords,
+      identityKeywords,
+      roleKeywords.slice(0, 6),
+    ),
     alternates: { canonical: `/writing/${piece.slug}` },
     openGraph: {
       type: "article",
