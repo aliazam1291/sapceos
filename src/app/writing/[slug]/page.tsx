@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageForm from "@/components/space/PageForm";
 import { Body, ButtonLink, DraftFlag, NextStep, PageHeader, Section, ui } from "@/components/ui";
+import { plainKind } from "@/content/pages";
 import { hostedWriting, isLive, writing } from "@/content/writing";
 import { breadcrumbJsonLd, clipDescription, jsonLd, pieceJsonLd } from "@/lib/seo";
 import { contentKeywords, identityKeywords, keywordsFor, roleKeywords, aiKeywords } from "@/lib/keywords";
@@ -80,6 +81,7 @@ export default async function WritingPiece({ params }: Params) {
       />
       <PageHeader
         label={`Writing · ${piece.kind} · ${fmt(piece.date)}`}
+        plain={plainKind.essay}
         title={piece.title}
         lede={piece.line}
         figure={<PageForm form="truss" label="A slowly turning wireframe transmitter truss." size={240} />}

@@ -97,6 +97,29 @@
   @include mono-label;
 }
 
+/*
+ * The plain-English name beside a page label (2026-09-24): "Missions"
+ * then "Projects". Quieter than the label and separated by a hairline dot,
+ * so the metaphor still reads first and the translation second.
+ */
+.labelPlain {
+  color: var(--text-tertiary);
+  text-transform: none;
+  letter-spacing: 0.02em;
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin: 0 0.6rem 0.18rem 0.1rem;
+    background: var(--text-tertiary);
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+}
+
+
 .lede {
   font-size: clamp(0.95rem, 1.1vw, 1.0625rem);
   color: var(--text-secondary);

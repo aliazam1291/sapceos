@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Body, ButtonLink, NextStep, PageHeader, Row, Section, SectionHead, Status, ui } from "@/components/ui";
+import { plainName } from "@/content/pages";
 import ReportNav, { ReportLayout } from "@/components/ReportNav";
 import Hologram from "@/components/Hologram";
 import Comms from "@/components/Comms";
@@ -58,6 +59,7 @@ export default function VenturePage() {
       />
       <PageHeader
         label={`Venture · ${venture.role}`}
+        plain={plainName["/dumbmoney"]}
         title={venture.title}
         lede={venture.premise}
         figure={<Hologram src={venture.cover} seed={venture.slug} tag="VENTURE" alt="DumbMoney — the deals catalogue on dumbmoney.in" priority />}

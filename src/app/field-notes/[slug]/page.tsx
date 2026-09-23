@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Body, ButtonLink, DraftFlag, NextStep, PageHeader, Pager, Section, ui } from "@/components/ui";
+import { plainKind } from "@/content/pages";
 import RelatedWriting from "@/components/RelatedWriting";
 import Drone from "@/components/Drone";
 import { fieldNotes, getFieldNote } from "@/content/field-notes";
@@ -71,6 +72,7 @@ export default async function FieldNote({ params }: Params) {
       />
       <PageHeader
         label="Field Note · Independent analysis"
+        plain={plainKind.note}
         title={note.title}
         lede={note.premise}
         figure={<Drone src={note.cover} seed={note.slug} tag={`FN-${String(index + 1).padStart(2, "0")}`} sub={note.kind.replace(/-/g, " ")} label={note.title} priority />}

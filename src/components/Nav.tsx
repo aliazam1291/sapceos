@@ -9,27 +9,30 @@ import { lockScroll } from "@/lib/lenis";
 import { scrollMax } from "@/lib/scroll-signal";
 import NavOverview from "./NavOverview";
 import SoundToggle from "./SoundToggle";
+import { plainName } from "@/content/pages";
 import styles from "./Nav.module.scss";
 
-// `plain` is what the label means if you ignore the metaphor entirely.
+// `plain` is what the label means if you ignore the metaphor entirely. It
+// comes from content/pages.ts, the same map the page headers read, so the
+// nav and the header can never disagree about what "Missions" means.
 const routes = [
-  { href: "/missions", label: "Missions", plain: "Projects" },
-  { href: "/galaxy", label: "Galaxy 3D", plain: "Interactive Map" },
-  { href: "/lab", label: "Lab", plain: "Experiments" },
-  { href: "/studio", label: "Studio", plain: "Freelance work" },
-  { href: "/dumbmoney", label: "DumbMoney", plain: "Venture" },
+  { href: "/missions", label: "Missions", plain: plainName["/missions"] },
+  { href: "/galaxy", label: "Galaxy 3D", plain: plainName["/galaxy"] },
+  { href: "/lab", label: "Lab", plain: plainName["/lab"] },
+  { href: "/studio", label: "Studio", plain: plainName["/studio"] },
+  { href: "/dumbmoney", label: "DumbMoney", plain: plainName["/dumbmoney"] },
   // Listed only once /orbit has real content — see src/content/orbit.ts.
   // The route always works; this is the link, not the page.
   ...(orbitHasContent
-    ? [{ href: "/orbit", label: "Orbit", plain: "Interests" }]
+    ? [{ href: "/orbit", label: "Orbit", plain: plainName["/orbit"] }]
     : []),
-  { href: "/field-notes", label: "Field Notes", plain: "Case studies" },
-  { href: "/writing", label: "Writing", plain: "Essays" },
-  { href: "/decisions", label: "Flight Rules", plain: "How I decide" },
-  { href: "/flight-data", label: "Flight Data", plain: "Portfolio analytics" },
-  { href: "/about", label: "About", plain: "About" },
-  { href: "/mission-history", label: "Mission History", plain: "Resume" },
-  { href: "/contact", label: "Open Channel", plain: "Contact" },
+  { href: "/field-notes", label: "Field Notes", plain: plainName["/field-notes"] },
+  { href: "/writing", label: "Writing", plain: plainName["/writing"] },
+  { href: "/decisions", label: "Flight Rules", plain: plainName["/decisions"] },
+  { href: "/flight-data", label: "Flight Data", plain: plainName["/flight-data"] },
+  { href: "/about", label: "About", plain: plainName["/about"] },
+  { href: "/mission-history", label: "Mission History", plain: plainName["/mission-history"] },
+  { href: "/contact", label: "Open Channel", plain: plainName["/contact"] },
 ];
 
 export default function Nav() {

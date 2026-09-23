@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { plainName } from "@/content/pages";
 import { ButtonLink, PageHeader, Row, Section, SectionHead, TagRow, ui } from "@/components/ui";
 import { education, leadership, profile, skills } from "@/content/profile";
 import MatrixPortrait from "@/components/space/MatrixPortrait";
@@ -38,6 +39,7 @@ export default function AboutPage() {
       />
       <PageHeader
         label="About the Operator"
+        plain={plainName["/about"]}
         title={profile.name}
         lede={`${profile.title} · Founder & CPO, DumbMoney · ${profile.location}`}
         figure={<MatrixPortrait src="/images/ali.jpg" alt={profile.name} size={220} cells={56} />}

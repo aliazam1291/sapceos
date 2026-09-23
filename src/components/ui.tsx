@@ -50,12 +50,20 @@ export function SectionHead({
 
 export function PageHeader({
   label,
+  plain,
   title,
   lede,
   figure,
   figureWidth,
 }: {
   label: string;
+  /**
+   * What this page is in plain words — "Projects", "Case studies",
+   * "Résumé" (2026-09-24). The metaphor names the place; this says what the
+   * place is, for a reader with thirty seconds and no interest in the
+   * conceit. Comes from content/pages.ts, so it matches the nav exactly.
+   */
+  plain?: string;
   title: string;
   lede?: string;
   /** The route's signature object — sits in the right column above the lede. */
@@ -67,6 +75,7 @@ export function PageHeader({
     <div className={styles.pageHeader} data-figure={figure ? "" : undefined}>
       <p className={styles.labelRule}>
         <Decode>{label}</Decode>
+        {plain ? <span className={styles.labelPlain}>{plain}</span> : null}
       </p>
       {/* The page title rises at FIRST PAINT, in CSS (2026-09-19). It was a
           GSAP SplitText reveal: the server-rendered title painted, then GSAP

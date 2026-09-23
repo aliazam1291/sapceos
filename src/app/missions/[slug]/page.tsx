@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { plainKind } from "@/content/pages";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -14,6 +15,8 @@ import {
 } from "@/components/ui";
 import ReportNav, { ReportLayout } from "@/components/ReportNav";
 import RelatedWriting from "@/components/RelatedWriting";
+import ScaleRail from "@/components/charts/ScaleRail";
+import { results as ledger } from "@/content/results";
 import MissionSignature from "@/components/MissionSignature";
 import Hologram from "@/components/Hologram";
 import { sectionSlug } from "@/lib/slug";
@@ -88,6 +91,7 @@ export default async function MissionReport({ params }: Params) {
           the title. Here the object is the interface, projected. */}
       <PageHeader
         label={`Mission Report · ${mission.org}`}
+        plain={plainKind.mission}
         title={mission.title}
         lede={mission.premise}
         figure={<Hologram src={mission.cover} seed={mission.slug} tag="REPORT" alt={`${mission.title} — interface`} priority />}
@@ -177,6 +181,13 @@ export default async function MissionReport({ params }: Params) {
           {!mission.results?.length && !mission.measure?.length ? (
             <p className={ui.measureNote}>Shipped. No public number attached — and none invented.</p>
           ) : null}
+          {/* The same figures on a log axis, with the rest of the site's
+              measured numbers faint behind them: what the value means in
+              company. Renders nothing when nothing here is a quantity. */}
+          <ScaleRail
+            figures={mission.results}
+            context={ledger.filter((r) => r.kind === "scale").map((r) => r.magnitude)}
+          />
         </section>
 
         {/* Ownership. Three columns so the split is visible: what I

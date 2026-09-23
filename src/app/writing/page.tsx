@@ -3,6 +3,7 @@ import Link from "next/link";
 import PageForm from "@/components/space/PageForm";
 import Comms from "@/components/Comms";
 import { NextStep, PageHeader, Section, SectionHead, ui } from "@/components/ui";
+import { plainName } from "@/content/pages";
 import { listedWriting } from "@/content/writing";
 import { links } from "@/content/profile";
 import { breadcrumbJsonLd, jsonLd, personId } from "@/lib/seo";
@@ -54,6 +55,7 @@ export default function WritingPage() {
       />
       <PageHeader
         label="Writing"
+        plain={plainName["/writing"]}
         title="Transmissions, in writing"
         lede="Essays, guides and one case study — on product strategy, UX and the software underneath. Newest first."
         figure={<PageForm form="truss" label="A slowly turning wireframe transmitter truss." size={240} />}

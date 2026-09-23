@@ -3,6 +3,7 @@ import Hologram from "@/components/Hologram";
 import RobotGuide from "@/components/RobotGuide";
 import Comms from "@/components/Comms";
 import { ButtonLink, NextStep, PageHeader, Readout, Section, SectionHead, Status, ui } from "@/components/ui";
+import { plainName } from "@/content/pages";
 import { studio, studioAlso, studioKindLabel, studioPieces } from "@/content/studio";
 import { results } from "@/content/results";
 import { identityKeywords, keywordsFor, skillKeywords } from "@/lib/keywords";
@@ -60,6 +61,7 @@ export default function StudioPage() {
       />
       <PageHeader
         label={`${studio.name} · Studio · since ${studio.since}`}
+        plain={plainName["/studio"]}
         title="The studio"
         lede="A product and design practice on the side of the day job. Ten clients across SaaS, creator brands, e-commerce, home décor and services — each one a brief, a decision about what to say first, and a thing that shipped."
         figure={<Hologram src={lead.cover} seed={lead.slug} tag="STUDIO" alt={`${lead.title} — ${studioKindLabel[lead.kind]}`} priority />}

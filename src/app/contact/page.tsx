@@ -7,6 +7,7 @@ import { links, lookingFor, profile } from "@/content/profile";
 import Comms from "@/components/Comms";
 import ContactForm from "@/components/ContactForm";
 import RecruiterManifest from "@/components/RecruiterManifest";
+import { plainName } from "@/content/pages";
 
 export const metadata: Metadata = {
   title: { absolute: "Contact — Hire a Product Manager, New Delhi · Ali Azam Kazmi" },
@@ -26,6 +27,7 @@ export default function ContactPage() {
     <>
       <PageHeader
         label="Open Channel"
+        plain={plainName["/contact"]}
         title="The channel is open"
         lede="Product roles, platform work, or an argument about something on this site. All three are welcome."
         // The channel is a relay: a comms satellite holding station beside the

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MissionFilter from "@/components/MissionFilter";
+import { plainName } from "@/content/pages";
 import RelatedWriting from "@/components/RelatedWriting";
 import RobotGuide from "@/components/RobotGuide";
 import Hologram from "@/components/Hologram";
@@ -23,6 +24,7 @@ export default function MissionsPage() {
     <>
       <PageHeader
         label="Missions"
+        plain={plainName["/missions"]}
         title="Every one started as somebody's bad afternoon"
         lede="Enterprise fleet and telematics platforms, mostly. The interesting part is rarely the technology — it is deciding what the system should insist on."
         figure={

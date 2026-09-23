@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { plainName } from "@/content/pages";
 import Link from "next/link";
 import CertificateGrid from "@/components/CertificateGrid";
 import Comms from "@/components/Comms";
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
 };
 
 export default function MissionHistoryPage() {
-  return <><PageHeader label="Mission History" title="The log, in order" lede="Roles, dates, and what each one actually involved. The resume, without the resume formatting." figure={<PageForm form="satellite" label="A slowly turning wireframe satellite with two solar panels." size={240} />} />
+  return <><PageHeader label="Mission History"
+        plain={plainName["/mission-history"]} title="The log, in order" lede="Roles, dates, and what each one actually involved. The resume, without the resume formatting." figure={<PageForm form="satellite" label="A slowly turning wireframe satellite with two solar panels." size={240} />} />
     <div className={ui.pageComms}><Comms at="history" /></div>
     <Section id="experience" data-section="Experience"><SectionHead label="Experience" title="Where the time went" /><div className={ui.timeline}>{experience.map((job) => <article key={`${job.org}-${job.period}`} className={ui.timelineItem}><div className={ui.timelineHead}><h3 className={ui.timelineRole}>{job.role}</h3><span className={ui.timelinePeriod}>{job.period}</span></div><p className={ui.timelineOrg}>{"href" in job && job.href ? <Link href={job.href}>{job.org}</Link> : job.org} · {job.place}</p>{job.points.length ? <ul className={ui.timelinePoints} style={{ marginTop: "var(--space-4)" }}>{job.points.map((point) => <li key={point}>{point}</li>)}</ul> : null}</article>)}</div></Section>
     <Section id="education" data-section="Education"><SectionHead label="Education" title="Foundations" /><div className={ui.rows}><Row label={education.period}><div className={ui.rowBody}><p><strong style={{ color: "var(--text-primary)", fontWeight: 500 }}>{education.degree}</strong><br />{education.school} · {education.detail}</p></div></Row></div></Section>

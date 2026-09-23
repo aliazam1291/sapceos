@@ -4,6 +4,7 @@ import Bars from "@/components/Bars";
 import Comms from "@/components/Comms";
 import PageForm from "@/components/space/PageForm";
 import { ButtonLink, NextStep, PageHeader, Readout, Section, SectionHead, ui } from "@/components/ui";
+import { plainName } from "@/content/pages";
 import {
   counters,
   coverage,
@@ -81,6 +82,7 @@ export default function FlightDataPage() {
       />
       <PageHeader
         label="Flight data"
+        plain={plainName["/flight-data"]}
         title="The portfolio, measured"
         lede="Every number on this page is counted from the site's own content at build time. Counts of work — not claims about its effect."
         figure={<PageForm form="crystal" label="A slowly turning wireframe lattice." size={240} />}

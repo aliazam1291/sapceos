@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Beacons from "@/components/Beacons";
 import PageForm from "@/components/space/PageForm";
 import { NextStep, PageHeader, Section, ui } from "@/components/ui";
+import { plainName } from "@/content/pages";
 import { decisions } from "@/content/decisions";
 import { breadcrumbJsonLd, jsonLd } from "@/lib/seo";
 import Comms from "@/components/Comms";
@@ -34,6 +35,7 @@ export default function DecisionsPage() {
       />
       <PageHeader
         label="Flight rules"
+        plain={plainName["/decisions"]}
         title="How I decide"
         lede="Seven calls, each with the fact it came from. What I did when the answer was not in the spec."
         figure={<PageForm form="probe" label="A slowly turning wireframe probe." size={240} />}

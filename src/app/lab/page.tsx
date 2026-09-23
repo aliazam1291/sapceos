@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Hologram from "@/components/Hologram";
 import RobotGuide from "@/components/RobotGuide";
 import { NextStep, PageHeader, Section, Status, TagRow, ui } from "@/components/ui";
+import { plainName } from "@/content/pages";
 import { labEntries } from "@/content/lab";
 import { identityKeywords, keywordsFor, skillKeywords } from "@/lib/keywords";
 import Comms from "@/components/Comms";
@@ -18,6 +19,7 @@ export default function LabPage() {
     <>
       <PageHeader
         label="Lab"
+        plain={plainName["/lab"]}
         title="Things built to find out whether they'd work"
         lede="No client, no deadline, no requirement to be useful. Some of these answered the question and stopped there — which was the point."
         figure={<Hologram src={labEntries[0].cover} seed={labEntries[0].title} tag="BENCH" alt={`${labEntries[0].title} — interface`} priority />}

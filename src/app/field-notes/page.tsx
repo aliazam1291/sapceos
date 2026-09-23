@@ -5,6 +5,7 @@ import { NextStep, PageHeader, Section, ui } from "@/components/ui";
 import { fieldNotes } from "@/content/field-notes";
 import { contentKeywords, identityKeywords, keywordsFor, roleKeywords } from "@/lib/keywords";
 import Comms from "@/components/Comms";
+import { plainName } from "@/content/pages";
 
 export const metadata: Metadata = {
   title: { absolute: "Field Notes — Product Teardowns · Ali Azam Kazmi" },
@@ -19,6 +20,7 @@ export default function FieldNotesPage() {
     <>
       <PageHeader
         label="Field Notes"
+        plain={plainName["/field-notes"]}
         title="Teardowns of products I don't work on"
         lede="Independent product and UX analyses. Not client work, not case studies for hire — just reading other people's decisions closely enough to disagree with them."
         figure={<Drone src={fieldNotes[0].cover} seed={fieldNotes[0].slug} tag="FN-01" sub="case study" label={fieldNotes[0].title} priority />}
