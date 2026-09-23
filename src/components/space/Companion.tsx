@@ -52,24 +52,26 @@ const REST_AIM = new THREE.Vector3(0.42, -0.05, -0.9).normalize();
  */
 type Waypoint = { p: number; x: number; y: number; s: number };
 const HOME_PLAN: Waypoint[] = [
-  // Measured against the ten legs (tools/sections-uat.mjs, 1440x900,
-  // 2026-09-19, H 16472): flight 0-0.314, operator 0.369-0.385, hangar
-  // 0.44-0.471, debrief 0.526, impact 0.581-0.617, flight rules 0.672,
-  // flight log 0.729-0.748, studio 0.803, field notes 0.858-0.869,
-  // touchdown 0.924-0.941, footer 1. Re-measure when a section moves.
+  // Re-measured after the Dispatches leg went in (tools/sections-uat.mjs,
+  // 1440x900, 2026-09-23, H 17541): arrival 0-0.295, operator 0.346-0.362,
+  // hangar 0.413-0.443, debrief 0.494, impact 0.545-0.58, rules 0.631,
+  // log 0.684-0.706, studio 0.757, notes 0.809-0.819, dispatches 0.87,
+  // touchdown 0.919-0.936, footer 1. Re-measure when a section moves.
   { p: 0.0, x: 0.36, y: -0.3, s: 0.7 }, // boarding (the galaxy flight has the frame; the companion yields)
-  { p: 0.33, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large
-  { p: 0.377, x: 0.36, y: 0.08, s: 0.85 }, // operator: the copy holds the left two-thirds; the ship in the air right of it
-  { p: 0.455, x: 0.1, y: 0.4, s: 0.55 }, // hangar: high and small, a distant pass over the projectors
-  { p: 0.526, x: -0.3, y: 0.3, s: 0.6 }, // debrief: over the black hole's sky, top left (the hole then captures it)
-  { p: 0.6, x: 0.0, y: 0.42, s: 0.5 }, // impact: full-width panels — a small high pass
-  { p: 0.673, x: 0.3, y: 0.02, s: 1.5 }, // flight rules: the hero moment — huge, in the air right of the beacons
-  { p: 0.74, x: 0.34, y: 0.06, s: 0.9 }, // flight log: the route holds the left; the ship rides the right
-  { p: 0.803, x: 0.1, y: 0.42, s: 0.5 }, // studio: projectors — high, small, distant
-  { p: 0.863, x: 0.3, y: 0.42, s: 0.5 }, // drone bay: high, small, distant — the drones own the frame
-  { p: 0.932, x: 0.0, y: 0.1, s: 1.1 }, // touchdown: descends toward the pad, then hands off to the landed ship (shipState.landed)
+  { p: 0.31, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large
+  { p: 0.354, x: 0.36, y: 0.08, s: 0.85 }, // operator: the copy holds the left two-thirds; the ship in the air right of it
+  { p: 0.428, x: 0.1, y: 0.4, s: 0.55 }, // hangar: high and small, a distant pass over the projectors
+  { p: 0.494, x: -0.3, y: 0.3, s: 0.6 }, // debrief: over the black hole's sky, top left (the hole then captures it)
+  { p: 0.56, x: 0.0, y: 0.42, s: 0.5 }, // impact: full-width panels — a small high pass
+  { p: 0.632, x: 0.3, y: 0.02, s: 1.5 }, // flight rules: the hero moment — huge, in the air right of the beacons
+  { p: 0.695, x: 0.34, y: 0.06, s: 0.9 }, // flight log: the route holds the left; the ship rides the right
+  { p: 0.757, x: 0.1, y: 0.42, s: 0.5 }, // studio: projectors — high, small, distant
+  { p: 0.814, x: 0.3, y: 0.42, s: 0.5 }, // drone bay: high, small, distant — the drones own the frame
+  { p: 0.87, x: -0.3, y: 0.42, s: 0.5 }, // dispatches: the truss holds the low left and the rows the right — high left is the free air
+  { p: 0.925, x: 0.0, y: 0.1, s: 1.1 }, // touchdown: descends toward the pad, then hands off to the landed ship (shipState.landed)
   { p: 1.0, x: 0.0, y: -0.1, s: 1.1 },
 ];
+
 /*
  * Secondary pages, by kind (2026-09-19). One plan for every page put the
  * rest position 80% down the first screen — on a report that is the

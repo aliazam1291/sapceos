@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Body, ButtonLink, DraftFlag, NextStep, PageHeader, Pager, Section, ui } from "@/components/ui";
+import RelatedWriting from "@/components/RelatedWriting";
 import Drone from "@/components/Drone";
 import { fieldNotes, getFieldNote } from "@/content/field-notes";
 import { DRAFT } from "@/content/types";
@@ -98,6 +99,8 @@ export default async function FieldNote({ params }: Params) {
             <Body value={note.body} subheadLevel="h2" />
           </div>
         )}
+
+        <RelatedWriting href={`/field-notes/${note.slug}`} />
 
         <div className={ui.buttonRow} style={{ marginTop: "var(--space-12)" }}>
           <ButtonLink href="/field-notes">← All field notes</ButtonLink>

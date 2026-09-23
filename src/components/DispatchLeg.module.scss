@@ -1,0 +1,159 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * Leg 10 — dispatches. The truss holds the left, three rows hold the
+ * right. Hairlines, no panels: this is text content, and the object beside
+ * it is the frame.
+ */
+
+.all {
+  @include mono-label;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-block: 0.4rem;
+
+  @include hover-only {
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+}
+
+.comms {
+  margin-bottom: var(--space-10);
+}
+
+.body {
+  display: grid;
+  gap: clamp(var(--space-8), 5vw, 4rem);
+  align-items: start;
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 0.38fr) minmax(0, 1fr);
+  }
+}
+
+.form {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  margin: 0;
+}
+
+/*
+ * The object is desktop-only. On a phone the column stacks above the rows,
+ * so a 220px canvas put most of a screen of empty space between the
+ * section head and the first essay — and the home page already carries the
+ * galaxy, the black hole, the landing and the companion. The caption stays:
+ * it says where the rest of the writing lives.
+ */
+.truss {
+  @media (max-width: 899px) {
+    display: none;
+  }
+}
+
+.formCaption {
+  @include mono-label;
+  color: var(--text-tertiary);
+  max-width: 24ch;
+  line-height: 1.5;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid var(--line-strong);
+}
+
+.row {
+  border-bottom: 1px solid var(--line);
+}
+
+.link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-4);
+  padding: var(--space-5) 0;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+
+  @include hover-only {
+    &:hover .title {
+      color: var(--accent);
+    }
+
+    &:hover .go {
+      color: var(--accent);
+      transform: translateX(3px);
+    }
+  }
+
+  @media (max-width: 560px) {
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+  }
+}
+
+.index {
+  @include mono-label;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.2rem;
+}
+
+.rowBody {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--type-medium);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  transition: color var(--dur-fast) var(--ease-out);
+  text-wrap: balance;
+}
+
+.line {
+  font-size: var(--type-small);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 62ch;
+}
+
+.meta {
+  @include mono-label;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-tertiary);
+}
+
+.dot {
+  opacity: 0.6;
+}
+
+.go {
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--text-tertiary);
+  padding-top: 0.15rem;
+  transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .go,
+  .title {
+    transition: none;
+  }
+}

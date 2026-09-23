@@ -13,6 +13,7 @@ import {
   ui,
 } from "@/components/ui";
 import ReportNav, { ReportLayout } from "@/components/ReportNav";
+import RelatedWriting from "@/components/RelatedWriting";
 import MissionSignature from "@/components/MissionSignature";
 import Hologram from "@/components/Hologram";
 import { sectionSlug } from "@/lib/slug";
@@ -214,6 +215,7 @@ export default async function MissionReport({ params }: Params) {
               </Row>
             </div>
           ))}
+          <RelatedWriting href={`/missions/${mission.slug}`} />
         </div>
       </ReportLayout>
 

@@ -1,0 +1,67 @@
+@use "../styles/tokens.scss" as *;
+
+/* Text content, so: hairlines and a label, not a card. */
+.related {
+  margin-top: var(--space-12);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line-strong);
+}
+
+.label {
+  @include mono-label;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.link {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+
+  @include hover-only {
+    &:hover .title {
+      color: var(--accent);
+    }
+  }
+}
+
+.list > li:last-child .link {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.title {
+  font-size: var(--type-small);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.line {
+  font-size: var(--type-small);
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 60ch;
+}
+
+.meta {
+  @include mono-label;
+  color: var(--text-tertiary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title {
+    transition: none;
+  }
+}

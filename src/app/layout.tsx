@@ -68,7 +68,11 @@ export const metadata: Metadata = {
     url: siteUrl,
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    // The feed, declared so readers and aggregators discover it (2026-09-23).
+    types: { "application/rss+xml": [{ url: "/feed.xml", title: "Space OS — essays and field notes" }] },
+  },
   robots: {
     index: true,
     follow: true,

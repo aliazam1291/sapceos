@@ -6,6 +6,7 @@ import Hangar from "@/components/Hangar";
 import Impact from "@/components/Impact";
 import LogLeg from "@/components/LogLeg";
 import StudioLeg from "@/components/StudioLeg";
+import DispatchLeg from "@/components/DispatchLeg";
 import DroneBay from "@/components/DroneBay";
 import RulesLeg from "@/components/RulesLeg";
 import Singularity from "@/components/Singularity";
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
  *   09 Notes      the case studies, carried in by drone
  *   10 Touchdown  the ship lands; its parts introduce the operator; the door
  *
- * The rail on the right is the route — leg N of 10. Re-plot HOME_PLAN
+ * The rail on the right is the route — leg N of 11. Re-plot HOME_PLAN
  * (Companion.tsx) from tools/sections-uat.mjs when a leg moves.
  */
 export default function Home() {
@@ -107,9 +108,14 @@ export default function Home() {
       {/* 09 — The case studies, carried in. */}
       <DroneBay notes={fieldNotes.slice(0, 3)} />
 
-      {/* 10 — The end of the journey: the ship lands, and its parts
+      {/* 10 — The dispatches. Added 2026-09-23: a week of analytics showed
+          /writing absent from the top pages, because the front door never
+          mentioned it existed. */}
+      <DispatchLeg />
+
+      {/* 11 — The end of the journey: the ship lands, and its parts
           introduce the operator. The door out is on the pad. */}
-      <Landing statement="I learn whatever I need to build the thing I think should exist.">
+      <Landing label="11 / Touchdown" statement="I learn whatever I need to build the thing I think should exist.">
         <div className={ui.buttonRow}>
           <Visitor>
             <MagneticButton href="/contact" primary>

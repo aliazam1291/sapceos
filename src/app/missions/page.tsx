@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MissionFilter from "@/components/MissionFilter";
+import RelatedWriting from "@/components/RelatedWriting";
 import RobotGuide from "@/components/RobotGuide";
 import Hologram from "@/components/Hologram";
 import Link from "next/link";
@@ -64,6 +65,7 @@ export default function MissionsPage() {
           lines={Object.fromEntries(missions.map((m, i) => [m.slug, `BAY ${String(i + 1).padStart(2, "0")} · ${m.title} · ${m.status === "active" ? "active" : "shipped"} · ${m.org}`]))}
         />
         <MissionFilter missions={missions} />
+        <RelatedWriting href="/missions" />
       </Section>
     <NextStep
       href="/mission-history"

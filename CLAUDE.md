@@ -707,12 +707,32 @@ the open channel; the one joke; keep it the only one).
   the mobile audit now reads zero tiny text and zero small taps at both
   375 and 320.
 
+- *Eleven legs: the dispatches* (2026-09-23). A week of analytics: 19
+  visits to `/`, and `/writing` nowhere in the top pages — because the
+  front door never mentioned that the operator writes. Ten legs listed the
+  missions, the studio, the rules, the log and the case studies, and not
+  one of them the essays. `DispatchLeg` is leg **10** (Touchdown is 11
+  now, passed as `Landing label`): the transmitter truss on the left (the
+  same object `/writing` opens on — an essay is a transmission, so it
+  gets no hologram; desktop only, a 220px canvas on a phone put a screen
+  of nothing above the rows) and the three most recent pieces as hairline
+  rows. `HOME_PLAN` re-plotted from `tools/sections-uat.mjs` (H 17541):
+  dispatches at 0.87 takes the high LEFT, since the rows hold the right.
+  Two more routes out of the writing: `writingAbout(href)` in
+  `writing.ts` is the reverse of each piece's `related`, rendered by
+  `RelatedWriting` on every mission report, field note, `/missions` and
+  `/dumbmoney` — essays linked into the work and nothing linked back.
+  And `/feed.xml` (app/feed.xml/route.ts, declared in `alternates.types`):
+  the hosted essays and the field notes, description = each piece's own
+  one-liner, never an excerpt. Also fixed: `ReportNav` items were 30×28
+  taps ("UX") — 36px floor now.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
 
 **Page map (each page is a place).**
-Home = one mission in ten legs (2026-09-20, above): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
+Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
 
 Context for Claude Code working in this repo. Read this first, every session.
 

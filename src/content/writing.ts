@@ -332,5 +332,16 @@ export function isLive(p: Piece) {
   return p.status === "published" || (p.status === "draft" && process.env.NODE_ENV !== "production");
 }
 
+/**
+ * The reverse of `related` (2026-09-23): given a mission, note or venture
+ * path, which live pieces point at it. Essays linked INTO the work and
+ * nothing linked back out, so a reader on a mission report had no route to
+ * the writing about it — and a week of analytics showed /writing missing
+ * from the top pages entirely.
+ */
+export function writingAbout(href: string): Piece[] {
+  return writing.filter((p) => p.related?.href === href && (p.outlet !== "Space OS" || isLive(p)));
+}
+
 /** What the /writing log lists: everything external, plus hosted pieces that are live. */
 export const listedWriting = writing.filter((p) => p.outlet !== "Space OS" || isLive(p));

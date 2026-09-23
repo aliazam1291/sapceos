@@ -4,6 +4,7 @@ import { Body, ButtonLink, NextStep, PageHeader, Row, Section, SectionHead, Stat
 import ReportNav, { ReportLayout } from "@/components/ReportNav";
 import Hologram from "@/components/Hologram";
 import Comms from "@/components/Comms";
+import RelatedWriting from "@/components/RelatedWriting";
 import { sectionSlug } from "@/lib/slug";
 import { venture } from "@/content/venture";
 import { profile } from "@/content/profile";
@@ -192,6 +193,7 @@ export default function VenturePage() {
             </li>
           </ol>
         </div>
+        <RelatedWriting href="/dumbmoney" label="Written here about it" />
       </Section>
 
       <Section>
