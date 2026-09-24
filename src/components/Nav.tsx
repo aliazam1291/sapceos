@@ -30,6 +30,7 @@ const routes = [
   { href: "/writing", label: "Writing", plain: plainName["/writing"] },
   { href: "/decisions", label: "Flight Rules", plain: plainName["/decisions"] },
   { href: "/flight-data", label: "Flight Data", plain: plainName["/flight-data"] },
+  { href: "/faq", label: "Questions", plain: plainName["/faq"] },
   { href: "/about", label: "About", plain: plainName["/about"] },
   { href: "/mission-history", label: "Mission History", plain: plainName["/mission-history"] },
   { href: "/contact", label: "Open Channel", plain: plainName["/contact"] },

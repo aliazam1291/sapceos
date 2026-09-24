@@ -1,0 +1,69 @@
+@use "../../styles/tokens.scss" as *;
+
+/*
+ * Text-only content, so: hairline rows in one panel, no card per question.
+ * Two columns on a desktop — the question holds the left, the answer the
+ * right — which keeps the questions scannable as a list on their own.
+ */
+
+.list {
+  margin: 0;
+  display: grid;
+  border-top: 1px solid var(--line-strong);
+}
+
+.row {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--line);
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+    column-gap: clamp(var(--space-8), 4vw, 4rem);
+    align-items: start;
+  }
+}
+
+.q {
+  margin: 0;
+}
+
+.qText {
+  margin: 0;
+  font-size: var(--type-medium);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+.a {
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+
+  p {
+    margin: 0;
+    font-size: var(--type-small);
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 64ch;
+  }
+}
+
+.more {
+  @include mono-label;
+  color: var(--accent);
+  text-decoration: none;
+  width: fit-content;
+  padding-block: 0.4rem;
+
+  @include hover-only {
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+}

@@ -78,6 +78,10 @@ export const comms = {
   flightData: [
     { who: "CAPCOM", line: "Telemetry on the operator's own record. Five of ten missions carry a number; the other five say so out loud." },
   ],
+  // /faq — the questions a first call opens with.
+  faq: [
+    { who: "CAPCOM", line: "Ground control, standing by. The awkward questions are near the bottom." },
+  ],
   // Home — Operator, under the leg's head.
   operator: [
     { who: "CAPCOM", line: "Pilot on the flight deck. Writes the PRD, then builds the thing the PRD said." },

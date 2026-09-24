@@ -727,6 +727,22 @@ the open channel; the one joke; keep it the only one).
   one-liner, never an excerpt. Also fixed: `ReportNav` items were 30×28
   taps ("UX") — 36px floor now.
 
+- *Questions* (2026-09-24). Ali: "we need a FAQ page, I think that will
+  help to get more SEO." The premise needed correcting first and the
+  correction shaped the page: **Google deprecated FAQ rich results on
+  7 May 2026** (Search Console stopped reporting them in June), so FAQPage
+  schema no longer wins a dropdown in the results list and is not a traffic
+  lever. `/faq` was built for the two things that are real — a recruiter`s
+  screening questions answered before they have to ask, and grounding for
+  answer engines, which do read structured Q&A. Twelve questions in
+  `content/faq.ts`, every answer a PROFILE.md fact or a link to a page
+  built from one; each question is an h2 so an answer engine can attribute
+  one cleanly. `faqJsonLd` in seo.ts carries the same pairs plus an `about`
+  pointing at the Person node. What is NOT on the page is the point:
+  notice period, remote/relocation, salary and references are listed in
+  `awaiting` and stay off until Ali answers, because a guess in an FAQ is a
+  guess a recruiter holds him to.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

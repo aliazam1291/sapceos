@@ -27,6 +27,7 @@ export const plainName: Record<string, string> = {
   "/contact": "Contact",
   "/dumbmoney": "My startup",
   "/flight-data": "Portfolio analytics",
+  "/faq": "Common questions",
   "/galaxy": "Interactive map",
   "/orbit": "Interests",
 };

@@ -74,6 +74,7 @@ function buildEntries(): Entry[] {
     { id: "/writing", kind: "page", label: "Writing", meta: "Essays, guides, a case study", href: "/writing", keywords: "blog medium articles essays posts published" },
     { id: "/decisions", kind: "page", label: "Flight rules", meta: "How I decide", href: "/decisions", keywords: "decisions principles judgement" },
     { id: "/flight-data", kind: "page", label: "Flight data", meta: "The portfolio, measured", href: "/flight-data", keywords: "analytics stats statistics data metrics numbers evidence charts" },
+    { id: "/faq", kind: "page", label: "Questions", meta: "Common questions, answered", href: "/faq", keywords: "faq questions answers hire availability why product" },
     { id: "/about", kind: "page", label: "About", meta: "The operator", href: "/about", keywords: "bio profile who" },
     { id: "/mission-history", kind: "page", label: "Mission history", meta: "Résumé · the flight log", href: "/mission-history", keywords: "resume cv experience career" },
     { id: "/galaxy", kind: "page", label: "Galaxy 3D", meta: "The interactive map", href: "/galaxy", keywords: "map explore" },

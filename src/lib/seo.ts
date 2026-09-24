@@ -214,6 +214,29 @@ export function clipDescription(text: string, max = 155) {
 }
 
 /** Renders one or more JSON-LD graphs as a script tag's text. */
+
+/*
+ * FAQPage (2026-09-24). Note what this is NOT for: Google deprecated FAQ
+ * rich results on 7 May 2026, so this wins no dropdown in the results list
+ * and Search Console stopped reporting them in June. It stays because the
+ * markup is still valid, still crawled by Bingbot and by the retrieval
+ * crawlers behind answer engines, and those ground their summaries on
+ * structured question-and-answer content. The content does the work; the
+ * schema only makes it unambiguous.
+ */
+export function faqJsonLd(items: { q: string; a: string[] }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((it) => ({
+      "@type": "Question",
+      name: it.q,
+      acceptedAnswer: { "@type": "Answer", text: it.a.join(" ") },
+    })),
+    about: { "@id": personId },
+  };
+}
+
 export function jsonLd(...graphs: object[]) {
   return JSON.stringify(graphs.length === 1 ? graphs[0] : graphs);
 }
