@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ButtonLink, PageHeader, Section, Status, ui } from "@/components/ui";
+import { ButtonLink, NextStep, PageHeader, Section, Status, ui } from "@/components/ui";
 import CopyLink from "@/components/CopyLink";
 import Satellite from "@/components/space/Satellite";
 import GravityGrid from "@/components/space/GravityGrid";
@@ -72,12 +72,19 @@ export default function ContactPage() {
             </p>
           </div>
 
+          {/* The résumé belongs here (2026-09-24). /contact is the second
+              most visited page on the site and two thirds of a week's
+              visitors reached it — and it was the one page offering no way
+              to take the CV away. Every report, /about and the pad had it. */}
           <div className={ui.vcardActions}>
             <ButtonLink href={`mailto:${profile.email}`} primary external>
               Send a message
             </ButtonLink>
             <ButtonLink href={profile.calendly} external>
               Book a slot
+            </ButtonLink>
+            <ButtonLink href="/Ali_Azam_Kazmi_.pdf" external>
+              Résumé (PDF)
             </ButtonLink>
           </div>
         </div>
@@ -139,6 +146,16 @@ export default function ContactPage() {
           </div>
         </div>
       </Section>
+
+      {/* Not a dead end (2026-09-24). Somebody arriving here from a CV, a
+          LinkedIn profile or the GitHub README has seen none of the work
+          yet, and this page offered no route to any of it. */}
+      <NextStep
+        href="/missions"
+        label="Next · Missions"
+        title="The work behind the channel"
+        premise="Ten products, each with the problem, the decisions and what shipped — the reason to start a conversation."
+      />
     </>
   );
 }
