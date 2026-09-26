@@ -29,6 +29,15 @@ export type StudioPiece = {
   brief: string;
   /** Extra fact PROFILE.md states about the client (never inferred). */
   note?: string;
+  /**
+   * The sector the client operates in, read off the client's own site and
+   * dated in PROFILE.md (2026-09-26). Context for what the piece was made
+   * for — never a claim about what the work achieved, and never guessed:
+   * six of the eight clients have no industry on file and carry none here.
+   */
+  industry?: string;
+  /** The client's own site, where it is public. */
+  site?: string;
   status: "client" | "independent";
   cover?: string;
   /** The client's logo, where the old site carried one. */
@@ -42,6 +51,8 @@ export const studio = {
   since: 2023,
   /** PROFILE.md: "10+ clients across SaaS, creator brands, e-commerce, home décor, services". */
   clients: 10,
+  /** Named on the site, of the 10+ PROFILE.md counts. */
+  named: 10,
   sectors: ["SaaS", "creator brands", "e-commerce", "home décor", "services"],
   behance: "https://www.behance.net/aliak8",
   figma: "https://www.figma.com/@aliak",
@@ -49,6 +60,31 @@ export const studio = {
 
 export const studioPieces: StudioPiece[] = [
   // ── Client work (PROFILE.md) ──────────────────────────────────────────────
+  // Sunder Masala and Wolf Casa confirmed by Ali 2026-09-26 — the first of
+  // them had sat in PROFILE.md's "DO NOT USE" list since the project began.
+  // Scope on both is his: website UI, content, branding and market strategy.
+  {
+    slug: "sunder-masala",
+    title: "Sunder Masala",
+    client: "Sunder Masala",
+    kind: "web",
+    brief: "Website UI, content, branding and market strategy.",
+    note: "Heritage spice house, Indore · est. 1975",
+    industry: "FMCG · spices & food",
+    site: "https://www.sundermasala.com/",
+    status: "client",
+  },
+  {
+    slug: "wolf-casa",
+    title: "Wolf Casa",
+    client: "Wolf Casa",
+    kind: "web",
+    brief: "Website UI, content, branding and market strategy.",
+    note: "“The Interio Mall for Curated Living”",
+    industry: "Interiors · premium home furnishing",
+    site: "https://www.wolfcasa.in/",
+    status: "client",
+  },
   {
     slug: "lean-multiverse",
     title: "Lean Multiverse",
@@ -56,6 +92,8 @@ export const studioPieces: StudioPiece[] = [
     kind: "brand",
     brief: "Brand identity and web UI for a creator-led brand.",
     note: "600K+ followers",
+    industry: "Career development · consultancy",
+    site: "https://www.leanmultiverse.com/",
     status: "client",
     cover: "/studio/leanmultiverse-logo-and-branding.png",
     logo: "/logos/leanmultiverse.svg",
@@ -76,6 +114,8 @@ export const studioPieces: StudioPiece[] = [
     client: "Mintair",
     kind: "deck",
     brief: "Investor pitch deck.",
+    industry: "Web3 · blockchain infrastructure",
+    site: "https://www.mintair.xyz/",
     status: "client",
     logo: "/logos/mintair.svg",
   },

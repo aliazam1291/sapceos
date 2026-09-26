@@ -20,6 +20,7 @@ export const plainName: Record<string, string> = {
   "/field-notes": "Case studies",
   "/lab": "Experiments",
   "/studio": "Freelance work",
+  "/smaak": "My design studio",
   "/writing": "Essays",
   "/decisions": "How I decide",
   "/about": "About me",

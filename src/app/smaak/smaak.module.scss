@@ -1,0 +1,353 @@
+@use "../../styles/tokens.scss" as *;
+
+/*
+ * Smaak.ux — the one route on this site that is not emerald.
+ *
+ * The blue is scoped entirely to `.smaak`: local custom properties, nothing
+ * written back to the tokens, nothing leaking to another page. A reader who
+ * navigates away is back in Space OS's palette on the next paint. See the
+ * header comment in page.tsx for why this exception exists.
+ */
+.smaak {
+  --smaak: #0066ff;
+  --smaak-bright: #00ccff;
+  --smaak-soft: #4d9fff;
+  --smaak-line: rgba(77, 159, 255, 0.26);
+  --smaak-dim: rgba(128, 170, 255, 0.55);
+
+  position: relative;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+
+.hero {
+  @include shell;
+  position: relative;
+  padding-block: clamp(var(--space-12), 9vw, 7rem) var(--space-12);
+}
+
+.heroInner {
+  display: grid;
+  gap: clamp(var(--space-8), 5vw, 4rem);
+  align-items: center;
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+}
+
+.heroCopy {
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+}
+
+.kicker {
+  @include mono-label;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--smaak-bright);
+}
+
+.kickerPlain {
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--font-sans);
+  font-size: var(--type-small);
+  color: var(--text-tertiary);
+}
+
+.title {
+  margin: 0;
+  // Bigger than the site's page titles on purpose: this is a designer's
+  // portfolio, and "less page, more sky" governs Space OS, not Smaak.
+  font-size: clamp(2.1rem, 5.4vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  max-width: 18ch;
+  text-wrap: balance;
+  color: var(--text-primary);
+}
+
+.em {
+  color: var(--smaak-bright);
+  font-style: italic;
+}
+
+.lede {
+  margin: 0;
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 48ch;
+}
+
+.sub {
+  margin: 0;
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--text-tertiary);
+  max-width: 46ch;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-6);
+  border: 1px solid var(--smaak-line);
+  border-radius: 100px;
+  font-size: var(--type-small);
+  text-decoration: none;
+  transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+.primary {
+  background: var(--smaak);
+  border-color: var(--smaak);
+  color: #ffffff;
+
+  @include hover-only {
+    &:hover {
+      background: var(--smaak-bright);
+      border-color: var(--smaak-bright);
+      color: #001028;
+    }
+  }
+}
+
+.secondary {
+  color: var(--text-secondary);
+
+  @include hover-only {
+    &:hover {
+      border-color: var(--smaak-bright);
+      color: var(--smaak-bright);
+    }
+  }
+}
+
+.planet {
+  max-width: 520px;
+  justify-self: center;
+
+  @media (max-width: 899px) {
+    max-width: 320px;
+    order: -1;
+  }
+}
+
+.scrollHint {
+  @include mono-label;
+  margin: var(--space-10) 0 0;
+  color: var(--smaak-dim);
+}
+
+/* ── Clients ──────────────────────────────────────────────────────────── */
+
+.clients {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid var(--smaak-line);
+}
+
+.client {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-6);
+  align-items: start;
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--line);
+
+  @media (max-width: 720px) {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    .clientMeta {
+      grid-column: 2;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+  }
+}
+
+.clientIndex {
+  @include mono-label;
+  color: var(--smaak-soft);
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.35rem;
+}
+
+.clientBody {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.clientHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.clientLogo {
+  display: inline-flex;
+  align-items: center;
+
+  img {
+    height: 22px;
+    width: auto;
+    opacity: 0.85;
+  }
+}
+
+.clientName {
+  margin: 0;
+  font-size: var(--type-medium);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+}
+
+.clientLink {
+  color: inherit;
+  text-decoration: none;
+
+  @include hover-only {
+    &:hover {
+      color: var(--smaak-bright);
+    }
+  }
+}
+
+.clientBrief {
+  margin: 0;
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 56ch;
+}
+
+.clientNote {
+  margin: 0;
+  font-size: var(--type-small);
+  color: var(--text-tertiary);
+}
+
+.clientMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.kind,
+.industry {
+  @include mono-label;
+  font-size: max(0.5625rem, var(--micro-floor));
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--line);
+  white-space: nowrap;
+  color: var(--text-tertiary);
+
+  // 'Interiors · premium home furnishing' does not fit a 320px phone on one
+  // line, and nowrap pushed it 56px past the edge (tools/mobile-uat.mjs).
+  @media (max-width: 560px) {
+    white-space: normal;
+    max-width: 100%;
+    line-height: 1.4;
+  }
+}
+
+.industry {
+  border-color: var(--smaak-line);
+  color: var(--smaak-bright);
+}
+
+/* ── Services ─────────────────────────────────────────────────────────── */
+
+.services {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.service {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-5);
+  background: var(--bg-primary);
+}
+
+.serviceCount {
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--smaak-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+.serviceLabel {
+  @include mono-label;
+  color: var(--text-secondary);
+}
+
+.sectors {
+  margin: var(--space-6) 0 0;
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--text-tertiary);
+  max-width: 62ch;
+}
+
+/* ── Loose ends ───────────────────────────────────────────────────────── */
+
+.also {
+  list-style: none;
+  margin: 0 0 var(--space-8);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.alsoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line);
+  font-size: var(--type-small);
+  color: var(--text-secondary);
+  text-decoration: none;
+
+  @include hover-only {
+    &:hover {
+      border-color: var(--smaak-line);
+      color: var(--smaak-bright);
+    }
+  }
+}

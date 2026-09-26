@@ -20,6 +20,7 @@ const routes = [
   { href: "/galaxy", label: "Galaxy 3D", plain: plainName["/galaxy"] },
   { href: "/lab", label: "Lab", plain: plainName["/lab"] },
   { href: "/studio", label: "Studio", plain: plainName["/studio"] },
+  { href: "/smaak", label: "Smaak.ux", plain: plainName["/smaak"] },
   { href: "/dumbmoney", label: "DumbMoney", plain: plainName["/dumbmoney"] },
   // Listed only once /orbit has real content — see src/content/orbit.ts.
   // The route always works; this is the link, not the page.

@@ -1,0 +1,28 @@
+@use "../../styles/tokens.scss" as *;
+
+/*
+ * The stage the studio's planet sits in. It is a square canvas that bleeds
+ * behind the hero copy, so it carries its own glow rather than a border —
+ * this is an object, not an instrument, and objects do not get frames.
+ */
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  pointer-events: none;
+
+  // The planet's own light, on the compositor. Sized so the copy beside it
+  // sits inside the falloff rather than against a hard edge.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.18), rgba(0, 102, 255, 0.05) 45%, transparent 70%);
+    pointer-events: none;
+  }
+
+  canvas {
+    position: relative;
+    z-index: 1;
+  }
+}

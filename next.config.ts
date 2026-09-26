@@ -79,8 +79,11 @@ const nextConfig: NextConfig = {
       { source: "/experience", destination: "/mission-history", permanent: true },
       { source: "/resume", destination: "/Ali_Azam_Kazmi_.pdf", permanent: false },
       { source: "/cv", destination: "/Ali_Azam_Kazmi_.pdf", permanent: false },
-      { source: "/smaak-ux", destination: "/studio", permanent: true },
-      { source: "/smaak", destination: "/studio", permanent: true },
+      // /smaak is a real page now (2026-09-26) — the studio's own, branded.
+      // Its redirect to /studio had to go or it would have shadowed the
+      // route entirely; only the hyphenated spelling still redirects, and
+      // it now points at the new page rather than the deck.
+      { source: "/smaak-ux", destination: "/smaak", permanent: true },
     ];
   },
 };

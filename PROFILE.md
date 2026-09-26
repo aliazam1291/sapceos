@@ -74,7 +74,23 @@ All at MapMyIndia/Gtropy. Ali owns frontend, UI/UX, cross-functional collaborati
 
 **Smaak.ux** — Founder & Product Designer · 2023–present · Remote/freelance
 - Product and design studio; 10+ clients across SaaS, creator brands, e-commerce, home décor, services
-- Clients: **Atmos** (brand identity) · **Mintair** (investor pitch deck) · **Ravenouxs** (responsive website) · **Lean Multiverse** (brand identity + web UI for a creator-led brand with 600K+ followers) · **Ekal** (brand identity, pitch decks) · **Urban Livin** (product catalogues) · **Sorted Blinds** (website, Australia-based) · **Posh Dikur** (luxury home décor marketing creatives)
+- Clients (10 named, 2026-09-26): **Sunder Masala** (website UI, content, branding, market strategy) · **Wolf Casa** (website UI, content, branding, market strategy) · **Atmos** (brand identity) · **Mintair** (investor pitch deck) · **Ravenouxs** (responsive website) · **Lean Multiverse** (brand identity + web UI for a creator-led brand with 600K+ followers) · **Ekal** (brand identity, pitch decks) · **Urban Livin** (product catalogues) · **Sorted Blinds** (website, Australia-based) · **Posh Dikur** (luxury home décor marketing creatives)
+
+### Client industries (Ali, 2026-09-26: "Mintair was a web3 company … we can be industry specific")
+What each client's own site says it does. This is context for the sector a
+piece was made for — it is NOT a claim about what the work achieved, and the
+deliverable above is still the only thing Ali is credited with.
+- **Mintair** (mintair.xyz, read 2026-09-26) — **Web3 / blockchain infrastructure.** A one-click node deployment and management platform: pick a chain, take a subscription, the service provisions and maintains the validator node. Tagline "One Click Node"; the site claims 35+ supported networks, 150,000+ users and 80,000+ nodes deployed. ⚠️ Those are **Mintair's own public numbers about their platform**, not outcomes of Ali's pitch deck — do not present them as his results.
+- **Lean Multiverse** (leanmultiverse.com, read 2026-09-26) — **career development / management consultancy.** LeanMultiverse Consultancy Pvt Ltd: a one-month bootcamp with a long-range career roadmap, live weekend sessions, industry mentors, capped batches. Taglines "Build in the Multiverse — Unlock Collaborative Innovation" and "Better Careers. A Brighter You." ⚠️ Note the tension with the line above: PROFILE records it as "a creator-led brand with 600K+ followers", the site presents a consultancy. Both may be true (a creator audience behind a consultancy) — **needs one word from Ali** before the site describes it either way. Until then the site says only what the deliverable was.
+- The other six clients' industries are not on file. Ali has them; they are not guessed here.
+
+### Two more clients, confirmed by Ali 2026-09-26
+Ali: "sundermasala.com — made this website UI and content and branding and
+market strategy … also same for casa, wolfcasa.in". Scope on both is his
+words: **website UI, content, branding and market strategy.** No outcome is
+claimed for either; none is on file.
+- **Sunder Masala** (sundermasala.com, read 2026-09-26) — **spice brand, FMCG / food.** A heritage masala house from Indore, Madhya Pradesh: founded 1975 by Bharat Kumar Jain, three generations, cold-milled under 40°C, single-origin, "100% pure, no artificial colour". Range: 13 blended spices, 9 pure, 8 whole, 2 hing, plus a recipe section ("Rasoi"). Taglines on the site: "Kam masala, poora swaad" and "Ek chutki, full fire". ⚠️ The 1975 founding and the family story are the CLIENT's history, not Ali's — never present them as his.
+- **Wolf Casa** (wolfcasa.in, read 2026-09-26) — **interiors / premium home furnishing.** An interior showroom and curation service positioned as "The Interio Mall for Curated Living", selling composed rooms rather than single pieces — "A sofa alone is inventory. A curated room is desire." 18 categories, 11 room curations, a 100,000 sq ft showroom, plus a sourcing service and franchise model. ⚠️ Showroom size and category counts are the client's figures about their business, not results of Ali's work.
 
 **Wise Work** — Full Stack Intern · Feb–Dec 2023 · Remote — React.js, scalable UI components, REST API integration
 
@@ -146,7 +162,7 @@ Linear vs Jira · The AI Code Assistant Adoption Paradox · Apple Ecosystem Frag
 
 ## Unverified — DO NOT USE without confirmation
 
-- **"Sunder Masala"** (legacy brand modernisation) — appears in the creative brief but nowhere in Ali's actual history. Do not build a case study for it until confirmed.
+- ~~**"Sunder Masala"**~~ — **CONFIRMED by Ali on 2026-09-26** and moved up to the Smaak.ux client list. It sat here as unverified from the first day of this project; it is his work. See "Smaak.ux" above.
 - **DumbMoney outcomes** — the older resume's "profitable in its first quarter with 37+ partner brands" and the founding year (2026) are not confirmed. The venture itself IS confirmed (see "Venture" above); only these numbers and the date wait on Ali. A public search on 2026-09-23 found neither.
 - **Vahan Shakti's store listing** — Intouch and Indane Yatra Mitra have URLs Ali gave (above). A search on 2026-09-23 for Vahan Shakti returned several unrelated AIS-140 tracking apps by other publishers (com.dhundhoolite, com.ce.vahanshakti) and nothing identifiable as the MapMyIndia build. NOT added: linking the wrong company's app under Ali's name is worse than no link. Needs the URL from Ali.
 - Outcome metrics for the three Active missions.

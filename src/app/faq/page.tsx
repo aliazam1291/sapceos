@@ -102,7 +102,7 @@ export default function FaqPage() {
                     </Link>
                   ) : (
                     <a href={f.more.href} className={styles.more} target="_blank" rel="noreferrer noopener">
-                      {f.more.label} <span aria-hidden="true">&nearr;</span>
+                      {f.more.label} <span aria-hidden="true">↗</span>
                     </a>
                   )
                 ) : null}

@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/decisions", priority: 0.8 },
     { path: "/flight-data", priority: 0.7 },
     { path: "/faq", priority: 0.7 },
+    { path: "/smaak", priority: 0.8 },
     { path: "/about", priority: 0.8 },
     { path: "/mission-history", priority: 0.8 },
     { path: "/contact", priority: 0.6 },

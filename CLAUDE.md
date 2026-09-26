@@ -743,12 +743,54 @@ the open channel; the one joke; keep it the only one).
   `awaiting` and stay off until Ali answers, because a guess in an FAQ is a
   guess a recruiter holds him to.
 
+- *Smaak.ux has its own page, and its own rules* (2026-09-26). Ali: "I need
+  a separate page for smaak.ux, only my freelance work … its gonna be my
+  freelance portfolio like a designer portfolio so be creative, sassy and
+  have funny humour … I need 3D scroll." `/smaak` is that page; `/studio`
+  stays exactly as it was — the deck of client work plus the independent
+  Behance pieces, in the site's own language. **Two exceptions live on
+  /smaak and neither is an oversight:**
+  (1) **Colour.** The page is Smaak blue (#0066FF / #00CCFF / #4D9FFF),
+  against the black-and-emerald rule and against the blue cast rejected on
+  2026-09-12. The studio is a separate brand and this is its page inside the
+  portfolio, not another room of it. The blue is scoped to local custom
+  properties on `.smaak` and never written back to the tokens, so the next
+  route repaints emerald.
+  (2) **Voice.** "The humour is mission control's … do not add a second
+  kind" governs Space OS. A designer's portfolio has its own mouth and Ali
+  asked for this one specifically. The joke is still never on a client and
+  never on a number.
+  The object is `SmaakPlanetScene` — the "CyberPlanet" ported from Ali's own
+  studio repo (D:/lap165/Projects/smaak-ux, `src/components/scene/Hero3D.tsx`):
+  void core, glass shell, wireframe layer, data ring, orbiting particles. The
+  port added what this repo requires — `quietGL`, `WarmShaders` with the
+  frameloop held at "never" until warm, a pause when off screen, dpr /
+  sparkles / particle count scaled by `perf.level`, the glass shell degraded
+  below "high" (transmission is a second render pass per frame) — and DROPPED
+  `Environment preset="city"`, which fetches an HDR from a CDN at runtime and
+  would need a CSP origin. Scroll drives the planet through `scroll-signal`
+  `damp()`, never read raw.
+  Content: **Sunder Masala and Wolf Casa are confirmed clients** as of this
+  date — Sunder Masala had sat in PROFILE.md's "Unverified — DO NOT USE" list
+  since the project began, and is Ali's work after all. Scope on both is his
+  words: website UI, content, branding, market strategy. Their own facts (a
+  1975 founding, a 100,000 sq ft showroom) are labelled as the client's,
+  never as his results. Four of ten client industries are documented, read
+  off the clients' own sites and dated in PROFILE.md; the other six show
+  nothing rather than a guess.
+  Routing trap: `/smaak` used to REDIRECT to `/studio`, and that redirect had
+  to be deleted or it shadows the route entirely; `/smaak-ux` now points at
+  `/smaak`.
+  JSX trap, hit for the second time: `&nearr;` is not in Babel's entity table
+  and renders as literal text — use the glyph ↗. It had already shipped that
+  way on /faq, and StarDetailDrawer.tsx carries a comment about the same bug.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
 
 **Page map (each page is a place).**
-Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
+Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/smaak` = the studio as its own brand — blue, sassy, its own planet, client work only. `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
 
 Context for Claude Code working in this repo. Read this first, every session.
 
