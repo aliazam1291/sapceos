@@ -785,6 +785,34 @@ the open channel; the one joke; keep it the only one).
   and renders as literal text — use the glyph ↗. It had already shipped that
   way on /faq, and StarDetailDrawer.tsx carries a comment about the same bug.
 
+- *The dome gallery* (2026-09-27). Ali: "we need a gallery kinda thing like
+  a dome gallery in smaak.ux and a better visual, it should look like a
+  design studio, and my designs from figma and behance displayed."
+  `DomeGallery` on /smaak hangs the work on the inside of a sphere with the
+  reader at its centre: drag spins it with momentum, hover lifts a piece and
+  names it in an HTML caption (a label that must be legible is not a job for
+  a texture), click opens it where it lives. Two things that had to be
+  measured rather than guessed:
+  (1) **Placement is rings, not a golden-angle scatter.** Spread evenly over
+  a whole sphere, fourteen pieces put exactly ONE frame in the camera's cone
+  at rest — an empty blue room with a poster in it. Two rings of seven,
+  offset by half a step, keep four to six in front of the reader.
+  (2) **The lookAt trap, again.** `Matrix4.lookAt(p, centre, up)` is the
+  CAMERA convention (−Z at the target). A PlaneGeometry's face is +Z, so
+  every frame faced outward and the reader saw mirrored backs through
+  `DoubleSide` — "vivo" rendered "oviv". `setFromUnitVectors` puts +Z on the
+  direction, and the material is `FrontSide` now. CLAUDE.md already carried
+  this rule for ships; it applies to any plane on a sphere.
+  Content is `content/gallery.ts` — fourteen pieces, each one Ali's, each
+  linking to its Behance gallery or the live site. Textures are 640px WebP
+  bakes (`tools/studio-textures.mjs`): the sources are 6.7 MB and the planes
+  are ~400px on screen, so the dome costs 0.29 MB rather than a hero-image
+  budget. **The grid underneath is not a placeholder** — it is always in the
+  DOM, it is what a crawler reads and what reduced motion or a missing canvas
+  leaves behind, and it only dims once the dome is live. Two covers were
+  added by screenshotting the live sites Ali built (sundermasala.com,
+  wolfcasa.in) at 1440×900.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

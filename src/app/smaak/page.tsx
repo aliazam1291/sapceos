@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import SmaakPlanet from "@/components/smaak/SmaakPlanet";
+import DomeGallery from "@/components/smaak/DomeGallery";
+import { gallery } from "@/content/gallery";
 import { ButtonLink, NextStep, Section, SectionHead, ui } from "@/components/ui";
 import { studio, studioAlso, studioKindLabel, studioPieces } from "@/content/studio";
 import { profile } from "@/content/profile";
@@ -133,6 +135,21 @@ export default function SmaakPage() {
           Scroll — the planet is load-bearing
         </p>
       </header>
+
+      {/* ── The work, hung in a dome. ────────────────────────────────────── */}
+      <Section id="work" data-section="The work">
+        <SectionHead
+          label={`Gallery · ${gallery.length}`}
+          title="Stand in the middle of it"
+          action={
+            <p className={ui.sectionNote}>
+              Drag to look around; click a piece to open it where it lives. If your machine would rather not render a
+              dome, the same {gallery.length} pieces are in the grid underneath — no work is hiding behind the WebGL.
+            </p>
+          }
+        />
+        <DomeGallery />
+      </Section>
 
       {/* ── The clients. ─────────────────────────────────────────────────── */}
       <Section id="clients" data-section="Clients">

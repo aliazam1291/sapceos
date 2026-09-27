@@ -72,6 +72,7 @@ export const studioPieces: StudioPiece[] = [
     note: "Heritage spice house, Indore · est. 1975",
     industry: "FMCG · spices & food",
     site: "https://www.sundermasala.com/",
+    cover: "/studio/sunder-masala-site.png",
     status: "client",
   },
   {
@@ -83,6 +84,7 @@ export const studioPieces: StudioPiece[] = [
     note: "“The Interio Mall for Curated Living”",
     industry: "Interiors · premium home furnishing",
     site: "https://www.wolfcasa.in/",
+    cover: "/studio/wolf-casa-site.png",
     status: "client",
   },
   {
