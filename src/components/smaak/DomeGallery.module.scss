@@ -13,16 +13,39 @@
 }
 
 .dome {
+  /*
+   * Two palettes, one component (2026-09-27). The default is the site's own
+   * emerald, because this gallery is on the HOME page as well as /smaak and
+   * the home page is Space OS — the blue is a documented exception scoped to
+   * the studio's route, and must not leak onto the front door.
+   * `data-tone="smaak"` opts into it.
+   */
+  --dome-edge: var(--line-strong);
+  --dome-glow: rgba(60, 221, 158, 0.1);
+  --dome-glow-2: rgba(60, 221, 158, 0.05);
+  --dome-ground: #04100c;
+  --dome-accent: var(--accent);
+  --dome-hint: rgba(60, 221, 158, 0.55);
+
+  &[data-tone="smaak"] {
+    --dome-edge: rgba(77, 159, 255, 0.26);
+    --dome-glow: rgba(0, 102, 255, 0.12);
+    --dome-glow-2: rgba(0, 204, 255, 0.07);
+    --dome-ground: #02060f;
+    --dome-accent: #00ccff;
+    --dome-hint: rgba(128, 170, 255, 0.6);
+  }
+
   position: relative;
   width: 100%;
   height: clamp(420px, 62vh, 660px);
   // Nothing is drawn here until the canvas mounts, so the box needs its own
   // presence rather than collapsing to an empty band.
-  border: 1px solid var(--smaak-line, rgba(77, 159, 255, 0.26));
+  border: 1px solid var(--dome-edge);
   background:
-    radial-gradient(120% 90% at 50% 18%, rgba(0, 102, 255, 0.12), transparent 62%),
-    radial-gradient(90% 70% at 50% 100%, rgba(0, 204, 255, 0.07), transparent 60%),
-    #02060f;
+    radial-gradient(120% 90% at 50% 18%, var(--dome-glow), transparent 62%),
+    radial-gradient(90% 70% at 50% 100%, var(--dome-glow-2), transparent 60%),
+    var(--dome-ground);
   overflow: hidden;
   touch-action: none; // the drag is the gallery's; don't scroll the page with it
 
@@ -37,7 +60,7 @@
     position: absolute;
     width: 22px;
     height: 22px;
-    border: 1px solid var(--smaak-soft, #4d9fff);
+    border: 1px solid var(--dome-accent);
     opacity: 0.5;
     pointer-events: none;
   }
@@ -65,12 +88,23 @@
   pointer-events: none;
 }
 
+.loading {
+  @include mono-label;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  margin: 0;
+  color: var(--dome-hint);
+  pointer-events: none;
+}
+
 .hint {
   @include mono-label;
   bottom: var(--space-5);
   left: 50%;
   transform: translateX(-50%);
-  color: rgba(128, 170, 255, 0.6);
+  color: var(--dome-hint);
   white-space: nowrap;
 }
 
@@ -96,7 +130,7 @@
 
 .captionKind {
   @include mono-label;
-  color: var(--smaak-bright, #00ccff);
+  color: var(--dome-accent);
 }
 
 /* ── The grid: the same work as markup ────────────────────────────────── */
@@ -131,11 +165,11 @@
 .cellLink {
   @include hover-only {
     &:hover .figTitle {
-      color: var(--smaak-bright, #00ccff);
+      color: var(--accent);
     }
 
     &:hover .img {
-      border-color: var(--smaak-line, rgba(77, 159, 255, 0.26));
+      border-color: var(--line-strong);
     }
   }
 }

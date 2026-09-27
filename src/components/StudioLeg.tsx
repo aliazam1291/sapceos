@@ -2,6 +2,8 @@ import Link from "next/link";
 import Hologram from "./Hologram";
 import RobotGuide from "./RobotGuide";
 import Comms from "./Comms";
+import DomeGallery from "./smaak/DomeGallery";
+import { gallery } from "@/content/gallery";
 import { Section, SectionHead, Status } from "./ui";
 import { studio, studioKindLabel, studioPieces } from "@/content/studio";
 import styles from "./StudioLeg.module.scss";
@@ -37,6 +39,18 @@ export default function StudioLeg() {
         idle={`Studio annex. Four of the ${studioPieces.length} pieces, ${studio.clients}+ clients behind them. Hover one.`}
         lines={Object.fromEntries(pieces.map((p, i) => [p.slug, `S-${String(i + 1).padStart(2, "0")} · ${p.title} · ${studioKindLabel[p.kind].toLowerCase()} · ${p.status}`]))}
       />
+      {/*
+        * The gallery (2026-09-27). Ali: "I need a gallery section on main
+        * home page and smaak.ux." The dome shows fourteen pieces where the
+        * projectors below show four — it is the design work at a glance,
+        * and the four projectors stay because a hologram is how this site
+        * says "project" and the leg still hands off to the deck.
+        *
+        * Emerald here, not Smaak blue: the blue is scoped to /smaak and the
+        * home page is Space OS. Same component, `tone="emerald"` (default).
+        */}
+      <DomeGallery items={gallery.slice(0, 10)} />
+
       <ol className={styles.bays}>
         {pieces.map((p, i) => (
           <li key={p.slug} className={`${styles.bay} objectRow`} data-bay={p.slug} style={{ "--lag": `${i * 8}%` } as React.CSSProperties}>

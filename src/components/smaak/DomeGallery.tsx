@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gallery } from "@/content/gallery";
+import type { DomeTone } from "./DomeGalleryScene";
 import styles from "./DomeGallery.module.scss";
 
 const DomeGalleryScene = dynamic(() => import("./DomeGalleryScene"), { ssr: false, loading: () => null });
@@ -22,11 +23,19 @@ const DomeGalleryScene = dynamic(() => import("./DomeGalleryScene"), { ssr: fals
  * The caption is HTML rather than in-scene text: a label that has to be
  * legible is not a job for a texture.
  */
-export default function DomeGallery() {
+export default function DomeGallery({ tone = "emerald", items = gallery }: { tone?: DomeTone; items?: typeof gallery }) {
   const host = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState<number | null>(null);
+  /*
+   * Mounted is not drawn. On the home page this is the seventh canvas and
+   * fourteen textures have to decode behind six other scenes — measured at
+   * ten to fifteen seconds before the first frame. A bordered empty box for
+   * that long reads as broken, so the box says what it is doing until the
+   * scene reports its first drawn frame.
+   */
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -45,14 +54,20 @@ export default function DomeGallery() {
     return () => io.disconnect();
   }, []);
 
-  const item = active === null ? null : gallery[active];
+  const item = active === null ? null : items[active];
 
   return (
     <div className={styles.wrap}>
-      <div ref={host} className={styles.dome} data-live={mounted || undefined}>
-        {mounted ? <DomeGalleryScene items={gallery} paused={!visible} onActive={setActive} /> : null}
+      <div ref={host} className={styles.dome} data-live={mounted || undefined} data-ready={ready || undefined} data-tone={tone}>
+        {mounted ? <DomeGalleryScene items={items} paused={!visible} onActive={setActive} onReady={() => setReady(true)} tone={tone} /> : null}
 
-        {mounted ? (
+        {mounted && !ready ? (
+          <p className={styles.loading} aria-hidden="true">
+            Hanging the work…
+          </p>
+        ) : null}
+
+        {ready ? (
           <>
             <p className={styles.hint} aria-hidden="true">
               Drag to look around · click to open
@@ -71,8 +86,8 @@ export default function DomeGallery() {
 
       {/* The work, as markup. Always in the DOM — this is how the gallery is
           crawled, and how it reads with the canvas absent. */}
-      <ul className={styles.grid} data-behind={mounted || undefined}>
-        {gallery.map((g) => (
+      <ul className={styles.grid} data-behind={ready || undefined}>
+        {items.map((g) => (
           <li key={g.texture} className={styles.cell}>
             {g.href ? (
               <a href={g.href} target="_blank" rel="noreferrer noopener" className={styles.cellLink}>

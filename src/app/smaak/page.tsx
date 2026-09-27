@@ -148,7 +148,7 @@ export default function SmaakPage() {
             </p>
           }
         />
-        <DomeGallery />
+        <DomeGallery tone="smaak" />
       </Section>
 
       {/* ── The clients. ─────────────────────────────────────────────────── */}

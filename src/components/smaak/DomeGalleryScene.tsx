@@ -35,6 +35,20 @@ const RADIUS = 5.2;
 const FRAME_H = 2.3;
 
 /*
+ * The dome is used on two pages with two palettes (2026-09-27). /smaak is
+ * Smaak blue by documented exception; the home page is Space OS and must
+ * stay emerald. Only the CHROME changes — the frame hairlines, the hover
+ * colour and the tint on the drag sphere. The artwork itself is whatever
+ * colour Ali made it, on both.
+ */
+export type DomeTone = "emerald" | "smaak";
+
+const TONES: Record<DomeTone, { line: string; hover: string; shell: string }> = {
+  emerald: { line: "#1f4438", hover: "#3cdd9e", shell: "#04100c" },
+  smaak: { line: "#2a4a7a", hover: "#00ccff", shell: "#000814" },
+};
+
+/*
  * Placement: rings, not a golden-angle scatter.
  *
  * The first version spread the fourteen pieces evenly over the whole sphere
@@ -70,10 +84,15 @@ export default function DomeGalleryScene({
   items,
   paused,
   onActive,
+  onReady,
+  tone = "emerald",
 }: {
   items: GalleryItem[];
   paused: boolean;
   onActive: (i: number | null) => void;
+  /** Fired on the first drawn frame — see the note in DomeGallery. */
+  onReady?: () => void;
+  tone?: DomeTone;
 }) {
   const [warm, setWarm] = useState(false);
   const low = perf.level === "low";
@@ -88,13 +107,13 @@ export default function DomeGalleryScene({
       style={{ background: "transparent" }}
     >
       <ambientLight intensity={1.1} />
-      <Dome items={items} onActive={onActive} />
+      <Dome items={items} onActive={onActive} onReady={onReady} tone={TONES[tone]} />
       <WarmShaders onWarm={() => setWarm(true)} />
     </Canvas>
   );
 }
 
-function Dome({ items, onActive }: { items: GalleryItem[]; onActive: (i: number | null) => void }) {
+function Dome({ items, onActive, onReady, tone }: { items: GalleryItem[]; onActive: (i: number | null) => void; onReady?: () => void; tone: { line: string; hover: string; shell: string } }) {
   const group = useRef<THREE.Group>(null);
   const spin = useRef(0.12);
   const drag = useRef<{ on: boolean; x: number; y: number }>({ on: false, x: 0, y: 0 });
@@ -115,8 +134,15 @@ function Dome({ items, onActive }: { items: GalleryItem[]; onActive: (i: number 
     }
   }, [textures]);
 
+  const announced = useRef(false);
   useFrame((_, delta) => {
     if (!group.current) return;
+    // useLoader suspends until every texture is decoded, so the first frame
+    // this runs is the first frame with artwork actually on screen.
+    if (!announced.current) {
+      announced.current = true;
+      onReady?.();
+    }
     // Momentum: the dome keeps turning after a drag and slows down, rather
     // than stopping dead the instant a finger lifts.
     if (!drag.current.on) spin.current += (0.12 - spin.current) * Math.min(delta * 0.8, 1);
@@ -148,7 +174,7 @@ function Dome({ items, onActive }: { items: GalleryItem[]; onActive: (i: number 
           so a drag that starts on empty sky still turns the dome. */}
       <mesh onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp}>
         <sphereGeometry args={[RADIUS + 2.5, 16, 16]} />
-        <meshBasicMaterial color="#000814" side={THREE.BackSide} transparent opacity={0.35} />
+        <meshBasicMaterial color={tone.shell} side={THREE.BackSide} transparent opacity={0.35} />
       </mesh>
 
       {items.map((item, i) => (
@@ -160,6 +186,7 @@ function Dome({ items, onActive }: { items: GalleryItem[]; onActive: (i: number 
           onOver={() => onActive(i)}
           onOut={() => onActive(null)}
           href={item.href}
+          tone={tone}
         />
       ))}
     </group>
@@ -173,6 +200,7 @@ function Frame({
   onOver,
   onOut,
   href,
+  tone,
 }: {
   texture: THREE.Texture;
   phi: number;
@@ -180,6 +208,7 @@ function Frame({
   onOver: () => void;
   onOut: () => void;
   href?: string;
+  tone: { line: string; hover: string };
 }) {
   const ref = useRef<THREE.Group>(null);
   const [hover, setHover] = useState(false);
@@ -248,7 +277,7 @@ function Frame({
           reads as hung rather than floating. */}
       <lineSegments>
         <edgesGeometry args={[new THREE.PlaneGeometry(w * 1.03, h * 1.05)]} />
-        <lineBasicMaterial color={hover ? "#00ccff" : "#2a4a7a"} transparent opacity={hover ? 0.9 : 0.45} />
+        <lineBasicMaterial color={hover ? tone.hover : tone.line} transparent opacity={hover ? 0.9 : 0.45} />
       </lineSegments>
     </group>
   );

@@ -813,6 +813,30 @@ the open channel; the one joke; keep it the only one).
   added by screenshotting the live sites Ali built (sundermasala.com,
   wolfcasa.in) at 1440×900.
 
+- *The gallery is on both pages now* (2026-09-28). Ali: "I need a gallery
+  section on main home page and smaak.ux." `DomeGallery` takes a `tone`
+  and an `items` slice, so one component serves two palettes: **emerald by
+  default** (the home page is Space OS) and `tone="smaak"` for the blue on
+  /smaak. Only the chrome changes — frame hairlines, hover colour, the tint
+  on the drag sphere and the box's own glow; the artwork is whatever colour
+  Ali made it. The blue must never reach the front door.
+  On home it sits at the top of the **Studio leg (08)**, showing ten of the
+  fourteen pieces, with the four hologram projectors kept beneath it: a
+  hologram is how this site says "project", and the leg still hands off to
+  the deck. No new leg, so nothing was renumbered — but the leg grew from
+  ~900px to 1891px and `HOME_PLAN` was re-plotted from a fresh measurement
+  (1440×900, H 19511). The studio waypoint moved to the left margin, high
+  and small: the dome fills the width and takes the drag, so the ship keeps
+  clear of it.
+  One thing worth knowing before touching it: on home this is the SEVENTH
+  canvas and its fourteen textures decode behind six other scenes —
+  measured at 10–15 s to the first drawn frame, against ~3 s on /smaak. A
+  bordered empty box for that long reads as broken, so the scene reports its
+  first drawn frame (`onReady`, fired from the first `useFrame` after
+  `useLoader` resolves) and the box says "Hanging the work…" until then. The
+  grid underneath only dims once that fires, so the work is never hidden
+  behind a canvas that has not arrived.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
