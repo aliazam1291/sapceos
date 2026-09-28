@@ -1255,6 +1255,17 @@
   justify-content: flex-end;
   overflow: hidden;
   isolation: isolate;
+
+  // The 88vh floor assumes the three columns below sit side by side, which
+  // is true from ~700px up. Under 640px they stack (see .footerLinks) and
+  // the stack alone clears 900px, so the floor never actually reserves
+  // empty ground on a phone — but it did keep the horizon scene rendering
+  // at up to 760px of canvas for a decoration nobody scrolls slowly enough
+  // to see. Capped instead of removed: still enough vertical run for the
+  // grid to reach a vanishing point.
+  @media (max-width: 640px) {
+    min-height: min(56vh, 460px);
+  }
 }
 
 /*
@@ -1300,12 +1311,35 @@
   display: grid;
   gap: var(--space-8);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+
+  @media (max-width: 640px) {
+    padding-block: var(--space-8);
+    gap: var(--space-6);
+  }
 }
 
 .footerCol {
   display: grid;
   gap: var(--space-3);
   align-content: start;
+}
+
+// The link list under each column label. Grid (one per row) everywhere the
+// columns run side by side; below 640px the three columns stack, and
+// Navigation and Elsewhere (nine and ten items) ran one-per-row to 400-450px
+// EACH on a phone (measured 2026-09-29 at 375px — footerInner alone hit
+// 1179px). Wrapping them into a chip row instead cuts that by more than
+// half; each chip still clears the 36px tap floor (2026-09-22) because it
+// wraps as its own unit, not because it fills the row.
+.footerLinks {
+  display: grid;
+  gap: var(--space-3);
+
+  @media (max-width: 640px) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
 }
 
 .footerLink {

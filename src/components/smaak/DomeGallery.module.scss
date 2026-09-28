@@ -137,6 +137,18 @@
   &[data-behind] {
     opacity: 0.72;
   }
+
+  // minmax(190px, 1fr) floors at ONE column under ~400px, so on a phone this
+  // fallback — always in the DOM, per the note above, for crawlers and no-JS
+  // — stacked fourteen full-width covers into ~3800px of pure scroll beneath
+  // a dome nearly everyone's browser can already render (measured 2026-09-29,
+  // 375px: the Studio leg hit 5623px, most of it this grid). Two columns cuts
+  // it to about a third; the crawler still gets every item, the reader gets
+  // a thumbnail row instead of a second gallery's worth of scrolling.
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
 }
 
 .cell {

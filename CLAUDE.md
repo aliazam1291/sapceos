@@ -858,6 +858,34 @@ the open channel; the one joke; keep it the only one).
   and asked for space-theme UI on 2026-09-28, which are different requests.
   The writing stays; the furniture changed.
 
+- *The footer was paying for a desktop layout on a phone* (2026-09-29). Ali:
+  "the footer not responsive on mobile, too much scroll, optimize wrt
+  mobile." Measured at 375px rather than guessed (browser pane, production
+  build): the footer alone was 1531px — more than the whole viewport twice
+  over — because `.footerInner`'s three-column grid (`auto-fit,
+  minmax(min(100%,220px),1fr)`) has no room for two 220px tracks under
+  ~460px, so Navigation (9 links) and Elsewhere (10 links) each fell back to
+  ONE PER ROW: 404px and 452px of stacked 36px tap targets, for lists that
+  are one word each. `.footerLinks` (new; Footer.tsx now wraps each
+  column's links in it) wraps them into a chip row below 640px instead —
+  same 36px floor per chip, four or five to a line — which took the footer
+  to 939px. `.footer`'s own `min-height: min(88vh,760px)` assumed the
+  columns sit side by side (true from ~700px up); below 640px it's capped
+  at `min(56vh,460px)` so a short phone doesn't carry a canvas taller than
+  its content needs.
+  The bigger number was the Studio leg, not the footer: 5623px on a phone,
+  because `DomeGallery`'s always-in-DOM fallback grid (`minmax(190px,1fr)`,
+  the crawler/no-JS copy of the fourteen gallery pieces, dimmed once the
+  dome canvas is live — see the 2026-09-27 note) also floors at one column
+  under ~400px and stacked fourteen full-width covers into ~3800px beneath
+  a dome almost every phone can already render. Two columns below 640px
+  cut it to ~1900px. Home page total, 375px, measured end to end: 23331px
+  → 20840px. Checked with `mobile-uat.mjs` (375/320, both `/` and
+  `/smaak`: no pan, no overflow, no tiny text, no small taps) and
+  `shift-uat.mjs` (no new shrink). `HOME_PLAN` was not re-plotted: both
+  fixes are gated `max-width: 640px` and the desktop-viewport section
+  fractions `sections-uat.mjs` reads for the plan are unchanged.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

@@ -28,26 +28,30 @@ export default function Footer() {
       <div className={ui.footerInner}>
         <div className={ui.footerCol}>
           <p className={ui.label}>Navigation</p>
-          {nav.map((n) => (
-            <Link key={n.href} href={n.href} className={ui.footerLink}>
-              {n.label}
-            </Link>
-          ))}
+          <div className={ui.footerLinks}>
+            {nav.map((n) => (
+              <Link key={n.href} href={n.href} className={ui.footerLink}>
+                {n.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className={ui.footerCol}>
           <p className={ui.label}>Elsewhere</p>
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className={ui.footerLink}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {l.label}
-            </a>
-          ))}
+          <div className={ui.footerLinks}>
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className={ui.footerLink}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
         </div>
 
         <div className={ui.footerCol}>
