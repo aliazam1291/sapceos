@@ -750,7 +750,8 @@ the open channel; the one joke; keep it the only one).
   stays exactly as it was — the deck of client work plus the independent
   Behance pieces, in the site's own language. **Two exceptions live on
   /smaak and neither is an oversight:**
-  (1) **Colour.** The page is Smaak blue (#0066FF / #00CCFF / #4D9FFF),
+  (1) **Colour.** ~~WITHDRAWN 2026-09-28 — see "The Smaak blue is withdrawn"
+  below; the page is emerald now.~~ The page was Smaak blue (#0066FF / #00CCFF / #4D9FFF),
   against the black-and-emerald rule and against the blue cast rejected on
   2026-09-12. The studio is a separate brand and this is its page inside the
   portfolio, not another room of it. The blue is scoped to local custom
@@ -837,12 +838,32 @@ the open channel; the one joke; keep it the only one).
   grid underneath only dims once that fires, so the work is never hidden
   behind a canvas that has not arrived.
 
+- *The Smaak blue is withdrawn* (2026-09-28). Ali, two days after asking
+  for it: "for the smaak section we need better UI with our space theme."
+  **The colour exception recorded on 2026-09-26 no longer applies** — do not
+  reinstate it from that older note. /smaak is Space OS now:
+  - the bespoke hero is gone, replaced by the site's `PageHeader` (label,
+    plain name, title, lede, the route's object in the right column) plus a
+    `Comms` line, so the masthead matches every other page;
+  - `smaak.module.scss` defines no local custom properties at all — every
+    colour is an ordinary token, and the file is layout only;
+  - `SmaakPlanetScene` follows the palette rules rather than Smaak's brand:
+    the body is ochre lit by one warm sun ("amber is for the field"), the
+    shell, wireframe, ring and orbiting particles are emerald, and the dust
+    band is warm. No hex in that file is blue;
+  - `DomeGallery`'s second palette is deleted rather than left as dead code.
+    `DomeTone` is a one-member union now, kept only as the seam to widen if
+    another palette ever earns its place.
+  What did NOT change is the voice: Ali asked for sassy copy on 2026-09-26
+  and asked for space-theme UI on 2026-09-28, which are different requests.
+  The writing stays; the furniture changed.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
 
 **Page map (each page is a place).**
-Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/smaak` = the studio as its own brand — blue, sassy, its own planet, client work only. `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
+Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/smaak` = the studio — the site's own palette (the blue was withdrawn 2026-09-28), sassy copy, its own planet, client work only, with the dome gallery. `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
 
 Context for Claude Code working in this repo. Read this first, every session.
 

@@ -4,8 +4,10 @@ import Image from "next/image";
 import SmaakPlanet from "@/components/smaak/SmaakPlanet";
 import DomeGallery from "@/components/smaak/DomeGallery";
 import { gallery } from "@/content/gallery";
-import { ButtonLink, NextStep, Section, SectionHead, ui } from "@/components/ui";
+import Comms from "@/components/Comms";
+import { ButtonLink, NextStep, PageHeader, Section, SectionHead, ui } from "@/components/ui";
 import { studio, studioAlso, studioKindLabel, studioPieces } from "@/content/studio";
+import { plainName } from "@/content/pages";
 import { profile } from "@/content/profile";
 import { breadcrumbJsonLd, jsonLd, personId } from "@/lib/seo";
 import { identityKeywords, keywordsFor } from "@/lib/keywords";
@@ -94,47 +96,46 @@ export default function SmaakPage() {
         }}
       />
 
-      {/* ── Hero. The object scrolls; the copy has a mouth. ───────────────── */}
-      <header className={styles.hero}>
-        <div className={styles.heroInner}>
-          <div className={styles.heroCopy}>
-            <p className={styles.kicker}>
-              {studio.name} <span className={styles.kickerPlain}>· freelance design, since {studio.since}</span>
-            </p>
-            <h1 className={styles.title}>
-              I make brands that <span className={styles.em}>look</span> like they know what they&rsquo;re doing.
-            </h1>
-            <p className={styles.lede}>
-              Usually because, by the end, they do. Logos, websites, product UI and the deck you raise on — for a
-              seventy-year-old spice house, an interiors showroom, a web3 node platform and whoever emails next.
-            </p>
-            <p className={styles.sub}>
-              Run by {profile.name} alongside a full-time job building fleet software, which is either a red flag or
-              the whole pitch, depending on how you feel about people who cannot sit still.
-            </p>
-            <div className={styles.heroActions}>
-              <Link className={styles.primary} href="/contact">
-                Start something
-              </Link>
-              <a className={styles.secondary} href={studio.behance} target="_blank" rel="noreferrer noopener">
-                Behance <span aria-hidden="true">↗</span>
-              </a>
-              <a className={styles.secondary} href={studio.figma} target="_blank" rel="noreferrer noopener">
-                Figma <span aria-hidden="true">↗</span>
-              </a>
-            </div>
-          </div>
-
+      {/*
+       * The site's own masthead (2026-09-28). This route used to carry a
+       * bespoke hero in Smaak blue; Ali asked for the space theme, so it now
+       * uses the same PageHeader as every other page — label, plain name,
+       * title, lede, and the route's signature object in the right column.
+       * The copy keeps its mouth; only the furniture changed.
+       */}
+      <PageHeader
+        label={`${studio.name} · freelance design, since ${studio.since}`}
+        plain={plainName["/smaak"]}
+        title="Brands that look like they know what they're doing"
+        lede="Usually because, by the end, they do. Logos, websites, product UI and the deck you raise on — for a seventy-year-old spice house, an interiors showroom, a web3 node platform and whoever emails next."
+        figure={
           <SmaakPlanet
-            className={styles.planet}
-            label="A dark metallic planet inside a blue glass shell, circled by a thin data ring with points of light orbiting it. It tips and spins as the page scrolls."
+            label="An ochre world inside a faint emerald shell, circled by a thin data ring with points of light orbiting it. It tips and spins as the page scrolls."
           />
-        </div>
+        }
+        figureWidth={320}
+      />
+      <div className={ui.pageComms}>
+        <Comms at="studio" />
+      </div>
 
-        <p className={styles.scrollHint} aria-hidden="true">
-          Scroll — the planet is load-bearing
+      <Section id="intro" data-section="The studio">
+        <p className={styles.sub}>
+          Run by {profile.name} alongside a full-time job building fleet software, which is either a red flag or the
+          whole pitch, depending on how you feel about people who cannot sit still.
         </p>
-      </header>
+        <div className={ui.buttonRow}>
+          <ButtonLink href="/contact" primary>
+            Start something
+          </ButtonLink>
+          <ButtonLink href={studio.behance} external>
+            Behance
+          </ButtonLink>
+          <ButtonLink href={studio.figma} external>
+            Figma
+          </ButtonLink>
+        </div>
+      </Section>
 
       {/* ── The work, hung in a dome. ────────────────────────────────────── */}
       <Section id="work" data-section="The work">
@@ -148,7 +149,7 @@ export default function SmaakPage() {
             </p>
           }
         />
-        <DomeGallery tone="smaak" />
+        <DomeGallery />
       </Section>
 
       {/* ── The clients. ─────────────────────────────────────────────────── */}

@@ -1,159 +1,29 @@
 @use "../../styles/tokens.scss" as *;
 
 /*
- * Smaak.ux — the one route on this site that is not emerald.
+ * Smaak.ux (2026-09-28). Ali: "for the smaak section we need better UI with
+ * our space theme."
  *
- * The blue is scoped entirely to `.smaak`: local custom properties, nothing
- * written back to the tokens, nothing leaking to another page. A reader who
- * navigates away is back in Space OS's palette on the next paint. See the
- * header comment in page.tsx for why this exception exists.
+ * This route used to define its own blue palette and its own hero. Both are
+ * gone: the masthead is the site's `PageHeader` like every other page, and
+ * every colour here is an ordinary token, so the studio reads as a room of
+ * Space OS rather than a different website wearing its nav. What is left in
+ * this file is layout — the client rows, the service counters, the loose
+ * ends — plus the one place the accent is allowed to do work.
+ *
+ * Panels and hairlines, no cards: the client list is text content, and text
+ * content gets rows (CLAUDE.md, "panels are for text-only content").
  */
 .smaak {
-  --smaak: #0066ff;
-  --smaak-bright: #00ccff;
-  --smaak-soft: #4d9fff;
-  --smaak-line: rgba(77, 159, 255, 0.26);
-  --smaak-dim: rgba(128, 170, 255, 0.55);
-
   position: relative;
-}
-
-/* ── Hero ─────────────────────────────────────────────────────────────── */
-
-.hero {
-  @include shell;
-  position: relative;
-  padding-block: clamp(var(--space-12), 9vw, 7rem) var(--space-12);
-}
-
-.heroInner {
-  display: grid;
-  gap: clamp(var(--space-8), 5vw, 4rem);
-  align-items: center;
-
-  @media (min-width: 900px) {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  }
-}
-
-.heroCopy {
-  display: grid;
-  gap: var(--space-5);
-  align-content: start;
-}
-
-.kicker {
-  @include mono-label;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin: 0;
-  color: var(--smaak-bright);
-}
-
-.kickerPlain {
-  text-transform: none;
-  letter-spacing: 0;
-  font-family: var(--font-sans);
-  font-size: var(--type-small);
-  color: var(--text-tertiary);
-}
-
-.title {
-  margin: 0;
-  // Bigger than the site's page titles on purpose: this is a designer's
-  // portfolio, and "less page, more sky" governs Space OS, not Smaak.
-  font-size: clamp(2.1rem, 5.4vw, 4rem);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-  max-width: 18ch;
-  text-wrap: balance;
-  color: var(--text-primary);
-}
-
-.em {
-  color: var(--smaak-bright);
-  font-style: italic;
-}
-
-.lede {
-  margin: 0;
-  font-size: clamp(1rem, 1.3vw, 1.125rem);
-  line-height: 1.6;
-  color: var(--text-secondary);
-  max-width: 48ch;
 }
 
 .sub {
-  margin: 0;
+  margin: 0 0 var(--space-8);
   font-size: var(--type-small);
-  line-height: 1.6;
-  color: var(--text-tertiary);
-  max-width: 46ch;
-}
-
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-
-.primary,
-.secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 44px;
-  padding: 0 var(--space-6);
-  border: 1px solid var(--smaak-line);
-  border-radius: 100px;
-  font-size: var(--type-small);
-  text-decoration: none;
-  transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out),
-    color var(--dur-base) var(--ease-out);
-}
-
-.primary {
-  background: var(--smaak);
-  border-color: var(--smaak);
-  color: #ffffff;
-
-  @include hover-only {
-    &:hover {
-      background: var(--smaak-bright);
-      border-color: var(--smaak-bright);
-      color: #001028;
-    }
-  }
-}
-
-.secondary {
+  line-height: 1.65;
   color: var(--text-secondary);
-
-  @include hover-only {
-    &:hover {
-      border-color: var(--smaak-bright);
-      color: var(--smaak-bright);
-    }
-  }
-}
-
-.planet {
-  max-width: 520px;
-  justify-self: center;
-
-  @media (max-width: 899px) {
-    max-width: 320px;
-    order: -1;
-  }
-}
-
-.scrollHint {
-  @include mono-label;
-  margin: var(--space-10) 0 0;
-  color: var(--smaak-dim);
+  max-width: 58ch;
 }
 
 /* ── Clients ──────────────────────────────────────────────────────────── */
@@ -163,7 +33,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  border-top: 1px solid var(--smaak-line);
+  border-top: 1px solid var(--line-strong);
 }
 
 .client {
@@ -188,7 +58,7 @@
 
 .clientIndex {
   @include mono-label;
-  color: var(--smaak-soft);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
   padding-top: 0.35rem;
 }
@@ -232,7 +102,7 @@
 
   @include hover-only {
     &:hover {
-      color: var(--smaak-bright);
+      color: var(--accent);
     }
   }
 }
@@ -276,9 +146,11 @@
   }
 }
 
+// The sector is the one lit thing in a client row — it is what a visitor
+// scanning for "has he worked in my industry" is actually looking for.
 .industry {
-  border-color: var(--smaak-line);
-  color: var(--smaak-bright);
+  border-color: var(--accent-line);
+  color: var(--accent);
 }
 
 /* ── Services ─────────────────────────────────────────────────────────── */
@@ -305,7 +177,7 @@
   font-size: clamp(1.75rem, 3.4vw, 2.6rem);
   line-height: 1;
   letter-spacing: -0.04em;
-  color: var(--smaak-bright);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
@@ -346,8 +218,8 @@
 
   @include hover-only {
     &:hover {
-      border-color: var(--smaak-line);
-      color: var(--smaak-bright);
+      border-color: var(--accent-line);
+      color: var(--accent);
     }
   }
 }

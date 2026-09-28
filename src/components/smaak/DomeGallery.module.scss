@@ -14,11 +14,10 @@
 
 .dome {
   /*
-   * Two palettes, one component (2026-09-27). The default is the site's own
-   * emerald, because this gallery is on the HOME page as well as /smaak and
-   * the home page is Space OS — the blue is a documented exception scoped to
-   * the studio's route, and must not leak onto the front door.
-   * `data-tone="smaak"` opts into it.
+   * The gallery's own colour, kept as properties so the chrome is declared
+   * in one place rather than smeared across five rules. It was briefly two
+   * palettes — a Smaak blue for /smaak — but that route uses the space theme
+   * now, so both pages that mount the dome are emerald (2026-09-28).
    */
   --dome-edge: var(--line-strong);
   --dome-glow: rgba(60, 221, 158, 0.1);
@@ -26,15 +25,6 @@
   --dome-ground: #04100c;
   --dome-accent: var(--accent);
   --dome-hint: rgba(60, 221, 158, 0.55);
-
-  &[data-tone="smaak"] {
-    --dome-edge: rgba(77, 159, 255, 0.26);
-    --dome-glow: rgba(0, 102, 255, 0.12);
-    --dome-glow-2: rgba(0, 204, 255, 0.07);
-    --dome-ground: #02060f;
-    --dome-accent: #00ccff;
-    --dome-hint: rgba(128, 170, 255, 0.6);
-  }
 
   position: relative;
   width: 100%;

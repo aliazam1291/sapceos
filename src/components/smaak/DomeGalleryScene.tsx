@@ -35,17 +35,18 @@ const RADIUS = 5.2;
 const FRAME_H = 2.3;
 
 /*
- * The dome is used on two pages with two palettes (2026-09-27). /smaak is
- * Smaak blue by documented exception; the home page is Space OS and must
- * stay emerald. Only the CHROME changes — the frame hairlines, the hover
- * colour and the tint on the drag sphere. The artwork itself is whatever
- * colour Ali made it, on both.
+ * One palette (2026-09-28). This briefly had a second, "smaak" blue, for
+ * /smaak's own branding; Ali asked for the space theme there instead, so
+ * both pages that mount the dome are emerald now and the variant is gone
+ * rather than left as dead code. The `tone` prop stays because it is the
+ * seam to widen if another palette ever earns its place — the CHROME is all
+ * it controls (frame hairlines, hover, the tint on the drag sphere). The
+ * artwork is whatever colour Ali made it, everywhere.
  */
-export type DomeTone = "emerald" | "smaak";
+export type DomeTone = "emerald";
 
 const TONES: Record<DomeTone, { line: string; hover: string; shell: string }> = {
   emerald: { line: "#1f4438", hover: "#3cdd9e", shell: "#04100c" },
-  smaak: { line: "#2a4a7a", hover: "#00ccff", shell: "#000814" },
 };
 
 /*

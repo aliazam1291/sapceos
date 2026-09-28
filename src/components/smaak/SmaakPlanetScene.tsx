@@ -17,14 +17,13 @@ import { perf } from "@/lib/perf";
  * built it: a metallic void core, a glass shell over it, a faint wireframe
  * layer, a tilted data ring, and twelve particles orbiting the ring.
  *
- * THE COLOUR IS A DELIBERATE EXCEPTION AND MUST NOT BE "FIXED".
- * Everything else on this site is black + emerald, and a blue cast was tried
- * and rejected on 2026-09-12. This scene stays Smaak blue (#0066FF /
- * #00CCFF / #4D9FFF) because Ali asked for it on 2026-09-26: Smaak.ux is a
- * separate brand with its own identity, and /smaak is its page inside the
- * portfolio rather than another room of it. The exception is scoped to this
- * one route — nothing else imports this scene, and the page's blue lives in
- * local custom properties, not in the tokens.
+ * COLOUR (2026-09-28). **The blue exception is withdrawn.** Ali, reversing
+ * the 2026-09-26 call: "for the smaak section we need better UI with our
+ * space theme." So the body follows the site's palette rules rather than
+ * Smaak's brand — the world is amber/ochre lit by one warm sun (CLAUDE.md:
+ * "amber is for the field — planets, dust, the core"), and every instrument
+ * line on it is emerald. Nothing here is blue any more, and the page no
+ * longer defines local blue custom properties.
  *
  * What changed in the port, all of it required by this repo's rules:
  *  - `quietGL` on create, `WarmShaders` before the first frame, and the
@@ -53,16 +52,18 @@ export default function SmaakPlanetScene({ paused }: { paused: boolean }) {
       camera={{ position: [0, 0, 18], fov: 45, near: 0.1, far: 60 }}
       style={{ background: "transparent" }}
     >
-      <ambientLight intensity={0.2} color="#001133" />
-      <pointLight position={[15, 10, 10]} intensity={2.5} color="#0066FF" distance={50} />
-      <pointLight position={[-15, -10, -5]} intensity={1.5} color="#00CCFF" distance={50} />
-      <spotLight position={[0, 15, 0]} intensity={1} angle={0.3} penumbra={1} color="#4D9FFF" />
+      {/* One warm sun, a cool bounce and a soft emerald key — the same
+          lighting logic the galaxy's own bodies use. */}
+      <ambientLight intensity={0.22} color="#1b2a26" />
+      <pointLight position={[15, 10, 10]} intensity={2.6} color="#ffd9a0" distance={50} />
+      <pointLight position={[-15, -10, -5]} intensity={1.2} color="#3a6f5e" distance={50} />
+      <spotLight position={[0, 15, 0]} intensity={0.9} angle={0.3} penumbra={1} color="#8af0c8" />
 
       <Float speed={1.2} rotationIntensity={0.5} floatIntensity={0.5}>
         <CyberPlanet low={low} />
       </Float>
 
-      {!low ? <Sparkles count={200} scale={30} size={2} speed={0.2} opacity={0.6} color="#80AAFF" /> : null}
+      {!low ? <Sparkles count={200} scale={30} size={2} speed={0.2} opacity={0.55} color="#8af0c8" /> : null}
 
       <WarmShaders onWarm={() => setWarm(true)} />
     </Canvas>
@@ -100,13 +101,14 @@ function CyberPlanet({ low }: { low: boolean }) {
 
   return (
     <group ref={groupRef}>
-      {/* 1. The void core. */}
+      {/* 1. The body. Ochre rock, not a void: a world on this site is amber,
+             and the saturation comes from the warm sun rather than the paint. */}
       <mesh>
         <sphereGeometry args={[3.8, low ? 32 : 64, low ? 32 : 64]} />
         <meshPhysicalMaterial
-          color="#000510"
-          emissive="#001133"
-          emissiveIntensity={0.2}
+          color="#6b4a2a"
+          emissive="#1a0f06"
+          emissiveIntensity={0.25}
           roughness={0.1}
           metalness={0.9}
           clearcoat={1}
@@ -121,7 +123,7 @@ function CyberPlanet({ low }: { low: boolean }) {
         <sphereGeometry args={[3.8, low ? 32 : 64, low ? 32 : 64]} />
         {perf.level === "high" ? (
           <meshPhysicalMaterial
-            color="#0066FF"
+            color="#2fbf8a"
             transmission={0.6}
             thickness={1.5}
             roughness={0}
@@ -132,26 +134,27 @@ function CyberPlanet({ low }: { low: boolean }) {
             side={THREE.DoubleSide}
           />
         ) : (
-          <meshBasicMaterial color="#0066FF" transparent opacity={0.16} side={THREE.DoubleSide} />
+          <meshBasicMaterial color="#2fbf8a" transparent opacity={0.14} side={THREE.DoubleSide} />
         )}
       </mesh>
 
-      {/* 3. The wireframe layer. */}
+      {/* 3. The wireframe layer — an instrument over a world, so emerald. */}
       <mesh scale={[1.15, 1.15, 1.15]}>
         <icosahedronGeometry args={[3.8, 2]} />
-        <meshBasicMaterial color="#00CCFF" wireframe transparent opacity={0.08} side={THREE.FrontSide} />
+        <meshBasicMaterial color="#8af0c8" wireframe transparent opacity={0.09} side={THREE.FrontSide} />
       </mesh>
 
-      {/* 4. The data ring, and what rides it. */}
+      {/* 4. The data ring, and what rides it. Emerald instrument line over a
+             warm dust band — the same division the galaxy uses. */}
       <group ref={ringRef} rotation={[Math.PI / 3, 0, 0]}>
         <mesh>
           <torusGeometry args={[6.5, 0.02, 16, 100]} />
-          <meshBasicMaterial color="#4D9FFF" transparent opacity={0.6} />
+          <meshBasicMaterial color="#3cdd9e" transparent opacity={0.6} />
         </mesh>
 
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <ringGeometry args={[5.5, 7.5, 64]} />
-          <meshBasicMaterial color="#003399" transparent opacity={0.05} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
+          <meshBasicMaterial color="#ffb35a" transparent opacity={0.07} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
         </mesh>
 
         {orbiters.map((_, i) => (
@@ -182,7 +185,7 @@ function OrbitingParticle({ index, total, radius, speed }: { index: number; tota
       </mesh>
       <mesh scale={[2, 2, 2]}>
         <sphereGeometry args={[0.1, 8, 8]} />
-        <meshBasicMaterial color="#00CCFF" transparent opacity={0.4} />
+        <meshBasicMaterial color="#3cdd9e" transparent opacity={0.4} />
       </mesh>
     </group>
   );
