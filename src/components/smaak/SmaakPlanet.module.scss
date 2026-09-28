@@ -13,11 +13,17 @@
 
   // The planet's own light, on the compositor. Sized so the copy beside it
   // sits inside the falloff rather than against a hard edge.
+  //
+  // This was Smaak blue (0, 102, 255) until 2026-09-29 — a leftover from
+  // before the palette switched to emerald/amber (2026-09-28): the scene's
+  // own hex went emerald that day, but this CSS glow around it didn't, so
+  // the planet sat inside a haze fighting its own light. Amber core, warm
+  // sun — the glow now reads as the sun's own bloom rather than a stray tint.
   &::before {
     content: "";
     position: absolute;
     inset: -12%;
-    background: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.18), rgba(0, 102, 255, 0.05) 45%, transparent 70%);
+    background: radial-gradient(circle at 50% 50%, rgba(255, 179, 90, 0.16), rgba(60, 221, 158, 0.06) 45%, transparent 70%);
     pointer-events: none;
   }
 

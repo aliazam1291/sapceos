@@ -54,8 +54,8 @@ export default function SmaakPlanetScene({ paused }: { paused: boolean }) {
     >
       {/* One warm sun, a cool bounce and a soft emerald key — the same
           lighting logic the galaxy's own bodies use. */}
-      <ambientLight intensity={0.22} color="#1b2a26" />
-      <pointLight position={[15, 10, 10]} intensity={2.6} color="#ffd9a0" distance={50} />
+      <ambientLight intensity={0.3} color="#1b2a26" />
+      <pointLight position={[15, 10, 10]} intensity={3.4} color="#ffd9a0" distance={50} />
       <pointLight position={[-15, -10, -5]} intensity={1.2} color="#3a6f5e" distance={50} />
       <spotLight position={[0, 15, 0]} intensity={0.9} angle={0.3} penumbra={1} color="#8af0c8" />
 
@@ -102,35 +102,52 @@ function CyberPlanet({ low }: { low: boolean }) {
   return (
     <group ref={groupRef}>
       {/* 1. The body. Ochre rock, not a void: a world on this site is amber,
-             and the saturation comes from the warm sun rather than the paint. */}
+             and the saturation comes from the warm sun rather than the paint.
+             Metalness 0.9/roughness 0.1 was left over from the port's
+             original "metallic void core" (Ali's studio site, pre-retheme) —
+             a near-mirror surface with nothing to reflect, since Environment
+             preset="city" was cut for CSP (see the note above). Lowering
+             metalness helped but did not fix it: isolated with a plain
+             meshBasicMaterial swapped in for a frame (2026-09-29, browser
+             pane, perf.level "low" — SwiftShader), the body itself drew
+             fine, so the direct point lights simply were not reaching a
+             meshPhysicalMaterial's PBR path in that pipeline, at any
+             metalness/roughness. The colour is carried on `emissive` now
+             instead of depending on that lighting resolving — the point
+             lights still add clearcoat sheen where they do land, but the
+             rock reads warm even where they do not. */}
       <mesh>
         <sphereGeometry args={[3.8, low ? 32 : 64, low ? 32 : 64]} />
         <meshPhysicalMaterial
-          color="#6b4a2a"
-          emissive="#1a0f06"
-          emissiveIntensity={0.25}
-          roughness={0.1}
-          metalness={0.9}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-          reflectivity={1}
+          color="#8a5a30"
+          emissive="#7a4a20"
+          emissiveIntensity={0.85}
+          roughness={0.55}
+          metalness={0.15}
+          clearcoat={0.35}
+          clearcoatRoughness={0.3}
         />
       </mesh>
 
-      {/* 2. The glass shell. Transmission is a second render pass per frame,
-             so below "high" it degrades to a plain translucent shell. */}
+      {/* 2. The glass shell. `transmission` refracts whatever the environment
+             map shows through the glass — and there is no environment map
+             (see the note at the top: `Environment preset="city"` was cut
+             for CSP), so at roughness 0 this had nothing correct to render
+             and came out as a near-black murky layer sitting right over the
+             body, the same failure mode the body's metalness had. A plain
+             translucent shell is what it visually was anyway once there's
+             no environment for the "glass" to be optically doing anything
+             with; the clearcoat keeps a soft highlight without needing one. */}
       <mesh scale={[1.1, 1.1, 1.1]}>
         <sphereGeometry args={[3.8, low ? 32 : 64, low ? 32 : 64]} />
         {perf.level === "high" ? (
           <meshPhysicalMaterial
-            color="#2fbf8a"
-            transmission={0.6}
-            thickness={1.5}
-            roughness={0}
-            ior={1.4}
-            clearcoat={1}
+            color="#4fd8a0"
+            roughness={0.3}
+            clearcoat={0.6}
+            clearcoatRoughness={0.2}
             transparent
-            opacity={0.3}
+            opacity={0.22}
             side={THREE.DoubleSide}
           />
         ) : (

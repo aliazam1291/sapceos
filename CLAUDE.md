@@ -886,6 +886,36 @@ the open channel; the one joke; keep it the only one).
   fixes are gated `max-width: 640px` and the desktop-viewport section
   fractions `sections-uat.mjs` reads for the plan are unchanged.
 
+- *The Smaak planet was never actually lit* (2026-09-29). Ali sent a
+  screenshot: a flat dark-green wireframe ball with a muddy blue-grey haze
+  behind it, and "imprve this ui." Two separate bugs, both leftovers from
+  the 2026-09-28 retheme that fixed the scene's own hex values but missed
+  what surrounded them:
+  (1) **The stage's CSS glow** (`SmaakPlanet.module.scss` `.stage::before`)
+  was still Smaak blue (`rgba(0, 102, 255, …)`) — the scene went emerald/
+  amber that day, the halo behind it did not, so the planet sat inside a
+  tint fighting its own colour. Now amber-core/emerald-falloff, matching.
+  (2) **The body and the glass shell were unlit.** Both bugs are the same
+  shape: `meshPhysicalMaterial` properties that depend on an environment
+  map (`metalness` on the body, `transmission` on the shell) with no
+  environment map to depend on — `Environment preset="city"` was cut for
+  CSP back when this was ported (see the file's top note). Without one,
+  high metalness/low roughness reads as black outside its one direct
+  specular hit, and `transmission` at `roughness 0` has nothing correct to
+  refract, so both layers rendered as a near-black wireframe ball no matter
+  what colour they were given underneath. Confirmed by isolating it: swap
+  the body for a flat unlit `meshBasicMaterial` for one frame and it draws
+  fine, so the geometry and compositing were never the problem. Fixed by
+  carrying the body's warm colour on `emissive` instead of depending on the
+  point lights resolving through a PBR path that wasn't reaching it, and by
+  dropping the shell's `transmission` for a plain translucent material —
+  which is what it was optically doing anyway with nothing behind it to
+  refract. `clearcoat` stays on both for a highlight where the lights do
+  land. Any future `meshPhysicalMaterial` in this repo: if it leans on
+  `metalness`, `transmission`, `sheen`, or anything else that reads the
+  environment, and the scene has no `<Environment>`, check what it looks
+  like with an unlit material before assuming the colours are wrong.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
