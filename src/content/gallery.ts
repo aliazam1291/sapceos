@@ -11,8 +11,14 @@
  * decoration.
  *
  * `href` is where the piece can actually be seen in full: the Behance
- * gallery, or the live site. Nothing here claims an outcome.
+ * gallery, or the live site. Nothing here claims an outcome. The Behance
+ * pieces that are also on /studio take their link from studio.ts, so there
+ * is one copy of each URL.
  */
+import { studioPieces } from "./studio";
+
+const behanceOf = (slug: string) => studioPieces.find((p) => p.slug === slug)?.behance;
+
 export type GalleryItem = {
   /** 640px WebP under public/studio/dome. */
   texture: string;
@@ -51,31 +57,37 @@ export const gallery: GalleryItem[] = [
     texture: "/studio/dome/web3-nft-marketplace-ui-multi-page-figma.webp",
     title: "Web3 NFT marketplace",
     kind: "Multi-page UI · Figma",
+    href: behanceOf("web3-nft-marketplace"),
   },
   {
     texture: "/studio/dome/dark-health-dashboard-ui.webp",
     title: "Health dashboard",
     kind: "Dark product UI",
+    href: behanceOf("health-dashboard"),
   },
   {
     texture: "/studio/dome/tedx-srmist-web-design-app-design.webp",
     title: "TEDxSRMIST",
     kind: "Web & app design",
+    href: behanceOf("tedx-srmist"),
   },
   {
     texture: "/studio/dome/talent-connect-logo-brand-identity-visua.webp",
     title: "Talent Connect",
     kind: "Logo & visual identity",
+    href: behanceOf("talent-connect"),
   },
   {
     texture: "/studio/dome/ar-vr-web-design-map-ar-vr.webp",
     title: "AR/VR map",
     kind: "Spatial web design",
+    href: behanceOf("ar-vr-map"),
   },
   {
     texture: "/studio/dome/rois-logo-clothing-brand.webp",
     title: "Rois",
     kind: "Clothing brand identity",
+    href: behanceOf("rois"),
   },
   {
     texture: "/studio/dome/dumb-money.webp",

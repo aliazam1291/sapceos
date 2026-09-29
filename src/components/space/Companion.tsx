@@ -103,7 +103,10 @@ function pagePlanFor(pathname: string): Waypoint[] {
   if (/^\/(missions|field-notes)\/[^/]+/.test(pathname) || pathname === "/dumbmoney") return PAGE_PLAN_REPORT;
   // /flight-data's bar rows run the full width like a deck's object rows,
   // and the numbers at their right end are text the ship would sit on.
-  if (/^\/(missions|field-notes|lab|studio|about|flight-data)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
+  // /smaak is a deck too: a full-width dome, full-width client rows with
+  // their tags at the right end, section notes in the right column — the
+  // prose plan parked the ship on those notes (2026-09-30).
+  if (/^\/(missions|field-notes|lab|studio|smaak|about|flight-data)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
   return PAGE_PLAN_PROSE;
 }
 // Phones (2026-09-18): the same low-right station is a fixed SCREEN

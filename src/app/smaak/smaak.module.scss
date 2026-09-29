@@ -44,6 +44,13 @@
   padding: var(--space-6) 0;
   border-bottom: 1px solid var(--line);
 
+  @include hover-only {
+    &:hover .clientLogo img {
+      filter: none;
+      opacity: 1;
+    }
+  }
+
   @media (max-width: 720px) {
     grid-template-columns: auto minmax(0, 1fr);
 
@@ -76,6 +83,10 @@
   gap: var(--space-3);
 }
 
+// Marks at rest in the page's own light, the way ClientGrid shows them on
+// /about; a client's colours come up only on the row being read. In full
+// colour they were the loudest things on the page — a purple M, an orange
+// knot — louder than the one accent a screen is allowed (2026-09-30).
 .clientLogo {
   display: inline-flex;
   align-items: center;
@@ -83,7 +94,11 @@
   img {
     height: 22px;
     width: auto;
-    opacity: 0.85;
+    filter: grayscale(1) brightness(1.6);
+    opacity: 0.7;
+    transition:
+      filter var(--dur-base) var(--ease-out),
+      opacity var(--dur-base) var(--ease-out);
   }
 }
 

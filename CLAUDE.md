@@ -810,7 +810,10 @@ the open channel; the one joke; keep it the only one).
   are ~400px on screen, so the dome costs 0.29 MB rather than a hero-image
   budget. **The grid underneath is not a placeholder** — it is always in the
   DOM, it is what a crawler reads and what reduced motion or a missing canvas
-  leaves behind, and it only dims once the dome is live. Two covers were
+  leaves behind, and it only dims once the dome is live. (~~Thumbnail grid~~
+  SUPERSEDED 2026-09-30: it is a text index now, and the dome's frames are
+  holograms — see "Smaak speaks Space OS" below. Do not bring back
+  full-colour thumbnails or full-colour frames.) Two covers were
   added by screenshotting the live sites Ali built (sundermasala.com,
   wolfcasa.in) at 1440×900.
 
@@ -879,7 +882,8 @@ the open channel; the one joke; keep it the only one).
   dome canvas is live — see the 2026-09-27 note) also floors at one column
   under ~400px and stacked fourteen full-width covers into ~3800px beneath
   a dome almost every phone can already render. Two columns below 640px
-  cut it to ~1900px. Home page total, 375px, measured end to end: 23331px
+  cut it to ~1900px (and on 2026-09-30 the grid became a text index —
+  see "Smaak speaks Space OS"). Home page total, 375px, measured end to end: 23331px
   → 20840px. Checked with `mobile-uat.mjs` (375/320, both `/` and
   `/smaak`: no pan, no overflow, no tiny text, no small taps) and
   `shift-uat.mjs` (no new shrink). `HOME_PLAN` was not re-plotted: both
@@ -915,6 +919,46 @@ the open channel; the one joke; keep it the only one).
   `metalness`, `transmission`, `sheen`, or anything else that reads the
   environment, and the scene has no `<Environment>`, check what it looks
   like with an unlit material before assuming the colours are wrong.
+
+- *Smaak speaks Space OS* (2026-09-30). Ali: "the smaak section on the
+  entire website looks off, not going with the theme." Measured first —
+  real-GPU stills of every Smaak surface beside the home Hangar. `/studio`
+  and `/about` already spoke the site's language (emerald holograms,
+  grayscaled marks). What did not was the **dome gallery** (home Studio leg
+  and `/smaak`) and three `/smaak` details:
+  (1) The dome was a bordered green box of full-colour screenshots — the
+  only saturated imagery anywhere on the site — every frame rolled at a
+  different angle, under a 109° horizontal lens. Its frames are
+  **holograms** now: a `ShaderMaterial` doing to each texture what
+  `Hologram.module.scss` does to a cover (luminance onto the #1a8f68 →
+  #4de3aa ramp, scanlines, edge light, inset glow, a sweep band, chamfered
+  corners; dark areas mostly sky, with a tinted-glass floor so dark UI still
+  reads as a plate). The one piece being looked at **resolves into its true
+  colours** (`uLit`) — the screen's single accent event, and how a
+  designer's work can still be judged in the colours it was made in. No
+  box: the canvas clears transparent, is masked into the sky, and a faint
+  lat/long wireframe of the dome is the structure the plates hang on.
+  (2) The roll was `setFromUnitVectors(+Z, inward)` — the shortest arc rolls
+  any frame both off the equator and off to the side. Frames get an explicit
+  basis (x = worldUp × z) and hang upright. Lens 52° (60° on a portrait
+  stage, `Lens`). A third orientation trap on record, after the ship's
+  `lookAt` and the mirrored "oviv".
+  (3) The thumbnail grid under the dome is a **text index** (hairline rows)
+  that is also the dome's legend: pointing at or tabbing to a row turns that
+  piece to the front (`π − θ`) and lights it; pointing at a frame lights its
+  row. It is still what crawlers, reduced motion and keyboards get. Six
+  pieces had no link; they take their Behance URL from `studio.ts`.
+  (4) R3F fires `onClick` on whatever the pointer went DOWN on, however far
+  it moved — a drag that began on a frame opened a new tab. Gate picks on
+  `e.delta`. Touch has no hover, so the first tap turns and lights a piece,
+  the second opens it, a tap on sky lets go; `touch-action: pan-y` (was
+  `none`: half a phone screen a thumb could not scroll past).
+  (5) `/smaak`'s client logos are grayscale at rest (ClientGrid's
+  treatment) and colour only on the row being read; `/smaak` flies the
+  **deck** plan — the prose plan parked the ship on its right-column notes.
+  Checked: mobile-uat clean at 375/320 on `/`, `/smaak`, `/studio`,
+  `/about`; shift-uat no new shift; console silent; seo-uat clean. Home H
+  18516 → 18428 at 1440, every leg moved ≤ 0.004 — `HOME_PLAN` not re-plotted.
 
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch

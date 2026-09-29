@@ -1,76 +1,55 @@
 @use "../../styles/tokens.scss" as *;
 
 /*
- * The dome and the grid are the same content twice. The grid is always in
- * the DOM — it is what a crawler reads and what a reader without the canvas
- * gets — and it steps aside (not away) once the dome is live, so the work is
- * still linkable below the fold.
+ * The dome and its index (2026-09-30). The dome is an OBJECT — a room of
+ * holograms — so it gets no frame: no border, no fill, no corner brackets.
+ * The canvas clears transparent and its edges are masked into the page's own
+ * sky, the rule every scene here follows ("sections are continuous"). The
+ * index under it is text, so it gets the house treatment for text: hairline
+ * rows, a mono index, one lit row at a time.
  */
 
 .wrap {
   display: grid;
-  gap: var(--space-8);
+  gap: var(--space-5);
 }
 
 .dome {
-  /*
-   * The gallery's own colour, kept as properties so the chrome is declared
-   * in one place rather than smeared across five rules. It was briefly two
-   * palettes — a Smaak blue for /smaak — but that route uses the space theme
-   * now, so both pages that mount the dome are emerald (2026-09-28).
-   */
-  --dome-edge: var(--line-strong);
-  --dome-glow: rgba(60, 221, 158, 0.1);
-  --dome-glow-2: rgba(60, 221, 158, 0.05);
-  --dome-ground: #04100c;
-  --dome-accent: var(--accent);
-  --dome-hint: rgba(60, 221, 158, 0.55);
-
   position: relative;
   width: 100%;
   height: clamp(420px, 62vh, 660px);
-  // Nothing is drawn here until the canvas mounts, so the box needs its own
-  // presence rather than collapsing to an empty band.
-  border: 1px solid var(--dome-edge);
-  background:
-    radial-gradient(120% 90% at 50% 18%, var(--dome-glow), transparent 62%),
-    radial-gradient(90% 70% at 50% 100%, var(--dome-glow-2), transparent 60%),
-    var(--dome-ground);
   overflow: hidden;
-  touch-action: none; // the drag is the gallery's; don't scroll the page with it
+  // Horizontal drags turn the dome; vertical ones still scroll the page.
+  // It was `none`, which on a phone made half a screen that a thumb could
+  // not scroll past.
+  touch-action: pan-y;
 
   canvas {
     display: block;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 9%, #000 91%, transparent),
+      linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent, #000 9%, #000 91%, transparent),
+      linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+    mask-composite: intersect;
   }
 
-  // Corner brackets: the studio's own instrument framing.
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    border: 1px solid var(--dome-accent);
-    opacity: 0.5;
-    pointer-events: none;
+  // A square-ish stage on a phone: the lens widens for it (DomeGalleryScene
+  // `Lens`), and half a screen of dome is enough to turn.
+  @media (max-width: 640px) {
+    height: clamp(340px, 92vw, 440px);
   }
 
-  &::before {
-    top: 12px;
-    left: 12px;
-    border-right: 0;
-    border-bottom: 0;
-  }
-
-  &::after {
-    bottom: 12px;
-    right: 12px;
-    border-left: 0;
-    border-top: 0;
+  // Reduced motion never mounts the canvas, so there is no dome to reserve
+  // room for — the index below is the gallery.
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
   }
 }
 
-.hint,
+.loading,
 .caption {
   position: absolute;
   z-index: 2;
@@ -80,22 +59,40 @@
 
 .loading {
   @include mono-label;
-  position: absolute;
   inset: 0;
   display: grid;
   place-content: center;
-  margin: 0;
-  color: var(--dome-hint);
-  pointer-events: none;
+  color: var(--text-tertiary);
 }
 
 .hint {
   @include mono-label;
-  bottom: var(--space-5);
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--dome-hint);
-  white-space: nowrap;
+  margin: calc(var(--space-2) * -1) 0 var(--space-3);
+  text-align: center;
+  color: var(--text-tertiary);
+  visibility: hidden;
+
+  &[data-on] {
+    visibility: visible;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintFine {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
 }
 
 .caption {
@@ -111,6 +108,11 @@
   }
 }
 
+.captionKind {
+  @include mono-label;
+  color: var(--accent);
+}
+
 .captionTitle {
   font-size: var(--type-medium);
   font-weight: 500;
@@ -118,96 +120,86 @@
   color: var(--text-primary);
 }
 
-.captionKind {
-  @include mono-label;
-  color: var(--dome-accent);
-}
+/* ── The index: every piece as a row ─────────────────────────────────── */
 
-/* ── The grid: the same work as markup ────────────────────────────────── */
-
-.grid {
+.index {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: var(--space-5);
-
-  // Once the dome is live this is the index beneath it, not the main event.
-  &[data-behind] {
-    opacity: 0.72;
-  }
-
-  // minmax(190px, 1fr) floors at ONE column under ~400px, so on a phone this
-  // fallback — always in the DOM, per the note above, for crawlers and no-JS
-  // — stacked fourteen full-width covers into ~3800px of pure scroll beneath
-  // a dome nearly everyone's browser can already render (measured 2026-09-29,
-  // 375px: the Studio leg hit 5623px, most of it this grid). Two columns cuts
-  // it to about a third; the crawler still gets every item, the reader gets
-  // a thumbnail row instead of a second gallery's worth of scrolling.
-  @media (max-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  column-gap: var(--space-8);
+  border-top: 1px solid var(--line);
 }
 
-.cell {
-  min-width: 0;
-}
-
-.cellLink,
-.figure {
+.entry {
   display: grid;
-  gap: var(--space-3);
-  margin: 0;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  grid-template-areas:
+    "idx title arrow"
+    "idx kind arrow";
+  align-items: baseline;
+  column-gap: var(--space-3);
+  row-gap: 2px;
+  min-height: 56px;
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--line);
   color: inherit;
   text-decoration: none;
-}
+  transition: border-color var(--dur-fast) var(--ease-out);
 
-.cellLink {
-  @include hover-only {
-    &:hover .figTitle {
+  &[data-on] {
+    border-bottom-color: var(--accent-line);
+
+    .entryIndex,
+    .entryTitle,
+    .entryArrow {
       color: var(--accent);
     }
+  }
 
-    &:hover .img {
-      border-color: var(--line-strong);
-    }
+  &:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 2px;
   }
 }
 
-.img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  border: 1px solid var(--line);
-  background: #06080d;
-  transition: border-color var(--dur-fast) var(--ease-out);
+.entryIndex {
+  grid-area: idx;
+  @include mono-label;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 
-.figCaption {
-  display: grid;
-  gap: 2px;
-}
-
-.figTitle {
+.entryTitle {
+  grid-area: title;
   font-size: var(--type-small);
   font-weight: 500;
   color: var(--text-primary);
   transition: color var(--dur-fast) var(--ease-out);
 }
 
-.figKind {
+.entryKind {
+  grid-area: kind;
   @include mono-label;
   font-size: max(0.5625rem, var(--micro-floor));
   color: var(--text-tertiary);
 }
 
+.entryArrow {
+  grid-area: arrow;
+  align-self: center;
+  color: var(--text-tertiary);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .img,
-  .figTitle,
-  .caption {
+  .caption,
+  .entry,
+  .entryIndex,
+  .entryTitle,
+  .entryArrow {
     transition: none;
   }
 }

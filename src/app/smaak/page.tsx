@@ -19,19 +19,20 @@ import styles from "./smaak.module.scss";
  * like a designer portfolio so be creative, sassy and have funny humour …
  * I need 3D scroll etc."
  *
- * TWO DOCUMENTED EXCEPTIONS TO THE SITE'S RULES LIVE ON THIS ROUTE. Neither
- * is an oversight; do not "fix" either without asking Ali.
+ * ONE DOCUMENTED EXCEPTION TO THE SITE'S RULES LIVES ON THIS ROUTE, and it
+ * is not an oversight; do not "fix" it without asking Ali.
  *
- *  1. COLOUR. Everything else is black + emerald, and a blue cast was tried
- *     and rejected on 2026-09-12. This page is Smaak blue, because Smaak.ux
- *     is a separate brand and this is its page inside the portfolio rather
- *     than another room of it. The blue lives in local custom properties on
- *     `.smaak` (see smaak.module.scss) — it never touches the tokens.
- *  2. VOICE. CLAUDE.md says the humour is mission control's, dry, one beat,
- *     never in a fact, and warns against a second kind. That rule governs
- *     Space OS. A designer's portfolio has its own mouth, and Ali asked for
- *     this one specifically. The joke is never on a client and never on a
- *     number — same floor as everywhere else.
+ *  VOICE. CLAUDE.md says the humour is mission control's, dry, one beat,
+ *  never in a fact, and warns against a second kind. That rule governs
+ *  Space OS. A designer's portfolio has its own mouth, and Ali asked for
+ *  this one specifically. The joke is never on a client and never on a
+ *  number — same floor as everywhere else.
+ *
+ * There used to be a second, COLOUR: this page was Smaak blue. Ali withdrew
+ * it on 2026-09-28 ("better UI with our space theme"), and on 2026-09-30 the
+ * last of the page that did not speak the site's language — the dome's
+ * full-colour frames and thumbnail grid, the logos in brand colour — went
+ * too. The furniture is Space OS; only the writing is Smaak's.
  *
  * What does NOT bend: every client, deliverable and industry here is from
  * PROFILE.md, and no outcome is claimed anywhere, because none is on file.
@@ -144,8 +145,9 @@ export default function SmaakPage() {
           title="Stand in the middle of it"
           action={
             <p className={ui.sectionNote}>
-              Drag to look around; click a piece to open it where it lives. If your machine would rather not render a
-              dome, the same {gallery.length} pieces are in the grid underneath — no work is hiding behind the WebGL.
+              Drag to look around. Point at a piece and it drops the hologram act and shows you its real colours; click
+              to open it where it lives. All {gallery.length} are listed underneath too — no work is hiding behind the
+              WebGL.
             </p>
           }
         />

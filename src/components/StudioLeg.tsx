@@ -44,10 +44,9 @@ export default function StudioLeg() {
         * home page and smaak.ux." The dome shows fourteen pieces where the
         * projectors below show four — it is the design work at a glance,
         * and the four projectors stay because a hologram is how this site
-        * says "project" and the leg still hands off to the deck.
-        *
-        * Emerald here, not Smaak blue: the blue is scoped to /smaak and the
-        * home page is Space OS. Same component, `tone="emerald"` (default).
+        * says "project" and the leg still hands off to the deck. The dome's
+        * frames are holograms too (2026-09-30), lit in true colour only when
+        * pointed at.
         */}
       <DomeGallery items={gallery.slice(0, 10)} />
 

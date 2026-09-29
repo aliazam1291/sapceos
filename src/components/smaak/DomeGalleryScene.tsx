@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { Canvas, useFrame, useLoader, type ThreeEvent } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Canvas, useFrame, useLoader, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { WarmShaders } from "@/components/space/useWarmShaders";
 import { quietGL } from "@/lib/gl";
@@ -11,86 +11,154 @@ import type { GalleryItem } from "@/content/gallery";
 /*
  * The dome gallery (2026-09-27). Ali: "we need a gallery kinda thing, like a
  * dome gallery in smaak.ux … my designs from Figma and Behance displayed."
+ * The work hangs on the inside of a sphere with the reader at its centre;
+ * drag spins it, release and it keeps its momentum.
  *
- * The work hangs on the inside of a sphere and the reader stands at its
- * centre. Drag spins the dome; release and it keeps its momentum and eases
- * down. Each frame is a plane placed on the sphere and turned to face the
- * middle, so the grid curves away in both directions the way a real
- * installation would.
+ * It speaks the site's language now (2026-09-30). Ali: "the smaak section on
+ * the entire website looks off, not going with the theme." Measured against
+ * the Hangar two legs earlier, it was a different website: a bordered green
+ * box of full-colour screenshots — the only saturated imagery anywhere on
+ * Space OS — rolled at random angles under a 109-degree lens. Now:
  *
- * Why a dome rather than a wall of cards: a designer's portfolio is judged
- * on whether the work is shown with any confidence, and a grid of thumbnails
- * shows fourteen pieces as fourteen rows of a table. This shows them as a
- * room you are standing in. It is also honest about the medium — these are
- * screens and posters, so they are flat rectangles hung in space, not
- * boxes or tiles.
+ *  - Every frame is a HOLOGRAM, the same treatment `Hologram.tsx` gives every
+ *    project on the site: luminance pushed onto the emerald ramp, scanlines,
+ *    edge light, a sweep band, chamfered corners, and no black — dark areas
+ *    are simply not there, so the sky shows through. A project is a
+ *    hologram, wherever it appears.
+ *  - The one piece being looked at (hover, or its row in the index below)
+ *    RESOLVES into its true colours. That is the screen's single accent
+ *    event, and it means a designer's work can still be judged in the
+ *    colours it was made in — just one at a time, on request.
+ *  - Frames hang upright. `setFromUnitVectors(+Z, inward)` is the shortest
+ *    arc, which rolls any frame that is both off the equator and off to the
+ *    side; the basis is built with world-up instead.
+ *  - A 52-degree lens (60 on a portrait box) instead of 70, and no box: the
+ *    canvas clears transparent and its edges are masked into the page's sky.
+ *  - A faint lat/long wireframe of the dome itself, so the structure reads
+ *    as an instrument the holograms hang on.
  *
  * Rules kept: `quietGL` and `WarmShaders` before the first frame, the loop
- * stops when the section is off screen, ring count and dpr scale with
- * `perf.level`, textures are the 640px WebP bakes rather than the 6.7 MB of
- * source art, and colour management is on so the covers are not washed out.
+ * stops off screen, dpr scales with `perf.level`, textures are the 640px
+ * WebP bakes. All fourteen frames share one program (same shader source),
+ * and one time uniform.
  */
 
 const RADIUS = 5.2;
-const FRAME_H = 2.3;
+/** Sized so both rings clear the masked top and bottom edges of the stage. */
+const FRAME_H = 1.75;
+/** Cut-corner size, in plate heights — the CSS plate's clip-path, in 3D. */
+const CHAMFER = 0.07;
+/** Idle turn, radians per second. The site flies calm. */
+const IDLE = 0.07;
 
 /*
- * One palette (2026-09-28). This briefly had a second, "smaak" blue, for
- * /smaak's own branding; Ali asked for the space theme there instead, so
- * both pages that mount the dome are emerald now and the variant is gone
- * rather than left as dead code. The `tone` prop stays because it is the
- * seam to widen if another palette ever earns its place — the CHROME is all
- * it controls (frame hairlines, hover, the tint on the drag sphere). The
- * artwork is whatever colour Ali made it, everywhere.
+ * One palette. This briefly had a second, "smaak" blue; that was withdrawn
+ * on 2026-09-28 and the variant deleted. `tone` stays as the seam to widen
+ * if another palette ever earns its place. It colours the chrome and the
+ * hologram ramp; the artwork's own colours show only when a piece is lit.
  */
 export type DomeTone = "emerald";
 
-const TONES: Record<DomeTone, { line: string; hover: string; shell: string }> = {
-  emerald: { line: "#1f4438", hover: "#3cdd9e", shell: "#04100c" },
+type Tone = { line: string; lit: string; low: string; high: string; glow: string; band: string; grid: string };
+
+const TONES: Record<DomeTone, Tone> = {
+  // low/high are Hologram.module.scss's plate gradient (#1a8f68 → #4de3aa).
+  emerald: { line: "#2a6b55", lit: "#8af0c8", low: "#1a8f68", high: "#4de3aa", glow: "#3cdd9e", band: "#bff5df", grid: "#3cdd9e" },
 };
 
 /*
- * Placement: rings, not a golden-angle scatter.
- *
- * The first version spread the fourteen pieces evenly over the whole sphere
- * with the golden angle. Measured rather than guessed: that left exactly ONE
- * frame inside the camera's cone at rest, because 14 items over 360 degrees
- * at this radius is 26 degrees of arc each and the view only spans about a
- * hundred. It read as an empty blue room with a poster in it.
- *
- * Two rings of seven, offset by half a step, fills roughly three quarters of
- * the circumference and always keeps four to six pieces in front of the
- * reader — which is what makes it read as a gallery wall curving away rather
- * than as scattered debris.
+ * Placement: two rings, offset by half a step. A golden-angle scatter over
+ * the whole sphere left exactly one frame in the camera's cone at rest
+ * (measured 2026-09-27); two offset rings keep a brick-laid wall of four to
+ * six pieces in front of the reader, with nothing near a pole.
  */
-function placements(n: number, rings: number) {
+function placements(n: number) {
   const out: { phi: number; theta: number }[] = [];
-  const per = Math.ceil(n / rings);
-  // Latitudes sit either side of the equator; nothing goes near a pole,
-  // where a rectangle mapped to a sphere shears badly.
-  const lat = rings === 1 ? [Math.PI / 2] : rings === 2 ? [Math.PI * 0.42, Math.PI * 0.58] : [Math.PI * 0.36, Math.PI * 0.5, Math.PI * 0.64];
+  const per = Math.ceil(n / 2);
+  const lat = [Math.PI * 0.43, Math.PI * 0.57];
   for (let i = 0; i < n; i++) {
     const ring = Math.floor(i / per);
     const idx = i % per;
     const count = Math.min(per, n - ring * per);
     const step = (Math.PI * 2) / count;
-    // Half-step offset per ring so frames do not stack in vertical columns.
-    const theta = idx * step + (ring % 2 ? step / 2 : 0);
-    out.push({ phi: lat[Math.min(ring, lat.length - 1)], theta });
+    out.push({ phi: lat[ring], theta: idx * step + (ring % 2 ? step / 2 : 0) });
   }
   return out;
 }
 
+const VERT = /* glsl */ `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const FRAG = /* glsl */ `
+uniform sampler2D uMap;
+uniform float uTime;
+uniform float uSeed;
+uniform float uLit;
+uniform float uAspect;
+uniform float uChamfer;
+uniform vec3 uLow;
+uniform vec3 uHigh;
+uniform vec3 uGlow;
+uniform vec3 uBand;
+varying vec2 vUv;
+
+void main() {
+  // The plate's cut corners, top-right and bottom-left, at 45 degrees.
+  if ((1.0 - vUv.x) * uAspect + (1.0 - vUv.y) < uChamfer) discard;
+  if (vUv.x * uAspect + vUv.y < uChamfer) discard;
+
+  vec4 tex = texture2D(uMap, vUv);
+
+  // Luminance in display space, pushed the way the CSS plate pushes it
+  // (grayscale, contrast 1.35, brightness 1.05), then back to linear.
+  float l = pow(max(dot(tex.rgb, vec3(0.2126, 0.7152, 0.0722)), 0.0), 1.0 / 2.2);
+  l = clamp(((l - 0.5) * 1.35 + 0.5) * 1.05, 0.0, 1.0);
+
+  // A floor under the ramp: a dark piece is still a plate of light, tinted
+  // glass rather than nothing (most of the studio's work is dark UI).
+  vec3 holo = mix(uLow, uHigh, vUv.y) * max(pow(l, 2.2), 0.045);
+
+  // Scanlines: a dark third of every line.
+  holo *= mix(0.62, 1.0, smoothstep(0.30, 0.38, fract(vUv.y * 72.0)));
+
+  // Edge light down both sides; a softer glow in from all four edges (the
+  // CSS plate's inset shadow); the band that sweeps down through it.
+  float edge = smoothstep(0.16, 0.0, vUv.x) + smoothstep(0.84, 1.0, vUv.x);
+  vec2 d = min(vUv, 1.0 - vUv) * vec2(uAspect, 1.0);
+  float inner = 1.0 - smoothstep(0.0, 0.16, min(d.x, d.y));
+  float y = 1.15 - fract(uTime * 0.23 + uSeed) * 1.5;
+  float band = smoothstep(0.1, 0.0, abs(vUv.y - y));
+  holo += uGlow * (0.22 * edge + 0.1 * inner) + uBand * 0.18 * band;
+
+  // A hologram has no black: the dark of the projection is mostly sky.
+  float a = clamp(l * 0.8 + 0.26 + edge * 0.18 + inner * 0.15 + band * 0.12, 0.0, 1.0);
+
+  gl_FragColor = vec4(mix(holo, tex.rgb, uLit), mix(a, 1.0, uLit));
+  #include <colorspace_fragment>
+}
+`;
+
 export default function DomeGalleryScene({
   items,
   paused,
+  focus,
   onActive,
+  onPick,
   onReady,
   tone = "emerald",
 }: {
   items: GalleryItem[];
   paused: boolean;
+  /** A piece picked from the index: the dome turns it to the front and lights it. */
+  focus: number | null;
   onActive: (i: number | null) => void;
+  /** A tap or click on a frame (i), or on empty sky (null). */
+  onPick: (i: number | null, touch: boolean) => void;
   /** Fired on the first drawn frame — see the note in DomeGallery. */
   onReady?: () => void;
   tone?: DomeTone;
@@ -104,25 +172,63 @@ export default function DomeGalleryScene({
       frameloop={!warm || paused ? "never" : "always"}
       dpr={low ? 1 : [1, 1.5]}
       gl={{ antialias: !low, alpha: true, powerPreference: "low-power", outputColorSpace: THREE.SRGBColorSpace }}
-      camera={{ position: [0, 0, 0.1], fov: 70, near: 0.05, far: 40 }}
+      camera={{ position: [0, 0, 0.1], fov: 52, near: 0.05, far: 40 }}
       style={{ background: "transparent" }}
     >
-      <ambientLight intensity={1.1} />
-      <Dome items={items} onActive={onActive} onReady={onReady} tone={TONES[tone]} />
+      <Lens />
+      <Dome items={items} focus={focus} onActive={onActive} onPick={onPick} onReady={onReady} tone={TONES[tone]} />
       <WarmShaders onWarm={() => setWarm(true)} />
     </Canvas>
   );
 }
 
-function Dome({ items, onActive, onReady, tone }: { items: GalleryItem[]; onActive: (i: number | null) => void; onReady?: () => void; tone: { line: string; hover: string; shell: string } }) {
+/** A portrait box (a phone) gets a wider lens, so a whole frame fits across. */
+function Lens() {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    const cam = camera as THREE.PerspectiveCamera;
+    cam.fov = size.width / size.height < 1.1 ? 60 : 52;
+    cam.updateProjectionMatrix();
+  }, [camera, size.width, size.height]);
+  return null;
+}
+
+/**
+ * A click that ends a drag is not a pick. R3F fires `onClick` on whatever
+ * the pointer went DOWN on, however far it then moved — so a drag that
+ * started on a frame used to open a new tab on release. `e.delta` is the
+ * distance since pointer-down, in pixels.
+ */
+const TAP = 6;
+const isTouch = (e: ThreeEvent<MouseEvent>) => (e.nativeEvent as PointerEvent).pointerType === "touch";
+
+function Dome({
+  items,
+  focus,
+  onActive,
+  onPick,
+  onReady,
+  tone,
+}: {
+  items: GalleryItem[];
+  focus: number | null;
+  onActive: (i: number | null) => void;
+  onPick: (i: number | null, touch: boolean) => void;
+  onReady?: () => void;
+  tone: Tone;
+}) {
   const group = useRef<THREE.Group>(null);
-  const spin = useRef(0.12);
+  const spin = useRef(IDLE);
   const drag = useRef<{ on: boolean; x: number; y: number }>({ on: false, x: 0, y: 0 });
   const tilt = useRef(0);
   const tiltTarget = useRef(0);
+  const focusRef = useRef(focus);
+  focusRef.current = focus;
+  const [hovered, setHovered] = useState<number | null>(null);
 
-  // Two rings on a phone-ish canvas would crowd; three when there is room.
-  const spots = useMemo(() => placements(items.length, items.length > 10 ? 2 : 1), [items.length]);
+  // One clock for every plate: fourteen materials, one uniform object.
+  const time = useMemo(() => ({ value: 0 }), []);
+  const spots = useMemo(() => placements(items.length), [items.length]);
   const textures = useLoader(
     THREE.TextureLoader,
     items.map((i) => i.texture),
@@ -135,21 +241,37 @@ function Dome({ items, onActive, onReady, tone }: { items: GalleryItem[]; onActi
     }
   }, [textures]);
 
+  // The dome's own structure: latitude and longitude only. EdgesGeometry at
+  // one degree drops the quads' diagonals, which a wireframe would draw.
+  const grid = useMemo(() => new THREE.EdgesGeometry(new THREE.SphereGeometry(RADIUS + 1.6, 24, 12), 1), []);
+
   const announced = useRef(false);
   useFrame((_, delta) => {
-    if (!group.current) return;
+    const g = group.current;
+    if (!g) return;
     // useLoader suspends until every texture is decoded, so the first frame
     // this runs is the first frame with artwork actually on screen.
     if (!announced.current) {
       announced.current = true;
       onReady?.();
     }
-    // Momentum: the dome keeps turning after a drag and slows down, rather
-    // than stopping dead the instant a finger lifts.
-    if (!drag.current.on) spin.current += (0.12 - spin.current) * Math.min(delta * 0.8, 1);
-    group.current.rotation.y += spin.current * delta;
+    time.value += delta;
+
+    const f = focusRef.current;
+    if (f !== null && spots[f]) {
+      // Turn the picked piece to the front: a piece at azimuth θ faces the
+      // camera (−Z) when the dome is turned to π − θ. Nearest way round.
+      const d = Math.PI - spots[f].theta - g.rotation.y;
+      g.rotation.y += Math.atan2(Math.sin(d), Math.cos(d)) * Math.min(delta * 3.5, 1);
+      spin.current = 0;
+      tiltTarget.current = 0;
+    } else {
+      // Momentum: after a drag the dome keeps turning and eases back to idle.
+      if (!drag.current.on) spin.current += (IDLE - spin.current) * Math.min(delta * 0.8, 1);
+      g.rotation.y += spin.current * delta;
+    }
     tilt.current += (tiltTarget.current - tilt.current) * Math.min(delta * 3, 1);
-    group.current.rotation.x = tilt.current;
+    g.rotation.x = tilt.current;
   });
 
   const onDown = (e: ThreeEvent<PointerEvent>) => {
@@ -163,7 +285,7 @@ function Dome({ items, onActive, onReady, tone }: { items: GalleryItem[]; onActi
     drag.current.x = e.clientX;
     drag.current.y = e.clientY;
     spin.current = dx * 0.012;
-    tiltTarget.current = THREE.MathUtils.clamp(tiltTarget.current + dy * 0.002, -0.32, 0.32);
+    tiltTarget.current = THREE.MathUtils.clamp(tiltTarget.current + dy * 0.002, -0.28, 0.28);
   };
   const onUp = () => {
     drag.current.on = false;
@@ -172,11 +294,25 @@ function Dome({ items, onActive, onReady, tone }: { items: GalleryItem[]; onActi
   return (
     <group ref={group}>
       {/* The drag surface: an inside-out sphere the pointer can always hit,
-          so a drag that starts on empty sky still turns the dome. */}
-      <mesh onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp}>
+          so a drag that starts on empty sky still turns the dome. It draws
+          nothing — the page's own sky is the backdrop. */}
+      <mesh
+        onPointerDown={onDown}
+        onPointerMove={onMove}
+        onPointerUp={onUp}
+        onPointerLeave={onUp}
+        onPointerCancel={onUp}
+        onClick={(e) => {
+          if (e.delta <= TAP) onPick(null, isTouch(e));
+        }}
+      >
         <sphereGeometry args={[RADIUS + 2.5, 16, 16]} />
-        <meshBasicMaterial color={tone.shell} side={THREE.BackSide} transparent opacity={0.35} />
+        <meshBasicMaterial side={THREE.BackSide} colorWrite={false} depthWrite={false} />
       </mesh>
+
+      <lineSegments geometry={grid}>
+        <lineBasicMaterial color={tone.grid} transparent opacity={0.07} depthWrite={false} />
+      </lineSegments>
 
       {items.map((item, i) => (
         <Frame
@@ -184,9 +320,19 @@ function Dome({ items, onActive, onReady, tone }: { items: GalleryItem[]; onActi
           texture={textures[i]}
           phi={spots[i].phi}
           theta={spots[i].theta}
-          onOver={() => onActive(i)}
-          onOut={() => onActive(null)}
-          href={item.href}
+          seed={i * 0.137}
+          time={time}
+          lit={hovered === i || focus === i}
+          onOver={() => {
+            setHovered(i);
+            onActive(i);
+          }}
+          onOut={() => {
+            setHovered((h) => (h === i ? null : h));
+            onActive(null);
+          }}
+          onPick={(touch) => onPick(i, touch)}
+          linked={Boolean(item.href)}
           tone={tone}
         />
       ))}
@@ -198,88 +344,133 @@ function Frame({
   texture,
   phi,
   theta,
+  seed,
+  time,
+  lit,
   onOver,
   onOut,
-  href,
+  onPick,
+  linked,
   tone,
 }: {
   texture: THREE.Texture;
   phi: number;
   theta: number;
+  seed: number;
+  time: { value: number };
+  lit: boolean;
   onOver: () => void;
   onOut: () => void;
-  href?: string;
-  tone: { line: string; hover: string };
+  onPick: (touch: boolean) => void;
+  linked: boolean;
+  tone: Tone;
 }) {
   const ref = useRef<THREE.Group>(null);
-  const [hover, setHover] = useState(false);
+  const line = useRef<THREE.LineBasicMaterial>(null);
 
   const { position, quaternion, aspect } = useMemo(() => {
     const p = new THREE.Vector3().setFromSphericalCoords(RADIUS, phi, theta);
     /*
-     * Face the centre — with the PLANE's convention, not the camera's.
-     *
-     * The first version used `Matrix4.lookAt(p, centre, up)`, which is the
-     * camera convention: it points an object's −Z at the target. A
-     * PlaneGeometry's face is +Z, so every frame ended up facing outward and
-     * the reader saw the BACK of each one through `DoubleSide` — every
-     * cover mirrored, "vivo" rendering as "oviv". Exactly the trap CLAUDE.md
-     * records for the ship ("never g.lookAt()").
-     *
-     * setFromUnitVectors puts +Z on the direction we want, so the artwork
-     * faces the middle of the dome and reads the right way round.
+     * Face the centre, upright. +Z (the plane's face) points inward; X is
+     * world-up × Z, so it stays level; Y completes the basis. Two traps on
+     * record here: `Matrix4.lookAt` is the CAMERA convention (−Z at the
+     * target) and showed every cover mirrored from behind ("vivo" read
+     * "oviv", 2026-09-27); `setFromUnitVectors` is the shortest arc and
+     * rolled every frame that sat both off the equator and off to the side.
      */
-    const q = new THREE.Quaternion().setFromUnitVectors(
-      new THREE.Vector3(0, 0, 1),
-      p.clone().negate().normalize(),
-    );
+    const z = p.clone().negate().normalize();
+    const x = new THREE.Vector3(0, 1, 0).cross(z).normalize();
+    const y = new THREE.Vector3().crossVectors(z, x);
+    const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z));
     const img = texture.image as { width?: number; height?: number } | undefined;
-    const a = img?.width && img?.height ? img.width / img.height : 1.5;
+    const a = img?.width && img?.height ? img.width / img.height : 1.6;
     return { position: p, quaternion: q, aspect: a };
   }, [phi, theta, texture]);
-
-  useFrame((_, delta) => {
-    if (!ref.current) return;
-    // Hovered work leans in toward the reader.
-    const target = hover ? 1.12 : 1;
-    const s = ref.current.scale.x + (target - ref.current.scale.x) * Math.min(delta * 8, 1);
-    ref.current.scale.setScalar(s);
-  });
 
   const h = FRAME_H;
   const w = h * aspect;
 
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: VERT,
+        fragmentShader: FRAG,
+        transparent: true,
+        depthWrite: false,
+        uniforms: {
+          uMap: { value: texture },
+          uTime: time,
+          uSeed: { value: seed },
+          uLit: { value: 0 },
+          uAspect: { value: aspect },
+          uChamfer: { value: CHAMFER },
+          uLow: { value: new THREE.Color(tone.low) },
+          uHigh: { value: new THREE.Color(tone.high) },
+          uGlow: { value: new THREE.Color(tone.glow) },
+          uBand: { value: new THREE.Color(tone.band) },
+        },
+      }),
+    [texture, time, seed, aspect, tone],
+  );
+  useEffect(() => () => material.dispose(), [material]);
+
+  // The hairline follows the plate's cut corners rather than boxing them.
+  const outline = useMemo(() => {
+    const W = (w * 1.03) / 2;
+    const H = (h * 1.04) / 2;
+    const k = CHAMFER * h;
+    const pts = [
+      [-W + k, -H],
+      [W, -H],
+      [W, H - k],
+      [W - k, H],
+      [-W, H],
+      [-W, -H + k],
+    ].map(([px, py]) => new THREE.Vector3(px, py, 0.002));
+    return new THREE.BufferGeometry().setFromPoints(pts);
+  }, [w, h]);
+
+  const litColor = useMemo(() => new THREE.Color(tone.lit), [tone.lit]);
+  const restColor = useMemo(() => new THREE.Color(tone.line), [tone.line]);
+
+  useFrame((_, delta) => {
+    const u = material.uniforms.uLit;
+    // The projection resolves into the real thing, and fades back.
+    u.value += ((lit ? 1 : 0) - u.value) * Math.min(delta * (lit ? 5 : 3), 1);
+    if (line.current) {
+      line.current.color.lerpColors(restColor, litColor, u.value);
+      line.current.opacity = 0.45 + u.value * 0.45;
+    }
+    if (ref.current) {
+      const s = ref.current.scale.x + ((lit ? 1.08 : 1) - ref.current.scale.x) * Math.min(delta * 8, 1);
+      ref.current.scale.setScalar(s);
+    }
+  });
+
   return (
     <group ref={ref} position={position} quaternion={quaternion}>
       <mesh
+        material={material}
         onPointerOver={(e) => {
           e.stopPropagation();
-          setHover(true);
           onOver();
-          document.body.style.cursor = href ? "pointer" : "grab";
+          document.body.style.cursor = linked ? "pointer" : "grab";
         }}
         onPointerOut={() => {
-          setHover(false);
           onOut();
           document.body.style.cursor = "";
         }}
         onClick={(e) => {
           e.stopPropagation();
-          if (href) window.open(href, "_blank", "noopener,noreferrer");
+          if (e.delta <= TAP) onPick(isTouch(e));
         }}
       >
         <planeGeometry args={[w, h]} />
-        {/* FrontSide now that +Z faces the centre: from inside the dome
-            every frame shows its face, and nothing shows a mirrored back. */}
-        <meshBasicMaterial map={texture} toneMapped={false} side={THREE.FrontSide} transparent />
       </mesh>
 
-      {/* A hairline around each piece — the one bit of chrome, so the work
-          reads as hung rather than floating. */}
-      <lineSegments>
-        <edgesGeometry args={[new THREE.PlaneGeometry(w * 1.03, h * 1.05)]} />
-        <lineBasicMaterial color={hover ? tone.hover : tone.line} transparent opacity={hover ? 0.9 : 0.45} />
-      </lineSegments>
+      <lineLoop geometry={outline}>
+        <lineBasicMaterial ref={line} color={tone.line} transparent opacity={0.45} depthWrite={false} />
+      </lineLoop>
     </group>
   );
 }
