@@ -8,8 +8,8 @@
  * gone: the masthead is the site's `PageHeader` like every other page, and
  * every colour here is an ordinary token, so the studio reads as a room of
  * Space OS rather than a different website wearing its nav. What is left in
- * this file is layout — the client rows, the service counters, the loose
- * ends — plus the one place the accent is allowed to do work.
+ * this file is layout — the status readout, the client bays and roster, the
+ * loose ends — plus the one place the accent is allowed to do work.
  *
  * Panels and hairlines, no cards: the client list is text content, and text
  * content gets rows (CLAUDE.md, "panels are for text-only content").
@@ -26,39 +26,96 @@
   max-width: 58ch;
 }
 
+// The studio's vital signs under the intro — the same readout /studio opens
+// its client section with, so the band under the buttons is an instrument
+// rather than a screen of air.
+.status {
+  margin-top: var(--space-10);
+
+  > dl {
+    margin-bottom: 0;
+  }
+}
+
 /* ── Clients ──────────────────────────────────────────────────────────── */
 
-.clients {
+// The clients with work on file, as projector bays: the hangar's floor
+// (hologram on top, the brief beneath, a hairline under it), never a card.
+.featured {
+  list-style: none;
+  margin: 0 0 var(--space-12);
+  padding: 0;
+  display: grid;
+  gap: var(--space-10) var(--space-8);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.bay {
+  // The .flies placeholder is a minimum: measured after the build so a bay
+  // can only grow when it renders (tools/reserve-uat.mjs).
+  contain-intrinsic-size: none auto 520px;
+  display: grid;
+  align-content: start;
+  gap: var(--space-5);
+  min-width: 0;
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--line);
+}
+
+.bayBody {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.bayHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  width: 100%;
+}
+
+.bayName {
+  margin: 0;
+  font-size: var(--type-medium);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+}
+
+// The rest of the list: two columns of hairline rows on a desktop, so seven
+// clients with a mark and a line each take four rows, not seven.
+.rosterLabel {
+  @include mono-label;
+  margin: 0 0 var(--space-3);
+  color: var(--text-tertiary);
+}
+
+.roster {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  column-gap: var(--space-8);
   border-top: 1px solid var(--line-strong);
 }
 
 .client {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: var(--space-4) var(--space-6);
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
   align-items: start;
-  padding: var(--space-6) 0;
+  padding: var(--space-5) 0;
   border-bottom: 1px solid var(--line);
 
   @include hover-only {
     &:hover .clientLogo img {
       filter: none;
       opacity: 1;
-    }
-  }
-
-  @media (max-width: 720px) {
-    grid-template-columns: auto minmax(0, 1fr);
-
-    .clientMeta {
-      grid-column: 2;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center;
     }
   }
 }
@@ -104,10 +161,10 @@
 
 .clientName {
   margin: 0;
-  font-size: var(--type-medium);
+  font-size: 1.0625rem;
   font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
 }
 
@@ -138,9 +195,10 @@
 
 .clientMeta {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
+  margin-top: var(--space-1);
 }
 
 .kind,
@@ -169,37 +227,8 @@
 }
 
 /* ── Services ─────────────────────────────────────────────────────────── */
-
-.services {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-
-.service {
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-6) var(--space-5);
-  background: var(--bg-primary);
-}
-
-.serviceCount {
-  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-.serviceLabel {
-  @include mono-label;
-  color: var(--text-secondary);
-}
+// The counts are the Bars instrument (components/Bars) now; only the line
+// under it lives here.
 
 .sectors {
   margin: var(--space-6) 0 0;

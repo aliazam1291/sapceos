@@ -3,10 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import SmaakPlanet from "@/components/smaak/SmaakPlanet";
 import DomeGallery from "@/components/smaak/DomeGallery";
+import Hologram from "@/components/Hologram";
+import Bars from "@/components/Bars";
 import { gallery } from "@/content/gallery";
 import Comms from "@/components/Comms";
-import { ButtonLink, NextStep, PageHeader, Section, SectionHead, ui } from "@/components/ui";
-import { studio, studioAlso, studioKindLabel, studioPieces } from "@/content/studio";
+import { ButtonLink, NextStep, PageHeader, Readout, Section, SectionHead, ui } from "@/components/ui";
+import { studio, studioAlso, studioKindLabel, studioPieces, type StudioKind } from "@/content/studio";
+import { results } from "@/content/results";
 import { plainName } from "@/content/pages";
 import { profile } from "@/content/profile";
 import { breadcrumbJsonLd, jsonLd, personId } from "@/lib/seo";
@@ -42,6 +45,20 @@ import styles from "./smaak.module.scss";
 
 const clients = studioPieces.filter((p) => p.status === "client");
 const withIndustry = clients.filter((c) => c.industry);
+/*
+ * Clients with work on file to show are projected; the rest are a roster
+ * (2026-10-01). Ten identical full-width text rows read as a spreadsheet,
+ * and the three with real covers are the three a visitor most wants to see.
+ */
+const featured = clients.filter((c) => c.cover);
+const roster = clients.filter((c) => !c.cover);
+const pad = (n: number) => String(n).padStart(2, "0");
+const followers = results.find((r) => r.source.startsWith("Lean Multiverse"));
+const years = new Date().getFullYear() - studio.since;
+const KINDS: StudioKind[] = ["web", "brand", "print", "deck", "product"];
+const delivered = KINDS.map((k) => ({ label: studioKindLabel[k], value: clients.filter((c) => c.kind === k).length }))
+  .filter((d) => d.value > 0)
+  .sort((a, b) => b.value - a.value);
 
 const description = `Smaak.ux — the design studio Ali Azam Kazmi runs on the side: branding, website UI and pitch decks for ${clients.length} clients across spices, interiors and web3.`;
 
@@ -136,6 +153,17 @@ export default function SmaakPage() {
             Figma
           </ButtonLink>
         </div>
+        <div className={styles.status}>
+          <Readout
+            label="Studio status"
+            items={[
+              { value: studio.clients, suffix: "+", label: "Clients" },
+              { value: years, label: "Years running", note: `since ${studio.since}` },
+              { value: studio.sectors.length, label: "Sectors" },
+              ...(followers ? [{ value: followers.magnitude, suffix: "+", label: "Audience of the largest brand", note: "Lean Multiverse" }] : []),
+            ]}
+          />
+        </div>
       </Section>
 
       {/* ── The work, hung in a dome. ────────────────────────────────────── */}
@@ -168,10 +196,40 @@ export default function SmaakPage() {
           }
         />
 
-        <ol className={styles.clients}>
-          {clients.map((c, i) => (
+        {/* The three with work on file, projected — a client project is a
+            project, and on this site a project is a hologram. */}
+        <ol className={styles.featured}>
+          {featured.map((c, i) => (
+            <li key={c.slug} className={`${styles.bay} flies`} data-flight={i % 2 ? "right" : "left"} data-bay={c.slug}>
+              <Hologram src={c.cover} seed={c.slug} tag={`C-${pad(i + 1)}`} alt={`${c.title} — ${studioKindLabel[c.kind]}`} />
+              <div className={styles.bayBody}>
+                <div className={styles.bayHead}>
+                  <h3 className={styles.bayName}>
+                    {c.site ? (
+                      <a href={c.site} target="_blank" rel="noreferrer noopener" className={styles.clientLink}>
+                        {c.title} <span aria-hidden="true">↗</span>
+                      </a>
+                    ) : (
+                      c.title
+                    )}
+                  </h3>
+                  <span className={styles.kind}>{studioKindLabel[c.kind]}</span>
+                </div>
+                <p className={styles.clientBrief}>{c.brief}</p>
+                {c.note ? <p className={styles.clientNote}>{c.note}</p> : null}
+                {c.industry ? <span className={styles.industry}>{c.industry}</span> : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <p className={styles.rosterLabel}>
+          Also on the list · {roster.length}
+        </p>
+        <ol className={styles.roster} start={featured.length + 1}>
+          {roster.map((c, i) => (
             <li key={c.slug} className={styles.client}>
-              <span className={styles.clientIndex}>{String(i + 1).padStart(2, "0")}</span>
+              <span className={styles.clientIndex}>{pad(featured.length + i + 1)}</span>
 
               <div className={styles.clientBody}>
                 <div className={styles.clientHead}>
@@ -180,7 +238,7 @@ export default function SmaakPage() {
                       <Image src={c.logo} alt={`${c.title} logo`} width={96} height={28} />
                     </span>
                   ) : null}
-                  <h2 className={styles.clientName}>
+                  <h3 className={styles.clientName}>
                     {c.site ? (
                       <a href={c.site} target="_blank" rel="noreferrer noopener" className={styles.clientLink}>
                         {c.title} <span aria-hidden="true">↗</span>
@@ -188,15 +246,16 @@ export default function SmaakPage() {
                     ) : (
                       c.title
                     )}
-                  </h2>
+                  </h3>
                 </div>
-                <p className={styles.clientBrief}>{c.brief}</p>
-                {c.note ? <p className={styles.clientNote}>{c.note}</p> : null}
-              </div>
-
-              <div className={styles.clientMeta}>
-                <span className={styles.kind}>{studioKindLabel[c.kind]}</span>
-                {c.industry ? <span className={styles.industry}>{c.industry}</span> : null}
+                <p className={styles.clientBrief}>
+                  {c.brief}
+                  {c.note ? <span className={styles.clientNote}> · {c.note}</span> : null}
+                </p>
+                <div className={styles.clientMeta}>
+                  <span className={styles.kind}>{studioKindLabel[c.kind]}</span>
+                  {c.industry ? <span className={styles.industry}>{c.industry}</span> : null}
+                </div>
               </div>
             </li>
           ))}
@@ -214,18 +273,10 @@ export default function SmaakPage() {
             </p>
           }
         />
-        <ul className={styles.services}>
-          {(["brand", "web", "deck", "print", "product"] as const).map((k) => {
-            const n = clients.filter((c) => c.kind === k).length;
-            if (n === 0) return null;
-            return (
-              <li key={k} className={styles.service}>
-                <span className={styles.serviceCount}>{String(n).padStart(2, "0")}</span>
-                <span className={styles.serviceLabel}>{studioKindLabel[k]}</span>
-              </li>
-            );
-          })}
-        </ul>
+        {/* The /flight-data instrument (2026-10-01): four boxed counters read
+            as a SaaS stats strip; a bar per deliverable, out of the whole
+            list, says the same thing in the site's own language. */}
+        <Bars label="Deliverables across the client list" items={delivered} max={clients.length} unit={`of ${clients.length}`} />
         <p className={styles.sectors}>
           Sectors so far: {studio.sectors.join(" · ")}. {withIndustry.length} of them documented client by client.
         </p>

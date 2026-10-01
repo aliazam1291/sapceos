@@ -960,6 +960,44 @@ the open channel; the one joke; keep it the only one).
   `/about`; shift-uat no new shift; console silent; seo-uat clean. Home H
   18516 → 18428 at 1440, every leg moved ≤ 0.004 — `HOME_PLAN` not re-plotted.
 
+- *Two guides on agents, and /smaak's clients projected* (2026-10-01). Ali:
+  "add and post blogs on ai agents we can use like library and use seo
+  keywords, write a good humanised blog, and improve the smaak section."
+  **The guides.** Read both ways, so two pieces (`kind: "guide"`):
+  `/writing/ai-agents-you-can-use` (a library of ready-made agents, shelved
+  by job: coding, office work, browser, research, support, self-hosted) and
+  `/writing/ai-agent-frameworks` (the SDKs you import like a library:
+  vendor SDKs, independent frameworks, TypeScript, the protocols). Every
+  product fact was checked on the day against current sources, because this
+  shelf changes monthly — OpenAI's Agent Builder shuts on 30 Nov 2026, Atlas
+  folded into ChatGPT, Cowork merged into the Claude app on 16 Sep, dots and
+  the Agents API landed at DevDay on 29 Sep. Re-verify before reusing a
+  date. Nothing claims Ali uses a given tool (PROFILE.md does not say so);
+  the voice is a curator's judgement plus his fleet-software lens (the
+  alarm/ticket chain, the autonomy dial), and both end on "What I would
+  measure" like the essays. Written to the humanised-writing skill: British
+  spelling, no em-dashes, no AI-cliché vocabulary — and an identical
+  "The code is on GitHub." closing eleven entries was itself a tell, so the
+  links are woven into the prose.
+  **Body markup grew two things** (`lib/bodyText.ts`, `ui.tsx` `Body`):
+  `### ` is the level under a `## ` subhead (an entry inside a section), and
+  `[label](https://…)` / `[label](/path)` is a link, parsed into elements,
+  never injected. Short link text fails the 36px tap floor (`MCP`, `A2A` at
+  34×21) and is poor link text anyway — link a descriptive phrase.
+  `plainBody()` strips the markup for counts. `Piece.keywords` leads the
+  page's keywords and the Article JSON-LD. Also fixed: `pieceJsonLd`
+  counted words with `split(/s+/)` — the letter s — so every piece's
+  structured data carried a wrong word count.
+  **/smaak.** The three clients with work on file (Sunder Masala, Wolf Casa,
+  Lean Multiverse) are hologram bays now — a client project is a project —
+  and the other seven are a two-column roster of hairline rows instead of
+  ten identical full-width rows. The service counters are the `Bars`
+  instrument (deliverables out of 10); the empty band under the intro holds
+  the studio `Readout` /studio uses. `.bay` reserves 520px (renders 561 at
+  1440; `reserve-uat` checked). Not done, and worth asking Ali: `/studio`
+  and `/smaak` now list the same ten clients and compete for the same
+  searches; one studio page with a redirect would be cleaner.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
