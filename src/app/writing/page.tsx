@@ -19,9 +19,9 @@ import styles from "./writing.module.scss";
  * the header object is the wireframe truss — a transmitter.
  */
 export const metadata: Metadata = {
-  title: { absolute: "Writing — AI & Product Management Essays · Ali Azam Kazmi" },
+  title: { absolute: "Writing — AI Agents & Product Management · Ali Azam Kazmi" },
   description:
-    "Essays by Ali Azam Kazmi on AI product management: PRDs for non-deterministic features, agents in production, and AI inside fleet software.",
+    "Essays and guides by Ali Azam Kazmi on AI product management: AI agents you can use, agent frameworks, PRDs for AI features and AI in fleet software.",
   keywords: keywordsFor(aiKeywords, contentKeywords, identityKeywords, roleKeywords.slice(0, 8)),
   alternates: { canonical: "/writing" },
 };
@@ -44,7 +44,7 @@ export default function WritingPage() {
               url: `${siteUrl}/writing`,
               name: "Writing — Ali Azam Kazmi",
               author: { "@id": personId },
-              hasPart: sorted.map((p) => ({ "@type": "Article", headline: p.title, url: p.href, datePublished: p.date, author: { "@id": personId }, publisher: { "@type": "Organization", name: p.outlet } })),
+              hasPart: sorted.map((p) => ({ "@type": "Article", headline: p.title, url: p.href.startsWith("/") ? `${siteUrl}${p.href}` : p.href, datePublished: p.date, author: { "@id": personId }, publisher: { "@type": "Organization", name: p.outlet } })),
             },
             breadcrumbJsonLd([
               { name: "Home", path: "/" },

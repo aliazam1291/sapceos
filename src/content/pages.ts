@@ -38,6 +38,7 @@ export const plainKind = {
   mission: "Project case study",
   note: "Product teardown",
   essay: "Essay",
+  guide: "Guide",
 } as const;
 
 /** The plain name for a path, falling back to its section's. */

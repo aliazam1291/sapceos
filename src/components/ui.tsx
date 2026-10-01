@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { DRAFT } from "@/content/types";
+import { BODY_LINK } from "@/lib/bodyText";
 import TextReveal from "./TextReveal";
 import Decode from "./Decode";
 import Counter from "./Counter";
@@ -133,6 +134,7 @@ export function Body({
   subheadLevel?: "h2" | "h3";
 }) {
   const parts = Array.isArray(value) ? value : [value];
+  const Minor = Sub === "h2" ? "h3" : "h4";
   return (
     <div className={styles.rowBody}>
       {parts.map((part, i) =>
@@ -140,18 +142,53 @@ export function Body({
           <p key={i}>
             <DraftFlag note={part.slice(DRAFT.length).replace(/^\s*—\s*/, "")} />
           </p>
+        ) : part.startsWith("### ") ? (
+          // One level down — an entry inside a section (a guide's tools).
+          <Minor key={i} className={styles.rowSubheadMinor}>
+            {part.slice(4)}
+          </Minor>
         ) : part.startsWith("## ") ? (
-          // A long note needs structure; a "## " prefix is the one bit of
-          // markup content is allowed, and it becomes a real subheading.
+          // A long note needs structure; a "## " prefix becomes a real
+          // subheading, and "### " the level under it.
           <Sub key={i} className={styles.rowSubhead}>
             {part.slice(3)}
           </Sub>
         ) : (
-          <p key={i}>{part}</p>
+          <p key={i}>{inline(part)}</p>
         ),
       )}
     </div>
   );
+}
+
+/*
+ * Links inside body copy (2026-10-01): `[label](https://…)` or `[label](/path)`
+ * (lib/bodyText.ts). Parsed into elements, never injected as HTML. A guide
+ * that names a tool should let the reader reach it.
+ */
+function inline(text: string): ReactNode {
+  if (!text.includes("](")) return text;
+  const out: ReactNode[] = [];
+  let last = 0;
+  for (const m of text.matchAll(BODY_LINK)) {
+    const [whole, label, href] = m;
+    const at = m.index ?? 0;
+    if (at > last) out.push(text.slice(last, at));
+    out.push(
+      href.startsWith("/") ? (
+        <Link key={at} href={href} className={styles.bodyLink}>
+          {label}
+        </Link>
+      ) : (
+        <a key={at} href={href} className={styles.bodyLink} target="_blank" rel="noreferrer noopener">
+          {label}
+        </a>
+      ),
+    );
+    last = at + whole.length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
 }
 
 /*

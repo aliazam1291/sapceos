@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     // The AI set only on the pieces that are about AI — a keyword with no
     // page behind it is what engines score as spam (2026-09-23).
     keywords: keywordsFor(
-      [piece.title],
+      [piece.title, ...(piece.keywords ?? [])],
       /\bAI\b|agent|PRD|model/i.test(`${piece.title} ${piece.line}`) ? aiKeywords : [],
       contentKeywords,
       identityKeywords,
@@ -81,7 +81,7 @@ export default async function WritingPiece({ params }: Params) {
       />
       <PageHeader
         label={`Writing · ${piece.kind} · ${fmt(piece.date)}`}
-        plain={plainKind.essay}
+        plain={piece.kind === "guide" ? plainKind.guide : plainKind.essay}
         title={piece.title}
         lede={piece.line}
         figure={<PageForm form="truss" label="A slowly turning wireframe transmitter truss." size={240} />}

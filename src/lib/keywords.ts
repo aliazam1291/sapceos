@@ -197,6 +197,11 @@ export const aiKeywords = [
   "model powered features",
   "AI product strategy",
   "generative AI product",
+  // The two guides (2026-10-01): pages now exist behind these.
+  "AI agents",
+  "AI agent tools",
+  "AI agent frameworks",
+  "AI agent SDK",
 ];
 
 export const genreKeywords = [

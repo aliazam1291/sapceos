@@ -6,6 +6,7 @@ import { decisions } from "./decisions";
 import { writing, hostedWriting, isLive } from "./writing";
 import { certifications, experience, skills } from "./profile";
 import { ownershipColumns, results } from "./results";
+import { plainBody } from "@/lib/bodyText";
 
 /*
  * Flight data (2026-09-22). Ali: "create stats and data analytics on my
@@ -109,7 +110,7 @@ export const reportWords = missions.reduce(
   0,
 );
 export const noteWords = fieldNotes.reduce((n, f) => n + f.body.join(" ").split(/\s+/).length, 0);
-export const essayWords = hostedWriting.filter(isLive).reduce((n, p) => n + (p.body ?? []).join(" ").split(/\s+/).length, 0);
+export const essayWords = hostedWriting.filter(isLive).reduce((n, p) => n + plainBody(p.body ?? []).split(/\s+/).length, 0);
 
 export const written: Series = [
   { label: "Mission reports", value: reportWords, note: `${missions.length} reports · ${sectionsPerReport} sections each` },

@@ -3,6 +3,7 @@ import type { FieldNote, Mission } from "@/content/types";
 import type { Venture } from "@/content/venture";
 import type { Piece } from "@/content/writing";
 import { siteUrl } from "./site";
+import { plainBody } from "./bodyText";
 import { contentKeywords, domainKeywords, skillKeywords } from "./keywords";
 
 /*
@@ -173,9 +174,12 @@ export function pieceJsonLd(p: Piece) {
     publisher: { "@id": personId },
     datePublished: p.date,
     articleSection: p.kind,
+    keywords: p.keywords?.join(", "),
     inLanguage: "en",
     isPartOf: { "@id": siteId },
-    wordCount: (p.body ?? []).join(" ").split(/s+/).length,
+    // Was `split(/s+/)` — the letter s, not whitespace — so every piece's
+    // structured data carried a nonsense word count (fixed 2026-10-01).
+    wordCount: plainBody(p.body ?? []).split(/\s+/).filter(Boolean).length,
   };
 }
 
