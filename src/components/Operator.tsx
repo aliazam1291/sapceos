@@ -25,7 +25,7 @@ export default function Operator() {
     <div className={styles.operator}>
       <div className={styles.identity} data-reveal>
         <span className={styles.avatar}>
-          <MatrixPortrait src="/images/ali.jpg" alt={profile.name} size={168} cells={46} />
+          <MatrixPortrait src="/images/ali-480.webp" alt={profile.name} size={168} cells={46} />
           <span className={styles.avatarInitials} aria-hidden="true">
             {initials}
           </span>

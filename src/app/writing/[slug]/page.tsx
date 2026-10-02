@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageForm from "@/components/space/PageForm";
+import AuthorBio from "@/components/AuthorBio";
 import { Body, ButtonLink, DraftFlag, NextStep, PageHeader, Section, ui } from "@/components/ui";
 import { plainKind } from "@/content/pages";
 import { hostedWriting, isLive, writing } from "@/content/writing";
@@ -94,7 +95,7 @@ export default async function WritingPiece({ params }: Params) {
             <p className={ui.noticeText}>This piece is a draft. It renders here for review and is not published, indexed or in the sitemap.</p>
           </div>
         ) : null}
-        <div className={ui.prose} data-reveal>
+        <div className={ui.prose}>
           <Body value={piece.body} subheadLevel="h2" />
         </div>
         {piece.related ? (
@@ -102,6 +103,7 @@ export default async function WritingPiece({ params }: Params) {
             <Link href={piece.related.href}>{piece.related.label} →</Link>
           </p>
         ) : null}
+        <AuthorBio />
         <div className={ui.buttonRow} style={{ marginTop: "var(--space-12)" }}>
           <ButtonLink href="/writing">← All writing</ButtonLink>
           <ButtonLink href="/contact">Open a channel</ButtonLink>

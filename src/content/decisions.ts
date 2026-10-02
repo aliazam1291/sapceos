@@ -27,14 +27,14 @@ export const decisions: Decision[] = [
   {
     id: "prd",
     call: "Write it down early enough to be wrong cheaply.",
-    fact: "The PRD is the argument. Problem statement, user stories, acceptance criteria, edge cases — before a screen exists.",
-    evidence: "Authored full PRDs — problem statements, user stories, acceptance criteria, edge cases.",
+    fact: "The PRD is the argument. Problem statement, user stories, acceptance criteria, edge cases, all before a screen exists.",
+    evidence: "Authored full PRDs: problem statements, user stories, acceptance criteria, edge cases.",
     where: "MapMyIndia · every active mission",
   },
   {
     id: "manual",
     call: "Replace the manual process; don't decorate it.",
-    fact: "Billing was done by hand. The work was not the arithmetic — it was finding every place a person was quietly deciding.",
+    fact: "Billing was done by hand. The work was not the arithmetic. It was finding every place a person was quietly deciding.",
     evidence: "Mappls Shop Admin + automatic billing: replacing a fully manual billing process. Owns UI/UX, the PRD, cross-functional delivery.",
     where: "MapMyIndia · Mappls Shop Admin",
   },
@@ -42,7 +42,7 @@ export const decisions: Decision[] = [
     id: "jobs",
     call: "Three jobs are not one screen.",
     fact: "Installation, replacement and rectification wear the same uniform and are different work. The app is built around the job, not the technician.",
-    evidence: "Technician App: end-to-end tracking of technicians and field operations — installation, replacement, and rectification jobs.",
+    evidence: "Technician App: end-to-end tracking of technicians and field operations: installation, replacement, and rectification jobs.",
     where: "MapMyIndia · Technician App",
   },
   {

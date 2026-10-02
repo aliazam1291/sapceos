@@ -39,7 +39,7 @@ export const faqs: Faq[] = [
   {
     q: "What kind of role are you looking for?",
     a: [
-      `${lookingFor}. Product manager, associate product manager or technical PM — the versions of the job where writing the document and shipping the thing are the same job.`,
+      `${lookingFor}. Product manager, associate product manager or technical PM: the versions of the job where writing the document and shipping the thing are the same job.`,
       `I am in New Delhi and currently ${profile.currentRole} at ${profile.currentOrg}.`,
     ],
     more: { label: "The open channel", href: "/contact" },
@@ -47,7 +47,7 @@ export const faqs: Faq[] = [
   {
     q: "You are an engineer. Why move into product management?",
     a: [
-      "Because I have been doing the product half for two years under an engineering title. On every project at MapMyIndia the role has been the same four things at once: build the frontend, own the UI and UX, work across the teams, and write the PRD that says what we are actually solving — problem statement, user stories, acceptance criteria, edge cases.",
+      "Because I have been doing the product half for two years under an engineering title. On every project at MapMyIndia the role has been the same four things at once: build the frontend, own the UI and UX, work across the teams, and write the PRD that says what we are actually solving: problem statement, user stories, acceptance criteria, edge cases.",
       "The shorter answer is that the part of the week that got dramatically faster this year was the building, and the part that did not budge was deciding what to build. That is where the work is now.",
     ],
     more: { label: "The essay on it", href: "/writing/the-bottleneck-moved" },
@@ -64,14 +64,14 @@ export const faqs: Faq[] = [
     q: "Are you technical?",
     a: [
       "Yes, and still writing code. TypeScript and React across most of the fleet work, plus Angular, Ionic, Node, RxJS, D3 and the Mappls SDK; Python, OpenCV and TensorFlow on the earlier OCR work.",
-      "The relevant part for a product role is not the list. It is that I know which edge cases are real — a route playback with a hole in the GPS data, an alarm that can fire twice, a dashboard that is fine at a hundred vehicles and unusable at ten thousand — and I can write them into a document before anyone builds the wrong thing.",
+      "The relevant part for a product role is not the list. It is that I know which edge cases are real (a route playback with a hole in the GPS data, an alarm that can fire twice, a dashboard that is fine at a hundred vehicles and unusable at ten thousand), and I can write them into a document before anyone builds the wrong thing.",
     ],
     more: { label: "What the work was built with", href: "/flight-data#stack" },
   },
   {
     q: "What did you own on those projects, exactly?",
     a: [
-      "It varies by project and the site says which is which rather than blurring it. Frontend on nine of ten, UI and UX on six, cross-team delivery on six, the PRD on two. Every line is matched against that mission's own role description — nothing is claimed that the report does not say.",
+      "It varies by project and the site says which is which rather than blurring it. Frontend on nine of ten, UI and UX on six, cross-team delivery on six, the PRD on two. Every line is matched against that mission's own role description, and nothing is claimed that the report does not say.",
       "There is a matrix showing it project by project, including the ones where I owned less.",
     ],
     more: { label: "The ownership matrix", href: "/flight-data#ownership" },
@@ -79,7 +79,7 @@ export const faqs: Faq[] = [
   {
     q: "Do you have results to show for it?",
     a: [
-      "Some, and the site is explicit about which. Five of the ten missions carry a measured number that I can point at a source for. The other five do not, and they say so rather than borrowing one — three are still active, so no outcome exists yet, and for those the reports name what will be measured.",
+      "Some, and the site is explicit about which. Five of the ten missions carry a measured number that I can point at a source for. The other five do not, and they say so rather than borrowing one. Three are still active, so no outcome exists yet, and for those the reports name what will be measured.",
       "The largest verified figures: 200,000+ users on Vahan Shakti, 30,000+ routes injected on the IOCL pipeline, 20,000+ vehicles monitored on Locate, and a roughly 40% performance improvement on data-heavy dashboards through caching, RxJS state management and API work.",
     ],
     more: { label: "Evidence coverage, per mission", href: "/flight-data#evidence" },
@@ -87,8 +87,8 @@ export const faqs: Faq[] = [
   {
     q: "Do you run anything of your own?",
     a: [
-      `Two things. ${venture.title} (${venture.urlLabel}), where I am ${venture.role} with co-founder ${venture.cofounder.name} — a coupon platform for Indian shoppers built on one standard: a code that works, rather than the longest list.`,
-      "And Smaak.ux, a product and design studio I founded in 2023 — ten or so clients across SaaS, creator brands, e-commerce and home décor.",
+      `Two things. ${venture.title} (${venture.urlLabel}), where I am ${venture.role} with co-founder ${venture.cofounder.name}: a coupon platform for Indian shoppers built on one standard: a code that works, rather than the longest list.`,
+      "And Smaak.ux, a product and design studio I founded in 2023, with ten or so clients across SaaS, creator brands, e-commerce and home décor.",
     ],
     more: { label: "The venture", href: "/dumbmoney" },
   },
@@ -109,14 +109,14 @@ export const faqs: Faq[] = [
   {
     q: "Can I see your résumé?",
     a: [
-      "Yes — there is a one-page PDF, and the same information is on this site in a form you can actually click through: roles with dates, what each involved, and a report behind every project named on it.",
+      "Yes. There is a one-page PDF, and the same information is on this site in a form you can actually click through: roles with dates, what each involved, and a report behind every project named on it.",
     ],
     more: { label: "Résumé (PDF)", href: "/Ali_Azam_Kazmi_.pdf" },
   },
   {
     q: "How do you decide what to build?",
     a: [
-      "There are seven rules I work by and each one comes with the project it was learned on — define the states before the screens, write the document early enough to be wrong cheaply, treat speed as a product decision, replace the manual process rather than decorating it.",
+      "There are seven rules I work by and each one comes with the project it was learned on: define the states before the screens, write the document early enough to be wrong cheaply, treat speed as a product decision, replace the manual process rather than decorating it.",
       "They are on the site with their evidence attached, which is the only way a claim like that means anything.",
     ],
     more: { label: "The flight rules", href: "/decisions" },
@@ -124,7 +124,7 @@ export const faqs: Faq[] = [
   {
     q: "What is this site built with, and why does it look like this?",
     a: [
-      "Next.js, TypeScript and React Three Fiber, with the 3D done in three.js. No page builder, no template — every scene, instrument and chart is written for this site.",
+      "Next.js, TypeScript and React Three Fiber, with the 3D done in three.js. No page builder, no template. Every scene, instrument and chart is written for this site.",
       "The reason it is a spaceship rather than a grid of cards is that a portfolio is a product, and I would rather show judgement by building something with a point of view than assert it in a paragraph. The content underneath is conventional: problem, decision, outcome, and what was not measured.",
     ],
     more: { label: "The portfolio, measured", href: "/flight-data" },
@@ -138,7 +138,7 @@ export const faqs: Faq[] = [
  */
 export const awaiting = [
   "Notice period and earliest start date",
-  "Remote, hybrid or on-site — and whether he would relocate",
+  "Remote, hybrid or on-site, and whether he would relocate",
   "Salary expectation, if it should be public at all",
   "Whether references can be shared on request",
 ];

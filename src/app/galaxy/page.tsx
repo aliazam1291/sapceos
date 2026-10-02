@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { genreKeywords, identityKeywords, keywordsFor } from "@/lib/keywords";
 import Link from "next/link";
+import Crumbs from "@/components/Crumbs";
 import GalaxyClientLoader from "./GalaxyClientLoader";
 import styles from "./galaxyPage.module.scss";
 
@@ -17,6 +18,7 @@ export default function GalaxyPage() {
     // <main id="main">, and nesting a second one is invalid HTML that also
     // gives assistive tech two competing main landmarks.
     <div className={styles.mainContainer}>
+      <Crumbs name="Galaxy map" path="/galaxy" />
       <header className={styles.topBanner}>
         <Link href="/" className={styles.backLink}>
           &larr; Return to Base

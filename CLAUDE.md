@@ -998,6 +998,47 @@ the open channel; the one joke; keep it the only one).
   and `/smaak` now list the same ten clients and compete for the same
   searches; one studio page with a redirect would be cleaner.
 
+- *The SEO sweep: what a crawler actually found* (2026-10-02). Ali: "0
+  views in last 24hrs?" plus a checklist (noindex, redirect chains,
+  canonicals, no 404, descriptions, one h1, FAQ schema, breadcrumbs,
+  orphans, alt text, WebP, layout shift, under 2 s, humanise, author bio,
+  a Forbes backlink). The site was never blocked — 200s, `index, follow`,
+  robots allows all, analytics script live — the views are low because
+  **Google has indexed three pages, all from the pre-Space-OS site**
+  (`site:` search, 2026-10-02). What a full crawl of the production build
+  found and fixed (the crawler is a scratch script; the release harnesses
+  did not catch any of these):
+  (1) **Old URLs into 404s.** `/case-studies|/work|/projects/:slug` all
+  went to `/missions/:slug` and `/blog/:slug` to `/field-notes/:slug`, so
+  every case study and essay slug — including the one URL Google still
+  holds, `/case-studies/uber-driver-retention` — landed on a 404. Those
+  four are route handlers now (`app/<old>/[slug]/route.ts` →
+  `lib/legacy.ts`): the slug is looked up across missions, field notes and
+  writing and answered with one 308; an unknown slug goes to the index.
+  (2) **Orphans.** `/faq`, `/smaak`, `/galaxy` had no server-rendered link
+  (only the JS overview and the palette); the footer nav now links every
+  sitemap page. (3) **Breadcrumbs** were missing on `/contact`,
+  `/missions`, `/about`, `/mission-history`, `/field-notes`, `/lab`,
+  `/galaxy` — `components/Crumbs.tsx`. (4) **WebP:** the portrait was an
+  840 KB JPEG drawn at ≤240px (`ali-480.webp`, 46 KB; the Person JSON-LD
+  keeps the JPEG) and the tab/palette icons are WebP (manifest keeps PNG);
+  decorative tab icons carry `aria-hidden`. (5) **Author bio**
+  (`AuthorBio`, PROFILE.md lines only) ends every essay and case study.
+  (6) **Humanised:** every em-dash in visible prose across writing, field
+  notes, missions, FAQ, venture, decisions, lab and profile rewritten by
+  hand (brackets, colons, full stops); what remains is date ranges and
+  names. (7) **The launch screen is home-only.** It ran on the first page
+  of any session, so a reader landing on an essay from search sat through
+  a five-second countdown — a full-screen interstitial. Deep links and
+  bots skip it; `?launch` still forces it anywhere. Article prose no
+  longer fades in (`data-reveal` removed from the body). Measured on the
+  essay, mobile Lighthouse: FCP 3.5 → 1.2 s, LCP 6.6 → 4.4 s, CLS 0;
+  desktop LCP 0.8 s, CLS ≤ 0.006 site-wide. The rest of mobile LCP is the
+  framework and scene JS on a 4× CPU — the next lever is no background 3D
+  on phones, which is Ali's call. Not doable from here: Search Console
+  (submit the sitemap, request indexing — Ali's login), the Vercel MCP
+  connector (lost its team scope), and backlinks.
+
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

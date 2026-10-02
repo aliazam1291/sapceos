@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Body, ButtonLink, DraftFlag, NextStep, PageHeader, Pager, Section, ui } from "@/components/ui";
 import { plainKind } from "@/content/pages";
 import RelatedWriting from "@/components/RelatedWriting";
+import AuthorBio from "@/components/AuthorBio";
 import Drone from "@/components/Drone";
 import { fieldNotes, getFieldNote } from "@/content/field-notes";
 import { DRAFT } from "@/content/types";
@@ -97,12 +98,13 @@ export default async function FieldNote({ params }: Params) {
             </p>
           </div>
         ) : (
-          <div className={ui.prose} data-reveal>
+          <div className={ui.prose}>
             <Body value={note.body} subheadLevel="h2" />
           </div>
         )}
 
         <RelatedWriting href={`/field-notes/${note.slug}`} />
+        <AuthorBio />
 
         <div className={ui.buttonRow} style={{ marginTop: "var(--space-12)" }}>
           <ButtonLink href="/field-notes">← All field notes</ButtonLink>

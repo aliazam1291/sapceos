@@ -38,12 +38,12 @@ export const principles = [
   {
     title: "Write it down before building it.",
     body: "A PRD is not paperwork. It is the argument, made early enough to be wrong cheaply.",
-    evidence: "Authored full PRDs — problem statements, user stories, acceptance criteria, edge cases.",
+    evidence: "Authored full PRDs: problem statements, user stories, acceptance criteria, edge cases.",
   },
   {
     title: "Learn whatever the problem needs.",
     body: "Frontend one week, a pitch deck the next. The tool is chosen by the problem, not the résumé.",
-    evidence: "Angular, React, Ionic, D3, geospatial pipelines — and a design studio on the side.",
+    evidence: "Angular, React, Ionic, D3, geospatial pipelines, and a design studio on the side.",
   },
   {
     title: "Ship, then look at what happened.",
@@ -70,7 +70,7 @@ export const operatingLoop = [
   {
     step: "Strategy",
     line: "Decide what matters first.",
-    evidence: "Vehicle status logic — moving, stopped, idle, delayed, offline — defined before anything was built.",
+    evidence: "Vehicle status logic (moving, stopped, idle, delayed, offline) defined before anything was built.",
   },
   {
     step: "UX",
@@ -80,7 +80,7 @@ export const operatingLoop = [
   {
     step: "Technology",
     line: "The tool the problem needs, not the one on the résumé.",
-    evidence: "React, Angular, Ionic, RxJS, D3, Mappls SDK — and a 30,000-route geospatial pipeline into S3.",
+    evidence: "React, Angular, Ionic, RxJS, D3, Mappls SDK, and a 30,000-route geospatial pipeline into S3.",
   },
   {
     step: "Build",
@@ -95,7 +95,7 @@ export const operatingLoop = [
   {
     step: "Learn",
     line: "Look at what happened. Then start again.",
-    evidence: "~40% dashboard speed-up — found after shipping, from caching, RxJS and API work.",
+    evidence: "~40% dashboard speed-up, found after shipping, from caching, RxJS and API work.",
   },
 ];
 
@@ -137,7 +137,7 @@ export const experience = [
     href: "/dumbmoney",
     points: [
       "A coupon and deals platform for Indian online shoppers, run with co-founder Akshat Somani.",
-      "Own the product: what DumbMoney is for, what ships, and the verification standard — automated expiry and duplicate checks, then a person, before a code goes live.",
+      "Own the product: what DumbMoney is for, what ships, and the verification standard: automated expiry and duplicate checks, then a person, before a code goes live.",
     ],
   },
   {
@@ -150,7 +150,7 @@ export const experience = [
       "Built and scaled enterprise fleet and telematics platforms: Vahan Shakti (government, 200,000+ users), OEM platforms (20,000+ users), fleet operators (10,000+ vehicles).",
       "5+ live production projects; owned operational and analytics dashboards covering vehicle health, trips, delays, alerts and compliance.",
       "~40% performance improvement on data-heavy dashboards through caching, RxJS state management and API optimisation.",
-      "Defined vehicle status logic — moving, stopped, idle, delayed, offline — plus map UX for rotation, fit-to-route and route playback, and the alarm, geofence and ticketing workflows.",
+      "Defined vehicle status logic (moving, stopped, idle, delayed, offline), plus map UX for rotation, fit-to-route and route playback, and the alarm, geofence and ticketing workflows.",
       "Authored full PRDs: problem statements, user stories, acceptance criteria, edge cases.",
     ],
   },
@@ -178,8 +178,8 @@ export const experience = [
     period: "Jun — Aug 2023",
     place: "Mumbai",
     points: [
-      "AI-driven OCR — +30% data extraction accuracy.",
-      "UX research and usability testing — +15% task completion.",
+      "AI-driven OCR: +30% data extraction accuracy.",
+      "UX research and usability testing: +15% task completion.",
     ],
   },
   {

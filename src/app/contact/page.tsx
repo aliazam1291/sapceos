@@ -1,3 +1,4 @@
+import Crumbs from "@/components/Crumbs";
 import type { Metadata } from "next";
 import { ButtonLink, NextStep, PageHeader, Section, Status, ui } from "@/components/ui";
 import CopyLink from "@/components/CopyLink";
@@ -25,6 +26,7 @@ const initials = profile.name
 export default function ContactPage() {
   return (
     <>
+      <Crumbs name="Open channel" path="/contact" />
       <PageHeader
         label="Open Channel"
         plain={plainName["/contact"]}

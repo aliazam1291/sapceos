@@ -1,3 +1,4 @@
+import Crumbs from "@/components/Crumbs";
 import type { Metadata } from "next";
 import Hologram from "@/components/Hologram";
 import RobotGuide from "@/components/RobotGuide";
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 export default function LabPage() {
   return (
     <>
+      <Crumbs name="Lab" path="/lab" />
       <PageHeader
         label="Lab"
         plain={plainName["/lab"]}

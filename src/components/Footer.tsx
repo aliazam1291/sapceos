@@ -18,6 +18,15 @@ const nav = [
   { href: "/decisions", label: "Flight Rules" },
   { href: "/about", label: "About" },
   { href: "/mission-history", label: "Mission History" },
+  // Server-rendered links to every page in the sitemap (2026-10-02): /faq,
+  // /smaak and /galaxy were reachable only from the JS overview and the
+  // palette, so a crawler following plain links never found them.
+  { href: "/studio", label: "Studio" },
+  { href: "/smaak", label: "Smaak.ux" },
+  { href: "/dumbmoney", label: "DumbMoney" },
+  { href: "/flight-data", label: "Flight Data" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/galaxy", label: "Galaxy Map" },
   { href: "/contact", label: "Open Channel" },
 ];
 

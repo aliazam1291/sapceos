@@ -1,3 +1,4 @@
+import Crumbs from "@/components/Crumbs";
 import type { Metadata } from "next";
 import MissionFilter from "@/components/MissionFilter";
 import { plainName } from "@/content/pages";
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
 export default function MissionsPage() {
   return (
     <>
+      <Crumbs name="Missions" path="/missions" />
       <PageHeader
         label="Missions"
         plain={plainName["/missions"]}

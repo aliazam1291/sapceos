@@ -50,7 +50,7 @@ export const venture: Venture = {
   url: "https://dumbmoney.in",
   urlLabel: "dumbmoney.in",
   status: "live",
-  premise: "A coupon and deals platform for Indian online shoppers — every code checked by a person before it goes live, so the one you copy at checkout works.",
+  premise: "A coupon and deals platform for Indian online shoppers. Every code is checked by a person before it goes live, so the one you copy at checkout works.",
   tagline: { text: "India's most trusted coupon platform. We verify every deal so you save more, every day.", source: "dumbmoney.in" },
   cofounder: { name: "Akshat Somani", role: "Co-founder" },
   market: "India · consumer · e-commerce",
@@ -58,14 +58,14 @@ export const venture: Venture = {
   cover: "/ventures/dumbmoney.png",
   coverPhone: "/ventures/dumbmoney-phone.png",
   measure: [
-    "Verified-code success rate at checkout — the number the product exists for",
+    "Verified-code success rate at checkout: the number the product exists for",
     "Deals live and brands covered, counted the same way every month",
     "Repeat visitors: does a shopper come back before the next sale?",
     "Time from a code expiring to it leaving the catalogue",
   ],
   ownership: {
     decided: [
-      "What DumbMoney is for: a code that works, not the longest list — the product standard, as CPO",
+      "What DumbMoney is for: a code that works, not the longest list. The product standard, as CPO",
       "That verification is the feature: automated expiry and duplicate checks, then a person, before a code goes live",
     ],
     withTeam: [
@@ -85,20 +85,20 @@ export const venture: Venture = {
     {
       label: "What it is",
       body: [
-        "A catalogue of coupon codes, promo codes and cashback offers from Indian retailers — Amazon, Flipkart, Myntra, Zomato, MakeMyTrip and the other stores Indian shoppers actually use — organised by store and by category (beauty, electronics, fashion, food, travel, pharmacy, gifting…). Browse, copy the code, use it at checkout. No account.",
+        "A catalogue of coupon codes, promo codes and cashback offers from Indian retailers (Amazon, Flipkart, Myntra, Zomato, MakeMyTrip and the other stores Indian shoppers actually use), organised by store and by category (beauty, electronics, fashion, food, travel, pharmacy, gifting…). Browse, copy the code, use it at checkout. No account.",
         "A hot-deals section that updates through the day, and a blog that teaches the mechanics: how sale-day coupons stack, why codes stop working.",
       ],
     },
     {
       label: "How a code gets in",
       body: [
-        "Automated checks first — expiry, duplicates — then a person reads it before it goes live. Every published coupon carries the name of the founder who checked it. The about page says the rest plainly: not every code is yet tested at checkout. That sentence is the standard we are working toward, written down where users can see it.",
+        "Automated checks first (expiry, duplicates), then a person reads it before it goes live. Every published coupon carries the name of the founder who checked it. The about page says the rest plainly: not every code is yet tested at checkout. That sentence is the standard we are working toward, written down where users can see it.",
       ],
     },
     {
       label: "My role",
       body: [
-        "Founder and Chief Product Officer. The product — what DumbMoney is for, what ships, what the site promises and refuses to promise — is mine. I also write for it: the two pieces below are the kind of thing a shopper actually needs the week before a sale.",
+        "Founder and Chief Product Officer. The product (what DumbMoney is for, what ships, what the site promises and refuses to promise) is mine. I also write for it: the two pieces below are the kind of thing a shopper actually needs the week before a sale.",
         "An earlier design concept for the brand is on Behance, linked at the foot of this page.",
       ],
     },

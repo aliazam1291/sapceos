@@ -35,7 +35,7 @@ export default function OperatorLeg() {
 
         <div className={styles.grid}>
           <div className={styles.figure}>
-            <MatrixPortrait src="/images/ali.jpg" alt={profile.name} size={240} cells={56} />
+            <MatrixPortrait src="/images/ali-480.webp" alt={profile.name} size={240} cells={56} />
           </div>
 
           <div className={styles.copy}>

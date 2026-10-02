@@ -57,10 +57,10 @@ const KIND_ORDER: Kind[] = ["page", "mission", "note", "studio", "lab", "channel
 // by the ship, missions by a world, the channel by the relay, the studio by
 // the ringed giant. Notes are drones (SVG) and the lab has no model yet.
 const KIND_ICON: Partial<Record<Kind, string>> = {
-  page: "/icons/ship-128.png",
-  mission: "/icons/world-128.png",
-  studio: "/icons/giant-128.png",
-  channel: "/icons/satellite-128.png",
+  page: "/icons/ship-128.webp",
+  mission: "/icons/world-128.webp",
+  studio: "/icons/giant-128.webp",
+  channel: "/icons/satellite-128.webp",
 };
 
 function buildEntries(): Entry[] {

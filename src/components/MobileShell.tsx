@@ -28,10 +28,10 @@ import styles from "./MobileShell.module.scss";
  */
 
 const TABS = [
-  { href: "/", label: "Home", icon: "/icons/ship-128.png" },
-  { href: "/missions", label: "Missions", icon: "/icons/world-128.png" },
-  { href: "/about", label: "Operator", icon: "/icons/ship-landed-128.png" },
-  { href: "/contact", label: "Channel", icon: "/icons/satellite-128.png" },
+  { href: "/", label: "Home", icon: "/icons/ship-128.webp" },
+  { href: "/missions", label: "Missions", icon: "/icons/world-128.webp" },
+  { href: "/about", label: "Operator", icon: "/icons/ship-landed-128.webp" },
+  { href: "/contact", label: "Channel", icon: "/icons/satellite-128.webp" },
 ] as const;
 
 // What the top bar calls the screen you are on.
@@ -120,7 +120,7 @@ export default function MobileShell() {
         {TABS.map((t) => (
           <Link key={t.href} href={t.href} className={styles.tab} aria-current={isActive(t.href) ? "page" : undefined} data-active={isActive(t.href) || undefined}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={t.icon} alt="" width={28} height={28} className={styles.tabIcon} decoding="async" />
+            <img src={t.icon} alt="" aria-hidden="true" width={28} height={28} className={styles.tabIcon} decoding="async" />
             <span className={styles.tabLabel}>{t.label}</span>
           </Link>
         ))}

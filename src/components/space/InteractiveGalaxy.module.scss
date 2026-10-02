@@ -186,8 +186,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2rem;
-  height: 2rem;
+  // 36px: the site's tap floor (the zoom buttons were 32×32 on a phone).
+  min-width: 2.25rem;
+  height: 2.25rem;
   padding: 0 0.5rem;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);

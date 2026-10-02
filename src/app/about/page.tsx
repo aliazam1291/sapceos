@@ -1,3 +1,4 @@
+import Crumbs from "@/components/Crumbs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { plainName } from "@/content/pages";
@@ -26,6 +27,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
+      <Crumbs name="About" path="/about" />
       {/* This page is the person's profile; say so to the crawler. */}
       <script
         type="application/ld+json"
@@ -42,7 +44,7 @@ export default function AboutPage() {
         plain={plainName["/about"]}
         title={profile.name}
         lede={`${profile.title} · Founder & CPO, DumbMoney · ${profile.location}`}
-        figure={<MatrixPortrait src="/images/ali.jpg" alt={profile.name} size={220} cells={56} />}
+        figure={<MatrixPortrait src="/images/ali-480.webp" alt={profile.name} size={220} cells={56} />}
       />
       <div className={ui.pageComms}>
         <Comms at="about" />

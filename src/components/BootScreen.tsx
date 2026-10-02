@@ -74,6 +74,15 @@ export default function BootScreen() {
       if (!force && sessionStorage.getItem(KEY)) return;
       if (force) sessionStorage.removeItem(KEY);
     } catch {}
+    /*
+     * The front door only (2026-10-02). It used to run on the first page of
+     * any session, so a reader arriving from a search result for an essay
+     * waited through a five-second countdown before the essay — a
+     * full-screen interstitial over the page Google had just sent them to.
+     * The launch is the home page's opening; a deep link goes straight to
+     * what was linked. Crawlers and link previews never get it either.
+     */
+    if (!force && (location.pathname !== "/" || /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|embedly|preview/i.test(navigator.userAgent))) return;
     reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setShow(true);
     document.documentElement.classList.add("booting");

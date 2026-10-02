@@ -22,14 +22,14 @@ export const missions: Mission[] = [
     stack: ["Angular", "Ionic", "TypeScript", "REST APIs"],
     signals: [{ label: "Stage", value: "Building end to end" }],
     ownership: {
-      decided: ["The PRD — problem statement, user stories, acceptance criteria, edge cases", "The UX: installation, replacement and rectification as three distinct jobs"],
+      decided: ["The PRD: problem statement, user stories, acceptance criteria, edge cases", "The UX: installation, replacement and rectification as three distinct jobs"],
       built: ["The app, end to end"],
       withTeam: ["Cross-functional delivery"],
     },
     report: [
       {
         label: "Brief",
-        body: "An end-to-end app for tracking technicians and managing field operations — installation, replacement and rectification jobs — built end to end.",
+        body: "An end-to-end app for tracking technicians and managing field operations (installation, replacement and rectification jobs), built end to end.",
       },
       {
         label: "Context",
@@ -38,7 +38,7 @@ export const missions: Mission[] = [
       { label: "Users", body: "Field technicians and the operations staff who dispatch and verify their work." },
       {
         label: "Discovery",
-        body: "Three job types — installation, replacement, rectification — were being coordinated through the same channels with no shared definition of 'done'. The first work was writing down, per job type, what has to be true before a technician starts, what proof closes it, and where each one usually stalls.",
+        body: "Three job types (installation, replacement, rectification) were being coordinated through the same channels with no shared definition of 'done'. The first work was writing down, per job type, what has to be true before a technician starts, what proof closes it, and where each one usually stalls.",
       },
       {
         label: "Problem",
@@ -46,7 +46,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Hypothesis",
-        body: "If the app carries job state as its primary object — not the technician, not the vehicle — then dispatch, the technician and verification are looking at the same thing, and the coordination that lived in messages disappears because it has nowhere left to live.",
+        body: "If the app carries job state as its primary object, rather than the technician or the vehicle, then dispatch, the technician and verification are looking at the same thing, and the coordination that lived in messages disappears because it has nowhere left to live.",
       },
       {
         label: "Strategy",
@@ -83,7 +83,7 @@ export const missions: Mission[] = [
     status: "active",
     featured: true,
     premise:
-      "Billing was done by hand. The interesting part was not automating the maths — it was finding every place a human was quietly making a decision.",
+      "Billing was done by hand. The interesting part was not automating the maths. It was finding every place a human was quietly making a decision.",
     stack: ["React", "TypeScript", "REST APIs"],
     signals: [{ label: "Replaces", value: "A fully manual billing process" }],
     ownership: {
@@ -111,7 +111,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Hypothesis",
-        body: "Automating the calculation is the easy half. If every judgement call the operator was making by hand is captured as an explicit rule — or explicitly surfaced for a human decision — the process becomes consistent, and consistency is what reconciliation actually needs.",
+        body: "Automating the calculation is the easy half. If every judgement call the operator was making by hand is captured as an explicit rule, or explicitly surfaced for a human decision, the process becomes consistent, and consistency is what reconciliation actually needs.",
       },
       {
         label: "Strategy",
@@ -161,10 +161,10 @@ export const missions: Mission[] = [
       withTeam: ["Cross-functional delivery"],
     },
     report: [
-      { label: "Brief", body: "Geospatial route data creation for Indian Oil — GeoRTD generation at scale." },
+      { label: "Brief", body: "Geospatial route data creation for Indian Oil: GeoRTD generation at scale." },
       {
         label: "Context",
-        body: "Indian Oil moves LPG by road across thousands of routes. Every one of those routes needs geospatial reference data — the GeoRTD — before tracking, geofencing and playback can work against it.",
+        body: "Indian Oil moves LPG by road across thousands of routes. Every one of those routes needs geospatial reference data (the GeoRTD) before tracking, geofencing and playback can work against it.",
       },
       {
         label: "Users",
@@ -180,7 +180,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Hypothesis",
-        body: "If every route carries provenance — what it was generated from, when, by which run — then errors are a data question rather than an archaeology exercise, and the team can trust the pipeline enough to keep running it.",
+        body: "If every route carries provenance (what it was generated from, when, by which run), then errors are a data question rather than an archaeology exercise, and the team can trust the pipeline enough to keep running it.",
       },
       {
         label: "Strategy",
@@ -198,12 +198,12 @@ export const missions: Mission[] = [
         label: "Design",
         body: "Logs and diffs presented as a report, not a console. The question a reviewer asks is 'what is different', and the interface answers that first.",
       },
-      { label: "Technology", body: "Route data generated and injected into an Amazon S3 bucket — 30,000+ routes." },
+      { label: "Technology", body: "Route data generated and injected into an Amazon S3 bucket: 30,000+ routes." },
       { label: "Build", body: "In progress." },
       { label: "Outcome", body: "30,000+ routes injected so far; the pipeline is live and still being measured. What gets measured: route accuracy against ground truth, and throughput per run." },
       {
         label: "Learnings",
-        body: "Data pipelines are products with a user of one team. They deserve the same discovery — what does the person running this need to know, and when — as anything customer-facing.",
+        body: "Data pipelines are products with a user of one team. They deserve the same discovery (what does the person running this need to know, and when?) as anything customer-facing.",
       },
     ],
   },
@@ -229,7 +229,7 @@ export const missions: Mission[] = [
       { label: "Sector", value: "Government" },
     ],
     ownership: {
-      built: ["React map components — live location, custom markers, route plotting, clustering, heatmaps"],
+      built: ["React map components: live location, custom markers, route plotting, clustering, heatmaps"],
     },
     report: [
       { label: "Brief", body: "Vehicle tracking and analytics for a government fleet programme." },
@@ -237,10 +237,10 @@ export const missions: Mission[] = [
         label: "Context",
         body: "A map that shows everything shows nothing. Past a certain density, every additional marker removes information rather than adding it.",
       },
-      { label: "Users", body: "Government fleet operators and administrators — 200,000+ of them." },
+      { label: "Users", body: "Government fleet operators and administrators, 200,000+ of them." },
       {
         label: "Discovery",
-        body: "A map of a national fleet is unreadable at the scale it needs to serve. The work began by identifying which questions operators asked at which zoom levels — where is everything, where is the density, where is this one vehicle — and designing a different answer for each.",
+        body: "A map of a national fleet is unreadable at the scale it needs to serve. The work began by identifying which questions operators asked at which zoom levels (where is everything, where is the density, where is this one vehicle) and designing a different answer for each.",
       },
       {
         label: "Problem",
@@ -248,7 +248,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Hypothesis",
-        body: "If the map changes what it emphasises with altitude — clusters and heat at the top, individual markers and routes close in — one interface can serve both the overview and the individual case without either collapsing into noise.",
+        body: "If the map changes what it emphasises with altitude (clusters and heat at the top, individual markers and routes close in), one interface can serve both the overview and the individual case without either collapsing into noise.",
       },
       {
         label: "Strategy",
@@ -268,7 +268,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Technology",
-        body: "React map components over the Mappls SDK — live location, custom markers, route plotting, clustering and heatmaps.",
+        body: "React map components over the Mappls SDK: live location, custom markers, route plotting, clustering and heatmaps.",
       },
       {
         label: "Build",
@@ -297,7 +297,7 @@ export const missions: Mission[] = [
     status: "shipped",
     featured: true,
     premise:
-      "Built for ten thousand vehicles, architected for fifty thousand — because the second number is the one that arrives without warning.",
+      "Built for ten thousand vehicles, architected for fifty thousand, because the second number is the one that arrives without warning.",
     stack: ["React", "Ionic", "TypeScript", "RxJS"],
     signals: [
       { label: "Active vehicles", value: "10,000+" },
@@ -313,7 +313,7 @@ export const missions: Mission[] = [
       { label: "Users", body: "Logistics and fleet operations teams." },
       {
         label: "Discovery",
-        body: "Operators segment fleets constantly — by status, region, customer, vehicle type — and they replay trips to understand what happened. Those two behaviours shaped the product more than any dashboard request.",
+        body: "Operators segment fleets constantly (by status, region, customer, vehicle type) and they replay trips to understand what happened. Those two behaviours shaped the product more than any dashboard request.",
       },
       {
         label: "Problem",
@@ -347,7 +347,7 @@ export const missions: Mission[] = [
       { label: "Outcome", body: "Live on the Play Store." },
       {
         label: "Learnings",
-        body: "Designing for the fleet you will have, not the one you have, is cheaper than it sounds — provided the architecture decision is made before the first screen, not after the first outage.",
+        body: "Designing for the fleet you will have, not the one you have, is cheaper than it sounds, provided the architecture decision is made before the first screen, not after the first outage.",
       },
     ],
   },
@@ -372,7 +372,7 @@ export const missions: Mission[] = [
       built: ["Real-time vehicle monitoring; web and mobile dashboards"],
     },
     report: [
-      { label: "Brief", body: "Real-time vehicle monitoring for an OEM — web and mobile dashboards." },
+      { label: "Brief", body: "Real-time vehicle monitoring for an OEM, on web and mobile dashboards." },
       {
         label: "Context",
         body: "A vehicle manufacturer wanted to see its fleet in the field: live location, engine health, journeys, driver behaviour and driver test scores, across 20,000+ vehicles in Maharashtra, from a desk and from a phone.",
@@ -380,7 +380,7 @@ export const missions: Mission[] = [
       { label: "Users", body: "Manufacturer operations teams monitoring 20,000+ vehicles across Maharashtra." },
       {
         label: "Discovery",
-        body: "The web and mobile dashboards had different jobs. The desk wanted analysis — trends, comparisons, driver scoring. The phone wanted a quick answer about one vehicle. Same data, different questions.",
+        body: "The web and mobile dashboards had different jobs. The desk wanted analysis: trends, comparisons, driver scoring. The phone wanted a quick answer about one vehicle. Same data, different questions.",
       },
       {
         label: "Problem",
@@ -443,7 +443,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Discovery",
-        body: "Alerts arrive continuously; humans work in queues. The product's job was to turn the first into the second — and to let an operator see where and when an alert happened, not just that it did.",
+        body: "Alerts arrive continuously; humans work in queues. The product's job was to turn the first into the second, and to let an operator see where and when an alert happened, not just that it did.",
       },
       { label: "Problem", body: "Turning a continuous stream of vehicle events into a queue a human can actually work through." },
       {
@@ -514,7 +514,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Hypothesis",
-        body: "If access is modelled around accountability — you see what you are answerable for — the app is simpler for every user and safer for the operator.",
+        body: "If access is modelled around accountability (you see what you are answerable for), the app is simpler for every user and safer for the operator.",
       },
       {
         label: "Strategy",
@@ -565,7 +565,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Users",
-        body: "Vehicle owners registering and managing FASTags — including fleet owners with many vehicles — and the operators supporting them.",
+        body: "Vehicle owners registering and managing FASTags, including fleet owners with many vehicles, and the operators supporting them.",
       },
       {
         label: "Discovery",
@@ -632,7 +632,7 @@ export const missions: Mission[] = [
       { label: "Users", body: "Internal operations staff." },
       {
         label: "Discovery",
-        body: "Internal tools accumulate inconsistency — every screen built by whoever needed it that week. The first job was a component library, so that the next screen would look and behave like the last.",
+        body: "Internal tools accumulate inconsistency, with every screen built by whoever needed it that week. The first job was a component library, so that the next screen would look and behave like the last.",
       },
       {
         label: "Problem",
@@ -666,7 +666,7 @@ export const missions: Mission[] = [
       },
       {
         label: "Learnings",
-        body: "Internal tools are where a design system pays for itself fastest — the audience is small, the screens are many, and nobody forgives inconsistency they have to live in every day.",
+        body: "Internal tools are where a design system pays for itself fastest: the audience is small, the screens are many, and nobody forgives inconsistency they have to live in every day.",
       },
     ],
   },

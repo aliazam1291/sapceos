@@ -1,3 +1,4 @@
+import Crumbs from "@/components/Crumbs";
 import type { Metadata } from "next";
 import NoteFlight from "@/components/NoteFlight";
 import Drone from "@/components/Drone";
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
 export default function FieldNotesPage() {
   return (
     <>
+      <Crumbs name="Field notes" path="/field-notes" />
       <PageHeader
         label="Field Notes"
         plain={plainName["/field-notes"]}
