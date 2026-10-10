@@ -26,6 +26,74 @@ export type Piece = {
 
 export const writing: Piece[] = [
   /*
+   * AI search (2026-10-11). Ali: "write a blog and post it, trending topic
+   * about tech and SEO keywords." GEO is the topic this month, and the site
+   * had just been through it (robots.txt crawler rules and llms.txt, 10-04;
+   * the SEO sweep, 10-02), so the piece is the guide with this site as the
+   * worked example. Every engine fact is from the vendor's own documentation,
+   * read on the day; vendor-blog percentages are named as folklore, not used.
+   * Nothing claims a citation or a traffic result for this site, because
+   * there is none on file.
+   */
+  {
+    // ≤44 chars: the page title adds " — Ali Azam Kazmi" and clips at 62.
+    title: "Get cited by ChatGPT, Perplexity and AI Mode",
+    outlet: "Space OS",
+    date: "2026-10-11",
+    slug: "get-cited-by-ai-search",
+    href: "/writing/get-cited-by-ai-search",
+    status: "published",
+    kind: "guide",
+    line: "What OpenAI, Google, Anthropic, Perplexity and Microsoft actually document about appearing in AI answers, what is folklore, and what I did on this site.",
+    related: { label: "The page built for answer engines: twelve recruiter questions", href: "/faq" },
+    keywords: [
+      "generative engine optimization",
+      "GEO",
+      "how to get cited by ChatGPT",
+      "AI search optimization",
+      "answer engine optimization",
+      "Google AI Mode SEO",
+      "AI Overviews SEO",
+      "OAI-SearchBot robots.txt",
+      "llms.txt",
+      "SEO for AI search 2026",
+    ],
+    body: [
+      "Search has a second front door now. Someone asks ChatGPT, Perplexity, Claude or Google's AI Mode a question, gets a paragraph back, and the sources sit underneath it as small links. Being one of those links is what people call generative engine optimisation, GEO, or answer engine optimisation, depending on who is selling it.",
+      "I spent the past fortnight working out how to get this site into those answers. The most useful thing I found is how little of the advice is written down by the companies that run the engines. Most of what circulates is vendor folklore with confident percentages attached. So this guide keeps the two apart: what OpenAI, Google, Anthropic, Perplexity and Microsoft actually document, what I did about it here, and what I would not bother with.",
+      "## Why it matters even when nobody clicks",
+      "The clicks are falling, and that part is measured. [Pew Research Center tracked 900 US adults' Google searches](https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/) in March 2025 and found they clicked a traditional result on 8 per cent of visits when an AI summary appeared, against 15 per cent when none did. Publishers have reported far steeper drops since, and Google spent May announcing changes to AI Overviews meant to send more of them back.",
+      "For a portfolio, a citation is worth having even without the click. A recruiter who asks an assistant about a candidate and gets a sourced answer has read your page, whether or not your analytics saw them arrive.",
+      "## What the engines actually document",
+      "### Google: AI Overviews and AI Mode",
+      "[Google's page on its AI features](https://developers.google.com/search/docs/appearance/ai-features) is short and blunt. To appear, a page must be indexed and eligible to show with a snippet, and there is nothing else to do: no special markup, no new machine-readable file. In May, Google published a fuller guide that names the tactics it considers unnecessary, including llms.txt files, chopping content into chunks and rewriting pages for AI. Its summary is that optimising for AI search is still optimising for search.",
+      "The opt-out levers are the ones you already had: nosnippet, max-snippet and noindex. Google-Extended, the token people tend to reach for, governs how some of Google's other AI systems use your content. It does not decide whether you appear in Search.",
+      "### ChatGPT",
+      "[OpenAI runs separate crawlers for separate jobs](https://developers.openai.com/api/docs/bots), and the difference matters. OAI-SearchBot feeds ChatGPT search, and OpenAI says plainly that a site which blocks it will not be shown in search answers. GPTBot collects material that may train future models; blocking it is a separate decision and does not affect search. ChatGPT-User is the fetch that happens when a person asks ChatGPT to read a page, and because a person triggered it, OpenAI says robots.txt rules may not apply.",
+      "The claim you will meet everywhere is that ChatGPT search runs on Bing's index, so ranking on Bing gets you into ChatGPT. It may be partly true. OpenAI has not documented it, and the percentages that circulate do not trace back to anything with a method. Registering with Bing is worth doing anyway, for a reason that is documented, below.",
+      "### Claude",
+      "[Anthropic splits its crawling three ways too](https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler): ClaudeBot gathers material that may be used for training, Claude-SearchBot indexes pages to improve Claude's search answers, and Claude-User fetches a page when a person asks about it. All three honour robots.txt, and Anthropic notes that blocking Claude-User can reduce how visible you are when people search through Claude.",
+      "### Perplexity",
+      "[PerplexityBot builds the index behind Perplexity's answers](https://docs.perplexity.ai/guides/bots) and, by Perplexity's account, is not used to train foundation models. Perplexity-User fetches a page because someone asked, and Perplexity says it generally ignores robots.txt. Changes to your rules can take up to a day to register.",
+      "### Microsoft Copilot and Bing",
+      "Bing Webmaster Tools is the one place you can see any of this happening. Since February it has carried an AI Performance report, still in preview, that counts how often Copilot and Bing's AI summaries cite your pages and shows sample queries that led there. It does not show clicks. Nobody else gives site owners even that much: OpenAI, Anthropic and Perplexity publish their crawlers, but no citation data.",
+      "## The pattern across all five",
+      "Read side by side, the documentation makes one point. You cannot be cited from a page the engine was not allowed to read, or could not read. Everything after that is ordinary search quality, which is less exciting than a GEO checklist and a good deal more useful.",
+      "Could not read deserves a moment. When [Vercel analysed AI crawler traffic across its network](https://vercel.com/blog/the-rise-of-the-ai-crawler) in December 2024, none of the major AI crawlers ran JavaScript. They downloaded the files and never executed them, so a page that builds its text in the browser was, to them, an empty page. This site is a 3D flight through a galaxy, which is about as bad a starting point as exists, so the rule here has always been that every page's words are in the HTML the server sends and the 3D arrives afterwards. If your portfolio is a single-page app, check this before anything else: open the page source, not the inspector, and look for your sentences.",
+      "## What I did on this site",
+      "When I checked at the start of October, Google had indexed three pages of this site, all from a version that no longer existed, and every old link landed on a 404. The fix had nothing to do with AI: permanent redirects from each old address to its new one, a footer that links every page so none is an orphan, and breadcrumbs.",
+      "The AI-specific part took ten minutes. The robots.txt names each search crawler above and allows it, rather than leaning on the catch-all rule, so tightening the default later cannot quietly remove the site from answers. It allows the training crawlers too. That is a choice, not a requirement: a portfolio exists to be known. If you would rather be cited than trained on, disallow GPTBot, ClaudeBot and Google-Extended and leave the search crawlers alone.",
+      "I also added an llms.txt, a plain-text map of the site for language models. Google says it ignores the file, so it neither helps nor harms there. A few other tools read it, none has promised to, and this one is generated from the same content as the pages, so it cannot drift. Worth ten minutes, not a day.",
+      "The page I would actually point to is [the FAQ written for recruiters](/faq): twelve questions, each a heading with a short factual answer beneath it. Google stopped showing FAQ rich results in May, so it wins nothing in the results list. It is there because a real question with a clean answer under it is the easiest thing on a site for any engine to quote and attribute.",
+      "## What I would not bother with",
+      "Rewriting pages in a special AI register, chopping them into fragments, or stuffing them with question-shaped headings nobody asked: Google names these as unnecessary and none of the others asks for them. Buying mentions to look popular. And any tool that promises your share of ChatGPT answers to a decimal place. The engines do not publish that number, so the tool is estimating it from prompts it chose itself. Read it as a weather vane if you like, but never report it as a metric.",
+      "## A checklist that fits on a card",
+      "Put the text in the server's HTML. Allow OAI-SearchBot, Claude-SearchBot and PerplexityBot by name, and decide separately about the training crawlers. Submit a sitemap to Google Search Console and Bing Webmaster Tools. Give every page its own title, description and canonical address. Answer real questions in plain sentences under clear headings. And write something nobody else could have written, because an engine has no reason to cite the hundredth copy of the same advice.",
+      "## What I would measure",
+      "Not a GEO score. In Bing's AI Performance report, citations per month and which pages earn them. In the server logs, visits from OAI-SearchBot, Claude-SearchBot and PerplexityBot, which tell you whether you are being read at all, and visits from ChatGPT-User, Claude-User and Perplexity-User, which tell you that somebody asked about you. In analytics, referrals from chatgpt.com and perplexity.ai. And the slow one: once a month, ask each assistant the questions a recruiter would ask about you, and write down whether the answer cites your page or somebody else's.",
+    ],
+  },
+  /*
    * The two guides (2026-10-01). Ali: "add and post blogs on ai agents we can
    * use like library, use seo keywords, write a good humanised blog." Read
    * both ways: a library of agents to USE, and the frameworks you import
