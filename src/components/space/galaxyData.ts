@@ -201,8 +201,8 @@ const RAW_NODES: GalaxyNode[] = [
     org: "MapMyIndia [Gtropy]",
     role: "UI/UX Owner · PRD Author",
     premise: "Replaced fully manual billing operations with automated reconciliation and admin workflows.",
-    stack: ["React", "TypeScript", "REST APIs"],
-    signals: [{ label: "Replaces", value: "Manual Billing" }],
+    stack: ["Angular", "Spring Boot", "Razorpay"],
+    signals: [{ label: "Billing & accounts", value: "80% more productive" }],
   },
   {
     id: "control-tower",

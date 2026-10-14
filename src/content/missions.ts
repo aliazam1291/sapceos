@@ -75,7 +75,12 @@ export const missions: Mission[] = [
   },
   {
     slug: "mappls-shop-admin",
-    measure: ["Billing cycle time, manual vs automated", "Invoice error rate", "Adoption by shop admins"],
+    updated: "2026-10-15",
+    results: [
+      { value: "80%", label: "More productive, billing & accounts teams", source: "Measured after go-live" },
+      { value: "30+", label: "Users", source: "shop.mappls.com" },
+      { value: "Live", label: "Generating revenue" },
+    ],
     title: "Mappls Shop Admin & Automated Billing",
     org: "MapMyIndia [Gtropy]",
     role: "UI/UX owner · PRD author · cross-functional delivery",
@@ -84,8 +89,11 @@ export const missions: Mission[] = [
     featured: true,
     premise:
       "Billing was done by hand. The interesting part was not automating the maths. It was finding every place a human was quietly making a decision.",
-    stack: ["React", "TypeScript", "REST APIs"],
-    signals: [{ label: "Replaces", value: "A fully manual billing process" }],
+    stack: ["Angular", "TypeScript", "Spring Boot", "Odoo", "Razorpay"],
+    signals: [
+      { label: "Replaces", value: "A fully manual billing process" },
+      { label: "Billing & accounts", value: "80% more productive" },
+    ],
     ownership: {
       decided: ["The PRD", "The UI/UX"],
       built: ["The web app frontend"],
@@ -100,7 +108,7 @@ export const missions: Mission[] = [
         label: "Context",
         body: "A manual process is never only arithmetic. It carries exceptions, tolerances and judgement calls that were never written down anywhere, because the person doing them never needed them written down.",
       },
-      { label: "Users", body: "Shop administrators and the billing operations team." },
+      { label: "Users", body: "Shop administrators, the billing team and the accounts team, plus the customers renewing a device subscription at shop.mappls.com." },
       {
         label: "Discovery",
         body: "Sat with the people doing the billing and traced one cycle end to end. Most of the time was not arithmetic; it was looking things up, deciding how to treat an edge case, and re-checking work that had no system of record.",
@@ -131,10 +139,10 @@ export const missions: Mission[] = [
       },
       {
         label: "Technology",
-        body: "React and TypeScript over the platform's REST APIs; the billing rules live server-side so that the admin surface and any future automation share one source of truth.",
+        body: "An Angular admin console over the Spring billing API, with Odoo upstream for devices and renewal dates and Razorpay for payments. The billing rules live server-side, so the admin surface, the customer checkout and any future automation share one source of truth. Every call goes through one API service that alone owns the base path, because production and the lab box use prefixes that 404 on each other.",
       },
       { label: "Build", body: "Ali owns the UI/UX, wrote the PRD, and drives delivery across the teams involved." },
-      { label: "Outcome", body: "In progress; nothing measured yet, so nothing claimed. What gets measured once it runs: billing cycle time, manual against automated; invoice error rate; adoption by shop admins." },
+      { label: "Outcome", body: "Live and generating revenue, with 30+ users. The billing and accounts teams are 80% more productive: the lookups, re-keying and re-checking that filled a manual cycle are now the system's job, and what is left for a person is the flagged decisions." },
       {
         label: "Learnings",
         body: "The PRD's most valuable section was the list of things the previous process decided silently. Making those decisions explicit was most of the product work; the code was the smaller part.",

@@ -14,6 +14,8 @@ export type Mission = {
   org: string;
   role: string;
   period: string;
+  /** ISO date this report last changed in substance; the sitemap's lastmod. */
+  updated?: string;
   status: MissionStatus;
   /** One line, shown on the index. Show the problem, not the tech. */
   premise: string;

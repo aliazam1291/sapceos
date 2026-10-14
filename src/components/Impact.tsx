@@ -72,7 +72,7 @@ export default function Impact() {
         ))}
         <p className={styles.footnote}>
           Bars are log-scaled for absolute counts and linear for percentage deltas. Outcome
-          metrics for the three active missions are not yet measured and are not shown.
+          metrics for the two missions still in build are not yet measured and are not shown.
         </p>
       </div>
 

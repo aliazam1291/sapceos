@@ -112,7 +112,7 @@ export const studioClients = [
 ];
 
 /** What is on the desk right now — from the ACTIVE list in PROFILE.md. */
-export const currently = "Building the Technician App end to end; replacing manual billing at Mappls Shop Admin.";
+export const currently = "Building the Technician App end to end; running Mappls Shop, the billing system that replaced a manual process.";
 
 export const links = [
   { label: "GitHub", href: "https://github.com/aliazam1291" },

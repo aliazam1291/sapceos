@@ -5,8 +5,16 @@ import { hostedWriting } from "@/content/writing";
 import { orbitHasContent } from "@/content/orbit";
 import { siteUrl } from "@/lib/site";
 
+/*
+ * lastModified is a real date, never the build time (2026-10-15). Every page
+ * used to carry `new Date()`, so all 31 changed on every deploy; Google
+ * learns that a site's lastmod is noise and stops reading it, which is the
+ * opposite of what a site waiting to be recrawled needs. Bump CONTENT_DATE
+ * when page copy changes; a mission with its own `updated` overrides it.
+ */
+const CONTENT_DATE = new Date("2026-10-15");
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
 
   const staticRoutes = [
     { path: "", priority: 1 },
@@ -31,7 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/contact", priority: 0.6 },
   ].map((r) => ({
     url: `${siteUrl}${r.path}`,
-    lastModified: now,
+    lastModified: CONTENT_DATE,
     priority: r.priority,
   }));
 
@@ -39,12 +47,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...staticRoutes,
     ...missions.map((m) => ({
       url: `${siteUrl}/missions/${m.slug}`,
-      lastModified: now,
+      lastModified: m.updated ? new Date(m.updated) : CONTENT_DATE,
       priority: 0.8,
     })),
     ...fieldNotes.map((n) => ({
       url: `${siteUrl}/field-notes/${n.slug}`,
-      lastModified: now,
+      lastModified: CONTENT_DATE,
       priority: 0.7,
     })),
     // Hosted writing: published pieces only — a draft is never advertised.

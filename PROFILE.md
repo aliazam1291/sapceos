@@ -43,10 +43,10 @@ Career loop: PROBLEM → UNDERSTAND → STRATEGY → UX → TECHNOLOGY → BUILD
 All at MapMyIndia/Gtropy. Ali owns frontend, UI/UX, cross-functional collaboration, and product/project management on each.
 
 1. **Technician App** — end-to-end app for tracking technicians and managing field operations: installation, replacement, and rectification jobs. Building end to end.
-2. **Mappls Shop Admin + automatic billing web app** — replacing a fully manual billing process with an automated system. Owns UI/UX, the PRD, and cross-functional delivery.
+2. **Mappls Shop Admin + automatic billing web app** — replacing a fully manual billing process with an automated system. Owns UI/UX, the PRD, and cross-functional delivery. **Live** at shop.mappls.com (Angular 17 admin console over the Spring `mappls-billing` API; Odoo upstream for devices and renewal dates; Razorpay for payments — from Ali's architecture doc, Mappls-Billing-Admin-Portal.docx). **Results (Ali, 2026-10-15):** live and generating revenue (do NOT state the amount, ever); 30+ users; the billing and accounts teams are 80% more productive.
 3. **IOCL (Indian Oil) GeoRTD creation** — geospatial route data pipeline, 30,000+ routes injected into an Amazon S3 bucket.
 
-⚠️ Outcome metrics for these (time saved, error rate, adoption) are **not yet known**. Do not estimate them.
+⚠️ Outcome metrics for the Technician App (time saved, error rate, adoption) are **not yet known**. Do not estimate them. Mappls Shop's are above and are the only ones.
 
 ---
 
