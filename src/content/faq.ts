@@ -1,4 +1,4 @@
-import { education, lookingFor, profile } from "./profile";
+import { aiTools, education, lookingFor, openTo, profile } from "./profile";
 import { missions } from "./missions";
 import { venture } from "./venture";
 
@@ -19,10 +19,10 @@ import { venture } from "./venture";
  * summaries on Q&A content, and that is a live and growing surface.
  *
  * EVERY answer is a PROFILE.md fact or a link to a page built from one.
- * Questions the file cannot answer — notice period, relocation, whether he
- * will take a remote role — are NOT here, because a guess in an FAQ is a
- * guess a recruiter will hold him to. They are listed in `awaiting` below
- * and go in the moment Ali says.
+ * Questions the file cannot answer — notice period, salary — are NOT here,
+ * because a guess in an FAQ is a guess a recruiter will hold him to. They
+ * are listed in `awaiting` below and go in the moment Ali says. (Location
+ * and the AI question went in on 2026-10-24, when he answered them.)
  */
 
 export type Faq = {
@@ -39,10 +39,18 @@ export const faqs: Faq[] = [
   {
     q: "What kind of role are you looking for?",
     a: [
-      `${lookingFor}. Product manager, associate product manager or technical PM: the versions of the job where writing the document and shipping the thing are the same job.`,
-      `I am in New Delhi and currently ${profile.currentRole} at ${profile.currentOrg}.`,
+      `${lookingFor}: the versions of the job where writing the document and building the product are the same job. I want to be the PM who can also build it.`,
+      `${openTo}. I am currently ${profile.currentRole} at ${profile.currentOrg}.`,
     ],
-    more: { label: "The open channel", href: "/contact" },
+    more: { label: "The recruiter brief", href: "/hire" },
+  },
+  {
+    q: "Do you use AI to build?",
+    a: [
+      `Every day. I prototype and ship with AI coding assistants (call it vibe coding) and use ${aiTools.join(", ")} for research and generative AI work. For a PM that changes the job: a spec can arrive with a working prototype attached, and the question moves from "can we build this" to "should we".`,
+      "This site is the exhibit. I designed and specified it, and built it with Claude as the coding pair; the commit history says so.",
+    ],
+    more: { label: "The essay on it", href: "/writing/the-bottleneck-moved" },
   },
   {
     q: "You are an engineer. Why move into product management?",
@@ -93,9 +101,9 @@ export const faqs: Faq[] = [
     more: { label: "The venture", href: "/dumbmoney" },
   },
   {
-    q: "Where are you based, and what languages do you work in?",
+    q: "Where are you based, and will you relocate?",
     a: [
-      `${profile.location}. I work in ${profile.languages.join(" and ")}.`,
+      `${openTo}: Delhi NCR, another city, or remote. I work in ${profile.languages.join(" and ")}.`,
     ],
   },
   {
@@ -138,7 +146,6 @@ export const faqs: Faq[] = [
  */
 export const awaiting = [
   "Notice period and earliest start date",
-  "Remote, hybrid or on-site, and whether he would relocate",
   "Salary expectation, if it should be public at all",
   "Whether references can be shared on request",
 ];

@@ -158,12 +158,20 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
                 <Decode delay={1100}>{profile.oneLine}</Decode>
               </p>
               <p className={styles.openerLine}>
-                {profile.title} &middot; targeting product roles &middot; {profile.location}
+                {profile.title} &middot; targeting Technical PM roles &middot; {profile.location}
               </p>
+              {/* The recruiter's way in, in plain words (2026-10-28 review):
+                  the brief and the résumé, before any of the flight. */}
               <p className={styles.openerLine}>
-                <Link href="/dumbmoney" className={styles.openerVenture}>
-                  Founder &amp; CPO, DumbMoney <span aria-hidden="true">&rarr;</span>
+                <Link href="/hire" className={styles.openerVenture}>
+                  For recruiters: role, wins, résumé <span aria-hidden="true">&rarr;</span>
                 </Link>
+              </p>
+              {/* Side ventures as one "also" line, not a second identity. */}
+              <p className={styles.openerLine}>
+                Also: <Link href="/dumbmoney" className={styles.openerVenture}>DumbMoney</Link> (co-founder)
+                {" "}&middot;{" "}
+                <Link href="/smaak" className={styles.openerVenture}>Smaak.ux</Link> (freelance design)
               </p>
               <p className={styles.openerProof}>
                 <span>{proof.value}</span> {proof.label}

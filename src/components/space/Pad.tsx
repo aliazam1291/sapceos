@@ -14,7 +14,9 @@ import { getGlowTexture } from "./glowTexture";
  * hold-to-launch). `masts` off for the small launch-screen view.
  */
 const EMERALD = "#3cdd9e";
-const AMBER = "#ffb35a";
+// Every fourth rim beacon is a red warning light, as on a real pad or mast
+// (red is heat and warning, 2026-10-24; was amber).
+const WARN = "#ff3b30";
 const BEACONS = 16;
 
 export default function Pad({ radius = 1.6, lit = 0.35, masts = true }: { radius?: number; lit?: number; masts?: boolean }) {
@@ -90,7 +92,7 @@ export default function Pad({ radius = 1.6, lit = 0.35, masts = true }: { radius
       if (!b) continue;
       const d = ((i / BEACONS - head) % 1 + 1) % 1;
       const on = Math.exp(-d * 9.0);
-      (b.material as THREE.MeshBasicMaterial).color.setStyle(i % 4 === 0 ? AMBER : EMERALD).multiplyScalar(0.25 + on * 1.4);
+      (b.material as THREE.MeshBasicMaterial).color.setStyle(i % 4 === 0 ? WARN : EMERALD).multiplyScalar(0.25 + on * 1.4);
       b.scale.setScalar(0.8 + on * 0.6);
     }
   });

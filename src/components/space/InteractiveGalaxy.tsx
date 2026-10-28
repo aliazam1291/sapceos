@@ -876,7 +876,7 @@ export default function InteractiveGalaxy({
         {/* The lens: bloom, depth of field on the flight subject, a touch of
             chromatic fringing. See Cinematic.tsx. */}
         <Cinematic />
-        <WarmShaders onWarm={onWarm} />
+        <WarmShaders onWarm={onWarm} offscreen={!low} />
       </Canvas>
 
       {/* Vignette and grain over the render — see .lens in the module. */}

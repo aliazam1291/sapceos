@@ -171,8 +171,9 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
+  // On air: the one red thing in the chrome (vars.scss, --signal-red).
+  background: var(--signal-red);
+  box-shadow: 0 0 10px var(--signal-red);
   animation: statusPulse 2.4s var(--ease-in-out) infinite;
   // Composited (2026-09-17): an infinite loop on a non-composited element
   // repainted its whole fixed layer every frame — the nav's 7px status dot

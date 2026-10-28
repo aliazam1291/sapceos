@@ -11,8 +11,8 @@ import RecruiterManifest from "@/components/RecruiterManifest";
 import { plainName } from "@/content/pages";
 
 export const metadata: Metadata = {
-  title: { absolute: "Contact — Hire a Product Manager, New Delhi · Ali Azam Kazmi" },
-  description: `Contact Ali Azam Kazmi about product manager, APM or technical PM roles in New Delhi / Delhi NCR — ${profile.email}, the form, or a Calendly slot.`,
+  title: { absolute: "Contact Ali Azam Kazmi — Technical PM roles, New Delhi" },
+  description: `Contact Ali Azam Kazmi about product manager or technical PM roles, in New Delhi or anywhere: ${profile.email}, the form, or a Calendly slot.`,
   alternates: { canonical: "/contact" },
 };
 

@@ -6,7 +6,7 @@ import AuthorBio from "@/components/AuthorBio";
 import { Body, ButtonLink, DraftFlag, NextStep, PageHeader, Section, ui } from "@/components/ui";
 import { plainKind } from "@/content/pages";
 import { hostedWriting, isLive, writing } from "@/content/writing";
-import { breadcrumbJsonLd, clipDescription, jsonLd, pieceJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, clipDescription, jsonLd, namedTitle, pieceJsonLd } from "@/lib/seo";
 import { contentKeywords, identityKeywords, keywordsFor, roleKeywords, aiKeywords } from "@/lib/keywords";
 import styles from "../writing.module.scss";
 
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!piece || !isLive(piece)) return {};
   const description = clipDescription(`${piece.line} By Ali Azam Kazmi.`);
   return {
-    title: { absolute: clipDescription(`${piece.title} — Ali Azam Kazmi`, 62) },
+    title: { absolute: namedTitle(piece.title) },
     description,
     // The AI set only on the pieces that are about AI — a keyword with no
     // page behind it is what engines score as spam (2026-09-23).

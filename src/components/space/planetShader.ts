@@ -3,9 +3,9 @@
  *
  * No textures: the surface is fBm noise evaluated in the fragment shader on
  * the sphere's object-space position, so every body is unique from a seed
- * and costs nothing to load. Three "kinds" share one shader and differ by
- * uniforms: banded gas giants (hubs), rocky worlds with continents and
- * polar caps, and ice/ocean worlds. Lit from the galactic core (the scene's
+ * and costs nothing to load. Three "kinds" share one shader source, picked
+ * by a KIND define: banded gas giants (hubs), rocky worlds with continents
+ * and polar caps, and ice/ocean worlds. Lit from the galactic core (the scene's
  * light), with a soft terminator and a Fresnel atmosphere at the limb.
  */
 
@@ -74,7 +74,6 @@ export const planetFrag = /* glsl */ `
   uniform vec3  uAccent;   // highlights: ice, storm, city glow
   uniform vec3  uAtmo;     // atmosphere rim
   uniform float uSeed;
-  uniform float uKind;     // 0 gas, 1 rock, 2 ice
   uniform float uTime;
   uniform float uOpacity;
   uniform float uRing;     // 1 when this body carries a ring
@@ -96,6 +95,19 @@ export const planetFrag = /* glsl */ `
   varying float vSun;
   ${colourPipeline}
 
+  /*
+   * KIND is a compile-time constant — 0 gas, 1 rock, 2 ice — set per body
+   * through ShaderMaterial.defines, not a uniform (2026-10-24). With all three
+   * kinds behind uniform branches, one program held fifteen fBm calls, and
+   * the D3D compiler behind ANGLE unrolls every one of them: measured on an
+   * Intel UHD, 10-13 s to compile each variant, three variants compiled at
+   * first use mid-flight, and the page frozen for each. A program now carries
+   * only its own kind's noise.
+   */
+  #ifndef KIND
+  #define KIND 1
+  #endif
+
   // Value noise + fBm. Cheap enough for a handful of bodies.
   float hash(vec3 p) {
     p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3) + uSeed);
@@ -114,7 +126,13 @@ export const planetFrag = /* glsl */ `
   float fbm(vec3 p) {
     float v = 0.0;
     float a = 0.5;
-    for (int i = 0; i < 5; i++) {
+    // Five octaves, but a count the compiler cannot see: uTime is never
+    // below -1, so this is always 5 — read from a uniform, so the D3D
+    // compiler keeps a real loop instead of unrolling every call site.
+    // Compile time on the Intel UHD, per kind: ~1-2.7 s unrolled, 0.3-0.7 s
+    // as a loop; same pixels.
+    int octaves = int(step(-1.0, uTime)) * 5;
+    for (int i = 0; i < octaves; i++) {
       v += a * noise(p);
       p = p * 2.07 + vec3(1.7, 9.2, 3.1);
       a *= 0.5;
@@ -132,57 +150,60 @@ export const planetFrag = /* glsl */ `
     float rough = 0.0;
     float ocean = 0.0;
     float cloud = 0.0;
-    if (uKind < 0.5) {
-      // Gas giant: latitude bands warped by turbulence, a slow drift.
-      float lat = p.y;
-      float warp = fbm(p * 3.0 + vec3(uTime * 0.02, 0.0, 0.0)) * 0.35;
-      float band = sin((lat + warp) * 14.0 + uSeed * 6.0) * 0.5 + 0.5;
-      float band2 = sin((lat - warp * 0.6) * 31.0) * 0.5 + 0.5;
-      float storm = smoothstep(0.62, 0.9, fbm(p * 5.0 + 4.0)) * 0.6;
-      col = mix(uSea, uLand, band * 0.75 + band2 * 0.25);
-      col = mix(col, uAccent, storm);
-    } else if (uKind < 1.5) {
-      // Rocky: continents from thresholded fBm, ice at the poles, night-side
-      // city glow in the accent where there is land.
-      float h = fbm(p * 2.6);
-      float land = smoothstep(0.47, 0.53, h);
-      float cap = smoothstep(0.72, 0.9, abs(p.y) + fbm(p * 4.0) * 0.12);
-      // Land has relief: darker valleys, lighter ridges from a finer octave.
-      float relief = fbm(p * 7.0 + 3.0);
-      vec3 landCol = uLand * (0.72 + relief * 0.56);
-      col = mix(uSea * (0.85 + h * 0.3), landCol, land);
-      col = mix(col, uAccent * 0.9 + vec3(0.1), cap);
-      rough = land;
-      ocean = 1.0 - land;
+    float land = 0.0;
+  #if KIND == 0
+    // Gas giant: latitude bands warped by turbulence, a slow drift.
+    float lat = p.y;
+    float warp = fbm(p * 3.0 + vec3(uTime * 0.02, 0.0, 0.0)) * 0.35;
+    float band = sin((lat + warp) * 14.0 + uSeed * 6.0) * 0.5 + 0.5;
+    float band2 = sin((lat - warp * 0.6) * 31.0) * 0.5 + 0.5;
+    float storm = smoothstep(0.62, 0.9, fbm(p * 5.0 + 4.0)) * 0.6;
+    col = mix(uSea, uLand, band * 0.75 + band2 * 0.25);
+    col = mix(col, uAccent, storm);
+  #elif KIND == 1
+    // Rocky: continents from thresholded fBm, ice at the poles, night-side
+    // city glow in the accent where there is land.
+    float h = fbm(p * 2.6);
+    land = smoothstep(0.47, 0.53, h);
+    float cap = smoothstep(0.72, 0.9, abs(p.y) + fbm(p * 4.0) * 0.12);
+    // Land has relief: darker valleys, lighter ridges from a finer octave.
+    float relief = fbm(p * 7.0 + 3.0);
+    vec3 landCol = uLand * (0.72 + relief * 0.56);
+    col = mix(uSea * (0.85 + h * 0.3), landCol, land);
+    col = mix(col, uAccent * 0.9 + vec3(0.1), cap);
+    rough = land;
+    ocean = 1.0 - land;
 
-      // Bump: perturb the normal by the height gradient on land, so ridges
-      // catch the key and valleys fall into shadow. Finite differences on
-      // the same noise, three extra taps.
-      float e = 0.02;
-      float hx = fbm((p + vec3(e, 0.0, 0.0)) * 7.0 + 3.0) - relief;
-      float hy = fbm((p + vec3(0.0, e, 0.0)) * 7.0 + 3.0) - relief;
-      float hz = fbm((p + vec3(0.0, 0.0, e)) * 7.0 + 3.0) - relief;
-      vec3 grad = vec3(hx, hy, hz) / e;
-      vec3 tangentGrad = grad - p * dot(grad, p);
-      N = normalize(N - normalize(normalMatrix * tangentGrad) * 0.045 * land);
+    // Bump: perturb the normal along the height gradient on land, so ridges
+    // catch the key and valleys fall into shadow. The gradient comes from
+    // screen-space derivatives of the relief already computed (Mikkelsen's
+    // surface gradient), not from three more fBm taps — only its direction
+    // was ever used, at a fixed 0.045.
+    vec3 dpx = dFdx(vViewPos);
+    vec3 dpy = dFdy(vViewPos);
+    vec3 r1 = cross(dpy, N);
+    vec3 r2 = cross(N, dpx);
+    vec3 sg = sign(dot(dpx, r1)) * (dFdx(relief) * r1 + dFdy(relief) * r2);
+    float sgl = length(sg);
+    if (sgl > 1e-9) N = normalize(N - sg / sgl * 0.045 * land);
 
-      // Clouds: a drifting layer at a coarser scale, thresholded to shapes.
-      float c = fbm(p * 3.2 + vec3(uTime * 0.012, 0.0, uTime * 0.008));
-      cloud = smoothstep(0.52, 0.68, c) * 0.85;
-    } else {
-      // Ice world, Europa-style: a bright frost shell scored by long dark
-      // lineae (ridged noise, thin), with broad darker chaos regions where
-      // the shell has refrozen dirty. Slightly glossy — it is ice.
-      float h = fbm(p * 2.6);
-      float ridge = 1.0 - abs(2.0 * fbm(p * 4.5 + 7.0) - 1.0);
-      float lineae = smoothstep(0.86, 0.97, ridge);
-      float chaos = smoothstep(0.5, 0.68, h);
-      col = mix(uLand, uAccent, 0.35 + 0.3 * fbm(p * 9.0));   // frost mottling
-      col = mix(col, uSea, chaos * 0.55);
-      col = mix(col, uSea * 0.6, lineae * 0.7);
-      rough = 0.35 + chaos * 0.4;
-      ocean = 0.35 * (1.0 - chaos);
-    }
+    // Clouds: a drifting layer at a coarser scale, thresholded to shapes.
+    float c = fbm(p * 3.2 + vec3(uTime * 0.012, 0.0, uTime * 0.008));
+    cloud = smoothstep(0.52, 0.68, c) * 0.85;
+  #else
+    // Ice world, Europa-style: a bright frost shell scored by long dark
+    // lineae (ridged noise, thin), with broad darker chaos regions where
+    // the shell has refrozen dirty. Slightly glossy — it is ice.
+    float h = fbm(p * 2.6);
+    float ridge = 1.0 - abs(2.0 * fbm(p * 4.5 + 7.0) - 1.0);
+    float lineae = smoothstep(0.86, 0.97, ridge);
+    float chaos = smoothstep(0.5, 0.68, h);
+    col = mix(uLand, uAccent, 0.35 + 0.3 * fbm(p * 9.0));   // frost mottling
+    col = mix(col, uSea, chaos * 0.55);
+    col = mix(col, uSea * 0.6, lineae * 0.7);
+    rough = 0.35 + chaos * 0.4;
+    ocean = 0.35 * (1.0 - chaos);
+  #endif
 
     /*
      * Lighting. ONE sun: the core, warm. Lambert with a soft terminator (the
@@ -215,6 +236,7 @@ export const planetFrag = /* glsl */ `
     vec3 albedo = col * 0.78;
     vec3 lit = albedo * (sun * lambert * day + bounce) + sun * spec * day * 0.5;
 
+  #if KIND == 1
     // Cloud layer: white, lit like the surface, and it casts a soft shadow
     // just below and to the side — the offset is what makes clouds float.
     if (cloud > 0.0) {
@@ -224,14 +246,11 @@ export const planetFrag = /* glsl */ `
       lit = mix(lit, cloudCol, cloud);
     }
 
-    // Night-side glow on rocky worlds: settlements, faint and warm.
-    if (uKind > 0.5 && uKind < 1.5) {
-      float night = 1.0 - day;
-      float h = fbm(p * 2.6);
-      float land = smoothstep(0.47, 0.53, h);
-      float cities = smoothstep(0.6, 0.85, fbm(p * 9.0 + 2.0)) * land * night;
-      lit += vec3(1.0, 0.8, 0.5) * cities * 0.18;
-    }
+    // Night-side glow on rocky worlds: settlements, faint and warm, on the
+    // same land mask as the surface.
+    float cities = smoothstep(0.6, 0.85, fbm(p * 9.0 + 2.0)) * land * (1.0 - day);
+    lit += vec3(1.0, 0.8, 0.5) * cities * 0.18;
+  #endif
 
     // Ring shadow. March the sun ray from this surface point to the ring
     // plane; if it lands inside the annulus, the surface is in shade. The
@@ -251,8 +270,9 @@ export const planetFrag = /* glsl */ `
     // the edge of the disc has travelled through far more of it. Rocky
     // worlds keep a hard limb.
     float nv = max(dot(N, V), 0.0);
-    float limb = mix(0.42, 1.0, pow(nv, 0.45));
-    lit *= mix(1.0, limb, 1.0 - step(0.5, uKind));
+  #if KIND == 0
+    lit *= mix(0.42, 1.0, pow(nv, 0.45));
+  #endif
 
     // Atmosphere: thin Fresnel limb, only where the sun reaches it. An
     // out-of-focus body's limb bleeds wider and brighter — the halo a
@@ -420,6 +440,8 @@ export type PlanetLook = {
   ring: boolean;
 };
 
+const RED_WORLD = "iocl-geortd";
+
 function hashStr(s: string) {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
@@ -455,6 +477,13 @@ export function planetLook(id: string, isHub: boolean): PlanetLook {
     { sea: "#2c2f3c", land: "#8c8a86", accent: "#f2f2f4", atmo: "#9aa6c0" }, // grey rock, thin air
     { sea: "#3a2a20", land: "#a07a58", accent: "#e8d2b0", atmo: "#c49a72" }, // desert world
   ];
+  // One red world (2026-10-24, Ali: red where the 3D runs hot). Rust, not
+  // paint: iron-oxide plains and dark basalt at Mars-like albedo, a thin
+  // dusty atmosphere. The IOCL route pipeline — oil, ground, heat — and a
+  // stop on the flight, so the reader actually passes it.
+  if (id === RED_WORLD) {
+    return { kind: 1, seed, ring: false, sea: "#4a2016", land: "#b4522f", accent: "#e8c7ae", atmo: "#e0623e" };
+  }
   const v = variants[h % variants.length];
   const kind: 1 | 2 = h % 5 === 0 ? 2 : 1;
   return { kind, seed, ring: false, ...v };

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { bootLine } from "@/content/voice";
 import { sfx, spaceSound } from "@/lib/spaceSound";
+import { isSearchReferrer } from "@/lib/referrer";
 import SoundToggle from "./SoundToggle";
 import styles from "./BootScreen.module.scss";
 
@@ -81,8 +82,14 @@ export default function BootScreen() {
      * full-screen interstitial over the page Google had just sent them to.
      * The launch is the home page's opening; a deep link goes straight to
      * what was linked. Crawlers and link previews never get it either.
+     *
+     * Nor does a reader sent here by a search or answer engine (2026-10-24):
+     * the name search is the one query this site can own, and the person
+     * who typed it is a recruiter checking a candidate — the same full-screen
+     * interstitial over the page the engine just sent them to, on the front
+     * door this time. A visitor from a shared link still gets the launch.
      */
-    if (!force && (location.pathname !== "/" || /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|embedly|preview/i.test(navigator.userAgent))) return;
+    if (!force && (location.pathname !== "/" || /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|embedly|preview/i.test(navigator.userAgent) || isSearchReferrer(document.referrer))) return;
     reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setShow(true);
     document.documentElement.classList.add("booting");

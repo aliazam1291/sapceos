@@ -1,0 +1,402 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * The paper relay. Geometry (top-face pixels): footprint 300 × 170, body
+ * 56 tall, slot 34 from the back edge, sheet 200 × 250. The faces are folded
+ * from the top plane with rotateX/rotateY about their shared edge, then
+ * lifted by the body height — the same box every CSS-3D object needs, no
+ * canvas. Paper is the one light thing in it; the machine is gunmetal like
+ * the pad, the display is an instrument, so it is emerald.
+ */
+
+$w: 300px;
+$d: 170px;
+$h: 56px;
+$slot: 34px;
+$pw: 200px;
+$ph: 250px;
+
+.terminal {
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+}
+
+.stage {
+  width: 100%;
+  height: 460px;
+  display: grid;
+  place-items: center;
+  perspective: 1100px;
+  perspective-origin: 50% 20%;
+  overflow: clip;
+
+  @media (max-width: 480px) {
+    height: 380px;
+  }
+}
+
+.world {
+  position: relative;
+  width: $w;
+  height: $d;
+  margin-top: 250px;
+  transform-style: preserve-3d;
+  transform: rotateX(56deg) rotateZ(-22deg);
+
+  @media (max-width: 480px) {
+    margin-top: 200px;
+    transform: scale(0.78) rotateX(56deg) rotateZ(-22deg);
+  }
+}
+
+.machine {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+
+  // Contact shadow on the ground plane: a gradient, not a blur filter.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -28px -36px -40px -20px;
+    background: radial-gradient(closest-side, rgba(0, 0, 0, 0.75), transparent);
+  }
+}
+
+%face {
+  position: absolute;
+  border: 1px solid rgba(190, 230, 215, 0.14);
+  backface-visibility: hidden;
+}
+
+.top {
+  @extend %face;
+  inset: 0;
+  transform: translateZ($h);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 40%),
+    linear-gradient(135deg, #2a2e31, #17191b 70%);
+  border-radius: 3px;
+}
+
+.front {
+  @extend %face;
+  left: 0;
+  top: 100%;
+  width: $w;
+  height: $h;
+  transform-origin: top;
+  transform: translateZ($h) rotateX(-90deg);
+  background: linear-gradient(180deg, #1d2023, #101213);
+}
+
+.side {
+  @extend %face;
+  left: 100%;
+  top: 0;
+  width: $h;
+  height: $d;
+  transform-origin: left;
+  transform: translateZ($h) rotateY(90deg);
+  background: linear-gradient(90deg, #15181a, #0c0d0e);
+}
+
+.grille {
+  position: absolute;
+  inset: 14px 24px;
+  background: repeating-linear-gradient(90deg, rgba(190, 230, 215, 0.12) 0 2px, transparent 2px 9px);
+}
+
+.plate {
+  @include mono-label;
+  position: absolute;
+  left: 16px;
+  bottom: 12px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.slot {
+  position: absolute;
+  left: calc(50% - #{$pw * 0.5} - 8px);
+  width: calc(#{$pw} + 16px);
+  top: $slot - 4px;
+  height: 7px;
+  border-radius: 4px;
+  background: #050505;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.lcdFace {
+  position: absolute;
+  left: 16px;
+  right: 92px;
+  top: 64px;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--accent);
+  background: #07130e;
+  border: 1px solid rgba(60, 221, 158, 0.25);
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.leds {
+  position: absolute;
+  right: 18px;
+  top: 72px;
+  display: flex;
+  gap: 10px;
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #23312b;
+    transition: background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+
+    &[data-on] {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(60, 221, 158, 0.8);
+    }
+
+    // The middle lamp is the motor: amber while it runs, like every engine here.
+    &:nth-child(2)[data-on] {
+      background: #f2b35a;
+      box-shadow: 0 0 8px rgba(242, 179, 90, 0.8);
+    }
+  }
+}
+
+/* The sheet stands out of the slot, leaning back 15°, clipped at the slot so
+   it can only ever be seen coming OUT. */
+.paper {
+  position: absolute;
+  left: calc(50% - #{$pw * 0.5});
+  top: $slot - $ph;
+  width: $pw;
+  height: $ph;
+  overflow: hidden;
+  transform-origin: bottom;
+  transform: translateZ($h + 1px) rotateX(-75deg);
+  pointer-events: none;
+}
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 18px 18px 0;
+  background: linear-gradient(180deg, #eef1ec, #dfe3dc);
+  color: #121412;
+  // Thermal paper: a faint grey along the edges where the rollers held it.
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), inset 0 -30px 30px -30px rgba(0, 0, 0, 0.25);
+  animation: feed var(--feed, 2400ms) steps(24, end) both;
+}
+
+@keyframes feed {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheetName {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.sheetTitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #4a524c;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rule {
+  height: 2px;
+  background: #121412;
+  margin-bottom: 4px;
+}
+
+.line {
+  height: 5px;
+  border-radius: 1px;
+  background: #9aa39b;
+}
+
+.gap {
+  height: 6px;
+}
+
+/* ── The reader (flat, so the drag maths stays in screen pixels) ── */
+
+.reader {
+  width: min(100%, 440px);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.track {
+  position: relative;
+  height: 76px;
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, #121416, #0b0c0d);
+  border-radius: 6px;
+  overflow: clip;
+}
+
+.groove {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  background: #040404;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+// The read head: the far end the pass has to reach.
+.head {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  width: 6px;
+  border-radius: 3px;
+  background: rgba(60, 221, 158, 0.25);
+
+  [data-state="reading"] &,
+  [data-state="cleared"] & {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(60, 221, 158, 0.7);
+  }
+}
+
+.card {
+  --x: 0px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 184px;
+  height: 62px;
+  padding: 18px 12px 8px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-content: end;
+  column-gap: 8px;
+  text-align: left;
+  border: 1px solid rgba(190, 230, 215, 0.3);
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1f2a25, #121815 60%, #18211d);
+  color: var(--text-primary);
+  transform: translate(var(--x), -50%);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
+
+  &[data-glide] {
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+.stripe {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 7px;
+  height: 7px;
+  background: #050505;
+}
+
+.cardKind {
+  @include mono-label;
+  grid-column: 1;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--text-tertiary);
+}
+
+.cardName {
+  grid-column: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cardArrow {
+  @include mono-label;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: 11px;
+  color: var(--accent);
+
+  [data-state="done"] & {
+    color: var(--text-tertiary);
+  }
+}
+
+.lcd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  text-align: center;
+
+  [data-state="noread"] & {
+    color: #f2b35a;
+  }
+}
+
+.caption {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.plainLink {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  // 36px tap floor, like every other link on a phone.
+  display: inline-block;
+  min-height: 36px;
+  line-height: 36px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    animation: none;
+  }
+
+  .card[data-glide] {
+    transition: none;
+  }
+}

@@ -9,7 +9,7 @@ If a fact is not here, do not put it on the site. Mark it `[DRAFT — needs inpu
 
 - **Name:** Ali Azam Kazmi
 - **Current title:** Associate Software Developer (Product & Platform), MapMyIndia [Gtropy]
-- **Positioning for this site:** Product Engineer & UX Strategist, targeting Product Management / product roles
+- **Positioning for this site (2026-10-28):** "Product Engineer, fleet & geospatial products", targeting Technical PM roles. One line on every page (tab titles say "Product Engineer moving into PM"). Replaced "Product Engineer & UX Strategist" after an outside review: too many identities. Not a job title; the PM title waits on Ali.
 - **Location:** New Delhi, India
 - **Email:** aliazamkazmi1291@gmail.com
 - **Languages:** English, Hindi
@@ -36,6 +36,13 @@ That is the differentiator, and it is verifiable — it is literally the job he 
 
 Career loop: PROBLEM → UNDERSTAND → STRATEGY → UX → TECHNOLOGY → BUILD → SHIP → LEARN → NEXT PROBLEM.
 
+### The job search (Ali, 2026-10-24, answering direct questions)
+- **Roles sought:** Product Manager and Technical PM. In his words: "i need to build products are pm" — a PM who builds the product, not only specs it. (Associate PM was offered as an option and not picked.)
+- **Title:** the PM title at MapMyIndia has NOT happened yet ("Not yet, keep as is"). The site and résumé keep "Associate Software Developer (Product & Platform)" and "targeting Product Management roles".
+- **AI:** "say i am a vibe coder claude gemini chatgpt for research gen ai if we can say it" — he builds with AI coding assistants (vibe coding) and uses **Claude, Gemini and ChatGPT** for research and generative AI work. Stated by Ali; no metric or employer is attached to it. One piece of evidence is on file: this portfolio was built with Claude Code — its git history is co-authored by Claude.
+- **Location:** asked "Where will you take a job?", answered "anywhere". Based in New Delhi.
+- Still not on file: notice period / earliest start, salary expectation, references.
+
 ---
 
 ## ACTIVE work (in progress — strongest PM-track material)
@@ -45,6 +52,21 @@ All at MapMyIndia/Gtropy. Ali owns frontend, UI/UX, cross-functional collaborati
 1. **Technician App** — end-to-end app for tracking technicians and managing field operations: installation, replacement, and rectification jobs. Building end to end.
 2. **Mappls Shop Admin + automatic billing web app** — replacing a fully manual billing process with an automated system. Owns UI/UX, the PRD, and cross-functional delivery. **Live** at shop.mappls.com (Angular 17 admin console over the Spring `mappls-billing` API; Odoo upstream for devices and renewal dates; Razorpay for payments — from Ali's architecture doc, Mappls-Billing-Admin-Portal.docx). **Results (Ali, 2026-10-15):** live and generating revenue (do NOT state the amount, ever); 30+ users; the billing and accounts teams are 80% more productive.
 3. **IOCL (Indian Oil) GeoRTD creation** — geospatial route data pipeline, 30,000+ routes injected into an Amazon S3 bucket.
+
+### Client deliveries on shipped products (Ali, 2026-10-23)
+Ali: "made dashboard for Toyota for non communicating device, and also created DMS, ADAS and driver section for Intouch for client VinFast, SM Green." Scope is his words and nothing more.
+- **Toyota** — made a dashboard for **non-communicating devices** (devices that have stopped reporting). Which MapMyIndia product it sits in, the users, and any outcome are NOT on file — the site states the deliverable only, and it is on the experience line, not a mission report, until Ali supplies the rest.
+- **Intouch, for VinFast and SM Green** — created the **DMS** (driver monitoring), **ADAS** (driver assistance) and **driver** sections. Clients named are VinFast and SM Green. No outcome is on file for either.
+
+### From Ali's own working files (read 2026-10-24; Ali: "you have context of cowork")
+Read from D:/lap165/Projects and Downloads. Product-level facts only. ⚠️ These are MapMyIndia internal documents (the subscription PRD is marked Confidential): never publish their revenue model, device counts, prices, client account details, internal URLs, API contracts or brand specs. Targets in them are PROPOSED, not results — never present one as an outcome.
+- **Toyota = an InTouch page.** `toyota/toyota-non-communicating-devices.html`: "Device Communication Health" in the InTouch portal for the customer Toyota Logistics. Every vehicle is classified by time since its last GPRS data — Online (0–24 h), Offline (1–7 days), Inactive (8–30 days), Not Working (31+ days) — with a status split, status by vehicle group sorted by non-communicating share (click a row to filter), a filterable vehicle table and CSV export. Users, problem history and outcome still not on file.
+- **Driver Safety PRD v1.0** (`Vinfast/Driver_Safety_PRD.pdf`, 13 Oct 2026, **owner: Ali Azam Kazmi**, audience backend/frontend/QA, design, delivery). A Driver Safety module inside InTouch: Safety Overview, DMS (7 in-cab alarms), ADAS (4 road-facing alarms), Drive Alerts (GPS/motion), Driver Scorecard with a per-driver report, On-Demand Video, Alert Settings. Ships with a clickable prototype and an OpenAPI contract. Product decisions in it: driver-first (find who needs attention in one screen); data only — no coaching programme, no review workflow; scores compared per distance or hours, never raw counts, with a minimum distance before a driver is scored; the customer hides alarms and sets each alarm's weight (totals must reach 100 before save); hidden alarms are enforced server-side so they never leak through exports. Success measures are proposed targets (time to find the riskiest driver, scorecard adoption, settings customisation, "score looks wrong" tickets, alarm-naming tickets) — not results. The prototype went through 11 design iterations by 1 Oct 2026 (`intouch-safety-redesign-notes.md`).
+- **Mappls Admin Platform PRD v1** (`mappls shop gadgets/docs/Mappls_Admin_Platform_PRD_v1.pdf`, 8 Oct 2026, by **@Azam**). Grows the shop.mappls.com billing admin into one platform for three teams — Billing (subscription renewals, exists), Gadgets Catalog (new), Operations (orders, inventory, shipping, installation; new) — with feature-ID role-based access replacing all-or-nothing super-admin, one Razorpay payments layer for subscriptions and gadgets, and an audit log of every change.
+- **Mappls Subscription Automation Platform PRD v1.1** (`PRDS/`, June 2026, owner "Subscription Product Team"). The product Mappls Shop billing belongs to: the connected-device subscription lifecycle — expiry discovery, reminders, renewal, Razorpay payment, Odoo invoicing, status sync to InTouch — self-service. North Star: **renewal conversion rate**. Phased: Phase 1 self-service renewal, payments, invoicing and reminders; Phase 2 analytics and ops depth; Phase 3 auto-renewal (subject to RBI e-mandate rules). Ali calls this product "subscription" too (2026-10-24).
+- **Mappls Gadgets Shop PRD v1.0** (8 Oct 2026, draft for CTO review) and a four-phase plan (Phase 1: catalog and storefront, checkout off): turns the enquiry-only gadgets site into a store, in the Mappls app and on the web. In build; nothing live or measured.
+- **Technician App PRD** (`internal technician app/…prd_and_react_native_architecture.md`): React Native, offline-first, for installation, deinstallation, replacement and rectification tickets.
+- **Title (resolved 2026-10-24):** the Driver Safety PRD names Ali "Technical APM", but Ali confirmed: "Not yet. Keep the current title for now." The site keeps "Associate Software Developer (Product & Platform)", targeting PM roles. Do not use "Technical APM" anywhere until Ali says it is official.
 
 ⚠️ Outcome metrics for the Technician App (time saved, error rate, adoption) are **not yet known**. Do not estimate them. Mappls Shop's are above and are the only ones.
 

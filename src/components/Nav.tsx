@@ -15,8 +15,11 @@ import styles from "./Nav.module.scss";
 // `plain` is what the label means if you ignore the metaphor entirely. It
 // comes from content/pages.ts, the same map the page headers read, so the
 // nav and the header can never disagree about what "Missions" means.
+// Labels are plain words since the 2026-10-28 review ("Missions",
+// "Operator", "Open Channel" were friction for an HR reader on a phone);
+// the space names stay on the pages themselves.
 const routes = [
-  { href: "/missions", label: "Missions", plain: plainName["/missions"] },
+  { href: "/missions", label: "Projects", plain: plainName["/missions"] },
   { href: "/galaxy", label: "Galaxy 3D", plain: plainName["/galaxy"] },
   { href: "/lab", label: "Lab", plain: plainName["/lab"] },
   { href: "/studio", label: "Studio", plain: plainName["/studio"] },
@@ -27,14 +30,15 @@ const routes = [
   ...(orbitHasContent
     ? [{ href: "/orbit", label: "Orbit", plain: plainName["/orbit"] }]
     : []),
-  { href: "/field-notes", label: "Field Notes", plain: plainName["/field-notes"] },
+  { href: "/field-notes", label: "Case Studies", plain: plainName["/field-notes"] },
   { href: "/writing", label: "Writing", plain: plainName["/writing"] },
-  { href: "/decisions", label: "Flight Rules", plain: plainName["/decisions"] },
+  { href: "/decisions", label: "How I Decide", plain: plainName["/decisions"] },
   { href: "/flight-data", label: "Flight Data", plain: plainName["/flight-data"] },
   { href: "/faq", label: "Questions", plain: plainName["/faq"] },
+  { href: "/hire", label: "For Recruiters", plain: plainName["/hire"] },
   { href: "/about", label: "About", plain: plainName["/about"] },
-  { href: "/mission-history", label: "Mission History", plain: plainName["/mission-history"] },
-  { href: "/contact", label: "Open Channel", plain: plainName["/contact"] },
+  { href: "/mission-history", label: "Experience", plain: plainName["/mission-history"] },
+  { href: "/contact", label: "Contact", plain: plainName["/contact"] },
 ];
 
 export default function Nav() {
@@ -203,7 +207,11 @@ export default function Nav() {
             type="button"
             className={styles.palette}
             onClick={() => window.dispatchEvent(new Event("space:palette"))}
-            aria-label="Open mission control (Command or Control K)"
+            // The name starts with the visible "⌘K" (WCAG 2.5.3, label in
+            // name): a voice-control user says what they see. axe flagged
+            // the old name, which left the legend out, on every page.
+            aria-label="⌘K: open mission control"
+            aria-keyshortcuts="Meta+K Control+K"
             title="Go anywhere — ⌘K"
           >
             <kbd aria-hidden="true">⌘K</kbd>
@@ -218,7 +226,7 @@ export default function Nav() {
             className={styles.cta}
             aria-current={isActive("/contact") ? "page" : undefined}
           >
-            Open Channel
+            Contact
           </Link>
 
           <button
@@ -243,10 +251,10 @@ export default function Nav() {
             rel="noreferrer noopener"
             // aria-label stays plain for screen readers; the visible tooltip
             // is the one place on the site allowed to editorialise.
-            aria-label="Open resume as PDF"
+            aria-label="Résumé (PDF, opens in a new tab)"
             title="The paper trail (PDF, opens honestly)"
           >
-            <span aria-hidden="true">&#8599;</span>
+            Résumé <span aria-hidden="true">&#8599;</span>
           </a>
         </div>
       </nav>

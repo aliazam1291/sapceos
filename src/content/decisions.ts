@@ -29,7 +29,9 @@ export const decisions: Decision[] = [
     call: "Write it down early enough to be wrong cheaply.",
     fact: "The PRD is the argument. Problem statement, user stories, acceptance criteria, edge cases, all before a screen exists.",
     evidence: "Authored full PRDs: problem statements, user stories, acceptance criteria, edge cases.",
-    where: "MapMyIndia · every active mission",
+    // Named, not "every active mission": IOCL GeoRTD is active and has no
+    // PRD on file, and the ownership matrix said so (2026-10-28 review).
+    where: "MapMyIndia · Technician App, Mappls Shop, Intouch Driver Safety",
   },
   {
     id: "manual",

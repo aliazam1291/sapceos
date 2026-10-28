@@ -17,7 +17,7 @@ import { jsonLd, personId } from "@/lib/seo";
 import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
-  title: { absolute: "About Ali Azam Kazmi — Product Manager & Engineer, New Delhi" },
+  title: { absolute: "About Ali Azam Kazmi — Product Engineer moving into PM, Delhi" },
   description:
     "Writes the PRD, then builds it. Product & platform at MapMyIndia (fleet telematics, 200,000+ users), founder & CPO of DumbMoney, Smaak.ux. B.Tech CSE, SRM.",
   keywords: keywordsFor(identityKeywords, roleKeywords, placeKeywords, ["about Ali Azam Kazmi", "product engineer bio", "Smaak.ux founder"]),
@@ -43,7 +43,7 @@ export default function AboutPage() {
         label="About the Operator"
         plain={plainName["/about"]}
         title={profile.name}
-        lede={`${profile.title} · Founder & CPO, DumbMoney · ${profile.location}`}
+        lede={`${profile.title} · ${profile.location} · Also: co-founder of DumbMoney`}
         figure={<MatrixPortrait src="/images/ali-480.webp" alt={profile.name} size={220} cells={56} />}
       />
       <div className={ui.pageComms}>

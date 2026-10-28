@@ -64,6 +64,13 @@
   --accent-dim: rgba(60, 221, 158, 0.14);
   --accent-line: rgba(60, 221, 158, 0.38);
 
+  // On air — red (2026-10-24). Not a second accent: red means heat in the
+  // 3D (engine throats, pad warning lights, the black hole's redshift, one
+  // rust world) and exactly ONE thing in the chrome, the "open to roles"
+  // dot. Never on text, buttons or labels — on a black-and-green page red
+  // type reads as an error.
+  --signal-red: #ff4b3e;
+
   // Type
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", "Cascadia Code", monospace;

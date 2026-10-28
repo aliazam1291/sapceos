@@ -168,6 +168,9 @@ export default async function MissionReport({ params }: Params) {
               ))}
             </dl>
           ) : null}
+          {mission.measure?.length && mission.results?.length ? (
+            <p className={ui.measureNote}>Next to measure</p>
+          ) : null}
           {mission.measure?.length ? (
             <ul className={ui.measureList}>
               {mission.measure.map((it) => (

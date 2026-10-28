@@ -71,8 +71,17 @@ export default function LoopSequence() {
       if (max > 0) setProgress(rail.scrollLeft / max);
     };
     rail?.addEventListener("scroll", onNative, { passive: true });
+    // On touch widths the rail scrolls sideways natively, so a keyboard has
+    // to be able to reach it (axe, scrollable-region-focusable); on desktop
+    // the pin drives it and a tab stop there would do nothing.
+    const focusable = () => {
+      if (rail) rail.tabIndex = rail.scrollWidth - rail.clientWidth > 0 && getComputedStyle(rail).overflowX === "auto" ? 0 : -1;
+    };
+    focusable();
+    window.addEventListener("resize", focusable);
 
     return () => {
+      window.removeEventListener("resize", focusable);
       cancelled = true;
       ctx?.revert();
       rail?.removeEventListener("scroll", onNative);
@@ -102,7 +111,7 @@ export default function LoopSequence() {
           </div>
         </header>
 
-        <div className={styles.rail} ref={railRef}>
+        <div className={styles.rail} ref={railRef} role="region" aria-label="The operating loop, step by step">
           <div className={styles.strip} ref={stripRef}>
             {/* The orbit line the beats sit on, with the travelling marker. */}
             <span className={styles.orbit} aria-hidden="true">

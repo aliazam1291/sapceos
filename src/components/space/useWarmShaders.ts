@@ -34,7 +34,15 @@ import { shipEnvIfReady, warmShipEnv } from "./shipEnv";
  *     <WarmShaders onWarm={() => setWarm(true)} />
  *   </Canvas>
  */
-export function WarmShaders({ onWarm }: { onWarm: () => void }) {
+export function WarmShaders({ onWarm, offscreen = false }: {
+  onWarm: () => void;
+  /**
+   * The scene draws through a postprocessing composer (Cinematic), i.e. into
+   * a render target: no tone mapping, linear output — a different program
+   * for every material than the on-screen compile produces. Warm both.
+   */
+  offscreen?: boolean;
+}) {
   const { gl, scene, camera } = useThree();
   useEffect(() => {
     let cancelled = false;
@@ -117,6 +125,24 @@ export function WarmShaders({ onWarm }: { onWarm: () => void }) {
           // A material that cannot compile here compiles on its first draw.
         }
         await settled(8000);
+        // Composer canvases render the scene into a render target, and three
+        // keys every program on that (tone mapping off, linear output). The
+        // on-screen compile above missed all of them: measured 2026-10-24 on
+        // the galaxy, every planet and the lead ship compiled again on first
+        // use, mid-flight. Compile the off-screen set too.
+        if (offscreen && !cancelled) {
+          const T = await import("three");
+          const rt = new T.WebGLRenderTarget(4, 4, { type: T.HalfFloatType });
+          r.setRenderTarget(rt);
+          try {
+            r.compile(scene, camera);
+          } catch {
+            // see above
+          }
+          r.setRenderTarget(null);
+          await settled(8000);
+          rt.dispose();
+        }
         // Shadow maps draw with their own depth materials, which compile()
         // never sees; on a canvas with shadows the first shadow pass was one
         // more synchronous compile. Warm the two default variants with a

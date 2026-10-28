@@ -2,7 +2,9 @@
 
 export const profile = {
   name: "Ali Azam Kazmi",
-  title: "Product Engineer & UX Strategist",
+  // One positioning line everywhere (2026-10-28 review: "too many identities").
+  // Not a job title: the PM title is not official yet (PROFILE.md).
+  title: "Product Engineer, fleet & geospatial products",
   currentRole: "Associate Software Developer, Product & Platform",
   currentOrg: "MapMyIndia [Gtropy]",
   location: "New Delhi, India",
@@ -12,8 +14,19 @@ export const profile = {
   oneLine: "Give me a problem. I'll figure out what to do next.",
 };
 
-/** What the site is for (PROFILE.md "Positioning"). Shown on the channel and the nav signal. */
-export const lookingFor = "Product Management / product roles";
+/** What the site is for (PROFILE.md "The job search", 2026-10-24). Shown on the channel and the nav signal. */
+export const lookingFor = "Product Manager and Technical PM roles";
+
+/** Where (PROFILE.md "The job search": "anywhere"). */
+export const openTo = "Based in New Delhi, open to roles anywhere";
+
+/**
+ * How he builds (PROFILE.md "The job search", Ali's words: a vibe coder;
+ * Claude, Gemini and ChatGPT for research and generative AI). No metric is
+ * claimed; the one exhibit is this site, whose history is co-authored by
+ * Claude.
+ */
+export const aiTools = ["Claude", "Gemini", "ChatGPT"];
 
 /**
  * Received transmissions — references from people Ali worked with. Empty
@@ -148,6 +161,9 @@ export const experience = [
     href: "/missions",
     points: [
       "Built and scaled enterprise fleet and telematics platforms: Vahan Shakti (government, 200,000+ users), OEM platforms (20,000+ users), fleet operators (10,000+ vehicles).",
+      "Wrote the Driver Safety PRD for Intouch and created its DMS, ADAS and driver sections for the clients VinFast and SM Green: driver scorecard, per-driver reports, video and map evidence, customer-weighted scoring.",
+      "Built a device health dashboard for Toyota Logistics that classifies every vehicle by time since its last GPRS data, so silent trackers are found before they are missed.",
+      "Wrote the Admin Platform PRD that grows the Mappls Shop billing admin into one portal for Billing, Gadgets Catalog and Operations, with role-based access and an audit log.",
       "5+ live production projects; owned operational and analytics dashboards covering vehicle health, trips, delays, alerts and compliance.",
       "~40% performance improvement on data-heavy dashboards through caching, RxJS state management and API optimisation.",
       "Defined vehicle status logic (moving, stopped, idle, delayed, offline), plus map UX for rotation, fit-to-route and route playback, and the alarm, geofence and ticketing workflows.",

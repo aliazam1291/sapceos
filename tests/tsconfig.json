@@ -1,0 +1,12 @@
+{
+  // The tests are type-checked on their own (npm run test:types), not by
+  // `next build`: a typo in a test must never block a deploy.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": { "@/*": ["./src/*"] },
+    "plugins": []
+  },
+  "include": ["../next-env.d.ts", "./**/*.ts", "../vitest.config.mts", "../playwright.config.ts"],
+  "exclude": []
+}

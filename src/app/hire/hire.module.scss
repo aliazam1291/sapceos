@@ -1,0 +1,65 @@
+@use "../../styles/tokens.scss" as *;
+
+/*
+ * The recruiter brief is text, so: hairline rows in one panel, a claim on
+ * the left and its evidence on the right — the /faq layout, because a
+ * recruiter reads both pages the same way.
+ */
+
+.list {
+  margin: 0;
+  display: grid;
+  border-top: 1px solid var(--line-strong);
+}
+
+.row {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--line);
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+    column-gap: clamp(var(--space-8), 4vw, 4rem);
+    align-items: start;
+  }
+}
+
+.claim {
+  margin: 0;
+  font-size: var(--type-medium);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+.evidence {
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+
+  p {
+    margin: 0;
+    font-size: var(--type-small);
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 64ch;
+  }
+}
+
+.more {
+  @include mono-label;
+  color: var(--accent);
+  text-decoration: none;
+  width: fit-content;
+  padding-block: 0.6rem;
+
+  @include hover-only {
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+}

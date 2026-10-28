@@ -7,7 +7,7 @@ import AuthorBio from "@/components/AuthorBio";
 import Drone from "@/components/Drone";
 import { fieldNotes, getFieldNote } from "@/content/field-notes";
 import { DRAFT } from "@/content/types";
-import { breadcrumbJsonLd, clipDescription, jsonLd, noteJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, clipDescription, jsonLd, namedTitle, noteJsonLd } from "@/lib/seo";
 import { contentKeywords, identityKeywords, keywordsFor, roleKeywords } from "@/lib/keywords";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const note = getFieldNote(slug);
   if (!note) return {};
   const description = clipDescription(`${note.premise} An independent product case study by Ali Azam Kazmi.`);
-  const title = clipDescription(`${note.title} — Ali Azam Kazmi`, 62);
+  const title = namedTitle(note.title);
   return {
     title: { absolute: title },
     description,

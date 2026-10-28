@@ -40,6 +40,9 @@
   ],
   "exclude": [
     "node_modules",
-    ".next/dev"
+    ".next/dev",
+    "tests",
+    "vitest.config.mts",
+    "playwright.config.ts"
   ]
 }

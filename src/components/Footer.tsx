@@ -26,6 +26,7 @@ const nav = [
   { href: "/dumbmoney", label: "DumbMoney" },
   { href: "/flight-data", label: "Flight Data" },
   { href: "/faq", label: "FAQ" },
+  { href: "/hire", label: "For Recruiters" },
   { href: "/galaxy", label: "Galaxy Map" },
   { href: "/contact", label: "Open Channel" },
 ];

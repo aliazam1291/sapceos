@@ -75,7 +75,13 @@ export const missions: Mission[] = [
   },
   {
     slug: "mappls-shop-admin",
-    updated: "2026-10-15",
+    updated: "2026-10-24",
+    measure: [
+      "Renewal conversion rate, the North Star",
+      "Renewals completed without a support call",
+      "Payment success rate",
+      "Time from payment to invoice",
+    ],
     results: [
       { value: "80%", label: "More productive, billing & accounts teams", source: "Measured after go-live" },
       { value: "30+", label: "Users", source: "shop.mappls.com" },
@@ -92,17 +98,22 @@ export const missions: Mission[] = [
     stack: ["Angular", "TypeScript", "Spring Boot", "Odoo", "Razorpay"],
     signals: [
       { label: "Replaces", value: "A fully manual billing process" },
+      { label: "Model", value: "Device subscription renewals" },
       { label: "Billing & accounts", value: "80% more productive" },
     ],
     ownership: {
-      decided: ["The PRD", "The UI/UX"],
+      decided: [
+        "The PRD",
+        "The UI/UX",
+        "The Admin Platform PRD (v1, October 2026): one portal for Billing, Gadgets Catalog and Operations, with role-based access",
+      ],
       built: ["The web app frontend"],
       withTeam: ["Cross-functional delivery"],
     },
     report: [
       {
         label: "Brief",
-        body: "Replace a fully manual billing process with an automated system, and give shop operations a first-class admin surface.",
+        body: "Replace a fully manual billing process with an automated system for device subscriptions and their renewals, and give shop operations a first-class admin surface.",
       },
       {
         label: "Context",
@@ -139,9 +150,16 @@ export const missions: Mission[] = [
       },
       {
         label: "Technology",
-        body: "An Angular admin console over the Spring billing API, with Odoo upstream for devices and renewal dates and Razorpay for payments. The billing rules live server-side, so the admin surface, the customer checkout and any future automation share one source of truth. Every call goes through one API service that alone owns the base path, because production and the lab box use prefixes that 404 on each other.",
+        body: "An Angular admin console over the Spring billing API, with Odoo upstream for devices and renewal dates and Razorpay for payments. The billing rules live server-side, so the admin surface, the customer checkout and any future automation share one source of truth.",
       },
       { label: "Build", body: "Ali owns the UI/UX, wrote the PRD, and drives delivery across the teams involved." },
+      {
+        label: "Roadmap",
+        body: [
+          "Billing was the first module of a bigger product: the subscription lifecycle for every connected device Mappls sells. The North Star is renewal conversion, the share of subscriptions that reach their renewal window and actually renew. Phase one is self-service renewal, payment, invoicing and timed reminders; phase two adds analytics and operational depth; phase three is auto-renewal, which waits on RBI's e-mandate rules.",
+          "In October 2026 I wrote the PRD that grows the admin into one platform for three teams: Billing, a new Gadgets Catalog, and Operations for orders, shipping and installation. It replaces all-or-nothing super-admin access with role-based feature permissions, puts subscriptions and gadget orders on one payments layer, and records every change in an audit log. The gadgets storefront it serves is being built in four phases, with checkout off until the catalog is right.",
+        ],
+      },
       { label: "Outcome", body: "Live and generating revenue, with 30+ users. The billing and accounts teams are 80% more productive: the lookups, re-keying and re-checking that filled a manual cycle are now the system's job, and what is left for a person is the flagged decisions." },
       {
         label: "Learnings",
@@ -300,7 +318,14 @@ export const missions: Mission[] = [
     cover: "/missions/intouch.jpg",
     title: "Intouch",
     org: "MapMyIndia [Gtropy]",
-    role: "Frontend · performance",
+    role: "Frontend · performance · UI/UX · Driver Safety PRD",
+    updated: "2026-10-24",
+    measure: [
+      "Time for a new user to find the driver who most needs attention",
+      "Weekly accounts opening the Driver Scorecard",
+      "Accounts that change at least one Alert Setting",
+      "Support tickets saying a score looks wrong",
+    ],
     period: "Shipped",
     status: "shipped",
     featured: true,
@@ -311,7 +336,19 @@ export const missions: Mission[] = [
       { label: "Active vehicles", value: "10,000+" },
       { label: "Headroom", value: "Scaling to 50,000" },
       { label: "Distribution", value: "Live on Play Store" },
+      { label: "Client deployments", value: "VinFast, SM Green, Toyota Logistics" },
     ],
+    ownership: {
+      decided: [
+        "The Driver Safety PRD (v1.0, October 2026): scope, scoring rules, API contract, success measures",
+        "The locked product calls: driver-first, data only, no coaching or review workflow",
+      ],
+      built: [
+        "The DMS, ADAS and driver sections, for VinFast and SM Green",
+        "A clickable Driver Safety prototype, through eleven design iterations",
+        "The Device Communication Health dashboard for Toyota Logistics",
+      ],
+    },
     report: [
       { label: "Brief", body: "A cross-platform logistics management app for fleet operators." },
       {
@@ -351,6 +388,17 @@ export const missions: Mission[] = [
       {
         label: "Build",
         body: "Ionic and Angular in TypeScript, REST integration tuned for mobile consumption, and rendering optimised for high-frequency live updates. In production at 10,000+ active vehicles, architected for 50,000.",
+      },
+      {
+        label: "Client work",
+        body: [
+          "## Driver Safety, for VinFast and SM Green",
+          "The video telematics devices already produced the data: in-cab cameras, road-facing cameras, GPS and motion sensors. What a fleet manager could not do was answer \"which drivers are risky this week?\" without opening several screens, and the alarm names did not even agree with each other. I wrote the PRD for a Driver Safety module and created its DMS (driver monitoring), ADAS (driver assistance) and driver sections: a safety overview, a scorecard that ranks every driver, a report per driver, and one evidence window with video, map and trip for any alert.",
+          "The decisions that shaped it were the ones about what not to build. It reports, scores and notifies; it does not run a coaching programme or a review queue, because the client's own team owns the people side. Drivers are compared per distance or hours driven, never on raw counts, and nobody is scored until they have driven enough to be judged. Customers choose which alarms they see and how much each one counts toward the score, and a hidden alarm is removed on the server, so it cannot leak back through an export.",
+          "## Device health, for Toyota Logistics",
+          "A tracker that stops reporting looks exactly like a parked vehicle until someone checks. I built a Device Communication Health dashboard that classifies every vehicle by the time since its last GPRS data (online, offline, inactive, not working), ranks vehicle groups by how much of them has gone quiet, and exports the list to act on.",
+          "No outcome is on file for any of the three clients yet, so none is claimed here. The measures the PRD sets are listed under Results.",
+        ],
       },
       { label: "Outcome", body: "Live on the Play Store." },
       {

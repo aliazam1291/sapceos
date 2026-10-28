@@ -211,6 +211,10 @@ const frag = /* glsl */ `
           vec3 tang = vec3(-hp.z, 0.0, hp.x) / hr;
           float dop = dot(tang, -rd);
           float beam = 1.0 + 0.95 * dop;
+          // …and the half orbiting away is redshifted: the receding side of
+          // the disc burns deep red (red is heat, 2026-10-24). Physics, not
+          // paint — the same Doppler term that dims it reddens it.
+          dc = mix(dc, vec3(1.0, 0.16, 0.08) * dot(dc, vec3(0.3, 0.55, 0.15)) * 1.6, smoothstep(0.05, 0.75, -dop) * 0.8);
 
           float emit = dens * beam * (0.22 + 1.7 * temp);
           col += T * dc * emit;

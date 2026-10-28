@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Status, ui } from "@/components/ui";
-import { lookingFor, profile } from "@/content/profile";
+import { aiTools, education, lookingFor, openTo, profile } from "@/content/profile";
 
 /*
  * The manifest a recruiter is scanning for (2026-09-21). Ali asked for
@@ -17,21 +17,39 @@ export default function RecruiterManifest() {
       <div className={ui.manifestCell}>
         <dt>Status</dt>
         <dd>
-          <Status>Accepting transmissions</Status>
+          {/* Plain words in the recruiter card; the space voice lives elsewhere. */}
+          <Status>Open to new roles</Status>
         </dd>
       </div>
       <div className={ui.manifestCell}>
         <dt>Looking for</dt>
-        <dd>{lookingFor} — Product Manager, Associate Product Manager, Technical PM</dd>
+        <dd>{lookingFor}: a PM who builds the product</dd>
       </div>
       <div className={ui.manifestCell}>
-        <dt>Based in</dt>
-        <dd>{profile.location} · Delhi NCR</dd>
+        <dt>Location</dt>
+        <dd>{openTo}</dd>
+      </div>
+      <div className={ui.manifestCell}>
+        <dt>Builds with AI</dt>
+        <dd>{aiTools.join(", ")}: research, prototyping, vibe coding</dd>
       </div>
       <div className={ui.manifestCell}>
         <dt>Now</dt>
         <dd>
-          {profile.currentRole}, {profile.currentOrg} · Founder &amp; CPO, <Link href="/dumbmoney">DumbMoney</Link>
+          {profile.currentRole}, {profile.currentOrg}
+        </dd>
+      </div>
+      {/* Side ventures as one line, not a second identity (2026-10-28 review). */}
+      <div className={ui.manifestCell}>
+        <dt>Also</dt>
+        <dd>
+          Co-founder, <Link href="/dumbmoney">DumbMoney</Link> · freelance design, <Link href="/smaak">Smaak.ux</Link>
+        </dd>
+      </div>
+      <div className={ui.manifestCell}>
+        <dt>Education</dt>
+        <dd>
+          {education.degree}, {education.school} · {education.detail}
         </dd>
       </div>
       <div className={ui.manifestCell}>

@@ -106,7 +106,9 @@ function pagePlanFor(pathname: string): Waypoint[] {
   // /smaak is a deck too: a full-width dome, full-width client rows with
   // their tags at the right end, section notes in the right column — the
   // prose plan parked the ship on those notes (2026-09-30).
-  if (/^\/(missions|field-notes|lab|studio|smaak|about|flight-data)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
+  // /hire opens on /about's full-width recruiter manifest, so it flies the
+  // same high pass (2026-10-24: the prose plan parked the ship on it).
+  if (/^\/(missions|field-notes|lab|studio|smaak|about|flight-data|hire)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
   return PAGE_PLAN_PROSE;
 }
 // Phones (2026-09-18): the same low-right station is a fixed SCREEN
@@ -326,7 +328,11 @@ function Pilot({
 
   // Demand-driven: this loop decides when the next frame is worth drawing.
   // Idle (no scroll, no lunge) the ship bobs at 30fps; scrolling, entering or
-  // departing it goes to full rate. Behind a heavy scene, or on a low level, 20fps.
+  // departing it goes to full rate. Behind a heavy scene, or on a software
+  // rasteriser, 20fps. (Was any "low" level: once integrated Intel graphics
+  // started at low, 2026-10-24, that put the hero ship at 20fps on exactly
+  // the laptops that asked for smoothness. A real GPU holds 30 for one small
+  // canvas.)
   useEffect(() => {
     let raf = 0;
     let last = 0;
@@ -334,7 +340,7 @@ function Pilot({
       raf = requestAnimationFrame(tick);
       const flying = Math.hypot(pvx.current, pvy.current) > 0.25 || departing.current > 0;
       const busy = signal.velocity > 0.02 || (warp.current ?? 0) > 0.02 || flying;
-      const slow = heavySceneLive() || perf.level === "low";
+      const slow = heavySceneLive() || perf.software;
       const interval = slow ? 50 : busy ? (perf.level === "high" ? 0 : 33) : 33;
       if (now - last >= interval) {
         last = now;

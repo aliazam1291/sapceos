@@ -33,6 +33,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/decisions", priority: 0.8 },
     { path: "/flight-data", priority: 0.7 },
     { path: "/faq", priority: 0.7 },
+    // The recruiter brief: the page a "technical PM New Delhi" search should
+    // land on (2026-10-24).
+    { path: "/hire", priority: 0.9 },
     { path: "/smaak", priority: 0.8 },
     { path: "/about", priority: 0.8 },
     { path: "/mission-history", priority: 0.8 },

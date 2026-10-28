@@ -36,18 +36,39 @@ let decided = false;
  * throwaway context, released immediately, answers it before any scene
  * mounts.
  */
-function detectSoftwareGL(): boolean {
+function readRenderer(): string | null {
   try {
     const c = document.createElement("canvas");
     const gl = (c.getContext("webgl2") ?? c.getContext("webgl")) as WebGLRenderingContext | null;
-    if (!gl) return true;
+    if (!gl) return null;
     const ext = gl.getExtension("WEBGL_debug_renderer_info");
     const renderer = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
     gl.getExtension("WEBGL_lose_context")?.loseContext();
-    return /swiftshader|llvmpipe|softpipe|software|mesa offscreen|microsoft basic render/i.test(renderer);
+    return renderer;
   } catch {
-    return false;
+    return "";
   }
+}
+
+const SOFTWARE_GL = /swiftshader|llvmpipe|softpipe|software|mesa offscreen|microsoft basic render/i;
+
+/*
+ * Integrated Intel graphics start at "low" (2026-10-24). Ali: "the space
+ * scroll on landing is not smooth". Cores and memory said "high" on his
+ * Intel UHD laptop. Measured on the landing flight, real Chrome, production
+ * build, wheel-scrolled: high 12 fps; medium 20 fps, then a 4 s freeze and
+ * the fps probe stepped it to low anyway (every medium run ended at low);
+ * low ~30 fps with no long task over 170 ms. Starting where the machine
+ * ends up skips the freeze. A real GPU at "low" still keeps every vsync
+ * (only a software rasteriser is capped). Intel Arc is a discrete card and
+ * is left alone.
+ */
+const INTEGRATED_GL = /intel(?!.*\barc\b)/i;
+
+/** What kind of rasteriser a WEBGL_debug_renderer_info string names. null = no WebGL at all. */
+export function glTier(renderer: string | null): "software" | "integrated" | "discrete" {
+  if (renderer === null || SOFTWARE_GL.test(renderer)) return "software";
+  return INTEGRATED_GL.test(renderer) ? "integrated" : "discrete";
 }
 
 export function decidePerfLevel(): PerfLevel {
@@ -64,8 +85,10 @@ export function decidePerfLevel(): PerfLevel {
   } catch {}
   if (saveData || cores <= 4 || mem <= 4) perf.level = "low";
   else if (coarse || cores <= 6) perf.level = perf.level === "low" ? "low" : "medium";
-  perf.software = detectSoftwareGL();
+  const tier = glTier(readRenderer());
+  perf.software = tier === "software";
   if (perf.software) perf.level = "low";
+  else if (tier === "integrated") perf.level = "low";
   document.documentElement.dataset.perf = perf.level;
   if (perf.software) document.documentElement.dataset.gl = "software";
   watchPower();

@@ -29,9 +29,9 @@ import styles from "./MobileShell.module.scss";
 
 const TABS = [
   { href: "/", label: "Home", icon: "/icons/ship-128.webp" },
-  { href: "/missions", label: "Missions", icon: "/icons/world-128.webp" },
-  { href: "/about", label: "Operator", icon: "/icons/ship-landed-128.webp" },
-  { href: "/contact", label: "Channel", icon: "/icons/satellite-128.webp" },
+  { href: "/missions", label: "Projects", icon: "/icons/world-128.webp" },
+  { href: "/about", label: "About", icon: "/icons/ship-landed-128.webp" },
+  { href: "/contact", label: "Contact", icon: "/icons/satellite-128.webp" },
 ] as const;
 
 // What the top bar calls the screen you are on.
@@ -50,6 +50,7 @@ const SCREEN: [RegExp, string][] = [
   [/^\/about/, "The operator"],
   [/^\/mission-history/, "Mission history"],
   [/^\/contact/, "Open channel"],
+  [/^\/hire/, "Recruiter brief"],
   [/^\/galaxy/, "Galaxy"],
 ];
 
@@ -94,8 +95,11 @@ export default function MobileShell() {
   return (
     <>
       <div className={styles.appBar} data-scrolled={scrolled || undefined} role="banner">
-        <Link href="/" className={styles.mark} aria-label={`${profile.name} — home`}>
+        {/* The name starts with the visible "AAK" (WCAG 2.5.3). */}
+        <Link href="/" className={styles.mark} aria-label={`AAK: ${profile.name}, home`}>
           AAK
+          {/* On air: open to roles. The one red thing in the chrome. */}
+          <i className={styles.onAir} aria-hidden="true" />
         </Link>
         <p className={styles.screen}>
           <span className={styles.screenLabel}>At</span>

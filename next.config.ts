@@ -1,4 +1,21 @@
 import type { NextConfig } from "next";
+import { siteUrl } from "./src/lib/site";
+
+/*
+ * One host (2026-10-24). The site has lived at aliazamkazmi.vercel.app; a
+ * custom domain is the move that lets it build authority of its own. When
+ * one is added in Vercel, VERCEL_PROJECT_PRODUCTION_URL (and so siteUrl,
+ * every canonical and the sitemap) switches to it on the next build, and
+ * this sends the old address there in one permanent hop so links and
+ * signals collected on it are not split across two hosts. A no-op until
+ * then: siteUrl's host IS the vercel.app host.
+ */
+const VERCEL_HOST = "aliazamkazmi.vercel.app";
+const canonicalHost = new URL(siteUrl).host;
+const hostRedirect =
+  canonicalHost === VERCEL_HOST
+    ? []
+    : [{ source: "/:path*", has: [{ type: "host" as const, value: VERCEL_HOST }], destination: `${siteUrl}/:path*`, permanent: true }];
 
 const nextConfig: NextConfig = {
   // Lets a production build run to its own directory while `next dev` keeps
@@ -66,6 +83,7 @@ const nextConfig: NextConfig = {
   // Preserve SEO equity from the pre-Space-OS URL structure.
   async redirects() {
     return [
+      ...hostRedirect,
       // Index pages only. Slugs under /work, /case-studies, /projects and
       // /blog are looked up by app/<old>/[slug]/route.ts (lib/legacy.ts):
       // the blanket /missions/:slug rule sent case studies and essays to a

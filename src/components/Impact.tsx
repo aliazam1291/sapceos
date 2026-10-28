@@ -22,12 +22,20 @@ function width(r: (typeof results)[number]) {
 }
 
 export default function Impact() {
-  const matrix = missions.map((m) => ({
-    slug: m.slug,
-    title: m.title,
-    status: m.status,
-    owns: ownershipColumns.map((c) => c.test.test(m.role)),
-  }));
+  // Product-owned rows first (PRD, then UI/UX), so the matrix reads as the
+  // trajectory it is: frontend roles that turned into product roles
+  // (2026-10-28 review: "PRD owned on 2/10" read as a verdict, not a path).
+  const prdCol = ownershipColumns.findIndex((c) => c.key === "prd");
+  const uxCol = ownershipColumns.findIndex((c) => c.key === "ux");
+  const matrix = missions
+    .map((m) => ({
+      slug: m.slug,
+      title: m.title,
+      status: m.status,
+      owns: ownershipColumns.map((c) => c.test.test(m.role)),
+    }))
+    .sort((a, b) => Number(b.owns[prdCol]) - Number(a.owns[prdCol]) || Number(b.owns[uxCol]) - Number(a.owns[uxCol]));
+  const prdOwned = matrix.filter((m) => m.owns[prdCol]).map((m) => m.title.split(" — ")[0].split(" & ")[0]);
   const totals = ownershipColumns.map((_, ci) => matrix.filter((m) => m.owns[ci]).length);
 
   return (
@@ -170,8 +178,9 @@ export default function Impact() {
           </li>
         </ul>
         <p className={styles.footnote}>
-          Every dot is a literal match against that mission&rsquo;s role line — nothing is
-          claimed here that the report itself does not say.
+          PRDs I wrote: {prdOwned.join(", ")}. The earlier rows were frontend and UX roles; the
+          product work grew out of them. Every dot is a literal match against that mission&rsquo;s
+          role line, so nothing here claims more than the report does.
         </p>
       </div>
     </div>

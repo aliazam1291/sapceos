@@ -1039,12 +1039,115 @@ the open channel; the one joke; keep it the only one).
   (submit the sitemap, request indexing — Ali's login), the Vercel MCP
   connector (lost its team scope), and backlinks.
 
+- *A test suite* (2026-10-24). Ali: "improve the seo … not getting any
+  view … do unit testing and other testing." First the diagnosis, so
+  nobody re-derives it: a web search for "Ali Azam Kazmi" and for the bare
+  token "aliazamkazmi" returned nothing from this site, while every page
+  passes on-page SEO (seo-uat clean, Lighthouse SEO 100). **The zero is
+  discovery and authority, not markup**: a new vercel.app host, three old
+  pages in Google's index, no backlinks. A site with no traffic also has
+  no Chrome field data, so Core Web Vitals cannot be what holds it back.
+  The levers are Ali's: Search Console (sitemap + request indexing), Bing
+  Webmaster Tools, a custom domain, and links from the profiles he owns.
+  `next.config.ts` now 308s the vercel.app host to siteUrl once a custom
+  domain is the production URL — a no-op until then.
+  Tests: `npm test` (Vitest, `tests/unit`: SEO builders, sitemap, robots,
+  old-URL redirects, referrer check, and content integrity — slugs, every
+  cover on disk, every internal href resolving, no DRAFT in what readers
+  see) and `npm run test:e2e` (Playwright, `tests/e2e`, against the
+  production server on :3210, desktop + Pixel 7: every sitemap route
+  indexable, no duplicate titles/descriptions, one-hop legacy redirects,
+  page errors, skip link, palette, the launch rules, and an axe WCAG 2.1
+  AA scan of 14 routes). `npm run test:types` type-checks them; they are
+  excluded from the app tsconfig so a test typo never blocks a deploy.
+  What they found on the first run, all fixed: the PRD essay's title was
+  "How to write a PRD for a feature that can be wrong — Ali Azam…"
+  (`namedTitle` drops the name whole instead); `jsonLd` did not escape
+  `<`, so a "</script>" in any string would have ended the block;
+  field-note word counts counted "##" as words; `BODY_LINK` accepted
+  `//host` as a site path; the ⌘K and AAK controls' names left out their
+  visible text (WCAG 2.5.3) on every page; the loop rail scrolled
+  sideways on phones with no keyboard access. And one UX call in the
+  same spirit as 10-02: a reader sent by a search or answer engine
+  (`lib/referrer.ts`) skips the launch screen on the front door too.
+  Lighthouse a11y on /about mobile reads 97 for a manifest label that is
+  13px below the fold mid-fade at load; no reader sees it dim, left alone.
+  Home performance is unchanged (mobile 38, desktop 59; seven scenes).
+
+- *Smooth flight, red heat, the recruiter brief* (2026-10-24). Ali: "the
+  space scroll on landing is not smooth … add red in 3d and some places …
+  update my cv … increase seo in delhi pm … ask me questions to get people
+  hrs on my website". Answers he gave are in PROFILE.md "The job search".
+  **The stutter was two things, both measured** (real Chrome, production,
+  Intel UHD; `tools/flightfeel-uat.mjs`, a copy of `glblock-uat` with a
+  wheel-scrolled flight): (1) **the planet shader took 10-13 s to compile per
+  variant** on ANGLE/D3D11 — all three kinds behind uniform branches, fifteen
+  fBm calls, every 5-octave loop unrolled by the D3D compiler — and three
+  variants compiled at first use mid-flight, freezing the page each time.
+  `planetShader.ts` now picks the kind with a `KIND` define (per material,
+  `StarSystemNode` `defines`), bumps the relief from screen-space derivatives
+  instead of three more fBm taps, and runs fBm as a real loop (a bound read
+  from a uniform, so the compiler cannot unroll it): 0.3-0.7 s per kind,
+  same pixels (`tools/shaderbench-uat.mjs`; `tests/unit/scene.test.ts` pins
+  all three). And `WarmShaders offscreen` warms the composer's render-target
+  variants too — the on-screen compile missed every program the Cinematic
+  pass actually draws with. Flight: 0 blocking GL queries (was 9-13 s ×3).
+  (2) **"high" on an iGPU.** Cores and memory said high; the flight ran at
+  12 fps; medium ran 20 fps, froze ~4 s, and the fps probe stepped it to low
+  in every run. `perf.ts` `glTier()`: integrated Intel (not Arc) starts at
+  **low** — 33 ms p50, nothing over 200 ms. The companion's 20 fps cap is
+  software-only now (it was any "low"). **Red** (Ali chose "3D heat + one
+  signal"): red is heat in the 3D — the ship's nozzle throats (`RED_HOT`),
+  every fourth pad beacon (`WARN`), the black hole's receding side
+  (redshift, the same Doppler term that dims it), and one rust world, IOCL
+  GeoRTD, a stop on the flight (`RED_WORLD`, muted Mars albedo, not paint)
+  — and exactly ONE thing in the chrome: the "on air / open to roles" dot
+  (`--signal-red`, the dock and the phone bar). Never red text, buttons or
+  labels. **`/hire`** is the recruiter brief: the manifest, four measured
+  numbers, four claims with evidence, CV / Calendly / email — titled for
+  the search a recruiter types ("Hiring a Technical PM in New Delhi?"),
+  never claiming a PM title he does not hold. In the sitemap (0.9), footer,
+  overview, palette, phone bar; deck flight plan (the full-width manifest);
+  the FAQ's first answer points to it. `lookingFor` is "Product Manager and
+  Technical PM roles", `openTo` "open to roles anywhere", `aiTools` Claude /
+  Gemini / ChatGPT (his words: a vibe coder); the FAQ gained the AI and
+  relocation answers. **The résumé** (`tools/resume/resume.html`, published
+  with `PUBLISH=1 node tools/resume-build.mjs`) gained Mappls Shop's results,
+  Toyota, VinFast / SM Green, Sunder Masala and Wolf Casa, the AI line and
+  the role target; Control Tower and FASTag came off to keep one page.
+  Still waiting on Ali: notice period, salary, the PM title when it lands.
+
+- *One identity, plain labels* (2026-10-28). An outside review Ali pasted:
+  "too many identities", PRD on 2/10 contradicting Rule 02, space labels as
+  HR friction, résumé behind an icon, internal details. Done: one positioning
+  line (`profile.title` "Product Engineer, fleet & geospatial products"; tab
+  titles "Product Engineer moving into PM"; never a PM title until PROFILE.md
+  has it; JSON-LD `jobTitle` is `currentRole`); DumbMoney and Smaak.ux are one
+  "Also" line (opener, `RecruiterManifest`, /about lede); the opener links
+  /hire first; nav, dock and phone tabs use plain words (Projects, Case
+  Studies, How I Decide, Experience, For Recruiters, Contact, "Résumé ↗");
+  the space names stay on the pages. The ownership matrix sorts product-owned
+  rows first and names the PRDs in its footnote; Rule 02 names the three
+  missions with a PRD instead of "every active mission". The API-prefix
+  sentence left the Mappls Shop report. `ResumeTracker` sends a Vercel
+  Analytics "Resume open" event (custom events need a Pro plan to show).
+  Not done, Ali's call: a theme toggle, the custom domain, NDA review of
+  client names, recommendations, the flagship PRD excerpt.
+- *The paper relay* (2026-10-28). Ali: "download my resume like a 3D design
+  where the user needs to swipe … and it comes out as a fax". `FaxTerminal`
+  on /hire's Next step, under the plain buttons: a CSS-3D machine (faces
+  folded from the top plane, no canvas, no frame loop), a visitor pass the
+  reader drags through a reader strip (≥88% of the travel, or "no read"); a
+  tap or Enter glides it through. The sheet feeds out of the slot on
+  `steps(24)` and the PDF downloads via a hidden `download` link (so
+  `ResumeTracker` counts it). Reduced motion: no glide, no feed. Sheet text
+  is bars, aria-hidden, nothing under 11px. Verified at 1243 and 375 wide.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
 
 **Page map (each page is a place).**
-Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/smaak` = the studio — the site's own palette (the blue was withdrawn 2026-09-28), sassy copy, its own planet, client work only, with the dome gallery. `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
+Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/smaak` = the studio — the site's own palette (the blue was withdrawn 2026-09-28), sassy copy, its own planet, client work only, with the dome gallery. `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). `/hire` = the recruiter brief. Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
 
 Context for Claude Code working in this repo. Read this first, every session.
 

@@ -20,16 +20,16 @@ import { results } from "@/content/results";
 import { allKeywords } from "@/lib/keywords";
 
 export const metadata: Metadata = {
-  // Title and description match the H1 (Product Engineer & UX Strategist)
+  // Title and description match the H1 (profile.title, one line everywhere)
   // and lead with what was built — the external SEO audit's one fair point
   // (2026-09-20). This page's metadata overrides the layout's, so it is set
   // here too.
   // The title carries what a recruiter types (product manager portfolio,
   // New Delhi); the H1 carries who he is; the description proves the first
   // with the second (2026-09-21 meta strategy).
-  title: { absolute: `${profile.name} — Product Manager Portfolio · New Delhi` },
+  title: { absolute: `${profile.name} — Product Engineer moving into PM · New Delhi` },
   description:
-    "Product engineer, UX strategist and founder (DumbMoney) moving into product management: PRDs, roadmaps and shipped fleet platforms for 200,000+ users.",
+    "Product engineer for fleet and geospatial products, moving into product management: PRDs, roadmaps and shipped platforms for 200,000+ users.",
   keywords: allKeywords,
   alternates: { canonical: "/" },
 };

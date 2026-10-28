@@ -20,6 +20,7 @@ import { siteUrl } from "@/lib/site";
 import { jsonLd, personJsonLd, websiteJsonLd } from "@/lib/seo";
 import { allKeywords } from "@/lib/keywords";
 import { Analytics } from "@vercel/analytics/next";
+import ResumeTracker from "@/components/ResumeTracker";
 import Telemetry from "@/components/Telemetry";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/styles/tailwind.css";
@@ -35,13 +36,13 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Space OS" },
   title: {
-    default: `${profile.name} — Product Manager Portfolio · New Delhi`,
+    default: `${profile.name} — Product Engineer moving into PM · New Delhi`,
     template: `%s — ${profile.name}`,
   },
   description:
     // Leads with the substance, not the job search (external SEO audit,
     // 2026-09-20): what was built, for whom, and the venture.
-    "Product engineer, UX strategist and founder (DumbMoney) moving into product management: PRDs, roadmaps and shipped fleet platforms for 200,000+ users.",
+    "Product engineer for fleet and geospatial products, moving into product management: PRDs, roadmaps and shipped platforms for 200,000+ users.",
   applicationName: "Space OS",
   authors: [{ name: profile.name, url: siteUrl }],
   creator: profile.name,
@@ -147,6 +148,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             cookie, so the footer line still holds. */}
         <Analytics />
         <SpeedInsights />
+        <ResumeTracker />
         <Telemetry />
       </body>
     </html>

@@ -360,7 +360,6 @@ export default function StarSystemNode({
       uAccent: { value: new THREE.Color(look.accent) },
       uAtmo: { value: new THREE.Color(look.atmo) },
       uSeed: { value: look.seed * 10 },
-      uKind: { value: look.kind },
       uTime: { value: 0 },
       uOpacity: { value: 1 },
       uRing: { value: look.ring ? 1 : 0 },
@@ -373,6 +372,9 @@ export default function StarSystemNode({
     }),
     [look],
   );
+  // The kind is compiled in, not a uniform (planetShader.ts, KIND): each
+  // program carries only its own kind's noise.
+  const hullDefines = useMemo(() => ({ KIND: look.kind }), [look]);
 
   const rimUniforms = useMemo(
     () => ({
@@ -566,6 +568,7 @@ export default function StarSystemNode({
             vertexShader={planetVert}
             fragmentShader={planetFrag}
             uniforms={hullUniforms}
+            defines={hullDefines}
           />
         </mesh>
 

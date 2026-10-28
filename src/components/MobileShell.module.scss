@@ -65,6 +65,23 @@
   text-decoration: none;
 }
 
+// On air (vars.scss, --signal-red): the dock's status dot, on a phone.
+.onAir {
+  width: 6px;
+  height: 6px;
+  margin-left: var(--space-2);
+  border-radius: 50%;
+  background: var(--signal-red);
+  box-shadow: 0 0 8px var(--signal-red);
+  animation: onAir 2.4s var(--ease-in-out) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes onAir {
+  0%, 100% { opacity: 0.45; transform: scale(0.85); }
+  50%      { opacity: 1; transform: scale(1.1); }
+}
+
 .screen {
   display: flex;
   align-items: baseline;
@@ -174,5 +191,9 @@
   .appBar,
   .tabIcon {
     transition: none;
+  }
+  .onAir {
+    animation: none;
+    opacity: 1;
   }
 }

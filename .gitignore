@@ -43,3 +43,7 @@ next-env.d.ts
 # Production build used for weight/verification checks
 .next-prod
 tools/shots
+
+# Playwright (npm run test:e2e)
+/test-results/
+/playwright-report/

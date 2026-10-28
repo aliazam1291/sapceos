@@ -1,4 +1,4 @@
-import { links, profile } from "@/content/profile";
+import { aiTools, links, profile } from "@/content/profile";
 import type { FieldNote, Mission } from "@/content/types";
 import type { Venture } from "@/content/venture";
 import type { Piece } from "@/content/writing";
@@ -57,9 +57,9 @@ export function personJsonLd() {
     familyName: "Kazmi",
     url: siteUrl,
     image: `${siteUrl}/images/ali.jpg`,
-    jobTitle: profile.title,
+    jobTitle: profile.currentRole,
     description:
-      "Product engineer and UX strategist building enterprise fleet and telematics platforms at MapMyIndia; founder and CPO of DumbMoney, a coupon platform for Indian shoppers.",
+      "Product engineer and de-facto product manager on enterprise fleet and telematics platforms at MapMyIndia; founder and CPO of DumbMoney. Seeking Product Manager and Technical PM roles.",
     worksFor: {
       "@type": "Organization",
       name: "MapMyIndia",
@@ -70,7 +70,7 @@ export function personJsonLd() {
       addressCountry: "IN",
     },
     email: `mailto:${profile.email}`,
-    knowsAbout: ["Product management", "UX strategy", "Frontend engineering", "AI product management", "PRD writing", "Evaluation of LLM features", ...domainKeywords, ...skillKeywords],
+    knowsAbout: ["Product management", "Technical product management", "UX strategy", "Frontend engineering", "AI product management", "Generative AI", "AI-assisted prototyping", "PRD writing", "Evaluation of LLM features", ...aiTools, ...domainKeywords, ...skillKeywords],
     knowsLanguage: ["en", "hi"],
     hasOccupation: [
       {
@@ -199,7 +199,8 @@ export function noteJsonLd(note: FieldNote) {
     inLanguage: "en",
     isPartOf: { "@id": siteId },
     // Wordcount helps the crawler weigh it as a real article, not a stub.
-    wordCount: note.body.join(" ").split(/\s+/).length,
+    // Counted on plainBody, as pieces are: "##" markers are not words.
+    wordCount: plainBody(note.body).split(/\s+/).filter(Boolean).length,
   };
 }
 
@@ -215,6 +216,17 @@ export function clipDescription(text: string, max = 155) {
   const at = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf(", "), cut.lastIndexOf(" "));
   const head = cut.slice(0, at > 60 ? at : max - 1).replace(/[,;:\s]+$/, "");
   return /[.!?]$/.test(head) ? head : head + "…";
+}
+
+/**
+ * A page title that carries the name when it fits and drops it whole when
+ * it does not (2026-10-24). Clipping "<title> — Ali Azam Kazmi" at 62 gave
+ * "How to write a PRD for a feature that can be wrong — Ali Azam…": the one
+ * title written to answer a real search, ending in half a name.
+ */
+export function namedTitle(title: string, max = 62) {
+  const full = `${title} — ${profile.name}`;
+  return full.length <= max ? full : clipDescription(title, max);
 }
 
 /** Renders one or more JSON-LD graphs as a script tag's text. */
@@ -242,5 +254,8 @@ export function faqJsonLd(items: { q: string; a: string[] }[]) {
 }
 
 export function jsonLd(...graphs: object[]) {
-  return JSON.stringify(graphs.length === 1 ? graphs[0] : graphs);
+  // Written into a <script> with dangerouslySetInnerHTML, so a "</script>"
+  // in any string would end the block. < is the same character to a
+  // JSON parser and nothing at all to the HTML tokenizer.
+  return JSON.stringify(graphs.length === 1 ? graphs[0] : graphs).replace(/</g, "\\u003c");
 }

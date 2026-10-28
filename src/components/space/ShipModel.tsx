@@ -26,6 +26,7 @@ const HULL_DARK = "#22262c";
 const HULL_EDGE = "#7b838d";
 const EMERALD = "#3cdd9e";
 const AMBER = "#ffb35a";
+const RED_HOT = "#ff3d2e";
 
 /*
  * An interceptor, built as planforms. Every part is a top-view Shape
@@ -347,7 +348,9 @@ const ShipModel = forwardRef<ShipHandle, ShipModelProps>(function ShipModel({ ke
     () => new THREE.MeshStandardMaterial({ color: "#151515", metalness: 0.6, roughness: 0.7, emissive: AMBER, emissiveIntensity: 0.9, side: THREE.DoubleSide }),
     [],
   );
-  const ring = useMemo(() => new THREE.MeshStandardMaterial({ color: "#0a0a0a", emissive: AMBER, emissiveIntensity: 1.6, roughness: 0.6 }), []);
+  // The throat is the hottest metal on the ship: red-hot at the core, the
+  // jet amber behind it (red is heat, 2026-10-24).
+  const ring = useMemo(() => new THREE.MeshStandardMaterial({ color: "#0a0a0a", emissive: RED_HOT, emissiveIntensity: 1.6, roughness: 0.6 }), []);
   const jet = useMemo(
     () => new THREE.MeshBasicMaterial({ color: AMBER, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }),
     [],

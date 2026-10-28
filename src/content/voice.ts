@@ -82,6 +82,10 @@ export const comms = {
   faq: [
     { who: "CAPCOM", line: "Ground control, standing by. The awkward questions are near the bottom." },
   ],
+  // /hire — the recruiter brief.
+  hire: [
+    { who: "CAPCOM", line: "Recruiter on frequency. The answers are pre-loaded; the call is still welcome." },
+  ],
   // Home — Operator, under the leg's head.
   operator: [
     { who: "CAPCOM", line: "Pilot on the flight deck. Writes the PRD, then builds the thing the PRD said." },
