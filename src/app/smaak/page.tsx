@@ -4,6 +4,8 @@ import Image from "next/image";
 import SmaakPlanet from "@/components/smaak/SmaakPlanet";
 import DomeGallery from "@/components/smaak/DomeGallery";
 import Hologram from "@/components/Hologram";
+import InspectionBay, { InspectTrigger } from "@/components/InspectionBay";
+import { isInspectable, studioInspectItem } from "@/lib/inspect";
 import Bars from "@/components/Bars";
 import { gallery } from "@/content/gallery";
 import Comms from "@/components/Comms";
@@ -51,6 +53,7 @@ const withIndustry = clients.filter((c) => c.industry);
  * and the three with real covers are the three a visitor most wants to see.
  */
 const featured = clients.filter((c) => c.cover);
+const inspectable = featured.map(studioInspectItem).filter(isInspectable);
 const roster = clients.filter((c) => !c.cover);
 const pad = (n: number) => String(n).padStart(2, "0");
 const followers = results.find((r) => r.source.startsWith("Lean Multiverse"));
@@ -198,10 +201,14 @@ export default function SmaakPage() {
 
         {/* The three with work on file, projected — a client project is a
             project, and on this site a project is a hologram. */}
+        {/* Click a bay to see the work off the projector, in its own colours. */}
+        <InspectionBay items={inspectable} />
         <ol className={styles.featured}>
           {featured.map((c, i) => (
             <li key={c.slug} className={`${styles.bay} flies`} data-flight={i % 2 ? "right" : "left"} data-bay={c.slug}>
-              <Hologram src={c.cover} seed={c.slug} tag={`C-${pad(i + 1)}`} alt={`${c.title} — ${studioKindLabel[c.kind]}`} />
+              <InspectTrigger slug={c.slug} title={c.title}>
+                <Hologram src={c.cover} seed={c.slug} tag={`C-${pad(i + 1)}`} alt={`${c.title} — ${studioKindLabel[c.kind]}`} />
+              </InspectTrigger>
               <div className={styles.bayBody}>
                 <div className={styles.bayHead}>
                   <h3 className={styles.bayName}>

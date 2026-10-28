@@ -1,0 +1,586 @@
+@use "../styles/tokens.scss" as *;
+
+/*
+ * The inspection bay. A text panel and an instrument frame, never a card:
+ * square corners, hairlines, emerald brackets. The only colour that is not
+ * the site's own is the work itself — that is the point of the room.
+ */
+
+/* ── The trigger, around a hologram on the deck ── */
+
+.trigger {
+  position: relative;
+  display: block;
+  cursor: zoom-in;
+  border-radius: 2px;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+}
+
+.triggerHint {
+  @include mono-label;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  padding: 6px 10px;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  color: var(--accent);
+  background: rgba(6, 6, 6, 0.82);
+  border: 1px solid var(--accent-line, rgba(60, 221, 158, 0.35));
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+  pointer-events: none;
+
+  span {
+    margin-left: 4px;
+  }
+
+  .trigger:hover &,
+  .trigger:focus-visible & {
+    opacity: 1;
+    transform: none;
+  }
+
+  // Touch has no hover: say it once, quietly, so the plate reads as tappable.
+  @media (hover: none) {
+    opacity: 0.9;
+    transform: none;
+  }
+}
+
+.openButton {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+/* ── The bay ── */
+
+.bay {
+  position: fixed;
+  inset: 0;
+  z-index: 10030; // above the phone shell (9990) and the palette (10020)
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: rgba(6, 6, 6, 0.985);
+  color: var(--text-primary);
+  animation: bay-in 260ms var(--ease-out) both;
+}
+
+@keyframes bay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-out;
+}
+
+.bar,
+.body,
+.strip {
+  position: relative;
+  z-index: 1;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--line);
+
+  @media (max-width: 640px) {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+.barLabel {
+  @include mono-label;
+  white-space: nowrap;
+  color: var(--accent);
+
+  b {
+    font-weight: inherit;
+    color: var(--text-tertiary);
+  }
+}
+
+// A phone keeps the count and drops the name of the room.
+.barPrefix {
+  @media (max-width: 420px) {
+    display: none;
+  }
+}
+
+.barTools {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.tool {
+  @include mono-label;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--line);
+  cursor: pointer;
+
+  &[aria-pressed="true"] {
+    color: var(--accent);
+    border-color: var(--accent-line, rgba(60, 221, 158, 0.35));
+  }
+
+  @include hover-only {
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--line-strong);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  // The loupe is a pointer tool; a phone has none to offer.
+  @media (pointer: coarse) {
+    &[aria-pressed] {
+      display: none;
+    }
+  }
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: var(--space-6);
+  min-height: 0;
+  padding: var(--space-6);
+  pointer-events: none; // clicks on the empty air fall through to the backdrop
+
+  > * {
+    pointer-events: auto;
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 0 56px;
+
+  @media (max-width: 640px) {
+    padding: 0;
+  }
+}
+
+.frame {
+  position: relative;
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  line-height: 0;
+
+  &[data-fit="contain"] {
+    padding: var(--space-8);
+    background: #0f1110;
+    border: 1px solid var(--line);
+  }
+}
+
+.true,
+.holo {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 260px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+
+  @media (max-width: 900px) {
+    max-height: calc(100dvh - 380px);
+  }
+}
+
+// The projection: the same pixels, pushed onto the hologram ramp. Static
+// filter (never animated); what moves is the clip-path that wipes it off.
+.holo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: grayscale(1) sepia(1) hue-rotate(95deg) saturate(2.4) brightness(0.82);
+  clip-path: inset(0 0 0 0);
+
+  .frame[data-ready] & {
+    animation: resolve 1100ms 160ms cubic-bezier(0.55, 0.05, 0.3, 1) forwards;
+  }
+
+  .frame[data-fit="contain"] & {
+    inset: var(--space-8);
+    width: calc(100% - 2 * var(--space-8));
+    height: calc(100% - 2 * var(--space-8));
+  }
+}
+
+@keyframes resolve {
+  to {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+// The scan line rides the edge of the wipe, then leaves.
+.scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(138, 240, 200, 0.95) 0 2px, rgba(60, 221, 158, 0.22) 2px, transparent 26px);
+  opacity: 0;
+
+  .frame[data-ready] & {
+    animation: sweep 1100ms 160ms cubic-bezier(0.55, 0.05, 0.3, 1) forwards;
+  }
+}
+
+// Until the image decodes the frame has no size of its own; give it one and
+// say what it is waiting for, in the same voice as every other instrument.
+.frame:not([data-ready]) {
+  min-width: min(60vw, 480px);
+  min-height: 240px;
+  border: 1px dashed var(--line-strong);
+}
+
+.receiving {
+  @include mono-label;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  color: var(--accent);
+
+  .frame[data-ready] & {
+    display: none;
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.bracket {
+  position: absolute;
+  z-index: 2;
+  width: 18px;
+  height: 18px;
+  border: 0 solid var(--accent);
+  pointer-events: none;
+
+  &[data-c="tl"] {
+    top: -10px;
+    left: -10px;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+  &[data-c="tr"] {
+    top: -10px;
+    right: -10px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+  }
+  &[data-c="bl"] {
+    bottom: -10px;
+    left: -10px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+  }
+  &[data-c="br"] {
+    bottom: -10px;
+    right: -10px;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
+  }
+}
+
+.loupe {
+  position: absolute;
+  z-index: 3;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background-color: #0b0c0c;
+  background-repeat: no-repeat;
+  background-size: 260%;
+  border: 1px solid var(--accent);
+  box-shadow:
+    0 0 0 4px rgba(6, 6, 6, 0.6),
+    0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--text-primary);
+  background: rgba(6, 6, 6, 0.7);
+  border: 1px solid var(--line-strong);
+  transform: translateY(-50%);
+  cursor: pointer;
+
+  &[data-side="prev"] {
+    left: 0;
+  }
+  &[data-side="next"] {
+    right: 0;
+  }
+
+  @include hover-only {
+    &:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  // Phones swipe; the arrows sit on the image's edges, smaller.
+  @media (max-width: 640px) {
+    width: 38px;
+    height: 38px;
+    font-size: 1.3rem;
+  }
+}
+
+.info {
+  align-self: center;
+  display: grid;
+  gap: var(--space-3);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  background: rgba(13, 13, 13, 0.8);
+
+  @media (max-width: 900px) {
+    align-self: stretch;
+    max-height: 30dvh;
+    padding: var(--space-4);
+  }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+
+  span {
+    @include mono-label;
+    padding: 4px 8px;
+    font-size: max(0.6875rem, var(--micro-floor, 0px));
+    border: 1px solid var(--line);
+    color: var(--text-secondary);
+  }
+
+  span:first-child {
+    color: var(--accent);
+    border-color: var(--accent-line, rgba(60, 221, 158, 0.35));
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: var(--type-medium);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.brief {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--type-small);
+  color: var(--text-tertiary);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0;
+
+  a {
+    @include mono-label;
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+}
+
+.keys {
+  @include mono-label;
+  margin: 0;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  color: var(--text-tertiary);
+
+  @media (pointer: coarse) {
+    display: none;
+  }
+}
+
+/* ── The filmstrip ── */
+
+.strip {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-6) var(--space-4);
+  list-style: none;
+  overflow-x: auto;
+  border-top: 1px solid var(--line);
+  scrollbar-width: thin;
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+
+  @media (max-width: 640px) {
+    padding-inline: var(--space-4);
+  }
+}
+
+.thumb {
+  display: block;
+  width: 96px;
+  height: 60px;
+  padding: 0;
+  overflow: hidden;
+  background: #0f1110;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  opacity: 0.55;
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    // Hologram-toned until chosen; a static filter, switched, never tweened.
+    filter: grayscale(1) sepia(1) hue-rotate(95deg) saturate(1.8) brightness(0.8);
+
+    &[data-fit="contain"] {
+      object-fit: contain;
+      padding: 6px;
+    }
+  }
+
+  @include hover-only {
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &[aria-current="true"] {
+    opacity: 1;
+    border-color: var(--accent);
+
+    img {
+      filter: none;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    width: 72px;
+    height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bay {
+    animation: none;
+  }
+
+  .holo,
+  .scan {
+    display: none;
+  }
+}

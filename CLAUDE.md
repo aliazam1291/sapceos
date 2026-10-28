@@ -1142,6 +1142,24 @@ the open channel; the one joke; keep it the only one).
   `steps(24)` and the PDF downloads via a hidden `download` link (so
   `ResumeTracker` counts it). Reduced motion: no glide, no feed. Sheet text
   is bars, aria-hidden, nothing under 11px. Verified at 1243 and 375 wide.
+- *The inspection bay* (2026-10-28). Ali: "better components for my design
+  work with our theme … make it interactive." Measured first: /studio was
+  9,186px of sixteen identical emerald holograms, and not one colour Ali
+  chose was visible anywhere on it. `InspectionBay` (portal dialog, no
+  canvas) opens from any hologram wrapped in `InspectTrigger` (or
+  `InspectButton`, the section-head door) via `space:inspect`: the piece
+  arrives as a hologram and a scan line wipes it into its true colours
+  (clip-path on a static-filter copy; the scan waits for the image's
+  onLoad, `data-ready`, or it plays over an empty frame on a slow line), a
+  2.6× loupe follows a mouse, ← → / edge arrows / swipe / filmstrip move,
+  Esc / backdrop close, focus goes in and comes back, scroll and Lenis are
+  held. Stage image is eager (a lazy <img> with no box lays out 0×0 and
+  never loads). On /studio (all sixteen) and /smaak (the three bays);
+  items from `lib/inspect.ts` `studioInspectItem`. Not on home: wrapping
+  the Studio leg's holograms would move a leg `HOME_PLAN` is plotted to.
+  The browser pane's screenshots lag: a shot right after a dialog opens can
+  show the page through it, still green — take a second one before
+  believing it.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

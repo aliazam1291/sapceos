@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Hologram from "@/components/Hologram";
+import InspectionBay, { InspectButton, InspectTrigger } from "@/components/InspectionBay";
+import { isInspectable, studioInspectItem } from "@/lib/inspect";
 import RobotGuide from "@/components/RobotGuide";
 import Comms from "@/components/Comms";
 import { ButtonLink, NextStep, PageHeader, Readout, Section, SectionHead, Status, ui } from "@/components/ui";
@@ -42,6 +44,8 @@ export const metadata: Metadata = {
 export default function StudioPage() {
   const clients = studioPieces.filter((p) => p.status === "client");
   const independent = studioPieces.filter((p) => p.status === "independent");
+  // Deck order, so Bay N on the floor is item N in the bay.
+  const inspectable = [...clients, ...independent].map(studioInspectItem).filter(isInspectable);
   const followers = results.find((r) => r.source.startsWith("Lean Multiverse"));
   const lead = studioPieces.find((p) => p.slug === "lean-multiverse")!;
   const years = new Date().getFullYear() - studio.since;
@@ -81,7 +85,17 @@ export default function StudioPage() {
           ]}
         />
 
-        <SectionHead label={`Client work · ${clients.length}`} title="What was on the brief" />
+        <SectionHead
+          label={`Client work · ${clients.length}`}
+          title="What was on the brief"
+          action={
+            inspectable[0] ? (
+              <InspectButton slug={inspectable[0].slug}>
+                Inspect the work in full colour <span aria-hidden="true">⤢</span>
+              </InspectButton>
+            ) : null
+          }
+        />
         <RobotGuide
           name="K-7"
           idle={`Studio floor. ${clients.length} client bays and ${independent.length} of the founder's own. Hover one.`}
@@ -122,6 +136,9 @@ export default function StudioPage() {
         </p>
       </Section>
 
+      {/* The bay: every projected piece, in its true colours, one click away. */}
+      <InspectionBay items={inspectable} />
+
       <NextStep
         href="/missions"
         label="Next · Missions"
@@ -141,7 +158,13 @@ function Piece({ piece, index }: { piece: (typeof studioPieces)[number]; index: 
         <Status idle={piece.status !== "client"}>{piece.status === "client" ? "Client" : "Independent"}</Status>
       </div>
 
-      <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} alt={`${piece.title} — ${studioKindLabel[piece.kind]}`} fit={piece.cover ? "cover" : "contain"} />
+      {src ? (
+        <InspectTrigger slug={piece.slug} title={piece.title}>
+          <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} alt={`${piece.title} — ${studioKindLabel[piece.kind]}`} fit={piece.cover ? "cover" : "contain"} />
+        </InspectTrigger>
+      ) : (
+        <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} alt={`${piece.title} — ${studioKindLabel[piece.kind]}`} fit="contain" />
+      )}
 
       <h3 className={ui.cardTitle}>{piece.title}</h3>
       <p className={ui.cardPremise}>
