@@ -19,6 +19,7 @@ export function studioInspectItem(p: StudioPiece): InspectItem | null {
     brief: p.brief,
     note: p.note,
     industry: p.industry,
+    group: p.kind,
     links: [
       ...(p.site ? [{ label: "Visit the live site", href: p.site }] : []),
       ...(p.behance ? [{ label: "Open on Behance", href: p.behance }] : []),

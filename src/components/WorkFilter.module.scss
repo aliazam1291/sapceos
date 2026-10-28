@@ -1,0 +1,115 @@
+@use "../styles/tokens.scss" as *;
+
+// A row of instrument keys, not pills: square, hairline, mono. The pressed
+// key is the one accent on the row.
+
+.filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block: var(--space-6) var(--space-2);
+}
+
+.label {
+  @include mono-label;
+  margin-right: var(--space-2);
+  color: var(--text-tertiary);
+}
+
+.chip {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 38px;
+  padding: 0 var(--space-3);
+  color: var(--text-secondary);
+  background: rgba(13, 13, 13, 0.7);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+
+  b {
+    font-weight: inherit;
+    color: var(--text-tertiary);
+  }
+
+  @include hover-only {
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--line-strong);
+    }
+  }
+
+  &[aria-pressed="true"] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(60, 221, 158, 0.08);
+
+    b {
+      color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.status {
+  @include mono-label;
+  margin-left: auto;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+
+  &:empty {
+    display: none;
+  }
+}
+
+// A phone gets one row it can swipe, like an app's segmented tabs: six keys
+// wrapped into four rows cost a whole screen before the first piece.
+@media (max-width: 640px) {
+  .filter {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding-bottom: 2px; // focus ring room
+    // The fade at the right edge says there is more to swipe to.
+    mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .label {
+    display: none;
+  }
+
+  .chip {
+    flex: none;
+    scroll-snap-align: start;
+  }
+
+  .status {
+    margin-left: var(--space-2);
+  }
+}
+
+// The line a shelf shows when the filter leaves it bare.
+.empty {
+  @include mono-label;
+  margin: var(--space-4) 0 0;
+  padding: var(--space-5);
+  color: var(--text-tertiary);
+  border: 1px dashed var(--line);
+  text-align: center;
+}

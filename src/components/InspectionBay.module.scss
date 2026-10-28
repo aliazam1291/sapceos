@@ -148,6 +148,14 @@
   }
 }
 
+.barGroup {
+  color: var(--text-secondary);
+
+  @media (max-width: 420px) {
+    display: none;
+  }
+}
+
 .barTools {
   display: flex;
   gap: var(--space-2);
@@ -212,15 +220,31 @@
   display: grid;
   place-items: center;
   min-height: 0;
-  padding: 0 56px;
+  padding: 0 56px 30px; // the bottom keeps the readout clear of the strip
 
   @media (max-width: 640px) {
-    padding: 0;
+    padding: 0 0 30px;
+  }
+
+  // The light table under the work: a faint emerald grid, fading out from
+  // the centre so it reads as a surface rather than a pattern.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(60, 221, 158, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(60, 221, 158, 0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center;
+    mask-image: radial-gradient(closest-side, #000 30%, transparent);
   }
 }
 
 .frame {
   position: relative;
+  z-index: 1; // above the light table
   margin: 0;
   max-width: 100%;
   max-height: 100%;
@@ -230,6 +254,21 @@
     padding: var(--space-8);
     background: #0f1110;
     border: 1px solid var(--line);
+  }
+}
+
+// The window onto the piece. It clips the zoom, and it is what a click or a
+// tap zooms: the origin (--ox/--oy) follows the pointer, so moving pans.
+.view {
+  position: relative;
+  overflow: hidden;
+  line-height: 0;
+  cursor: zoom-in;
+
+  .frame[data-zoom] & {
+    cursor: zoom-out;
+    // Dragging pans the piece; the browser must not take the gesture.
+    touch-action: none;
   }
 }
 
@@ -249,6 +288,15 @@
   }
 }
 
+.true {
+  transform-origin: var(--ox, 50%) var(--oy, 50%);
+  transition: transform 0.35s var(--ease-out);
+
+  .frame[data-zoom] & {
+    transform: scale(2.4);
+  }
+}
+
 // The projection: the same pixels, pushed onto the hologram ramp. Static
 // filter (never animated); what moves is the clip-path that wipes it off.
 .holo {
@@ -262,11 +310,74 @@
   .frame[data-ready] & {
     animation: resolve 1100ms 160ms cubic-bezier(0.55, 0.05, 0.3, 1) forwards;
   }
+}
 
-  .frame[data-fit="contain"] & {
-    inset: var(--space-8);
-    width: calc(100% - 2 * var(--space-8));
-    height: calc(100% - 2 * var(--space-8));
+// The scan's readout under the frame: a count while it resolves, then what
+// is on the table. A registered integer property animated in CSS, read by a
+// counter — no script ticks for it.
+@property --pct {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.readout {
+  @include mono-label;
+  position: absolute;
+  left: 0;
+  bottom: -30px;
+  display: grid;
+  line-height: 1;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  color: var(--accent);
+  white-space: nowrap;
+
+  > * {
+    grid-area: 1 / 1;
+  }
+
+  .frame:not([data-ready]) & {
+    display: none;
+  }
+}
+
+.pct {
+  counter-reset: pct var(--pct);
+
+  &::after {
+    content: "Resolving " counter(pct) "%";
+  }
+
+  .frame[data-ready] & {
+    animation:
+      pct 1100ms 160ms cubic-bezier(0.55, 0.05, 0.3, 1) forwards,
+      gone 1ms 1300ms forwards;
+  }
+}
+
+.done {
+  opacity: 0;
+
+  .frame[data-ready] & {
+    animation: arrive 240ms 1300ms forwards;
+  }
+}
+
+@keyframes pct {
+  to {
+    --pct: 100;
+  }
+}
+
+@keyframes gone {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes arrive {
+  to {
+    opacity: 1;
   }
 }
 
@@ -496,9 +607,20 @@
   margin: 0;
   font-size: max(0.6875rem, var(--micro-floor, 0px));
   color: var(--text-tertiary);
+}
 
-  @media (pointer: coarse) {
+// What the hands can do differs by pointer; say only the true one.
+.keysTouch {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .keysFine {
     display: none;
+  }
+
+  .keysTouch {
+    display: inline;
   }
 }
 
@@ -580,7 +702,20 @@
   }
 
   .holo,
-  .scan {
+  .scan,
+  .pct {
     display: none;
+  }
+
+  .done {
+    opacity: 1;
+
+    .frame[data-ready] & {
+      animation: none;
+    }
+  }
+
+  .true {
+    transition: none;
   }
 }

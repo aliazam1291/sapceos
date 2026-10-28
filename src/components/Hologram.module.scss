@@ -112,6 +112,46 @@
   opacity: 0.9;
 }
 
+// True colour, held below the plate's bottom edge until pointed at; then
+// it wipes up through the projection like a scan resolving. clip-path
+// only (no filter is animated), and only on hover-capable pointers — a
+// tap opens the inspection bay instead.
+.true {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 0.55s cubic-bezier(0.55, 0.05, 0.3, 1);
+  pointer-events: none;
+
+  .holo[data-fit="contain"] & {
+    background: #0f1110;
+  }
+}
+
+.trueImg {
+  object-fit: cover;
+  object-position: center top;
+
+  .holo[data-fit="contain"] & {
+    object-fit: contain;
+    object-position: center;
+    padding: 14%;
+  }
+}
+
+@media (hover: hover) {
+  :global(article):hover .holo[data-reveal] .true,
+  .holo[data-reveal]:hover .true {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+// The keyboard's version of pointing: the trigger around the hologram.
+:global(:focus-visible) > .holo[data-reveal] .true {
+  clip-path: inset(0 0 0 0);
+}
+
 .scanlines {
   position: absolute;
   inset: 0;

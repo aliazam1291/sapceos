@@ -1,7 +1,7 @@
 "use client";
 
 import { getImageProps } from "next/image";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { lockScroll } from "@/lib/lenis";
 import { sfx } from "@/lib/spaceSound";
@@ -18,10 +18,15 @@ import styles from "./InspectionBay.module.scss";
  * projector and looked at properly:
  *
  *  - it opens on the hologram and a scan line RESOLVES it into its true
- *    colours, top to bottom (the dome gallery's `uLit` idea, in CSS);
- *  - a loupe follows a fine pointer at 2.4× so type and detail can be read;
+ *    colours, top to bottom (the dome gallery's `uLit` idea, in CSS), with a
+ *    readout counting the scan;
+ *  - a loupe follows a fine pointer at 2.6× so type and detail can be read;
+ *    a click or tap zooms the piece itself 2.4× at that point, and moving
+ *    (or dragging) pans; a second click lets go;
  *  - ←/→, the edge arrows, a swipe or the filmstrip move between pieces;
- *    Esc, the close key or the backdrop put it back.
+ *    Esc, the close key or the backdrop put it back;
+ *  - when <WorkFilter> has narrowed the deck to one kind, the bay pages
+ *    through only that kind (`space:inspect-filter`).
  *
  * It is a dialog with focus moved in and restored, the page scroll held
  * (Lenis too), and nothing animated under reduced motion. No canvas: two
@@ -43,9 +48,13 @@ export type InspectItem = {
   note?: string;
   industry?: string;
   links?: { label: string; href: string }[];
+  /** The kind key WorkFilter filters on (a StudioKind for studio pieces). */
+  group?: string;
 };
 
 const EVENT = "space:inspect";
+/** WorkFilter announces the kind on show (or null for all of it). */
+export const FILTER_EVENT = "space:inspect-filter";
 
 export function inspect(slug: string) {
   window.dispatchEvent(new CustomEvent(EVENT, { detail: slug }));
@@ -92,54 +101,83 @@ function optimised(src: string, width: number, eager = false) {
 
 export default function InspectionBay({ items }: { items: InspectItem[] }) {
   const [index, setIndex] = useState<number | null>(null);
+  const [group, setGroup] = useState<string | null>(null);
   const [lens, setLens] = useState<{ x: number; y: number; bx: number; by: number } | null>(null);
   const [loupeOn, setLoupeOn] = useState(true);
   // The slug whose true-colour image has decoded. The resolve scan waits for
   // it: on a slow line a scan over an empty frame reveals nothing.
   const [ready, setReady] = useState<string | null>(null);
+  // Zoomed in on the piece itself (a click or a tap); moving pans.
+  const [zoom, setZoom] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const returnTo = useRef<HTMLElement | null>(null);
   const swipe = useRef<{ x: number; y: number } | null>(null);
   const stripRef = useRef<HTMLOListElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
+  // A drag while zoomed is a pan, not a tap: the click that follows it must
+  // not let go of the zoom.
+  const panned = useRef(false);
+  const groupRef = useRef(group);
+  groupRef.current = group;
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
 
+  const list = useMemo(() => (group ? items.filter((it) => it.group === group) : items), [items, group]);
   const open = index !== null;
-  const item = open ? items[index] : null;
+  const item = open ? list[index] : null;
 
   const go = useCallback(
     (d: number) => {
-      setIndex((i) => (i === null ? i : (i + d + items.length) % items.length));
+      setIndex((i) => (i === null ? i : (i + d + list.length) % list.length));
       setLens(null);
+      setZoom(false);
       sfx("tick");
     },
-    [items.length],
+    [list.length],
   );
 
   const close = useCallback(() => {
     setIndex(null);
     setLens(null);
+    setZoom(false);
     sfx("close");
   }, []);
 
-  // Open from anywhere on the page.
+  // Open from anywhere on the page; follow the deck's filter.
   useEffect(() => {
     const onInspect = (e: Event) => {
       const slug = (e as CustomEvent<string>).detail;
-      const i = items.findIndex((it) => it.slug === slug);
-      if (i < 0) return;
+      const g = groupRef.current;
+      const scoped = g ? items.filter((it) => it.group === g) : items;
+      let i = scoped.findIndex((it) => it.slug === slug);
+      if (i < 0) {
+        // Asked for a piece the filter hides: show everything rather than nothing.
+        i = items.findIndex((it) => it.slug === slug);
+        if (i < 0) return;
+        setGroup(null);
+      }
       returnTo.current = document.activeElement as HTMLElement | null;
       setIndex(i);
+      setZoom(false);
       sfx("open");
     };
+    const onFilter = (e: Event) => setGroup((e as CustomEvent<string | null>).detail ?? null);
     window.addEventListener(EVENT, onInspect);
-    return () => window.removeEventListener(EVENT, onInspect);
+    window.addEventListener(FILTER_EVENT, onFilter);
+    return () => {
+      window.removeEventListener(EVENT, onInspect);
+      window.removeEventListener(FILTER_EVENT, onFilter);
+    };
   }, [items]);
 
   // While open: keys, scroll lock, focus in and back out.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-      else if (e.key === "ArrowRight") go(1);
+      if (e.key === "Escape") {
+        if (zoomRef.current) setZoom(false);
+        else close();
+      } else if (e.key === "ArrowRight") go(1);
       else if (e.key === "ArrowLeft") go(-1);
     };
     window.addEventListener("keydown", onKey);
@@ -173,21 +211,54 @@ export default function InspectionBay({ items }: { items: InspectItem[] }) {
   // 1200 CSS px: the 2x candidate (the loupe's source) stays near 2400px, not 3840.
   const big = optimised(item.src, 1200, true);
   const n = String(index + 1).padStart(2, "0");
-  const total = String(items.length).padStart(2, "0");
+  const total = String(list.length).padStart(2, "0");
 
-  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!loupeOn || e.pointerType !== "mouse") return;
-    const img = e.currentTarget.querySelector("img");
-    if (!img) return;
-    const r = img.getBoundingClientRect();
+  /** Where the pointer is over the piece, 0–1 on each axis. */
+  const over = (e: { clientX: number; clientY: number }) => {
+    const view = viewRef.current;
+    if (!view) return null;
+    const r = view.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width;
     const py = (e.clientY - r.top) / r.height;
-    if (px < 0 || px > 1 || py < 0 || py > 1) {
+    return { px, py, inside: px >= 0 && px <= 1 && py >= 0 && py <= 1 };
+  };
+
+  const aim = (px: number, py: number) => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.style.setProperty("--ox", `${(Math.min(1, Math.max(0, px)) * 100).toFixed(2)}%`);
+    view.style.setProperty("--oy", `${(Math.min(1, Math.max(0, py)) * 100).toFixed(2)}%`);
+  };
+
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const p = over(e);
+    if (!p) return;
+    if (zoom) {
+      // Panning: the zoom's origin follows the pointer, so the part under it
+      // is the part in view. Touch only moves while a finger is down.
+      if (e.pointerType !== "mouse") panned.current = true;
+      aim(p.px, p.py);
+      return;
+    }
+    if (!loupeOn || e.pointerType !== "mouse") return;
+    if (!p.inside) {
       setLens(null);
       return;
     }
     const host = e.currentTarget.getBoundingClientRect();
-    setLens({ x: e.clientX - host.left, y: e.clientY - host.top, bx: px * 100, by: py * 100 });
+    setLens({ x: e.clientX - host.left, y: e.clientY - host.top, bx: p.px * 100, by: p.py * 100 });
+  };
+
+  const onViewClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (panned.current) {
+      panned.current = false;
+      return;
+    }
+    const p = over(e);
+    if (p) aim(p.px, p.py);
+    setZoom((z) => !z);
+    setLens(null);
+    sfx("click");
   };
 
   return createPortal(
@@ -202,7 +273,8 @@ export default function InspectionBay({ items }: { items: InspectItem[] }) {
       onPointerUp={(e) => {
         const s = swipe.current;
         swipe.current = null;
-        if (!s || e.pointerType === "mouse") return;
+        // Zoomed, a drag is a pan; only an unzoomed swipe changes the piece.
+        if (!s || e.pointerType === "mouse" || zoomRef.current) return;
         const dx = e.clientX - s.x;
         if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(e.clientY - s.y) * 1.5) go(dx < 0 ? 1 : -1);
       }}
@@ -212,7 +284,10 @@ export default function InspectionBay({ items }: { items: InspectItem[] }) {
       <header className={styles.bar}>
         <span className={styles.barLabel}>
           <span className={styles.barPrefix}>Inspection bay · </span>
-          <b>Bay {n} / {total}</b>
+          <b>
+            Bay {n} / {total}
+          </b>
+          {group ? <span className={styles.barGroup}> · {item.kind}</span> : null}
         </span>
         <span className={styles.barTools}>
           <button
@@ -235,23 +310,43 @@ export default function InspectionBay({ items }: { items: InspectItem[] }) {
       <div className={styles.body}>
         <div className={styles.stage} onPointerMove={onMove} onPointerLeave={() => setLens(null)}>
           {/* key: a new piece remounts the frame, so the resolve scan runs again. */}
-          <figure key={item.slug} className={styles.frame} data-fit={item.fit ?? "cover"} data-ready={ready === item.slug || undefined}>
+          <figure
+            key={item.slug}
+            className={styles.frame}
+            data-fit={item.fit ?? "cover"}
+            data-ready={ready === item.slug || undefined}
+            data-zoom={zoom || undefined}
+          >
             <i className={styles.bracket} data-c="tl" />
             <i className={styles.bracket} data-c="tr" />
             <i className={styles.bracket} data-c="bl" />
             <i className={styles.bracket} data-c="br" />
-            {/* eslint-disable-next-line @next/next/no-img-element -- optimiser URL from getImageProps */}
-            <img {...big} alt={`${item.title}: ${item.kind}`} className={styles.true} onLoad={() => setReady(item.slug)} />
-            {/* The projection, wiped away by the scan to leave the real thing. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img {...big} alt="" aria-hidden="true" className={styles.holo} />
-            <span className={styles.scan} aria-hidden="true" />
+            <div
+              ref={viewRef}
+              className={styles.view}
+              onPointerDown={() => {
+                panned.current = false;
+              }}
+              onClick={onViewClick}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- optimiser URL from getImageProps */}
+              <img {...big} alt={`${item.title}: ${item.kind}`} className={styles.true} onLoad={() => setReady(item.slug)} draggable={false} />
+              {/* The projection, wiped away by the scan to leave the real thing. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img {...big} alt="" aria-hidden="true" className={styles.holo} draggable={false} />
+              <span className={styles.scan} aria-hidden="true" />
+            </div>
             <span className={styles.receiving} aria-hidden="true">
               Receiving…
             </span>
+            {/* The scan's readout: a count while it resolves, then what you are looking at. */}
+            <span className={styles.readout} aria-hidden="true">
+              <span className={styles.pct} />
+              <span className={styles.done}>True colour{zoom ? " · 2.4×" : ""}</span>
+            </span>
           </figure>
 
-          {lens ? (
+          {lens && !zoom ? (
             <span
               className={styles.loupe}
               aria-hidden="true"
@@ -291,13 +386,16 @@ export default function InspectionBay({ items }: { items: InspectItem[] }) {
             </p>
           ) : null}
           <p className={styles.keys} aria-hidden="true">
-            ← → to move · Esc to close{loupeOn ? " · point to magnify" : ""}
+            <span className={styles.keysFine}>
+              ← → to move · click to zoom{loupeOn ? " · point to magnify" : ""} · Esc to close
+            </span>
+            <span className={styles.keysTouch}>Tap to zoom · drag to look around · swipe to move</span>
           </p>
         </aside>
       </div>
 
-      <ol ref={stripRef} className={styles.strip} aria-label="All pieces">
-        {items.map((it, i) => {
+      <ol ref={stripRef} className={styles.strip} aria-label={group ? `${item.kind} pieces` : "All pieces"}>
+        {list.map((it, i) => {
           const t = optimised(it.src, 256);
           return (
             <li key={it.slug}>
@@ -305,10 +403,11 @@ export default function InspectionBay({ items }: { items: InspectItem[] }) {
                 type="button"
                 className={styles.thumb}
                 aria-current={i === index ? "true" : undefined}
-                aria-label={`${it.title} (${i + 1} of ${items.length})`}
+                aria-label={`${it.title} (${i + 1} of ${list.length})`}
                 onClick={() => {
                   setIndex(i);
                   setLens(null);
+                  setZoom(false);
                   sfx("tick");
                 }}
               >

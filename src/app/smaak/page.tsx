@@ -207,7 +207,7 @@ export default function SmaakPage() {
           {featured.map((c, i) => (
             <li key={c.slug} className={`${styles.bay} flies`} data-flight={i % 2 ? "right" : "left"} data-bay={c.slug}>
               <InspectTrigger slug={c.slug} title={c.title}>
-                <Hologram src={c.cover} seed={c.slug} tag={`C-${pad(i + 1)}`} alt={`${c.title} — ${studioKindLabel[c.kind]}`} />
+                <Hologram src={c.cover} seed={c.slug} tag={`C-${pad(i + 1)}`} alt={`${c.title} — ${studioKindLabel[c.kind]}`} reveal />
               </InspectTrigger>
               <div className={styles.bayBody}>
                 <div className={styles.bayHead}>

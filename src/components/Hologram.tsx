@@ -26,6 +26,14 @@ interface HologramProps {
    * "contain" projects a mark — a client's logo — whole, with air around it.
    */
   fit?: "cover" | "contain";
+  /**
+   * Design work (2026-10-28): pointing at the projector wipes its true
+   * colours up through the plate, the way the dome lights the one piece
+   * being looked at. One lit plate at a time is the screen's accent event;
+   * everything at rest stays emerald. Missions never set it — an interface
+   * screenshot reads fine as light; a brand identity does not.
+   */
+  reveal?: boolean;
 }
 
 /*
@@ -42,7 +50,7 @@ interface HologramProps {
  * two custom properties. Reduced motion: it holds still and stops
  * flickering, still a hologram.
  */
-export default function Hologram({ src, seed, tag, alt, className, priority, fit = "cover" }: HologramProps) {
+export default function Hologram({ src, seed, tag, alt, className, priority, fit = "cover", reveal }: HologramProps) {
   const altText = alt ?? (tag ? `${tag} — projected interface` : "Projected interface");
   const ref = useRef<HTMLDivElement>(null);
 
@@ -72,7 +80,7 @@ export default function Hologram({ src, seed, tag, alt, className, priority, fit
   }, []);
 
   return (
-    <div ref={ref} className={`${styles.holo} ${className ?? ""}`} aria-hidden="true" data-fit={fit}>
+    <div ref={ref} className={`${styles.holo} ${className ?? ""}`} aria-hidden="true" data-fit={fit} data-reveal={(reveal && src) || undefined}>
       <div className={styles.stage}>
         {/* Ghost copies give the projection its chromatic fringe. */}
         <div className={`${styles.plate} ${styles.ghostA}`}>
@@ -83,6 +91,12 @@ export default function Hologram({ src, seed, tag, alt, className, priority, fit
         </div>
         <div className={styles.plate}>
           {src ? <Image src={src} alt={altText} fill sizes="260px" className={styles.img} priority={priority} /> : <MissionSignature seed={seed} className={styles.trace} />}
+          {/* Same URL as the plate (same sizes), so the browser reuses it. */}
+          {reveal && src ? (
+            <span className={styles.true}>
+              <Image src={src} alt="" fill sizes="260px" className={styles.trueImg} />
+            </span>
+          ) : null}
           <span className={styles.scanlines} />
           <span className={styles.sweep} />
           <span className={styles.edge} />

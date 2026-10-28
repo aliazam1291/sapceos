@@ -1160,6 +1160,31 @@ the open channel; the one joke; keep it the only one).
   The browser pane's screenshots lag: a shot right after a dialog opens can
   show the page through it, still green — take a second one before
   believing it.
+- *The deck answers the pointer* (2026-10-28, later). Ali: "make it better
+  … enhance the ui more." Three additions to the design-work surfaces:
+  (1) `Hologram reveal` — pointing at a design projector wipes its true
+  colours up through the plate (a second next/image at the same URL, held
+  under `clip-path: inset(100% 0 0 0)` until `article:hover`, the plate's
+  own hover, or the trigger's `:focus-visible`; hover-capable pointers
+  only). One lit plate at a time is the accent event, the dome's rule. On
+  /studio, /smaak and the home Studio leg — inside the plate, so no layout
+  moved and `HOME_PLAN` stands. Missions never set it. (2) `WorkFilter` on
+  /studio — instrument keys for each kind with work (All 16 · Brand 5 ·
+  Product UI 3 · Website 5 · Deck 1 · Print 2); hides non-matching
+  `[data-group]` rows inside `[data-work-scope]` (inline display, since the
+  module's `display` beats `hidden`), shows a shelf's `data-empty-note`
+  when it empties, and tells the bay (`space:inspect-filter`) so it pages
+  within the kind. Brand alone: 9,523 → 5,773px. On a phone the keys are
+  one swipeable row (a wrapped row cost a screen). (3) The bay: click or
+  tap zooms the piece 2.4× at that point, moving/dragging pans (origin
+  follows the pointer), Esc lets go of the zoom before it closes, swipes
+  are ignored while zoomed; a "Resolving N%" readout counts the scan (a
+  registered `@property --pct` read by `counter()`, no script) and settles
+  on "True colour"; a faint emerald light-table grid sits under the work.
+  Checked: mobile-uat clean at 375/320 on /studio, /smaak, /hire, /; the
+  filter → bay → arrow → Esc path in Playwright on the production build.
+  Git Bash rewrites `ROUTES=/studio` into a Windows path when it leads the
+  value — prefix `MSYS_NO_PATHCONV=1`.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

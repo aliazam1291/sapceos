@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Hologram from "@/components/Hologram";
 import InspectionBay, { InspectButton, InspectTrigger } from "@/components/InspectionBay";
+import WorkFilter from "@/components/WorkFilter";
+import filterStyles from "@/components/WorkFilter.module.scss";
 import { isInspectable, studioInspectItem } from "@/lib/inspect";
 import RobotGuide from "@/components/RobotGuide";
 import Comms from "@/components/Comms";
@@ -49,6 +51,10 @@ export default function StudioPage() {
   const followers = results.find((r) => r.source.startsWith("Lean Multiverse"));
   const lead = studioPieces.find((p) => p.slug === "lean-multiverse")!;
   const years = new Date().getFullYear() - studio.since;
+  // The filter's keys: each kind that has work, in the label map's order.
+  const groups = (Object.keys(studioKindLabel) as (keyof typeof studioKindLabel)[])
+    .map((k) => ({ key: k, label: studioKindLabel[k], count: studioPieces.filter((p) => p.kind === k).length }))
+    .filter((g) => g.count > 0);
 
   return (
     <>
@@ -85,6 +91,8 @@ export default function StudioPage() {
           ]}
         />
 
+        <WorkFilter groups={groups} total={studioPieces.length} scope="studio" />
+
         <SectionHead
           label={`Client work · ${clients.length}`}
           title="What was on the brief"
@@ -101,11 +109,14 @@ export default function StudioPage() {
           idle={`Studio floor. ${clients.length} client bays and ${independent.length} of the founder's own. Hover one.`}
           lines={Object.fromEntries(studioPieces.map((p, i) => [p.slug, `BAY ${String(i + 1).padStart(2, "0")} · ${p.title} · ${studioKindLabel[p.kind].toLowerCase()} · ${p.status === "client" ? "client" : "independent"}`]))}
         />
-        <div className={ui.projectorGrid}>
+        <div className={ui.projectorGrid} data-work-scope="studio">
           {clients.map((p, i) => (
             <Piece key={p.slug} piece={p} index={i} />
           ))}
         </div>
+        <p className={filterStyles.empty} data-empty-note hidden>
+          No client work of this kind. The independent shelf below has some.
+        </p>
       </Section>
 
       <Section id="independent" data-section="Independent">
@@ -118,11 +129,14 @@ export default function StudioPage() {
             </ButtonLink>
           }
         />
-        <div className={ui.projectorGrid}>
+        <div className={ui.projectorGrid} data-work-scope="studio">
           {independent.map((p, i) => (
             <Piece key={p.slug} piece={p} index={clients.length + i} />
           ))}
         </div>
+        <p className={filterStyles.empty} data-empty-note hidden>
+          Nothing of this kind on the independent shelf. The client work above has it.
+        </p>
         <p className={styles.also}>
           <span className={ui.labelRule}>Also on Behance</span>
           {studioAlso.map((a, i) => (
@@ -152,7 +166,7 @@ export default function StudioPage() {
 function Piece({ piece, index }: { piece: (typeof studioPieces)[number]; index: number }) {
   const src = piece.cover ?? piece.logo;
   return (
-    <article className={`${ui.projectorCell} flies`} data-bay={piece.slug} data-flight={index % 2 ? "right" : "left"}>
+    <article className={`${ui.projectorCell} flies`} data-bay={piece.slug} data-group={piece.kind} data-flight={index % 2 ? "right" : "left"}>
       <div className={ui.cardTop}>
         <span className={ui.entryIndex}>BAY {String(index + 1).padStart(2, "0")}</span>
         <Status idle={piece.status !== "client"}>{piece.status === "client" ? "Client" : "Independent"}</Status>
@@ -160,7 +174,7 @@ function Piece({ piece, index }: { piece: (typeof studioPieces)[number]; index: 
 
       {src ? (
         <InspectTrigger slug={piece.slug} title={piece.title}>
-          <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} alt={`${piece.title} — ${studioKindLabel[piece.kind]}`} fit={piece.cover ? "cover" : "contain"} />
+          <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} alt={`${piece.title} — ${studioKindLabel[piece.kind]}`} fit={piece.cover ? "cover" : "contain"} reveal />
         </InspectTrigger>
       ) : (
         <Hologram src={src} seed={piece.slug} tag={studioKindLabel[piece.kind].toUpperCase()} alt={`${piece.title} — ${studioKindLabel[piece.kind]}`} fit="contain" />
