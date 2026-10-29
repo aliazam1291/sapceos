@@ -75,6 +75,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "mappls-shop-admin",
+    links: [{ label: "shop.mappls.com", href: "https://shop.mappls.com" }],
     updated: "2026-10-24",
     measure: [
       "Renewal conversion rate, the North Star",
@@ -83,7 +84,8 @@ export const missions: Mission[] = [
       "Time from payment to invoice",
     ],
     results: [
-      { value: "80%", label: "More productive, billing & accounts teams", source: "Measured after go-live" },
+      { value: "4×", label: "Collections", source: "vs the manual process" },
+      { value: "80%", label: "Less manual ops work", source: "Billing & accounts" },
       { value: "30+", label: "Users", source: "shop.mappls.com" },
       { value: "Live", label: "Generating revenue" },
     ],
@@ -96,10 +98,12 @@ export const missions: Mission[] = [
     premise:
       "Billing was done by hand. The interesting part was not automating the maths. It was finding every place a human was quietly making a decision.",
     stack: ["Angular", "TypeScript", "Spring Boot", "Odoo", "Razorpay"],
+    // Results first: the galaxy HUD shows the first two signals.
     signals: [
+      { label: "Collections", value: "4× the manual process" },
+      { label: "Manual ops", value: "80% less" },
       { label: "Replaces", value: "A fully manual billing process" },
       { label: "Model", value: "Device subscription renewals" },
-      { label: "Billing & accounts", value: "80% more productive" },
     ],
     ownership: {
       decided: [
@@ -160,7 +164,7 @@ export const missions: Mission[] = [
           "In October 2026 I wrote the PRD that grows the admin into one platform for three teams: Billing, a new Gadgets Catalog, and Operations for orders, shipping and installation. It replaces all-or-nothing super-admin access with role-based feature permissions, puts subscriptions and gadget orders on one payments layer, and records every change in an audit log. The gadgets storefront it serves is being built in four phases, with checkout off until the catalog is right.",
         ],
       },
-      { label: "Outcome", body: "Live and generating revenue, with 30+ users. The billing and accounts teams are 80% more productive: the lookups, re-keying and re-checking that filled a manual cycle are now the system's job, and what is left for a person is the flagged decisions." },
+      { label: "Outcome", body: "Live and generating revenue, with 30+ users. Collections are four times what the manual process brought in, and the operations work it needed is down 80%: the lookups, re-keying and re-checking that filled a manual cycle are now the system's job, and what is left for a person is the flagged decisions." },
       {
         label: "Learnings",
         body: "The PRD's most valuable section was the list of things the previous process decided silently. Making those decisions explicit was most of the product work; the code was the smaller part.",
@@ -310,6 +314,13 @@ export const missions: Mission[] = [
   {
     slug: "intouch",
     links: [{ label: "Google Play", href: "https://play.google.com/store/apps/details?id=intouch.mappls.app" }],
+    listing: {
+      where: "Google Play",
+      href: "https://play.google.com/store/apps/details?id=intouch.mappls.app",
+      installs: "1K+",
+      updated: "12 May 2026",
+      read: "2026-10-29",
+    },
     results: [
       { value: "10,000+", label: "Active vehicles" },
       { value: "50,000", label: "Designed headroom" },
@@ -540,6 +551,15 @@ export const missions: Mission[] = [
   {
     slug: "indane-yatra-mitra",
     links: [{ label: "Google Play", href: "https://play.google.com/store/apps/details?id=iocl.cvtms.mappls" }],
+    listing: {
+      where: "Google Play",
+      href: "https://play.google.com/store/apps/details?id=iocl.cvtms.mappls",
+      installs: "1K+",
+      rating: "4.4",
+      reviews: 10,
+      updated: "19 Mar 2026",
+      read: "2026-10-29",
+    },
     results: [{ value: "Live", label: "On the Play Store", source: "IOCL LPG tanker operations" }],
     title: "Indane Yatra Mitra",
     org: "MapMyIndia [Gtropy] · for IOCL",

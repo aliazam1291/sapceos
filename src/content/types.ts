@@ -42,6 +42,21 @@ export type Mission = {
   cover?: string;
   /** Where the shipped thing can be opened — store listings, live URLs. Proof, not decoration. */
   links?: { label: string; href: string }[];
+  /**
+   * The public record behind a live link: what the store listing itself
+   * shows, read on a date (PROFILE.md "Public listings"). It is the
+   * listing's number, attributed and dated — not an outcome Ali claims.
+   */
+  listing?: {
+    where: string;
+    href: string;
+    installs?: string;
+    rating?: string;
+    reviews?: number;
+    updated?: string;
+    /** ISO date the listing was read. */
+    read: string;
+  };
 };
 
 export type FieldNote = {

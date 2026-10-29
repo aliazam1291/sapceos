@@ -397,3 +397,34 @@
     }
   }
 }
+
+/* Proof level beside the status (2026-10-29): measured is the accent, the
+   rest step down — the same scale as the /missions scoreboard. */
+.proof {
+  @include mono-label;
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  white-space: nowrap;
+  border: 1px solid var(--line);
+  color: var(--text-secondary);
+
+  &[data-proof="measured"] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(60, 221, 158, 0.08);
+  }
+
+  &[data-proof="listed"] {
+    color: #8af0c8;
+    border-color: rgba(138, 240, 200, 0.4);
+  }
+
+  &[data-proof="named"] {
+    border-style: dashed;
+  }
+
+  &[data-proof="none"] {
+    color: var(--text-tertiary);
+  }
+}

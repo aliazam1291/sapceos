@@ -20,13 +20,15 @@ const SUFFIX: Record<string, number> = { k: 1e3, m: 1e6, cr: 1e7, lakh: 1e5, l: 
 /** The number inside a written figure, or null when there is not one. */
 export function magnitudeOf(value: string): { magnitude: number; kind: "scale" | "delta" } | null {
   const text = value.trim().toLowerCase();
-  const match = text.match(/([~+±]?)\s*([\d,.]+)\s*(k|m|cr|lakh|l)?\s*(%?)/);
+  // A trailing % or × (2026-10-29: "4× the collections") marks a change, not
+  // a size: it is never placed on an axis of counts.
+  const match = text.match(/([~+±]?)\s*([\d,.]+)\s*(k|m|cr|lakh|l)?\s*(%|×)?/);
   if (!match) return null;
   const digits = match[2].replace(/,/g, "");
   if (!digits || Number.isNaN(Number(digits))) return null;
   const n = Number(digits) * (match[3] ? (SUFFIX[match[3]] ?? 1) : 1);
   if (!Number.isFinite(n) || n <= 0) return null;
-  return { magnitude: n, kind: match[4] === "%" ? "delta" : "scale" };
+  return { magnitude: n, kind: match[4] ? "delta" : "scale" };
 }
 
 /** Keeps only the figures that carry a quantity, with it attached. */

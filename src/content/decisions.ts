@@ -37,7 +37,7 @@ export const decisions: Decision[] = [
     id: "manual",
     call: "Replace the manual process; don't decorate it.",
     fact: "Billing was done by hand. The work was not the arithmetic. It was finding every place a person was quietly deciding.",
-    evidence: "Mappls Shop Admin + automatic billing replaced a fully manual billing process. Owns UI/UX, the PRD, cross-functional delivery. Live, earning, and the billing and accounts teams are 80% more productive.",
+    evidence: "Mappls Shop Admin + automatic billing replaced a fully manual billing process. Owns UI/UX, the PRD, cross-functional delivery. Live and earning: 4× the collections of the manual process, with 80% less manual operations work.",
     where: "MapMyIndia · Mappls Shop Admin",
   },
   {

@@ -73,7 +73,7 @@ const brief = [
   {
     claim: "Builds what it says",
     evidence: [
-      "Frontend and UI/UX on enterprise fleet and telematics platforms: Vahan Shakti (200,000+ users), Locate (20,000+ vehicles), Intouch (10,000+ active vehicles), and Mappls Shop, the billing system that replaced a manual process and made the billing and accounts teams 80% more productive.",
+      "Frontend and UI/UX on enterprise fleet and telematics platforms: Vahan Shakti (200,000+ users), Locate (20,000+ vehicles), Intouch (10,000+ active vehicles), and Mappls Shop, the subscription billing system that replaced a manual process: 4× the collections, with 80% less manual operations work.",
     ],
     more: { label: "Ten mission reports", href: "/missions" },
   },
@@ -124,9 +124,9 @@ export default function HirePage() {
           label="Measured results"
           items={[
             { value: 200000, suffix: "+", label: "Users", note: "Vahan Shakti" },
-            { value: 80, suffix: "%", label: "More productive billing teams", note: "Mappls Shop" },
+            { value: 4, suffix: "×", label: "Collections", note: "Mappls Shop" },
+            { value: 80, suffix: "%", label: "Less manual ops work", note: "Mappls Shop" },
             { value: 30000, suffix: "+", label: "Routes injected", note: "IOCL GeoRTD" },
-            { value: 40, prefix: "~", suffix: "%", label: "Faster dashboards", note: "caching, RxJS" },
           ]}
         />
       </Section>

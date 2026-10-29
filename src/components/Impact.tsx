@@ -17,7 +17,8 @@ import styles from "./Impact.module.scss";
 const MAX_LOG = Math.log10(Math.max(...results.map((r) => r.magnitude)));
 
 function width(r: (typeof results)[number]) {
-  if (r.kind === "delta") return r.magnitude / 100;
+  // A change past +100% (4× is +300%) fills the bar; the value says how far.
+  if (r.kind === "delta") return Math.min(1, r.magnitude / 100);
   return Math.log10(r.magnitude) / MAX_LOG;
 }
 
@@ -49,7 +50,7 @@ export default function Impact() {
         {(
           [
             { kind: "scale", title: "Scale reached", note: "absolute counts · log scale" },
-            { kind: "delta", title: "Measured change", note: "percentage deltas · linear" },
+            { kind: "delta", title: "Measured change", note: "change · linear, capped at +100%" },
           ] as const
         ).map((group) => (
           <div key={group.kind} className={styles.group}>

@@ -50,13 +50,20 @@ Career loop: PROBLEM → UNDERSTAND → STRATEGY → UX → TECHNOLOGY → BUILD
 All at MapMyIndia/Gtropy. Ali owns frontend, UI/UX, cross-functional collaboration, and product/project management on each.
 
 1. **Technician App** — end-to-end app for tracking technicians and managing field operations: installation, replacement, and rectification jobs. Building end to end.
-2. **Mappls Shop Admin + automatic billing web app** — replacing a fully manual billing process with an automated system. Owns UI/UX, the PRD, and cross-functional delivery. **Live** at shop.mappls.com (Angular 17 admin console over the Spring `mappls-billing` API; Odoo upstream for devices and renewal dates; Razorpay for payments — from Ali's architecture doc, Mappls-Billing-Admin-Portal.docx). **Results (Ali, 2026-10-15):** live and generating revenue (do NOT state the amount, ever); 30+ users; the billing and accounts teams are 80% more productive.
+2. **Mappls Shop Admin + automatic billing web app** — replacing a fully manual billing process with an automated system. Owns UI/UX, the PRD, and cross-functional delivery. **Live** at shop.mappls.com (Angular 17 admin console over the Spring `mappls-billing` API; Odoo upstream for devices and renewal dates; Razorpay for payments — from Ali's architecture doc, Mappls-Billing-Admin-Portal.docx). **Results (Ali, 2026-10-15):** live and generating revenue (do NOT state the amount, ever); 30+ users; the billing and accounts teams are 80% more productive. **Updated by Ali, 2026-10-29:** "mappls shop/subscription gave a 80% less ops needed and 4x the collection" — so the 80% is now worded as **80% less manual operations work** (this wording supersedes "80% more productive"), and **collections are 4× what the manual process brought in**. A multiple, never an amount: the revenue figure itself stays off the site.
 3. **IOCL (Indian Oil) GeoRTD creation** — geospatial route data pipeline, 30,000+ routes injected into an Amazon S3 bucket.
 
 ### Client deliveries on shipped products (Ali, 2026-10-23)
 Ali: "made dashboard for Toyota for non communicating device, and also created DMS, ADAS and driver section for Intouch for client VinFast, SM Green." Scope is his words and nothing more.
 - **Toyota** — made a dashboard for **non-communicating devices** (devices that have stopped reporting). Which MapMyIndia product it sits in, the users, and any outcome are NOT on file — the site states the deliverable only, and it is on the experience line, not a mission report, until Ali supplies the rest.
 - **Intouch, for VinFast and SM Green** — created the **DMS** (driver monitoring), **ADAS** (driver assistance) and **driver** sections. Clients named are VinFast and SM Green. No outcome is on file for either.
+
+### Public listings (read 2026-10-29; Ali: "links are there anyway")
+What each app's own Google Play listing shows. These are the listings' public numbers, attributed and dated — not outcomes Ali claims, and not the same measure as the vehicles or users above (an operator app with 1K+ installs runs a fleet of 10,000+ vehicles).
+- **Mappls Intouch** (play.google.com …id=intouch.mappls.app, publisher MapmyIndia): **1K+ downloads**, rated for 3+, updated 12 May 2026. No rating shown on the listing.
+- **Indane Yatra Mitra** (…id=iocl.cvtms.mappls): **1K+ downloads**, **4.4★ from 10 reviews**, updated 19 Mar 2026.
+- **Mappls Shop** — shop.mappls.com answers publicly (HTTP 200); it publishes no usage numbers.
+- Re-read before reusing: store counts change.
 
 ### From Ali's own working files (read 2026-10-24; Ali: "you have context of cowork")
 Read from D:/lap165/Projects and Downloads. Product-level facts only. ⚠️ These are MapMyIndia internal documents (the subscription PRD is marked Confidential): never publish their revenue model, device counts, prices, client account details, internal URLs, API contracts or brand specs. Targets in them are PROPOSED, not results — never present one as an outcome.

@@ -1185,6 +1185,41 @@ the open channel; the one joke; keep it the only one).
   filter → bay → arrow → Esc path in Playwright on the production build.
   Git Bash rewrites `ROUTES=/studio` into a Windows path when it leads the
   value — prefix `MSYS_NO_PATHCONV=1`.
+- *Success, project by project* (2026-10-29). Ali: "more enhancement each
+  project stats success", then "links are there anyway". The store links
+  carry public numbers, so they were read (curl + parse; WebFetch truncates
+  Play pages): Intouch 1K+ installs, updated 12 May 2026; Indane Yatra
+  Mitra 1K+, 4.4★ from 10 reviews, updated 19 Mar 2026 — PROFILE.md
+  "Public listings", `Mission.listing` (dated `read`); shop.mappls.com is
+  now Mappls Shop's link. `lib/success.ts` derives everything, nothing typed
+  in: `proofOf` (measured · public listing · being measured / metrics named
+  · none), `headlineOf` (first measured number, else installs), `reachOf`
+  (first measured SIZE in the author's order — not a %, not the designed
+  headroom after it — so nothing is cherry-picked by magnitude), and
+  `boardRows`. Shown three ways: `SuccessBoard` on /missions (sortable by
+  reach / proof / status / A–Z, reach on one log scale, installs hatched as
+  a different unit, a "Reach:" caption where the lead result is a %, a
+  table ≥1000px and a list below — six columns did not fit at 1024 until
+  the cells stacked their contents; a `display:grid` td drops out of the
+  row's borders); a proof badge on every `MissionRow` plus the listing's
+  installs; on each report the Results label is the proof level, numbers
+  count up as written (`ResultValue`: "200,000+", never en-IN "2,00,000+")
+  and `ListingRecord` shows the listing, sourced and dated.
+  `tests/unit/success.test.ts` pins the rules, including that every shown
+  figure is one already on the mission's record. Store counts change:
+  re-read before reusing.
+- *4× the collections* (2026-10-29, later). Ali: "mappls shop/subscription
+  gave a 80% less ops needed and 4x the collection." The 80% is now worded
+  "80% less manual ops work" everywhere (it supersedes "80% more
+  productive"; PROFILE.md records both dates), and "4× collections, vs the
+  manual process" is new — a multiple, never the revenue amount. It leads
+  Mappls Shop's results and signals (the galaxy HUD shows the first two),
+  the /hire readout (it replaced ~40% faster dashboards there; the ledger
+  keeps that one), the decisions evidence, the ledger and the résumé PDF
+  (republished, one page). `lib/figures.ts` `magnitudeOf` now reads a
+  trailing × as a change like %, so a ScaleRail never plots "4×" as a
+  count of 4, and `lib/success.ts` takes magnitude and kind from it rather
+  than parsing twice. The ledger's change bars cap at +100% (4× is +300%).
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

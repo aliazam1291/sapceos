@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Mission } from "@/content/types";
 import { DRAFT } from "@/content/types";
 import Hologram from "./Hologram";
+import { proofLabel, proofOf } from "@/lib/success";
 import { Status } from "./ui";
 import styles from "./MissionRow.module.scss";
 
@@ -49,6 +50,7 @@ export default function MissionRow({
   index: number;
 }) {
   const brief = briefFor(mission);
+  const proof = proofOf(mission);
 
   const onMove = (e: React.PointerEvent<HTMLElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -70,6 +72,10 @@ export default function MissionRow({
           <Status idle={mission.status !== "active"}>
             {mission.status === "active" ? "Active" : "Shipped"}
           </Status>
+          {/* How much of its success can be checked (lib/success.ts). */}
+          <span className={styles.proof} data-proof={proof}>
+            {proofLabel(mission, proof)}
+          </span>
         </div>
 
         <p className={styles.premise}>{mission.premise}</p>
@@ -81,6 +87,16 @@ export default function MissionRow({
               <dd>{signal.value}</dd>
             </div>
           ))}
+          {/* The listing's own public numbers, read on a date. */}
+          {mission.listing?.installs ? (
+            <div>
+              <dt>{mission.listing.where}</dt>
+              <dd>
+                {mission.listing.installs} installs
+                {mission.listing.rating ? ` · ${mission.listing.rating}★` : ""}
+              </dd>
+            </div>
+          ) : null}
           {/* A live listing is the strongest signal a shipped thing has. */}
           {mission.links?.map((l) => (
             <div key={l.href}>

@@ -202,7 +202,10 @@ const RAW_NODES: GalaxyNode[] = [
     role: "UI/UX Owner · PRD Author",
     premise: "Replaced fully manual billing operations with automated reconciliation and admin workflows.",
     stack: ["Angular", "Spring Boot", "Razorpay"],
-    signals: [{ label: "Billing & accounts", value: "80% more productive" }],
+    signals: [
+      { label: "Collections", value: "4× the manual process" },
+      { label: "Manual ops", value: "80% less" },
+    ],
   },
   {
     id: "control-tower",

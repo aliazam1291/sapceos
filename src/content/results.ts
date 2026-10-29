@@ -18,7 +18,9 @@ export const results: Result[] = [
   { value: "600K+", label: "Follower brand shipped", source: "Lean Multiverse · Smaak.ux", magnitude: 600000, kind: "scale" },
   { value: "300+", label: "Workshop participants", source: "UI/UX workshop, Alexa Developers SRM", magnitude: 300, kind: "scale" },
   { value: "50+", label: "Cross-functional team led", source: "Milan core team", magnitude: 50, kind: "scale" },
-  { value: "80%", label: "More productive billing & accounts teams", source: "Mappls Shop", magnitude: 80, kind: "delta" },
+  // 4× is a +300% change; the ledger's linear change bars cap at 100%.
+  { value: "4×", label: "Collections, vs the manual process", source: "Mappls Shop", magnitude: 300, kind: "delta" },
+  { value: "80%", label: "Less manual ops work, billing & accounts", source: "Mappls Shop", magnitude: 80, kind: "delta" },
   { value: "~40%", label: "Dashboard performance", source: "Caching · RxJS · API optimisation", magnitude: 40, kind: "delta" },
   { value: "+30%", label: "OCR extraction accuracy", source: "Datamatics R&D", magnitude: 30, kind: "delta" },
   { value: "+15%", label: "Task completion after UX research", source: "Datamatics usability testing", magnitude: 15, kind: "delta" },

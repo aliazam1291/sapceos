@@ -1,0 +1,367 @@
+@use "../styles/tokens.scss" as *;
+
+// An instrument table: hairline rows, mono labels, one accent per state.
+// No cards; the starfield reads through the panel.
+
+.board {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--line);
+  background: rgba(13, 13, 13, 0.72);
+
+  @media (max-width: 640px) {
+    padding: var(--space-4);
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.summary {
+  @include mono-label;
+  margin: 0;
+  color: var(--text-secondary);
+
+  b {
+    font-weight: inherit;
+    color: var(--accent);
+  }
+}
+
+.sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sortLabel {
+  @include mono-label;
+  color: var(--text-tertiary);
+}
+
+.key {
+  @include mono-label;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+
+  @include hover-only {
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--line-strong);
+    }
+  }
+
+  &[aria-pressed="true"] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(60, 221, 158, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── The table (tablets and up) ── */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--type-small);
+
+  // Below 1000px six columns do not fit beside the rail; the list takes over.
+  @media (max-width: 999px) {
+    display: none;
+  }
+
+  th,
+  td {
+    padding: var(--space-3) var(--space-2);
+    text-align: left;
+    vertical-align: middle;
+    border-top: 1px solid var(--line);
+  }
+
+  thead th {
+    @include mono-label;
+    border-top: 0;
+    padding-top: 0;
+    font-weight: inherit;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+
+    &[aria-sort] {
+      color: var(--accent);
+    }
+  }
+
+  tbody tr {
+    transition: background var(--dur-fast) var(--ease-out);
+
+    @include hover-only {
+      &:hover {
+        background: rgba(60, 221, 158, 0.04);
+      }
+    }
+  }
+
+  // The project cell: name, and the status on its own line beneath it.
+  // Cells stay table-cells (a grid td drops out of the row's borders);
+  // their contents stack instead.
+  tbody th {
+    font-weight: inherit;
+
+    .name {
+      display: block;
+      margin-bottom: 2px;
+    }
+  }
+
+  td.record span {
+    display: block;
+    line-height: 1.6;
+  }
+}
+
+.thNote {
+  color: var(--text-tertiary);
+  text-transform: none;
+}
+
+.name {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: none;
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.headline {
+  b {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  span {
+    color: var(--text-secondary);
+  }
+}
+
+.dash {
+  color: var(--text-tertiary);
+}
+
+.record {
+  @include mono-label;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Reach: one shared log scale. The outer `grow` scales 0 → 1 as the row
+   arrives (scroll-driven, compositor-only, no var() in the keyframes); the
+   inner fill holds the static log width. */
+.rail {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 96px;
+  height: 6px;
+  background: rgba(190, 230, 215, 0.08);
+}
+
+.railNote {
+  @include mono-label;
+  display: block;
+  margin-top: 6px;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  color: var(--text-tertiary);
+}
+
+.railEmpty {
+  display: block;
+  width: 100%;
+  min-width: 96px;
+  height: 6px;
+  border-top: 1px dashed var(--line);
+  margin-top: 3px;
+}
+
+.grow {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+}
+
+@supports (animation-timeline: view()) {
+  .grow {
+    animation: rail-grow linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 80%;
+  }
+}
+
+@keyframes rail-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform: scaleX(var(--w, 0));
+  background: linear-gradient(90deg, rgba(60, 221, 158, 0.55), var(--accent));
+  box-shadow: 0 0 10px rgba(60, 221, 158, 0.35);
+
+  // Installs are a different unit from users or vehicles: hatched, dimmer.
+  &[data-kind="installs"] {
+    background: repeating-linear-gradient(135deg, rgba(60, 221, 158, 0.6) 0 3px, rgba(60, 221, 158, 0.18) 3px 6px);
+    box-shadow: none;
+  }
+}
+
+/* Proof: the strongest is the accent; the rest step down. */
+.proof {
+  @include mono-label;
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  white-space: nowrap;
+  border: 1px solid var(--line);
+  color: var(--text-secondary);
+
+  &[data-proof="measured"] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(60, 221, 158, 0.08);
+  }
+
+  &[data-proof="listed"] {
+    color: #8af0c8;
+    border-color: rgba(138, 240, 200, 0.4);
+  }
+
+  &[data-proof="named"] {
+    border-style: dashed;
+  }
+
+  &[data-proof="none"] {
+    color: var(--text-tertiary);
+  }
+}
+
+.owns {
+  display: inline-flex;
+  gap: 4px;
+
+  i {
+    @include mono-label;
+    font-style: normal;
+    padding: 2px 5px;
+    font-size: max(0.625rem, var(--micro-floor, 0px));
+    color: var(--text-tertiary);
+    border: 1px solid transparent;
+    opacity: 0.55;
+    text-decoration: line-through;
+    text-decoration-color: rgba(190, 230, 215, 0.25);
+
+    &[data-on] {
+      color: var(--text-primary);
+      border-color: var(--line-strong);
+      opacity: 1;
+      text-decoration: none;
+    }
+  }
+}
+
+/* ── Phones: the same rows as a list ── */
+
+.stack {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (max-width: 999px) {
+    display: grid;
+  }
+}
+
+.stackRow {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--line);
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+.stackHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+
+  // The 36px tap floor every phone link on the site keeps.
+  .name {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+  }
+}
+
+.stackFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.foot {
+  margin: 0;
+  font-size: var(--type-small);
+  color: var(--text-tertiary);
+  line-height: 1.55;
+}

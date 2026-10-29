@@ -11,6 +11,8 @@ import { missions } from "@/content/missions";
 import { results } from "@/content/results";
 import { domainKeywords, identityKeywords, keywordsFor, roleKeywords, skillKeywords } from "@/lib/keywords";
 import Comms from "@/components/Comms";
+import SuccessBoard from "@/components/SuccessBoard";
+import { boardRows } from "@/lib/success";
 
 export const metadata: Metadata = {
   title: { absolute: "Missions — Product Case Studies · Ali Azam Kazmi" },
@@ -38,7 +40,7 @@ export default function MissionsPage() {
         <Comms at="missions" />
       </div>
 
-      <Section>
+      <Section id="success" data-section="Success">
         {/* Deck status: how much is on the deck, and the largest measured
             deployment on it. Every number is content, none is inferred. */}
         <Readout
@@ -53,6 +55,13 @@ export default function MissionsPage() {
             })(),
           ]}
         />
+        {/* Success, project by project (2026-10-29): every project's lead
+            result, reach, proof level and ownership on one sortable board. */}
+        <SectionHead label="Success · by project" title="What each one proved" />
+        <SuccessBoard rows={boardRows(missions)} />
+      </Section>
+
+      <Section id="index" data-section="Index">
         <SectionHead
           label={`Index · ${missions.length}`}
           title="Filter the log"

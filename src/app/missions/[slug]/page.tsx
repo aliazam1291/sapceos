@@ -14,6 +14,9 @@ import {
   ui,
 } from "@/components/ui";
 import ReportNav, { ReportLayout } from "@/components/ReportNav";
+import ListingRecord from "@/components/ListingRecord";
+import ResultValue from "@/components/ResultValue";
+import { proofLabel, proofOf } from "@/lib/success";
 import RelatedWriting from "@/components/RelatedWriting";
 import ScaleRail from "@/components/charts/ScaleRail";
 import { results as ledger } from "@/content/results";
@@ -153,13 +156,18 @@ export default async function MissionReport({ params }: Params) {
         <section className={ui.results} aria-label="Results" data-state={mission.results?.length ? "measured" : "pending"}>
           <p className={ui.resultsLabel}>
             <span>Results</span>
-            <span className={ui.resultsState}>{mission.results?.length ? "Measured" : "Not yet measured"}</span>
+            {/* How much of this can be checked, in the scoreboard's words (lib/success.ts). */}
+            <span className={ui.resultsState} data-proof={proofOf(mission)}>
+              {proofLabel(mission)}
+            </span>
           </p>
           {mission.results?.length ? (
             <dl className={ui.resultsGrid}>
               {mission.results.map((r) => (
                 <div key={r.label} className={ui.resultCell}>
-                  <dd className={ui.resultValue}>{r.value}</dd>
+                  <dd className={ui.resultValue}>
+                    <ResultValue value={r.value} />
+                  </dd>
                   <dt className={ui.resultLabel}>
                     {r.label}
                     {r.source ? <span className={ui.resultSource}> · {r.source}</span> : null}
@@ -168,6 +176,8 @@ export default async function MissionReport({ params }: Params) {
               ))}
             </dl>
           ) : null}
+          {/* The listing's own public numbers, sourced and dated. */}
+          {mission.listing ? <ListingRecord listing={mission.listing} /> : null}
           {mission.measure?.length && mission.results?.length ? (
             <p className={ui.measureNote}>Next to measure</p>
           ) : null}
