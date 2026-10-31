@@ -425,3 +425,15 @@
     animation: none;
   }
 }
+
+// The page list in groups by intent (2026-10-31 flow): a quiet label over
+// each, the running index kept across them.
+.pageGroup + .pageGroup {
+  margin-top: var(--space-4);
+}
+
+.pageGroupLabel {
+  @include mono-label;
+  margin: 0 0 var(--space-2);
+  color: var(--text-tertiary);
+}

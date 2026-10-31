@@ -217,6 +217,9 @@ export const experience = [
 export const education = {
   degree: "B.Tech, Computer Science Engineering",
   school: "SRM Institute of Science and Technology, Chennai",
+  /** How PROFILE.md's leadership lines name it; for one-line places. */
+  short: "SRMIST",
+  degreeShort: "B.Tech CSE",
   detail: "CGPA 8.76 / 10.0",
   period: "Aug 2020 — Jun 2024",
 };

@@ -1,0 +1,682 @@
+@use "../styles/tokens.scss" as *;
+
+// The landing: copy on the left, Ali on the right in front of a planet's lit
+// limb with his skills in orbit. Transparent ground — the site's star field
+// is the sky. Panels only for text (the counts); the portrait stands free.
+
+.hero {
+  @include shell;
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding-block: clamp(4rem, 10vh, 6rem) clamp(2.5rem, 7vh, 4.5rem);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: var(--space-5);
+    padding-block: var(--space-12) var(--space-8);
+  }
+
+  // `main` already starts below the phone's top bar (globals.scss). The
+  // planet is wider than a phone on purpose; the screen's edge is its edge.
+  @media (max-width: 767px) {
+    padding-top: var(--space-4);
+    overflow-x: clip;
+  }
+}
+
+/* ── The copy ─────────────────────────────────────────────────────────── */
+
+.copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  // Fewer things, more room between them.
+  gap: var(--space-5);
+  max-width: 600px;
+
+  > * {
+    animation: hero-in 0.8s var(--ease-out) both;
+  }
+
+  @for $i from 1 through 8 {
+    > :nth-child(#{$i}) {
+      animation-delay: #{0.05 + $i * 0.07}s;
+    }
+  }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.kicker {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--accent);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(60, 221, 158, 0.8);
+}
+
+.name {
+  margin: 0;
+  font-size: clamp(2.5rem, 5vw, 4.4rem);
+  font-weight: 650;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+}
+
+.role {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.pitch {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.3vw, 1.22rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+/* Counts: an open row, no box (2026-10-31, "too clustered") — each
+   number over its label, a hairline before every cell but the first. */
+.counts {
+  // One row of four: tracks shrink toward their labels' longest word, so a
+  // narrow column wraps a label instead of dropping a whole cell a line.
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: start;
+  column-gap: var(--space-5);
+  row-gap: var(--space-4);
+  margin: var(--space-2) 0 0;
+
+  @media (max-width: 560px) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cell {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+
+  & + & {
+    padding-left: var(--space-5);
+    border-left: 1px solid var(--line);
+
+    @media (max-width: 560px) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+}
+
+.value {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(1.35rem, 1.9vw, 1.8rem);
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.label {
+  @include mono-label;
+  line-height: 1.5;
+  white-space: normal;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  color: var(--text-tertiary);
+}
+
+// Education and where he works, one quiet line.
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+
+  span + span::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin-right: var(--space-4);
+    vertical-align: middle;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.primary,
+.action {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  text-decoration: none;
+  border: 1px solid var(--line-strong);
+  color: var(--text-primary);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+// The one accent on the screen: the way into the work.
+.primary {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(60, 221, 158, 0.1);
+
+  @include hover-only {
+    &:hover {
+      background: rgba(60, 221, 158, 0.18);
+    }
+  }
+}
+
+.action {
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+      border-color: var(--accent-line);
+    }
+  }
+}
+
+// The recruiter door: a link, not a third box.
+.textLink {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  color: var(--text-secondary);
+  text-decoration: none;
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* A short laptop screen (720-800px tall): the same copy, a little tighter. */
+@media (max-height: 800px) and (min-width: 901px) {
+  .hero {
+    padding-block: 3.25rem 2rem;
+  }
+
+  .copy {
+    gap: var(--space-4);
+  }
+
+  .name {
+    font-size: clamp(2.4rem, 4.2vw, 3.5rem);
+  }
+}
+
+/* ── The stage ────────────────────────────────────────────────────────── */
+
+.stage {
+  position: relative;
+  // Short enough that, with the hero's padding, the landing is exactly one
+  // screen and the flight starts at the fold.
+  height: min(80svh, 760px);
+  min-height: 440px;
+  // The figure sizes itself from the stage's box (cqw / cqh).
+  container-type: size;
+
+  @media (max-width: 900px) {
+    order: -1;
+    height: min(56svh, 480px);
+    min-height: 340px;
+  }
+}
+
+// A soft emerald glow behind the head: the subject is lit, the sky is not.
+.halo {
+  position: absolute;
+  left: 50%;
+  top: 2%;
+  width: 78%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(60, 221, 158, 0.2), rgba(60, 221, 158, 0.05) 45%, transparent 68%);
+  pointer-events: none;
+}
+
+// The planet: a dark body whose lit limb arcs behind the shoulders — the
+// atmosphere line emerald, the terminator under it red-hot fading to amber
+// (red is heat; amber is for the field), the same red as the hologram's
+// right-hand rim, so the light on him reads as coming off this world.
+.planet {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 150%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 10%, #3a1a12 0%, #1f120c 20%, #0c0908 42%, #060606 60%);
+  box-shadow:
+    inset 0 3px 0 rgba(138, 240, 200, 0.55),
+    inset 0 10px 24px -10px rgba(255, 61, 46, 0.5),
+    inset 0 34px 60px -30px rgba(242, 150, 70, 0.28),
+    0 -14px 70px rgba(60, 221, 158, 0.22);
+  // The body sinks into the page below; only the arc and its glow read.
+  mask-image: linear-gradient(to bottom, #000 0%, #000 18%, transparent 46%);
+  pointer-events: none;
+}
+
+// The photo's own box: as tall as the stage allows, never wider than it,
+// at the image's ratio — so a percentage inside it is a point on him.
+.figure {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: min(94cqh, 109.4cqw);
+  aspect-ratio: 1199 / 1312;
+  translate: -50% 0;
+  // Weightless: a slow float, the whole figure and its orbit together.
+  animation: figure-float 7s ease-in-out infinite;
+  will-change: transform;
+
+  &[data-off] {
+    animation-play-state: paused;
+  }
+
+  // A phone's stage is narrow: a smaller figure leaves the ring room to be
+  // wider than his head, and the tags room above his hair.
+  @media (max-width: 640px) {
+    height: min(84cqh, 109.4cqw);
+  }
+}
+
+@keyframes figure-float {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+// His avatar. The suit runs off the image's sides and bottom, so those edges
+// dissolve into space; a static emerald rim says the planet lights him; the
+// pointer turns him a few degrees (`--tx`/`--ty`, set by HoloFigure).
+.still {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  mask-image:
+    linear-gradient(to bottom, #000 0%, #000 74%, transparent 98%),
+    linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+  filter: drop-shadow(0 0 16px rgba(60, 221, 158, 0.25));
+  transform: perspective(1200px) rotateY(calc(var(--tx, 0) * 5deg)) rotateX(calc(var(--ty, 0) * -3deg));
+  transition:
+    opacity 1.2s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+
+/* Under the helmet: the unmasked frame, the same box, the same tilt and
+   fades, cut to a soft circle at the pointer (`--mx`/`--my` from
+   HoloFigure). `--peek` is the circle's radius, registered so it can ease
+   open on `data-peek` and closed after. No drop-shadow: the helmet layer
+   under it already has the rim. */
+@property --peek {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+.reveal {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  mask-image:
+    radial-gradient(circle var(--peek) at var(--mx, 50%) var(--my, 30%), #000 55%, transparent 100%),
+    linear-gradient(to bottom, #000 0%, #000 74%, transparent 98%),
+    linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+  transform: perspective(1200px) rotateY(calc(var(--tx, 0) * 5deg)) rotateX(calc(var(--ty, 0) * -3deg));
+  transition:
+    --peek 0.45s var(--ease-out),
+    opacity 1.2s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+
+.figure[data-peek] {
+  --peek: clamp(64px, 24cqw, 120px);
+}
+
+// The hologram's canvas: the figure's box grown 8% up and 12% each side, so
+// the curls that fizz off the top are not cut at the edge (the scene frames
+// itself to exactly this box — HoloPortraitScene WORLD_H).
+.holo {
+  position: absolute;
+  inset: -8% -12% 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+// As the live one starts to materialise, the still steps aside.
+.figure:has(.holo[data-holo="live"]) :is(.still, .reveal) {
+  opacity: 0;
+  transition-duration: 0.5s;
+}
+
+// Downloaded: the avatar returns over the points, and the points go.
+.holo {
+  transition: opacity 1.2s var(--ease-out);
+
+  &[data-holo="resolved"] {
+    opacity: 0;
+  }
+}
+
+// Downloading skills (HoloFigure): while he materialises, each skill in the
+// orbit waits for its turn (`--installed` on the figure, `--i` on its
+// satellite) and pops in. Without the hologram the attribute never comes,
+// and the skills simply orbit.
+.figure[data-install] .chip {
+  opacity: clamp(0, calc(var(--installed, 0) - var(--i)), 1);
+  scale: calc(0.4 + 0.6 * clamp(0, calc(var(--installed, 0) - var(--i)), 1));
+  transition:
+    opacity 0.3s var(--ease-out),
+    scale 0.55s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+.bracket {
+  position: absolute;
+  z-index: 3;
+  width: 22px;
+  height: 22px;
+  border: 0 solid var(--accent-line);
+  pointer-events: none;
+
+  &[data-c="tl"] {
+    top: 0;
+    left: 0;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+
+  &[data-c="tr"] {
+    top: 0;
+    right: 0;
+    border-top-width: 1px;
+    border-right-width: 1px;
+  }
+}
+
+.tag {
+  @include mono-label;
+  position: absolute;
+  z-index: 3;
+  top: 6px;
+  left: 32px;
+  margin: 0;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  line-height: 1.7;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+
+  &[data-done] {
+    color: var(--text-secondary);
+  }
+}
+
+// The download's meter: a hairline that fills as the skills install.
+.meter {
+  display: inline-block;
+  width: 64px;
+  height: 3px;
+  margin: 0 8px 0 10px;
+  vertical-align: middle;
+  background: linear-gradient(var(--accent), var(--accent)) 0 0 / calc(var(--k, 0) * 100%) 100% no-repeat, var(--line-strong);
+}
+
+.count {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.installing {
+  margin-left: 8px;
+  color: var(--text-primary);
+}
+
+.hint {
+  color: var(--text-secondary);
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintHover {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
+}
+
+/* ── The orbit ──────────────────────────────────────────────────────────
+   Box: an ellipse 1 : 0.3 around his jaw, centred 45% down the photo —
+   the far side passes behind his face, the near side across his collar.
+   `.flat` is a circle squashed by scaleY into that ellipse; `.ring` turns
+   inside it; each chip turns back (the `rotate` property) and un-squashes,
+   so it stays upright and the right size while riding the ellipse. */
+
+.orbit {
+  --n: var(--count);
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 108%;
+  aspect-ratio: 1 / 0.3;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+
+  // The ring line itself: an ellipse box, not a squashed border.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(60, 221, 158, 0.34);
+  }
+
+  // The far half, under the photo (its near half is the front copy's).
+  &[data-layer="back"] {
+    z-index: 1;
+
+    &::before {
+      clip-path: inset(0 0 50% 0);
+    }
+  }
+
+  // The near half passes in front of him: over the photo, clipped to the
+  // lower half of the ellipse (wide, so a chip at the rim is not cut).
+  &[data-layer="front"] {
+    z-index: 3;
+    clip-path: inset(50% -40% -60% -40%);
+  }
+
+  // A phone carries five, evenly spaced, on a ring narrow enough that a
+  // chip at either end stays on the screen.
+  // Never wider than the stage less a chip's half-width each side (100cqw
+  // is the stage), so the end chips stay whole on a tall, narrow phone.
+  @media (max-width: 640px) {
+    --n: min(var(--count), 5);
+    width: min(92%, calc(100cqw - 124px));
+  }
+}
+
+.flat {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  aspect-ratio: 1;
+  transform: translateY(-50%) scaleY(0.3);
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  animation: orbit-spin 72s linear infinite;
+  will-change: transform;
+}
+
+.satellite {
+  --a: calc(360deg / var(--n) * var(--i));
+  position: absolute;
+  inset: 0;
+  transform: rotate(var(--a));
+
+  @media (max-width: 640px) {
+    &:nth-child(n + 6) {
+      display: none;
+    }
+  }
+}
+
+// A point on the ring's rim, turned back and un-squashed.
+.chip {
+  @include mono-label;
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 9px;
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  // Tags, not boxes: a dark wash for legibility over him, no outline.
+  background: rgba(6, 6, 6, 0.6);
+  border: 0;
+  border-left: 1px solid var(--accent-line);
+  transform-origin: 0 0;
+  transform: rotate(calc(-1 * var(--a))) scaleY(3.3333) translate(-50%, -50%);
+  animation: orbit-counter 72s linear infinite;
+  will-change: transform;
+
+  b {
+    font-weight: 600;
+    color: var(--accent);
+  }
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// The individual `rotate` property composes before `transform`, so the
+// chip's own static angle stays out of the keyframe.
+@keyframes orbit-counter {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: -360deg;
+  }
+}
+
+// Off screen it stops. It keeps turning at a low perf level, unlike the
+// decorative loops further down the page: it is the landing's one motion,
+// sixteen composited layers, and costs the main thread nothing.
+.orbit[data-off] {
+  .ring,
+  .chip {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy > *,
+  .figure {
+    animation: none;
+  }
+
+  .still,
+  .reveal {
+    transform: none;
+  }
+
+  .ring,
+  .chip {
+    animation: none;
+  }
+}

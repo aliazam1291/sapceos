@@ -12,9 +12,11 @@ import CometCursor from "@/components/space/CometCursor";
 import WarpOnNavigate from "@/components/space/WarpOnNavigate";
 import CompanionLoader from "@/components/space/CompanionLoader";
 import BootScreen from "@/components/BootScreen";
+import { dossier } from "@/content/portfolio";
 import Transition from "@/components/Transition";
 import CommandPalette from "@/components/CommandPalette";
 import SoundSystem from "@/components/SoundSystem";
+import Radio from "@/components/Radio";
 import { profile } from "@/content/profile";
 import { siteUrl } from "@/lib/site";
 import { jsonLd, personJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -123,10 +125,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {/* The launch sequence, first visit of a session. */}
-        <BootScreen />
+        <BootScreen dossier={dossier()} />
         <MotionProvider />
         {/* The room tone and the ship's engines. Opt-in; see SoundToggle. */}
         <SoundSystem />
+        {/* Back in Black, through Spotify's own player. Mounts on request. */}
+        <Radio />
         <SmoothScroll />
         <DeepSpace />
         <CometCursor />

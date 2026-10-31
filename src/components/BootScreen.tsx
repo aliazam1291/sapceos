@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { bootLine } from "@/content/voice";
 import { sfx, spaceSound } from "@/lib/spaceSound";
+import type { Dossier } from "@/content/portfolio";
+import PortfolioDossier from "./PortfolioDossier";
 import { isSearchReferrer } from "@/lib/referrer";
 import SoundToggle from "./SoundToggle";
 import styles from "./BootScreen.module.scss";
@@ -29,7 +31,7 @@ const BootShip = dynamic(() => import("@/components/space/BootShip"), { ssr: fal
  * four milestones (fonts, the star field's first draw, the ship on the
  * pad, the galaxy's first frame or the floor on other routes) drive a
  * percentage that counts up on screen and never lies about being done.
- * Once ready, a launch window opens: T−5 counts down in the corner and
+ * Once ready, a launch window opens: T−3 counts down in the corner and
  * the ship launches itself at T−0. The hold still launches it sooner and
  * Skip still cuts straight through — but a recruiter who does nothing
  * for five seconds still reaches the site. A scan line sweeps the pad
@@ -47,7 +49,7 @@ const LOG = [
 
 const KEY = "space-os:booted";
 
-export default function BootScreen() {
+export default function BootScreen({ dossier }: { dossier?: Dossier }) {
   const [show, setShow] = useState(false);
   const [lines, setLines] = useState(0);
   const [ready, setReady] = useState(false);
@@ -174,15 +176,17 @@ export default function BootScreen() {
     return () => cancelAnimationFrame(raf);
   }, [show, ready]);
 
-  // The launch window: T−5 to T−0 once ready, then the ship goes on its
+  // The launch window: T−3 to T−0 once ready, then the ship goes on its
   // own. Holding pauses the count (the reader is launching it themselves).
+  // Three, not five (2026-10-31 flow): the countdown is the one thing a
+  // first-time visitor waits through before any content.
   useEffect(() => {
     if (!show || !ready || leaving) return;
     if (reduced.current) {
       const id = window.setTimeout(launch, 2000);
       return () => window.clearTimeout(id);
     }
-    let left = 5;
+    let left = 3;
     setCount(left);
     const id = window.setInterval(() => {
       if (holding.current) return;
@@ -278,9 +282,18 @@ export default function BootScreen() {
       <span className={styles.corner} data-at="bl" aria-hidden="true" />
       <span className={styles.corner} data-at="br" aria-hidden="true" />
 
-      <header className={styles.head}>
-        <p className={styles.title}>SPACE OS</p>
-        <p className={styles.sub}>Mission Control for a curious builder</p>
+      {/* Before the flight: whose portfolio this is and how much is in it
+          (2026-10-31). Falls back to the Space OS mark when no dossier is
+          passed. */}
+      <header className={styles.head} data-dossier={dossier ? "" : undefined}>
+        {dossier ? (
+          <PortfolioDossier data={dossier} />
+        ) : (
+          <>
+            <p className={styles.title}>SPACE OS</p>
+            <p className={styles.sub}>Mission Control for a curious builder</p>
+          </>
+        )}
       </header>
       {/* Top-right readout: the pad, the state, the real percentage and,
           once ready, the launch window counting down. */}

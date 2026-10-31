@@ -6,18 +6,21 @@ import FooterHorizon from "./FooterHorizon";
 import LocalTime from "./LocalTime";
 import { ui } from "./ui";
 
+// The same plain words as the dock, the menu and the phone tabs (2026-10-31
+// flow): one name per place everywhere you navigate. Page headers keep
+// their space names.
 const nav = [
-  { href: "/missions", label: "Missions" },
+  { href: "/missions", label: "Projects" },
   { href: "/lab", label: "Lab" },
   // Gated the same way as in Nav.tsx — see src/content/orbit.ts. Listing a
   // route whose four rows all read "needs input" is worse than not listing
   // it, and this reverses itself the moment there is content.
   ...(orbitHasContent ? [{ href: "/orbit", label: "Orbit" }] : []),
-  { href: "/field-notes", label: "Field Notes" },
+  { href: "/field-notes", label: "Case Studies" },
   { href: "/writing", label: "Writing" },
-  { href: "/decisions", label: "Flight Rules" },
+  { href: "/decisions", label: "How I Decide" },
   { href: "/about", label: "About" },
-  { href: "/mission-history", label: "Mission History" },
+  { href: "/mission-history", label: "Experience" },
   // Server-rendered links to every page in the sitemap (2026-10-02): /faq,
   // /smaak and /galaxy were reachable only from the JS overview and the
   // palette, so a crawler following plain links never found them.
@@ -25,10 +28,10 @@ const nav = [
   { href: "/smaak", label: "Smaak.ux" },
   { href: "/dumbmoney", label: "DumbMoney" },
   { href: "/flight-data", label: "Flight Data" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/faq", label: "Questions" },
   { href: "/hire", label: "For Recruiters" },
-  { href: "/galaxy", label: "Galaxy Map" },
-  { href: "/contact", label: "Open Channel" },
+  { href: "/galaxy", label: "Galaxy 3D" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Footer() {

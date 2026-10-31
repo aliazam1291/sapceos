@@ -1,0 +1,541 @@
+@use "../styles/tokens.scss" as *;
+
+// The ace: obsidian stock, an emerald foil edge with a light running round
+// it, a spade that is a window into space. Hover tilts it (the layers move
+// at different depths); a click, a tap or the keyboard turns it over
+// (`data-turned`). Every loop is a compositor transform, paused off screen.
+
+$w: 200px;
+$h: 280px;
+$w-phone: 164px;
+$h-phone: 230px;
+$foil: linear-gradient(135deg, #8af0c8, #1a8f68 30%, #0f3b2e 50%, #3cdd9e 75%, #8af0c8);
+$spade: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 3C40 20 8 36 8 61c0 14 11 25 24 25 8 0 14-4 17-9-1 9-5 16-14 20h30c-9-4-13-11-14-20 3 5 9 9 17 9 13 0 24-11 24-25C92 36 60 20 50 3Z'/%3E%3C/svg%3E");
+
+.ace {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.float {
+  position: relative;
+  width: $w;
+  height: $h;
+  perspective: 1000px;
+  animation: ace-float 6s ease-in-out infinite;
+  will-change: transform;
+
+  .ace[data-off] & {
+    animation-play-state: paused;
+  }
+
+  @media (max-width: 640px) {
+    width: $w-phone;
+    height: $h-phone;
+  }
+}
+
+@keyframes ace-float {
+  50% {
+    transform: translateY(-8px) rotate(-1.5deg);
+  }
+}
+
+/* ── The deck under it ─────────────────────────────────────────────── */
+
+.under {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: $foil;
+  box-shadow: 0 18px 30px -18px rgba(0, 0, 0, 0.9);
+
+  &[data-n="1"] {
+    transform: translate(14px, 8px) rotate(7deg);
+    opacity: 0.7;
+  }
+
+  &[data-n="2"] {
+    transform: translate(-12px, 12px) rotate(-6deg);
+    opacity: 0.5;
+  }
+}
+
+.emblem {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34%;
+  translate: -50% -50%;
+  opacity: 0.55;
+}
+
+/* ── The deal: dealt onto the deck on arrival ──────────────────────── */
+
+.deal {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition:
+    transform 1s cubic-bezier(0.2, 1.25, 0.35, 1),
+    opacity 0.35s var(--ease-out);
+
+  // Waiting above the deck, not beside it: from the side it sat past a
+  // phone's right edge until it was dealt (mobile-uat, 2026-10-31).
+  &[data-deal="pending"] {
+    transform: translate3d(36px, -150px, 140px) rotateZ(18deg) rotateX(42deg);
+    opacity: 0;
+    transition: none;
+  }
+}
+
+/* ── The card ──────────────────────────────────────────────────────── */
+
+.card {
+  --rx: 0deg;
+  --ry: 0deg;
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.25s var(--ease-out);
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+    border-radius: 14px;
+  }
+}
+
+.flip {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.3, 1.35, 0.4, 1);
+
+  .card[data-turned] & {
+    transform: rotateY(180deg);
+  }
+}
+
+// A face: the foil gradient is its background, seen as a 1.5px edge round
+// `.base`; the running light turns between the two.
+.face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: $foil;
+  box-shadow:
+    0 26px 44px -22px rgba(0, 0, 0, 0.95),
+    0 0 36px -8px rgba(60, 221, 158, 0.32);
+
+  &[data-side="back"] {
+    transform: rotateY(180deg);
+  }
+}
+
+// The light running round the foil edge: a conic beam spinning behind the
+// stock, so only the 1.5px rim shows it.
+.run {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 170%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(from 0deg, transparent 0 60%, rgba(138, 240, 200, 0.2) 66%, #e8fff6 73%, #3cdd9e 77%, transparent 86%);
+  animation: run 4.5s linear infinite;
+  will-change: transform;
+
+  .ace[data-off] & {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes run {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.base {
+  position: absolute;
+  inset: 1.5px;
+  border-radius: 12.5px;
+  background:
+    repeating-linear-gradient(45deg, rgba(60, 221, 158, 0.04) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(-45deg, rgba(60, 221, 158, 0.04) 0 1px, transparent 1px 9px),
+    radial-gradient(120% 80% at 50% 0%, #142019, #070908 62%);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(60, 221, 158, 0.16);
+    border-radius: 9px;
+  }
+}
+
+/* The spade is a window into space: stars, an emerald nebula, a warm
+   world with a ring. Depth is parallax — the stars move least, the world
+   more, the foil outline above them most (all against the tilt). */
+.window {
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  width: 66%;
+  aspect-ratio: 1;
+  translate: calc(-50% + var(--sx, 0) * -4px) calc(var(--sy, 0) * -4px);
+  mask: $spade center / contain no-repeat;
+  -webkit-mask: $spade center / contain no-repeat;
+  background:
+    radial-gradient(1.6px 1.6px at 22% 34%, #fff 50%, transparent 100%),
+    radial-gradient(1.2px 1.2px at 64% 24%, #e8fff6 50%, transparent 100%),
+    radial-gradient(1.2px 1.2px at 40% 64%, #fff 50%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 80% 46%, #8af0c8 50%, transparent 100%),
+    radial-gradient(1px 1px at 52% 42%, #fff 50%, transparent 100%),
+    radial-gradient(1.2px 1.2px at 30% 80%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 72% 84%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 14% 58%, #e8fff6 50%, transparent 100%),
+    radial-gradient(circle at 34% 44%, rgba(60, 221, 158, 0.55), transparent 44%),
+    radial-gradient(circle at 62% 30%, rgba(26, 143, 104, 0.45), transparent 40%),
+    radial-gradient(circle at 70% 76%, rgba(242, 179, 90, 0.3), transparent 48%),
+    radial-gradient(circle at 50% 50%, #0b2a20, #030806 76%);
+  background-size: 150% 150%;
+  background-position: calc(50% + var(--sx, 0) * 50%) calc(50% + var(--sy, 0) * 50%);
+}
+
+// A warm world in the window — amber is for the field — with an emerald
+// atmosphere, and its ring.
+.planet {
+  position: absolute;
+  left: 56%;
+  top: 52%;
+  width: 24%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: calc(var(--sx, 0) * -10px) calc(var(--sy, 0) * -10px);
+  background: radial-gradient(circle at 35% 30%, #f7d08a, #c27a2c 42%, #4a2410 70%, #160a04);
+  box-shadow:
+    0 0 10px 1px rgba(60, 221, 158, 0.55),
+    inset -3px -3px 6px rgba(0, 0, 0, 0.6);
+}
+
+.ring {
+  position: absolute;
+  left: 46%;
+  top: 60.5%;
+  width: 44%;
+  height: 10%;
+  border-radius: 50%;
+  border: 1px solid rgba(138, 240, 200, 0.75);
+  translate: calc(var(--sx, 0) * -10px) calc(var(--sy, 0) * -10px);
+  rotate: -16deg;
+}
+
+.outline {
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  width: 66%;
+  aspect-ratio: 1;
+  overflow: visible;
+  translate: calc(-50% + var(--sx, 0) * -8px) calc(var(--sy, 0) * -8px);
+  filter: drop-shadow(0 0 6px rgba(60, 221, 158, 0.6));
+}
+
+// Foil text: emerald to mint, the sheen sliding with the tilt.
+%foil-text {
+  background: linear-gradient(115deg, #1a8f68 0%, #8af0c8 35%, #3cdd9e 50%, #e8fff6 58%, #1a8f68 80%);
+  background-size: 220% 100%;
+  background-position: calc(50% - var(--sx, 0) * 60%) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.index {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  translate: calc(var(--sx, 0) * -3px) calc(var(--sy, 0) * -3px);
+
+  b {
+    @extend %foil-text;
+    font-family: var(--font-sans);
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 0.9;
+  }
+
+  svg {
+    width: 15px;
+  }
+
+  &[data-at="tl"] {
+    top: 16px;
+    left: 16px;
+  }
+
+  &[data-at="br"] {
+    right: 16px;
+    bottom: 16px;
+    rotate: 180deg;
+  }
+
+  @media (max-width: 640px) {
+    b {
+      font-size: 1.5rem;
+    }
+
+    svg {
+      width: 12px;
+    }
+  }
+}
+
+.mark {
+  @include mono-label;
+  @extend %foil-text;
+  position: absolute;
+  left: 0;
+  right: 0;
+  // Between the window and the corner index — at 15% it ran into the
+  // bottom-right "A ♠".
+  bottom: 26%;
+  text-align: center;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  // mono-label sets a colour; the foil needs the fill clear.
+  color: transparent;
+
+  // A phone's 164px card: one line, tighter.
+  @media (max-width: 640px) {
+    letter-spacing: 0.08em;
+  }
+}
+
+// A holographic sheen on the foil — mint, gold, emerald — that slides
+// across the card as it tilts.
+.holo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(138, 240, 200, 0.16) 38%,
+    rgba(242, 179, 90, 0.12) 48%,
+    rgba(60, 221, 158, 0.14) 56%,
+    transparent 70%
+  );
+  background-size: 260% 260%;
+  background-position: calc(50% + var(--sx, 0) * 120%) calc(50% + var(--sy, 0) * 120%);
+  mix-blend-mode: screen;
+}
+
+// Every few seconds a band of light crosses the card.
+.sweep {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(232, 255, 246, 0.16), transparent);
+  rotate: 18deg;
+  animation: sweep 6s ease-in-out infinite;
+  will-change: transform;
+  pointer-events: none;
+
+  .ace[data-off] & {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes sweep {
+  0%,
+  55% {
+    transform: translateX(0);
+  }
+
+  85%,
+  100% {
+    transform: translateX(420%);
+  }
+}
+
+// Light on the card where the pointer is.
+.glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--gx, 30%) var(--gy, 20%), rgba(255, 255, 255, 0.16), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+
+  .card:hover & {
+    opacity: 1;
+  }
+}
+
+/* ── The back: the proverb ─────────────────────────────────────────── */
+
+.watermark {
+  position: absolute;
+  right: -18%;
+  bottom: -12%;
+  width: 78%;
+  opacity: 0.07;
+}
+
+.backLabel {
+  @include mono-label;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  letter-spacing: 0.18em;
+  color: var(--accent);
+
+  svg {
+    width: 11px;
+    flex: none;
+  }
+}
+
+.quoteMark {
+  @extend %foil-text;
+  position: absolute;
+  top: 34px;
+  left: 16px;
+  font-family: var(--font-sans);
+  font-size: 4.2rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.quote {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 50%;
+  translate: 0 -38%;
+  font-size: 1rem;
+  line-height: 1.42;
+  letter-spacing: -0.01em;
+  text-align: left;
+  color: var(--text-primary);
+
+  em {
+    font-style: normal;
+    color: #8af0c8;
+  }
+
+  @media (max-width: 640px) {
+    left: 16px;
+    right: 16px;
+    font-size: 0.8125rem;
+  }
+}
+
+.backIndex {
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  b {
+    @extend %foil-text;
+    font-family: var(--font-sans);
+    font-weight: 700;
+  }
+
+  svg {
+    width: 12px;
+  }
+}
+
+/* ── The caption: the proverb as text, and the hint ─────────────────── */
+
+.caption {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  max-width: 240px;
+  text-align: center;
+}
+
+.captionLabel {
+  @include mono-label;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  color: var(--accent);
+}
+
+.captionQuote {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  quotes: "\201C" "\201D";
+}
+
+.hint {
+  @include mono-label;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  color: var(--text-tertiary);
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintHover {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .run,
+  .sweep {
+    animation: none;
+  }
+
+  .deal,
+  .flip,
+  .card {
+    transition: none;
+  }
+}

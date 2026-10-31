@@ -193,3 +193,25 @@
 }
 
 html[data-perf="low"] .mass { animation-play-state: paused; }
+
+// The door to the depth: the full ledger on /about.
+.more {
+  @include mono-label;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  color: var(--text-primary);
+  text-decoration: none;
+
+  @include hover-only {
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}

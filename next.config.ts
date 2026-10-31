@@ -45,8 +45,9 @@ const nextConfig: NextConfig = {
    * ship and the bars, and the nonce alternative forces every route to
    * render dynamically — which would cost the static delivery the whole
    * site is built around. What it still buys: no third-party script origin
-   * can execute, no external form target, no data: or remote iframes, and
-   * connections are limited to this origin and Vercel's telemetry.
+   * can execute, no external form target, no data: iframes and no remote
+   * ones except Spotify's player (the radio, 2026-11-01), and connections
+   * are limited to this origin and Vercel's telemetry.
    */
   async headers() {
     const csp = [
@@ -56,6 +57,8 @@ const nextConfig: NextConfig = {
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
       "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+      // The radio (Radio.tsx): Spotify's own player, the one remote frame.
+      "frame-src https://open.spotify.com",
       "worker-src 'self' blob:",
       "manifest-src 'self'",
       "object-src 'none'",

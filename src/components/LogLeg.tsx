@@ -15,14 +15,14 @@ import styles from "./LogLeg.module.scss";
  */
 export default function LogLeg() {
   return (
-    <Section id="log" data-section="Flight log">
+    <Section id="log" data-section="Experience">
       <div className={styles.leg}>
         <SectionHead
-          label={`07 / Flight log · ${experience.length} roles`}
+          label={`04 / Experience · ${experience.length} roles`}
           title="Where the time went"
           action={
             <Link href="/mission-history" className={styles.all}>
-              The full log &rarr;
+              The full history &rarr;
             </Link>
           }
         />

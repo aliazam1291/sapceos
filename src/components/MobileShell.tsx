@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
+import RadioButton from "./RadioButton";
 import styles from "./MobileShell.module.scss";
 
 /*
@@ -116,6 +117,8 @@ export default function MobileShell() {
             <path d="M12.8 12.8 17 17" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
         </button>
+        {/* The radio: Back in Black, via Spotify's player (Radio.tsx). */}
+        <RadioButton className={`${styles.search} ${styles.radio}`} />
         {/* The ship's berth: the companion parks over this space. */}
         <span className={styles.berth} aria-hidden="true" />
       </div>

@@ -298,7 +298,8 @@
     font-size: max(0.625rem, var(--micro-floor, 0px));
     color: var(--text-tertiary);
     border: 1px solid transparent;
-    opacity: 0.55;
+    // Not owned reads as struck through in the tertiary grey (5.1:1). It
+    // was also faded to 0.55, which took it under 4.5:1 (axe, 2026-11-01).
     text-decoration: line-through;
     text-decoration-color: rgba(190, 230, 215, 0.25);
 

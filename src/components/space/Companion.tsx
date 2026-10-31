@@ -52,25 +52,28 @@ const REST_AIM = new THREE.Vector3(0.42, -0.05, -0.9).normalize();
  */
 type Waypoint = { p: number; x: number; y: number; s: number };
 const HOME_PLAN: Waypoint[] = [
-  // Re-measured after the dome gallery went into the Studio leg
-  // (1440x900, 2026-09-27, H 19511): arrival 0-0.326, operator 0.326,
-  // hangar 0.39, debrief 0.466, impact 0.515, rules 0.596, log 0.646,
-  // studio 0.718 (now 1891px — the gallery lives at its top), notes 0.82,
-  // dispatches 0.877, touchdown 0.923, footer 1.
-  { p: 0.0, x: 0.36, y: -0.3, s: 0.7 }, // boarding (the galaxy flight has the frame; the companion yields)
-  { p: 0.29, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large
-  { p: 0.334, x: 0.36, y: 0.08, s: 0.85 }, // operator: the copy holds the left two-thirds; the ship in the air right of it
-  { p: 0.404, x: 0.1, y: 0.4, s: 0.55 }, // hangar: high and small, a distant pass over the projectors
-  { p: 0.466, x: -0.3, y: 0.3, s: 0.6 }, // debrief: over the black hole's sky, top left (the hole then captures it)
-  { p: 0.53, x: 0.0, y: 0.42, s: 0.5 }, // impact: full-width panels — a small high pass
-  { p: 0.597, x: 0.3, y: 0.02, s: 1.5 }, // flight rules: the hero moment — huge, in the air right of the beacons
-  { p: 0.658, x: 0.34, y: 0.06, s: 0.9 }, // flight log: the route holds the left; the ship rides the right
-  // Studio: the dome fills the width and takes the drag, so the ship keeps
-  // well clear of it — high, small, and out at the left margin.
-  { p: 0.735, x: -0.3, y: 0.44, s: 0.45 },
-  { p: 0.826, x: 0.3, y: 0.42, s: 0.5 }, // drone bay: high, small, distant — the drones own the frame
-  { p: 0.879, x: -0.3, y: 0.42, s: 0.5 }, // dispatches: the truss holds the low left and the rows the right — high left is the free air
-  { p: 0.928, x: 0.0, y: 0.1, s: 1.1 }, // touchdown: descends toward the pad, then hands off to the landed ship (shipState.landed)
+  // Re-plotted for the simplified front door (1440x900, 2026-10-31 flow,
+  // H 11859): intro 0 (landing, toolkit 0.076, building 0.117), work
+  // 0.177 (the flight, its pin halved), results 0.462, experience 0.538,
+  // design 0.659, case studies 0.763, contact 0.855, footer 0.971. Every
+  // waypoint that survived kept its pixel offset from the start of its
+  // section (the 2026-09-27 plot); Operator, Hangar, Impact, Rules and
+  // Dispatches left the page, and their waypoints with them.
+  // Intro: he has the frame; the ship holds the sky above his right
+  // shoulder, small, above the rail and right of his hair.
+  { p: 0.0, x: 0.4, y: 0.39, s: 0.45 },
+  // Toolkit and building: full-width objects, so the same high pass, right.
+  { p: 0.076, x: 0.42, y: 0.38, s: 0.4 },
+  { p: 0.143, x: 0.43, y: 0.4, s: 0.38 },
+  { p: 0.177, x: 0.36, y: -0.3, s: 0.7 }, // boarding (the galaxy flight has the frame; the companion yields)
+  { p: 0.38, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large (the lead ship climbs out here)
+  { p: 0.462, x: -0.3, y: 0.3, s: 0.6 }, // results: over the black hole's sky, top left (the hole then captures it)
+  { p: 0.558, x: 0.34, y: 0.06, s: 0.9 }, // experience: the route holds the left; the ship rides the right
+  // Design: the dome fills the width and takes the drag, so the ship keeps
+  // well clear of it: high, small, and out at the left margin.
+  { p: 0.687, x: -0.3, y: 0.44, s: 0.45 },
+  { p: 0.773, x: 0.3, y: 0.42, s: 0.5 }, // case studies: high, small, distant; the drones own the frame
+  { p: 0.864, x: 0.0, y: 0.1, s: 1.1 }, // contact: descends toward the pad, then hands off to the landed ship (shipState.landed)
   { p: 1.0, x: 0.0, y: -0.1, s: 1.1 },
 ];
 
@@ -281,7 +284,6 @@ function Pilot({
   // Where the next entrance starts: the edge the ship is coming from.
   const entryFrom = useRef<"above" | "high-right">("above");
   const lastPath = useRef(pathname);
-  const mountedAt = useRef(0);
 
   /*
    * Entrance: put the ship beyond the frame's edge with a velocity aimed
@@ -324,6 +326,38 @@ function Pilot({
     prog.current = 0;
     entryFrom.current = "above";
     started.current = false;
+  }, [pathname]);
+
+  // Is the flight's section on screen? The landing sits above it now
+  // (2026-10-31), so "the top of the home page" no longer means "the
+  // galaxy". Kept by an observer so the frame loop reads no layout; the
+  // section may mount a frame after the route does, hence the retry.
+  const arrivalOn = useRef(false);
+  // When it came on screen: the eight-second ceiling below counts from here.
+  const arrivalAt = useRef(0);
+  useEffect(() => {
+    arrivalOn.current = false;
+    if (pathname !== "/") return;
+    let io: IntersectionObserver | null = null;
+    let raf = 0;
+    let tries = 0;
+    const attach = () => {
+      const el = document.getElementById("arrival");
+      if (!el) {
+        if (++tries < 120) raf = requestAnimationFrame(attach);
+        return;
+      }
+      io = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting && !arrivalOn.current) arrivalAt.current = performance.now();
+        arrivalOn.current = e.isIntersecting;
+      });
+      io.observe(el);
+    };
+    attach();
+    return () => {
+      cancelAnimationFrame(raf);
+      io?.disconnect();
+    };
   }, [pathname]);
 
   // Demand-driven: this loop decides when the next frame is worth drawing.
@@ -369,16 +403,16 @@ function Pilot({
     // has the ship.
     const booting = document.documentElement.hasAttribute("data-booting");
     const now = performance.now();
-    if (!mountedAt.current) mountedAt.current = now;
     const flightLive = cameraFocus.ship > 0.5 && now - cameraFocus.tick < Math.max(120, cameraFocus.frameMs * 5);
     // The galaxy is a lazy chunk; on the home page it arrives after this
     // ship does. Until it has drawn a frame (`tick`), the flight is
-    // presumed live at the top of the page — otherwise the companion flew
-    // in, and a second later the lead ship appeared beside it (measured
-    // 2026-09-19: two ships in the boarding frame for ~2 s). Eight seconds
+    // presumed live while its section is on screen — otherwise the
+    // companion flew in, and a second later the lead ship appeared beside
+    // it (measured 2026-09-19: two ships in the boarding frame for ~2 s).
+    // On the landing above it the companion flies as usual. Eight seconds
     // is the ceiling, so a galaxy that never mounts (reduced motion, a
     // failed chunk) does not keep the ship away for the whole visit.
-    const galaxyPending = pathname === "/" && cameraFocus.tick === 0 && signal.progress < 0.45 && now - mountedAt.current < 8000;
+    const galaxyPending = pathname === "/" && cameraFocus.tick === 0 && arrivalOn.current && now - arrivalAt.current < 8000;
     const want = flightLive || galaxyPending || booting || shipState.landed || shipState.captured ? 0 : 1;
     const wasShown = shown.current > 0.02;
     shown.current += (want - shown.current) * Math.min(dt * 3, 1);

@@ -9,7 +9,7 @@ import GalaxyNavigator from "@/components/GalaxyNavigator";
 import LocalTime from "@/components/LocalTime";
 import { Status } from "@/components/ui";
 import type { Mission } from "@/content/types";
-import { profile, proof } from "@/content/profile";
+import { profile } from "@/content/profile";
 import styles from "./MissionFlight.module.scss";
 
 /**
@@ -56,8 +56,11 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
         const st = ScrollTrigger.create({
           trigger: section,
           start: "top top",
-          // One viewport per beat, with a little extra dwell on each.
-          end: () => `+=${window.innerHeight * (beats - 1) * 1.15}`,
+          // Half a viewport per beat (2026-10-31 flow: it was 1.15 — seven
+          // screens of forced scroll for five projects). The pacer below still
+          // steps one world at a time on its dwell, so a quicker scroll shows
+          // every world; it just asks less of the wheel.
+          end: () => `+=${window.innerHeight * (beats - 1) * 0.55}`,
           pin: stage,
           anticipatePin: 1,
           invalidateOnRefresh: true,
@@ -101,7 +104,7 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
   const mission = beat > 0 ? missions[beat - 1] : null;
 
   return (
-    <section id="arrival" data-section="Arrival" className={styles.section} ref={sectionRef}>
+    <section id="arrival" data-section="Work" className={styles.section} ref={sectionRef}>
       <div className={styles.stage} data-pin>
         <div className={styles.field} aria-hidden="true">
           <div className={styles.fieldInner}>
@@ -118,9 +121,9 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
             <Decode delay={800}>{profile.location}</Decode>
             <LocalTime />
           </p>
-          <h1 className={styles.srOnly}>
-            {profile.name} — {profile.title}. Digital products with a point of view.
-          </h1>
+          {/* The page's h1 is the landing above (PortfolioHero, 2026-10-31);
+              this names the flight for readers who cannot see the galaxy. */}
+          <h2 className={styles.srOnly}>Selected work: {missions.length} featured missions, one system at a time</h2>
 
           {/* Flight plan — the beat track. Clicking a stop is a request; the
               scroll is still the throttle, so it scrolls the page there. */}
@@ -151,38 +154,27 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
           </ol>
 
           <div className={styles.foot}>
-            {/* The opener: who this is and why to keep reading, on screen
-                before anything moves. Dissolves once the flight starts. */}
+            {/* The opener introduces the section, not the person (the landing
+                above already did — 2026-10-31 flow): what this is, how to
+                move through it, and the way to everything at once. */}
             <div className={styles.opener} data-away={beat > 0 || undefined}>
+              <p className={styles.openerLine}>Selected work</p>
               <p className={styles.openerPitch}>
-                <Decode delay={1100}>{profile.oneLine}</Decode>
+                <Decode delay={600}>{`${missions.length} projects, one world at a time.`}</Decode>
               </p>
               <p className={styles.openerLine}>
-                {profile.title} &middot; targeting Technical PM roles &middot; {profile.location}
-              </p>
-              {/* The recruiter's way in, in plain words (2026-10-28 review):
-                  the brief and the résumé, before any of the flight. */}
-              <p className={styles.openerLine}>
-                <Link href="/hire" className={styles.openerVenture}>
-                  For recruiters: role, wins, résumé <span aria-hidden="true">&rarr;</span>
+                Scroll to fly through them, or{" "}
+                <Link href="/missions" className={styles.openerVenture}>
+                  see all projects <span aria-hidden="true">&rarr;</span>
                 </Link>
-              </p>
-              {/* Side ventures as one "also" line, not a second identity. */}
-              <p className={styles.openerLine}>
-                Also: <Link href="/dumbmoney" className={styles.openerVenture}>DumbMoney</Link> (co-founder)
-                {" "}&middot;{" "}
-                <Link href="/smaak" className={styles.openerVenture}>Smaak.ux</Link> (freelance design)
-              </p>
-              <p className={styles.openerProof}>
-                <span>{proof.value}</span> {proof.label}
               </p>
             </div>
 
             <p className={styles.hint} aria-hidden="true">
               {beat === 0 ? "Scroll to fly" : `System ${String(beat).padStart(2, "0")} / ${String(missions.length).padStart(2, "0")}`}
             </p>
-            {/* The 30-second path: past the flight, straight to the deck. */}
-            <a href="#hangar" className={styles.skip} data-away={beat > 0 || undefined} title="The ship will understand.">
+            {/* The 30-second path: past the flight, straight to the results. */}
+            <a href="#debrief" className={styles.skip} data-away={beat > 0 || undefined} title="The ship will understand.">
               Skip the flight &darr;
             </a>
           </div>

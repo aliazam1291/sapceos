@@ -9,6 +9,7 @@ import { lockScroll } from "@/lib/lenis";
 import { scrollMax } from "@/lib/scroll-signal";
 import NavOverview from "./NavOverview";
 import SoundToggle from "./SoundToggle";
+import RadioButton from "./RadioButton";
 import { plainName } from "@/content/pages";
 import styles from "./Nav.module.scss";
 
@@ -18,27 +19,31 @@ import styles from "./Nav.module.scss";
 // Labels are plain words since the 2026-10-28 review ("Missions",
 // "Operator", "Open Channel" were friction for an HR reader on a phone);
 // the space names stay on the pages themselves.
+// Grouped by what the visitor came for (2026-10-31 flow): sixteen numbered
+// lines in one flat list was a choice-overload problem of its own. Work
+// (the things he made), How I think (the thinking behind them), About me
+// (who, the history, the brief for a recruiter, the channel).
 const routes = [
-  { href: "/missions", label: "Projects", plain: plainName["/missions"] },
-  { href: "/galaxy", label: "Galaxy 3D", plain: plainName["/galaxy"] },
-  { href: "/lab", label: "Lab", plain: plainName["/lab"] },
-  { href: "/studio", label: "Studio", plain: plainName["/studio"] },
-  { href: "/smaak", label: "Smaak.ux", plain: plainName["/smaak"] },
-  { href: "/dumbmoney", label: "DumbMoney", plain: plainName["/dumbmoney"] },
+  { href: "/missions", label: "Projects", plain: plainName["/missions"], group: "Work" },
+  { href: "/studio", label: "Studio", plain: plainName["/studio"], group: "Work" },
+  { href: "/smaak", label: "Smaak.ux", plain: plainName["/smaak"], group: "Work" },
+  { href: "/dumbmoney", label: "DumbMoney", plain: plainName["/dumbmoney"], group: "Work" },
+  { href: "/lab", label: "Lab", plain: plainName["/lab"], group: "Work" },
+  { href: "/galaxy", label: "Galaxy 3D", plain: plainName["/galaxy"], group: "Work" },
   // Listed only once /orbit has real content — see src/content/orbit.ts.
   // The route always works; this is the link, not the page.
   ...(orbitHasContent
-    ? [{ href: "/orbit", label: "Orbit", plain: plainName["/orbit"] }]
+    ? [{ href: "/orbit", label: "Orbit", plain: plainName["/orbit"], group: "Work" }]
     : []),
-  { href: "/field-notes", label: "Case Studies", plain: plainName["/field-notes"] },
-  { href: "/writing", label: "Writing", plain: plainName["/writing"] },
-  { href: "/decisions", label: "How I Decide", plain: plainName["/decisions"] },
-  { href: "/flight-data", label: "Flight Data", plain: plainName["/flight-data"] },
-  { href: "/faq", label: "Questions", plain: plainName["/faq"] },
-  { href: "/hire", label: "For Recruiters", plain: plainName["/hire"] },
-  { href: "/about", label: "About", plain: plainName["/about"] },
-  { href: "/mission-history", label: "Experience", plain: plainName["/mission-history"] },
-  { href: "/contact", label: "Contact", plain: plainName["/contact"] },
+  { href: "/field-notes", label: "Case Studies", plain: plainName["/field-notes"], group: "How I think" },
+  { href: "/writing", label: "Writing", plain: plainName["/writing"], group: "How I think" },
+  { href: "/decisions", label: "How I Decide", plain: plainName["/decisions"], group: "How I think" },
+  { href: "/flight-data", label: "Flight Data", plain: plainName["/flight-data"], group: "How I think" },
+  { href: "/about", label: "About", plain: plainName["/about"], group: "About me" },
+  { href: "/mission-history", label: "Experience", plain: plainName["/mission-history"], group: "About me" },
+  { href: "/hire", label: "For Recruiters", plain: plainName["/hire"], group: "About me" },
+  { href: "/faq", label: "Questions", plain: plainName["/faq"], group: "About me" },
+  { href: "/contact", label: "Contact", plain: plainName["/contact"], group: "About me" },
 ];
 
 export default function Nav() {
@@ -219,6 +224,8 @@ export default function Nav() {
 
           {/* The room tone: off until asked. */}
           <SoundToggle className={styles.sound} label={false} />
+          {/* The radio: Back in Black, via Spotify's player (Radio.tsx). */}
+          <RadioButton className={`${styles.sound} ${styles.radio}`} />
 
           {/* Contact is promoted out of the list into the trailing action. */}
           <Link

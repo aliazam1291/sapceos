@@ -197,3 +197,8 @@
     opacity: 1;
   }
 }
+
+// The radio switch beside search: lit while the Spotify player is mounted.
+.radio[data-on] {
+  color: var(--accent);
+}

@@ -687,7 +687,11 @@ export default function InteractiveGalaxy({
   }, [isFullscreen]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const visibleLoop = useSceneFrameloop(canvasRef);
+  // No look-ahead margin (2026-10-31): the landing sits on top of the flight
+  // now, and with the usual 20% the galaxy drew every frame — 82 calls, full
+  // rate — under a screen the reader was reading, halving the landing's fps
+  // on an iGPU (30 fps, measured). It is primed instead (below).
+  const visibleLoop = useSceneFrameloop(canvasRef, "0px");
   // The quality level, decided once at mount (see lib/perf.ts). Point and
   // rock counts cannot change live; dpr and the frame cap can.
   const [level] = useState(() => (typeof window === "undefined" ? "high" : decidePerfLevel()));
@@ -733,7 +737,27 @@ export default function InteractiveGalaxy({
     setWarm(true);
     window.dispatchEvent(new Event("space:ready"));
   }, []);
-  const frameloop = !warm ? "never" : visibleLoop === "always" && (booting || throttle) ? "demand" : visibleLoop;
+  // Primed: one frame as soon as the shaders are warm, on screen or not.
+  // ANGLE builds its per-draw state at the first draw, so that cost is paid
+  // under the landing, not as the reader scrolls into the flight.
+  const [primed, setPrimed] = useState(false);
+  useEffect(() => {
+    if (!warm || primed) return;
+    let raf = 0;
+    const check = () => {
+      if (cameraFocus.tick > 0) setPrimed(true);
+      else raf = requestAnimationFrame(check);
+    };
+    raf = requestAnimationFrame(check);
+    return () => cancelAnimationFrame(raf);
+  }, [warm, primed]);
+  const frameloop = !warm
+    ? "never"
+    : !primed && visibleLoop === "never"
+      ? "demand"
+      : visibleLoop === "always" && (booting || throttle)
+        ? "demand"
+        : visibleLoop;
   const invalidateRef = useRef<(() => void) | null>(null);
   useEffect(() => {
     if (frameloop !== "demand" || !throttle || booting) return;
@@ -893,7 +917,13 @@ export default function InteractiveGalaxy({
        * Focus flies the camera and opens the detail panel — the identical
        * result as clicking the body — so the 3D is not a separate experience
        * that keyboard users get a text fallback for; it is the same one.
+       *
+       * Not in the home flight (2026-11-01): there the galaxy sits inside an
+       * aria-hidden field, the scroll drives the camera, and the flight has
+       * its own plan buttons and list — these were focusable but hidden
+       * (axe aria-hidden-focus), sixteen invisible tab stops.
        */}
+      {!flightControlled && (
       <nav className={styles.srOnly} aria-label="Star map systems">
         <ul>
           {filteredNodes.map((node) => (
@@ -917,6 +947,7 @@ export default function InteractiveGalaxy({
           ))}
         </ul>
       </nav>
+      )}
 
       <GalaxyHUD
         category={category}

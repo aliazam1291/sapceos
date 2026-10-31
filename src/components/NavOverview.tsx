@@ -6,7 +6,7 @@ import { missions } from "@/content/missions";
 import { links, profile } from "@/content/profile";
 import styles from "./NavOverview.module.scss";
 
-export type Route = { href: string; label: string; plain: string };
+export type Route = { href: string; label: string; plain: string; group?: string };
 
 /** "MapMyIndia [Gtropy] · for IOCL" → "MapMyIndia · for IOCL": the cell is 2.5cm wide. */
 const shortOrg = (org: string) => org.replace(/\s*\[[^\]]*\]/, "");
@@ -28,6 +28,18 @@ const shortOrg = (org: string) => org.replace(/\s*\[[^\]]*\]/, "");
  * win that fight: the page dims behind it, the dock dims with everything else,
  * and the way out is inside the thing you opened.
  */
+/** Routes in their groups, in order, keeping one running index across them. */
+function groupsOf(routes: Route[]) {
+  const out: { group: string; items: { r: Route; i: number }[] }[] = [];
+  routes.forEach((r, i) => {
+    const g = r.group ?? "Pages";
+    const last = out[out.length - 1];
+    if (last && last.group === g) last.items.push({ r, i });
+    else out.push({ group: g, items: [{ r, i }] });
+  });
+  return out;
+}
+
 export default function NavOverview({
   routes,
   isActive,
@@ -112,8 +124,11 @@ export default function NavOverview({
             <p className={styles.wordmark}>Space OS</p>
           </div>
 
+          {groupsOf(routes).map(({ group, items }) => (
+            <div key={group} className={styles.pageGroup}>
+              <p className={styles.pageGroupLabel}>{group}</p>
           <ul className={styles.pageList}>
-            {routes.map((r, i) => (
+            {items.map(({ r, i }) => (
               <li key={r.href}>
                 <Link
                   href={r.href}
@@ -131,6 +146,8 @@ export default function NavOverview({
               </li>
             ))}
           </ul>
+            </div>
+          ))}
 
           <ul className={styles.social}>
             {links.slice(0, 4).map((l) => (

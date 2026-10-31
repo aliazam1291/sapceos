@@ -1220,12 +1220,258 @@ the open channel; the one joke; keep it the only one).
   trailing × as a change like %, so a ScaleRail never plots "4×" as a
   count of 4, and `lib/success.ts` takes magnitude and kind from it rather
   than parsing twice. The ledger's change bars cap at +100% (4× is +300%).
+- *Say it is a portfolio before the flight* (2026-10-31). Ali: "no one can
+  say it's my portfolio before we start at space … add skills acc to my
+  projects, my education; my number of projects seem less." Measured
+  first: the launch screen said only "SPACE OS · Mission Control for a
+  curious builder"; the galaxy opener carried the name in grey mono caps.
+  `content/portfolio.ts` `dossier()` COUNTS it from content — 31 projects
+  (10 platforms + 4 lab = 14 products, 16 design pieces, 1 venture), each
+  stack with how many projects used it (TypeScript 10, React 7, Mappls
+  SDK 4…), the PM crafts in the matrix's order (UI/UX 7, PRDs 3,
+  cross-team 6), design kinds, the degree — server-only, passed as props
+  (the launch screen loads on every route; it must not import every
+  report). `PortfolioDossier` replaces the launch screen's top-left mark: a
+  text panel (legible where it crosses the ship's wing), counts counted
+  up while the pad loads; ≤820px tall it drops the notes and "Now" and
+  shows six stacks; on a phone it is compact (three stacks, UI/UX + PRDs,
+  one-line degree) and the boot log and readout sub-line go (they ran
+  under it). The galaxy opener: "Portfolio" leads the top strip (with the
+  degree), the h1 is visible (the name, ≤245px so it ends before the lead
+  ship), then the counts line (design → /studio, venture → /dumbmoney;
+  it replaced "Also:") and one skills line. The lead ship sits in a band
+  at ~45–64% of the height at every size, so the counts and skills must
+  land BELOW it: the scroll hint and the skip are one row and the proof
+  is one line on a desktop (`contain: inline-size`, or its width re-wraps
+  the column). Checked at 1440×900, 1366×768, 1280×720, 375×812, 375×667:
+  no overlap, mobile-uat clean, Skip removes the dossier with the screen.
+  SUPERSEDED the same day by the landing below: the galaxy opener is back
+  to its 2026-10-28 self (its h1 is an h2 now) and the launch screen's
+  dossier is a title card — name, role, the three counts.
+- *The landing* (2026-10-31). Ali: "a portfolio looking page related to
+  space, my photo masked on me, then the next page continues what we
+  have"; then "a 3D animated space version of me, futuristic, with mask";
+  then "I don't like my image — a 3D animated image, downloading skills";
+  and "red as the third colour". `PortfolioHero` is section zero of the
+  home page, exactly one screen (min-height 100svh, the stage
+  `min(80svh, 760px)`), above the flight, with the page's one h1 (the
+  name). No `data-section`: it is leg 00, so the rail still counts 11.
+  Left (cut back the same day — Ali: "make the UI better, too clustered"):
+  kicker, name, role, pitch, four counts as an open row (no box; a
+  hairline before each cell; a 4-column grid whose labels wrap, so a
+  narrow column never drops a cell to its own line), one meta line
+  (degree, school · "Now at" the org), and two boxed actions plus a plain
+  "For recruiters →" link. The skill-chip rows and the "31 = …" sum are
+  gone: the orbit (five skills now, lighter tags) and the toolkit below
+  carry the skills, and an sr-only line says them. The readout is two
+  lines ("Downloading skills ▬ 3/5 React" / the unmask hint). Right, the stage: a CSS planet limb (emerald
+  atmosphere line, a red-hot terminator fading to amber), a halo, and the
+  figure. **The figure is his avatar, never the studio headshot**
+  (`ali-astronaut.webp`, 1199×1312: Ali's own AI 3D astronaut in a black suit
+  with cyan lights; he sent it after rejecting the headshot). It came with
+  a checkerboard PAINTED into an RGB file — `tools/cutout-checker.py`
+  removes that (border-connected colourless-light flood → GrabCut → hole
+  fill from a frame round the image, since hair touching the top edge split
+  the background in two → crown pockets above the brow dropped → edges
+  un-mixed against the square that was behind them). The avatar is the
+  first paint (priority image), the whole figure without WebGL or motion,
+  and what the download RESOLVES into: `HoloPortraitScene` samples it
+  into ~19-36k points (by perf level), the alpha is the mask,
+  depth is inferred (silhouette inflated by distance-to-edge, capped; a
+  head dome found at the narrowest row; luminance relief), colour is the
+  emerald ramp + 38% true colour, an emerald rim from the left and a red
+  heat rim from the right, a visor band and glint across his glasses, a
+  scan every 7 s, curls that fizz off the top. A dark silhouette plane
+  (same alpha) keeps the CSS orbit's far half behind him. Arrival is
+  "downloading": a scan plane rises from his chest over 3.4 s, he exists
+  below it, and `HoloFigure` installs the seven orbit skills one by one
+  (`data-install` + `--installed` on `.figure`, chips pop in) while
+  `HoloReadout` counts "Downloading skills · 3/7 · React" → "Skills
+  installed"; 0.9 s later `data-holo="resolved"` brings the avatar back
+  over the points and the canvas stops for good (one sequence, then the
+  image). After that the figure floats (7 s, paused off screen via
+  `data-off`) and tilts a few degrees toward the mouse (`--tx`/`--ty`).
+  (The baked hologram still, `holo-still.py`, was retired with the
+  headshot.) **Then the helmet** (same day, Ali: "use this image as 1 and
+  when someone hovers show the second image, but only the part where the
+  mouse is"): the figure is `ali-masked.webp` (the same astronaut, face
+  behind a black helmet; real alpha, 1199×1312 like the unmasked one, the
+  two line up pixel for pixel — check a 50/50 blend before swapping either)
+  and the hologram's source; `ali-astronaut.webp` is stacked on it as
+  `.reveal`, cut to a soft circle at the pointer (`--mx`/`--my` and
+  `data-peek` from HoloFigure; `--peek` is a registered `<length>` so the
+  window eases open to `clamp(64px, 24cqw, 120px)` and shut). A mouse
+  peeks while over the figure; a tap on him opens it where it lands until
+  a tap elsewhere (a finger cannot hover, and a held finger is a scroll).
+  The readout's last line says "Hover to unmask" / "Tap him to unmask" by
+  `(hover: none)`. The orbit is CSS (two copies, back under the
+  figure, front over it clipped to the near half; chips counter-rotate via
+  the `rotate` property; `--i` of `--n`, five on a phone); it keeps
+  turning at perf "low" — the landing's one loop, compositor-only — and
+  pauses off screen. The figure box is sized in container units
+  (`min(94cqh, 109.4cqw)` at the image's ratio — change both with the
+  image) so the ring sits on his collar at every stage shape. Companion:
+  the home plan was re-plotted (H 20217 with the toolkit; every waypoint
+  kept its pixel offset from its section) with a landing station high
+  right (0.4, 0.39, s 0.45), a toolkit pass (0.42, 0.38, s 0.4), and `galaxyPending`
+  now waits only while `#arrival` is ON SCREEN (an observer; it used to
+  hide the ship for 8 s on the landing). The galaxy's frameloop margin is
+  0 and it is PRIMED — one frame once warm, then nothing until it scrolls
+  in — because with the 20% margin it drew 60 fps (82 calls) under the
+  landing: the landing ran 30 fps on the iGPU (`who-draws` probe:
+  renderer.info.render.frame per renderer over 2 s).
+- *The toolkit* (2026-10-31). Ali: "the tools I code with — React, React
+  Native, Node.js, Figma, Illustrator — kinda use 3D logos in space
+  theme." `Toolkit` is a band between the landing and the flight (still
+  leg 00, no `data-section`): a corner label, "What I build with", and
+  `ToolShelf` — ONE canvas (`ToolLogosScene`) of five logos built from
+  geometry, not images (the React atom; the atom in a phone for React
+  Native; Node's hexagon with "JS"; Figma's five extruded pieces; the
+  Illustrator "Ai" tile), each over an emerald pad ring, lit emerald from
+  the left and red from the right, warping in one by one on arrival
+  (60% visible + 350 ms), atoms spinning, the rest swaying; the column
+  under the pointer, or its label, lifts and faces you. Slot i sits over
+  the i-th of five equal columns, so the server-rendered labels (name +
+  what it is for, `content/toolkit.ts`) line up without measuring. No
+  canvas under reduced motion or a software rasteriser: the labels show a
+  flat CSS mark per tool instead. On phones the "what for" line goes (five
+  columns of 335px ran the labels together).
+- *The ace* (2026-10-31). Ali: "a quote I follow — jack of all trades,
+  master of none, oftentimes better than the master of one — I need a 3D
+  ace deck card for this." `AceCard` sits beside the toolkit's shelf (the
+  band is a 2-column grid; one column under 900px): CSS 3D, no canvas — an
+  obsidian card with an emerald foil edge, a foil ace of spades ("Jack of
+  all trades" under the pip) whose sheen and glare follow the pointer
+  (`--sx`, `--gx/--gy`; `--rx/--ry` tilt), floating (paused off screen).
+  It turns over on hover, a tap, or Enter/Space (`data-turned`,
+  `aria-pressed`) to the proverb's long form (`content/building.ts`
+  `motto`; never attributed — it is pinned on Shakespeare and Franklin
+  and neither wrote it). The faces are aria-hidden; the caption carries the
+  quote for screen readers.
+  **Redrawn the same day** (Ali: "make the card cooler"): the spade is a
+  WINDOW into space — one SVG spade path, inline for the foil outline and
+  indices, and as a data-URI `mask` on a div of CSS stars, an emerald
+  nebula and an amber world with a ring — and depth is PARALLAX, not
+  nested translateZ (a face with `overflow: hidden` flattens 3D): against
+  the tilt the stars shift least, the world more, the foil outline most
+  (`--sx/--sy`). A conic light runs round the 1.5px foil edge (spinning
+  behind the opaque stock), a sheen band crosses every 6 s, a holographic
+  mint/gold sheen and a glare follow the pointer; two face-down cards
+  fanned underneath make it a deck; it is DEALT from above onto the deck on
+  first arrival (`data-deal` pending → dealt once half of it is on screen,
+  confirmed 350 ms later; dealt from the side, it sat past a phone's edge
+  until then — mobile-uat). Hover now only tilts; a click/tap/Enter turns it (a hover
+  flip meant a mouse never saw the front up close), and the quote is the
+  visible caption too. Every loop is a compositor transform, paused off
+  screen; none under reduced motion. Playwright's `locator.click()` waits
+  for a stable element and the card never stops floating — click by
+  coordinates in harnesses.
+  The toolkit's logos are in the site's colours now, not the brands'
+  (Ali: "the 3D icons in our colours"; `PALETTE` in ToolLogosScene):
+  emerald rings and a mint core for the atoms, an emerald hexagon with
+  ink "JS", Figma's pieces in mint/emerald/deep/green with its circle the
+  one red-hot core (red is heat), gunmetal for the phone and the tile with
+  an emerald rim and "Ai". The flat CSS fallbacks match.
+- *Building now* (2026-10-31). Ali: "watchsensecrm.com, building this
+  application" and "add web preview for WatchSense and DumbMoney".
+  `Building` is a band after the toolkit (leg 00): each product as its live
+  site in a browser window (chrome bar + address), turned slightly toward
+  the middle; pointing at it turns it flat and scrolls the page through it
+  (a 960×2100 capture in `public/previews/`, translateY to
+  `calc(-100% + 100cqh)` over 9 s on the compositor), and it opens the real
+  site. Under it: his part ("Building it" / "Founder & CPO"), the product's
+  own one-line description, the links (and /dumbmoney). The captures are
+  full-page Playwright shots of the live sites at 1440 wide, re-take them
+  when the sites change. Nothing about WatchSense beyond the site's own
+  words and "building it" is on file (PROFILE.md "Building now"). With the
+  ace and this band the flight starts at 2086px: `HOME_PLAN` re-plotted
+  (H 20928) with a high-right pass over each band.
+  **Monochrome until looked at** (same day, Ali: "something on what I am
+  building — monochromatic mask"): the previews were the only full-colour
+  imagery on the home page. `PreviewWindow` (client) stacks two layers of
+  the capture: `.mono`, the hologram treatment (greyscale multiplied onto
+  emerald) on a MUTED gradient (#3ca880 → #1f7558 — the hologram's bright
+  one turned a white page into a glaring slab; inverting instead turned
+  WatchSense's dark hero into one) under scanlines and a vignette; and
+  `.color`, true colour seen only through a lens under the pointer
+  (`--lx/--ly`, `data-lens`, a registered `--lens` that eases open to
+  `clamp(72px, 22cqw, 130px)`, a mint rim riding it). Both layers scroll
+  together on hover. A phone resolves to colour as the window crosses the
+  middle of the screen (scroll-driven opacity) — on a NAMED view timeline
+  on the row (`--preview`): `view()` on the layer measured it against the
+  window, whose `overflow: hidden` makes it a scroll container that never
+  scrolls, and it sat at full colour everywhere. Any scroll-driven
+  animation inside an overflow-hidden box needs the same.
+- *The flow* (2026-10-31). Ali: "think about the flow of the entire
+  website, make it easy for users — it's too complex", then "think like a
+  pro for user flow". **This supersedes "Ten legs" and "Eleven legs"
+  above.** Designed from the visitors backwards: a recruiter (30–90 s:
+  who, what role, the résumé, a way in), a hiring manager (minutes: the
+  work, whether it worked, the experience, how he thinks), a studio client
+  (the design). Rules a pro applies, and this page now follows: answer
+  the questions in the order they are asked, one section per question, a
+  summary at home and the depth one link away (every section ends on its
+  door), the same plain word for a place everywhere you navigate, no long
+  forced sequence. Measured before → after (1440×900, production):
+  24.3 → 14.2 screens desktop, 29.3 → 15.1 on a phone; 14 → 9 sections
+  (7 stops); 75 → 40 links in the page; the flight 6,075 → 3,375px (the
+  pin is `0.55` of a viewport per beat, was `1.15`; the 900 ms pacer still
+  shows every world); Contact at screen 22 → 11.3. Résumé and Contact are
+  on the first screen.
+  The stops: **Intro** (`data-section="Intro"` on the landing; toolkit
+  and building ride with it) → **Work** (the flight's opener introduces
+  the section, not the person: "Selected work · N projects, one world at
+  a time · see all projects →"; "Skip the flight" goes to `#debrief`) →
+  **Results** (Singularity `more` → "The full ledger" /about#impact) →
+  **Experience** (→ the full history) → **Design** (the dome only; the
+  four projectors under it repeated four of its pieces) → **Case
+  studies** (→ all case studies, essays, how I decide) → **Contact** (the
+  pad: "Get in touch", Résumé, Experience). Section labels are
+  "NN / Plain name"; the rail reads "Leg N / 07".
+  Navigation: the Overview menu groups its sixteen pages by intent (Work
+  · How I think · About me) with one running index — a flat numbered list
+  of sixteen was choice overload; the footer and the galaxy's hub stars
+  use the same plain names (Projects, Experience, Lab, Case Studies,
+  Contact) — page headers keep their space names. The launch countdown is
+  T−3 (was T−5). `HOME_PLAN` re-plotted (H 11859). Not done, Ali's call:
+  folding /smaak into /studio (he asked for both), deleting the four
+  unreferenced leg components.
+- *The fax, redrawn* (2026-10-31). Ali: "make this look better". The
+  sheet prints the real header and /hire's first three measured numbers
+  (passed as `sheet`, the same array the Readout counts) over bars; the
+  machine stands on a pad of rings, has a keypad, screws, an etched plate,
+  vents and a status strip; the thermal head in the slot glows red while
+  it prints and cools after, and the receive lamp is red (heat); the pass
+  is an ID card — contact chip, a foil sheen that counter-moves with the
+  drag, the magnetic stripe riding the groove — with a three-pulse chevron
+  hint and a read head whose lamp goes emerald on a read, red on a miss.
+- *The radio* (2026-11-01). Ali: "I need Back in Black in the bg to be
+  played." This overrides the 2026-09-19 "do not add a soundtrack" — for
+  this one track, opt-in. It is AC/DC's recording, so the site never hosts
+  the audio: `Radio` (root layout) plays it through **Spotify's official
+  embed** (Ali chose this over a royalty-free stand-in; full song for
+  visitors signed in to Spotify, a 30-second preview otherwise) and Ali chose
+  **"when they press play"** — nothing loads or sounds until asked. A music
+  note in the dock and the phone bar (`RadioButton`, `space:radio`) mounts
+  the iframe and opens a panel (bottom-right; above the tab bar on a phone);
+  the visitor presses Spotify's play. Hide keeps it mounted, so the song
+  survives client navigation; Stop unmounts it. The CSP gained exactly one
+  line, `frame-src https://open.spotify.com`. Never self-host the MP3 or
+  hide a YouTube player for its audio (copyright; YouTube's terms).
+  The pre-push axe run found four serious failures in the 10-31 work, all
+  fixed: the ace card, the Building preview windows and the inspection
+  triggers had aria-labels that left out their visible text (WCAG 2.5.3) —
+  they are named by a `visually-hidden` span now, since axe only checks
+  controls that carry an aria-label; the scoreboard's "not owned" marks
+  were faded to 0.55 on the tertiary grey (under 4.5:1); and the galaxy's
+  hidden star-map buttons were sixteen invisible tab stops inside the home
+  flight's aria-hidden field (`!flightControlled` now).
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
 
 **Page map (each page is a place).**
-Home = one mission in eleven legs (2026-09-23): Board → Flight → Operator → Deck → Debrief → Impact → Rules → Log → Studio → Notes → **Dispatches** → Touchdown. Signals, Ticker and the operator statement stay off the home page; Impact and the loop live on both home and `/about`. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/smaak` = the studio — the site's own palette (the blue was withdrawn 2026-09-28), sassy copy, its own planet, client work only, with the dome gallery. `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). `/hire` = the recruiter brief. Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
+Home = seven stops (2026-10-31, the flow — supersedes the eleven legs): **Intro** (landing + toolkit + building) → **Work** (the flight) → **Results** (the black hole) → **Experience** (the route) → **Design** (the dome) → **Case studies** (drones) → **Contact** (touchdown). Operator, Hangar, the Impact ledger, Flight rules and Dispatches live on /about, /missions, /about#impact, /decisions and /writing; their components are unreferenced, not deleted. `/missions` = the hangar deck. `/studio` = the studio deck (Smaak.ux, freelance). `/smaak` = the studio — the site's own palette (the blue was withdrawn 2026-09-28), sassy copy, its own planet, client work only, with the dome gallery. `/lab` = the bench. `/field-notes` = the drone bay. `/decisions` = the flight rules (beacons on a route). `/about` = the operator (portrait matrix, transmissions). `/mission-history` = the flight log (dashed route, diamond waypoints). `/contact` = the open channel (the relay satellite). `/dumbmoney` = the venture (Founder & CPO). `/hire` = the recruiter brief. Mission reports open on a large hologram of the interface; notes open on the drone that carried them.
 
 Context for Claude Code working in this repo. Read this first, every session.
 

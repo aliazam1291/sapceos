@@ -94,6 +94,15 @@ const brief = [
   },
 ];
 
+// The measured results, once: the readout counts them, the fax prints the
+// first three on its sheet.
+const measured = [
+  { value: 200000, suffix: "+", label: "Users", note: "Vahan Shakti" },
+  { value: 4, suffix: "×", label: "Collections", note: "Mappls Shop" },
+  { value: 80, suffix: "%", label: "Less manual ops work", note: "Mappls Shop" },
+  { value: 30000, suffix: "+", label: "Routes injected", note: "IOCL GeoRTD" },
+];
+
 export default function HirePage() {
   return (
     <>
@@ -120,15 +129,7 @@ export default function HirePage() {
           title="Measured, not estimated"
           action={<p className={ui.sectionNote}>Every number links back to a report that names its source. What was not measured says so.</p>}
         />
-        <Readout
-          label="Measured results"
-          items={[
-            { value: 200000, suffix: "+", label: "Users", note: "Vahan Shakti" },
-            { value: 4, suffix: "×", label: "Collections", note: "Mappls Shop" },
-            { value: 80, suffix: "%", label: "Less manual ops work", note: "Mappls Shop" },
-            { value: 30000, suffix: "+", label: "Routes injected", note: "IOCL GeoRTD" },
-          ]}
-        />
+        <Readout label="Measured results" items={measured} />
       </Section>
 
       <Section id="case" data-section="The case">
@@ -168,7 +169,7 @@ export default function HirePage() {
         {/* The same PDF, the fun way: swipe a pass, the relay prints it. The
             plain button above stays first (2026-10-28 review: no résumé
             behind a game). */}
-        <FaxTerminal />
+        <FaxTerminal sheet={{ name: profile.name, role: profile.title, place: profile.location, numbers: measured.slice(0, 3) }} />
       </Section>
 
       <NextStep

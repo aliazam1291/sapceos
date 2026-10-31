@@ -181,11 +181,22 @@
 }
 
 .more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-6);
   margin: var(--space-6) 0 0;
   @include mono-label;
 
   a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
     color: var(--accent);
     text-decoration: none;
+  }
+
+  // One accent: the first door; the other two are quieter.
+  a + a {
+    color: var(--text-primary);
   }
 }

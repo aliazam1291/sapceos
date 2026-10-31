@@ -461,3 +461,21 @@
     display: none;
   }
 }
+
+/* The radio switch (RadioButton): a bare glyph like the speaker beside it,
+   lit emerald while the Spotify player is mounted. */
+.radio {
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &[data-on] {
+    color: var(--accent);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: -4px;
+  }
+}

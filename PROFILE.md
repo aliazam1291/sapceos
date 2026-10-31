@@ -79,6 +79,12 @@ Read from D:/lap165/Projects and Downloads. Product-level facts only. ⚠️ The
 
 ---
 
+## Building now
+
+**WatchSense** (https://watchsensecrm.com) — Ali is building it (his words, 2026-10-31: "building this application"). Role beyond that not stated; do not add one until he does. What it is (from the site, read 2026-10-31): "Customer Growth Platform for Offline Businesses" — retail CRM software for shops, clinics and salons that sends automatic birthday wishes, service reminders and WhatsApp offers that bring customers back; built for 16 offline trades; Meta's official WhatsApp API; free plan. No users, revenue or results on file: claim none.
+
+**Motto** (Ali, 2026-10-31, "a quote I follow … I love this quote"): "A jack of all trades is a master of none, but oftentimes better than a master of one." Shown on the home page's ace card. Do not attribute it to anyone.
+
 ## Venture
 
 **DumbMoney** (https://dumbmoney.in) — **Founder & CPO**. Confirmed by Ali on 2026-09-20 ("I am the founder and CPO, and there is a link"). Has a dedicated page on the site (/dumbmoney).
@@ -186,6 +192,10 @@ Linear vs Jira · The AI Code Assistant Adoption Paradox · Apple Ecosystem Frag
 **Design:** Figma, Spline, Adobe Suite — wireframing, prototyping, UX research, user flow design, interaction design, usability testing
 
 **Product:** PRD writing, user story mapping, roadmapping, A/B testing, prioritisation, competitive analysis, Agile/Scrum, stakeholder management, SEO & growth
+
+**The tools he builds with** (Ali, 2026-10-31, his words: "the tools I code with"): React, React Native, Node.js, Figma, Illustrator. Shown as the home page's toolkit (`content/toolkit.ts`).
+
+**Portrait** (2026-10-31): Ali prefers his 3D astronaut avatar (AI-generated from his likeness, his choice) to the studio headshot; the site shows the avatar, never the headshot, on the landing.
 
 ---
 

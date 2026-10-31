@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { profile } from "@/content/profile";
 import { sfx } from "@/lib/spaceSound";
 import styles from "./FaxTerminal.module.scss";
 
@@ -17,9 +16,25 @@ import styles from "./FaxTerminal.module.scss";
  * gate — and the plain "Résumé (PDF)" button always sits beside it.
  *
  * Reduced motion: no glide, no feed; the sheet is simply there and the PDF
- * downloads. The sheet's "text" is bars, not type: decorative, aria-hidden,
- * and nothing under the 11px phone floor.
+ * downloads. The sheet is decorative and aria-hidden, nothing on it under the
+ * 11px phone floor.
+ *
+ * Redrawn 2026-10-31 (Ali: "make this look better"): the sheet prints the
+ * real header and the measured numbers the page passes in (the rest of it is
+ * bars); the machine got a keypad, an etched plate, screws and a pad to
+ * stand on; the thermal head in the slot glows red while it prints (red is
+ * heat); the pass is an ID card — contact chip, a sheen that moves as you
+ * drag it, the magnetic stripe riding the reader's groove.
  */
+
+export type FaxSheet = {
+  name: string;
+  role: string;
+  place: string;
+  numbers: { value: number; suffix?: string; label: string; note?: string }[];
+};
+
+const figure = (n: FaxSheet["numbers"][number]) => `${n.value.toLocaleString("en-US")}${n.suffix ?? ""}`;
 
 const PDF = "/Ali_Azam_Kazmi_.pdf";
 const FEED_MS = 2400;
@@ -35,7 +50,7 @@ const LCD: Record<State, string> = {
   done: "Printed · PDF downloaded",
 };
 
-export default function FaxTerminal() {
+export default function FaxTerminal({ sheet }: { sheet: FaxSheet }) {
   const [state, setState] = useState<State>("idle");
   const [run, setRun] = useState(0); // remounts the sheet so a reprint feeds again
   const trackRef = useRef<HTMLDivElement>(null);
@@ -157,30 +172,61 @@ export default function FaxTerminal() {
     <figure className={styles.terminal} data-state={state}>
       <div className={styles.stage} aria-hidden="true">
         <div className={styles.world}>
+          <span className={styles.pad} />
           <div className={styles.machine}>
             <div className={styles.top}>
-              <span className={styles.plate}>Relay FX-01 · paper out</span>
-              <span className={styles.slot} />
-              <span className={styles.lcdFace}>{LCD[state]}</span>
-              <span className={styles.leds}>
-                <i data-on={state !== "idle" || undefined} />
-                <i data-on={state === "printing" || state === "done" || undefined} />
-                <i data-on={state === "done" || undefined} />
+              <span className={styles.slot}>
+                <i className={styles.heat} />
               </span>
+              <span className={styles.lcdFace}>{LCD[state]}</span>
+              {/* Power, receiving (red: the head is hot), printed. */}
+              <span className={styles.leds}>
+                <i data-kind="power" data-on="" />
+                <i data-kind="rx" data-on={state === "cleared" || state === "printing" || undefined} />
+                <i data-kind="ok" data-on={state === "done" || undefined} />
+              </span>
+              <span className={styles.keypad}>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <i key={i} />
+                ))}
+              </span>
+              <span className={styles.plate}>Relay FX-01</span>
+              <span className={styles.screw} data-at="tl" />
+              <span className={styles.screw} data-at="tr" />
+              <span className={styles.screw} data-at="bl" />
+              <span className={styles.screw} data-at="br" />
             </div>
             <div className={styles.front}>
               <span className={styles.grille} />
+              <span className={styles.strip} />
             </div>
-            <div className={styles.side} />
+            <div className={styles.side}>
+              <span className={styles.vents} />
+            </div>
             <div className={styles.paper}>
               {run > 0 ? (
                 <div key={run} className={styles.sheet} style={{ ["--feed" as string]: `${FEED_MS}ms` }}>
-                  <b className={styles.sheetName}>{profile.name}</b>
-                  <span className={styles.sheetTitle}>Résumé · 1 page</span>
+                  <span className={styles.sheetTop}>
+                    <b className={styles.sheetName}>{sheet.name}</b>
+                    <span className={styles.sheetPage}>CV · 1/1</span>
+                  </span>
+                  <span className={styles.sheetRole}>{sheet.role}</span>
                   <span className={styles.rule} />
-                  {[92, 70, 84, 60, 0, 88, 76, 66, 80, 0, 72, 58, 86, 64].map((w, i) =>
-                    w ? <span key={i} className={styles.line} style={{ width: `${w}%` }} /> : <span key={i} className={styles.gap} />,
-                  )}
+                  {sheet.numbers.map((n) => (
+                    <span key={n.label} className={styles.sheetNum}>
+                      <b>{figure(n)}</b>
+                      <span>{n.label}</span>
+                    </span>
+                  ))}
+                  <span className={styles.sheetHead}>Experience</span>
+                  {[88, 72, 80].map((w, i) => (
+                    <span key={`e${i}`} className={styles.line} style={{ width: `${w}%` }} />
+                  ))}
+                  <span className={styles.sheetHead}>Skills</span>
+                  {[76, 62].map((w, i) => (
+                    <span key={`s${i}`} className={styles.line} style={{ width: `${w}%` }} />
+                  ))}
+                  <span className={styles.sheetFoot}>{sheet.place}</span>
                 </div>
               ) : null}
             </div>
@@ -192,7 +238,14 @@ export default function FaxTerminal() {
       <div className={styles.reader}>
         <div ref={trackRef} className={styles.track}>
           <span className={styles.groove} aria-hidden="true" />
-          <span className={styles.head} aria-hidden="true" />
+          <span className={styles.hint} aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className={styles.head} aria-hidden="true">
+            <i />
+          </span>
           <button
             ref={cardRef}
             type="button"
@@ -204,12 +257,14 @@ export default function FaxTerminal() {
             onClick={onClick}
             aria-label="Visitor pass: swipe or press to print the résumé (downloads the PDF)"
           >
-            <span className={styles.stripe} aria-hidden="true" />
+            <span className={styles.sheen} aria-hidden="true" />
+            <span className={styles.chip} aria-hidden="true" />
             <span className={styles.cardKind}>Visitor pass</span>
             <span className={styles.cardName}>Recruiter</span>
             <span className={styles.cardArrow} aria-hidden="true">
-              Swipe &rarr;
+              &rarr;
             </span>
+            <span className={styles.stripe} aria-hidden="true" />
           </button>
         </div>
         <p className={styles.lcd} aria-live="polite">

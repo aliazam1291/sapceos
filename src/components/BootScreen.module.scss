@@ -56,6 +56,29 @@
   left: clamp(1.75rem, 4vw, 3.5rem);
   display: grid;
   gap: 0.35rem;
+
+  // The dossier takes the left of the frame; on a phone it sits under the
+  // top-right readout, full width.
+  &[data-dossier] {
+    z-index: 1;
+
+    // A phone has no room for both the dossier and the boot log; the log is
+    // flavour, and the readout top-right already carries the real progress.
+    // The readout's sub-line ("Auto-launch · hold to go now") ran under
+    // the dossier's top edge; the T−count above it says the same.
+    @media (max-width: 640px) {
+      & ~ .inner .log,
+      & ~ .readout .readoutSub {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      top: 104px;
+      right: clamp(1.25rem, 5vw, 1.75rem);
+      left: clamp(1.25rem, 5vw, 1.75rem);
+    }
+  }
 }
 
 // Top-right: pad label, the big number, a progress rule, a sub line.

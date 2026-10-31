@@ -67,7 +67,8 @@ export function InspectTrigger({ slug, title, children }: { slug: string; title:
       role="button"
       tabIndex={0}
       className={styles.trigger}
-      aria-label={`Inspect ${title} in full colour`}
+      // Named by content (the sr-only line below), not aria-label: the
+      // hologram inside shows text an aria-label would have to repeat.
       onClick={() => inspect(slug)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -76,6 +77,7 @@ export function InspectTrigger({ slug, title, children }: { slug: string; title:
         }
       }}
     >
+      <span className="visually-hidden">Inspect {title} in full colour</span>
       {children}
       <span className={styles.triggerHint} aria-hidden="true">
         Inspect <span>⤢</span>

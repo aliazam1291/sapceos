@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import Comms from "./Comms";
 import { useEffect, useRef, useState } from "react";
 import { useOnScreen } from "@/lib/use-on-screen";
@@ -23,6 +24,8 @@ interface SingularityProps {
   title: string;
   lede?: string;
   masses: Mass[];
+  /** The door to the depth (2026-10-31 flow: every home section ends on one). */
+  more?: { href: string; label: string };
 }
 
 /**
@@ -37,7 +40,7 @@ interface SingularityProps {
  * Mounted on approach (three.js is not in the first-paint bundle), stays
  * mounted, and stops rendering off-screen via the scene's own frameloop.
  */
-export default function Singularity({ label, title, lede, masses }: SingularityProps) {
+export default function Singularity({ label, title, lede, masses, more }: SingularityProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [mount, setMount] = useState(false);
   // The orbit is an offset-path animation — main thread, five bodies, every
@@ -70,6 +73,11 @@ export default function Singularity({ label, title, lede, masses }: SingularityP
         <p className={styles.label}>{label}</p>
         <h2 className={styles.title}>{title}</h2>
         {lede ? <p className={styles.lede}>{lede}</p> : null}
+        {more ? (
+          <Link href={more.href} className={styles.more}>
+            {more.label} <span aria-hidden="true">&rarr;</span>
+          </Link>
+        ) : null}
         <p className={styles.hint} aria-hidden="true">
           Drag to orbit · Hold to dive
         </p>

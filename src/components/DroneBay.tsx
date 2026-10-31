@@ -18,8 +18,8 @@ import styles from "./DroneBay.module.scss";
  */
 export default function DroneBay({ notes }: { notes: FieldNote[] }) {
   return (
-    <Section id="notes" data-section="Field notes">
-      <SectionHead label="09 / Field notes" title="Case studies, in flight" />
+    <Section id="notes" data-section="Case studies">
+      <SectionHead label="06 / Case studies" title="Case studies, in flight" />
       <Comms at="notes" className={styles.comms} />
       <ArrivalGate />
       <ol className={styles.bay}>
@@ -52,8 +52,12 @@ export default function DroneBay({ notes }: { notes: FieldNote[] }) {
           );
         })}
       </ol>
+      {/* How he thinks, one link away (2026-10-31 flow): the essays and the
+          flight rules left the home page for their own pages. */}
       <p className={styles.more}>
-        <Link href="/field-notes">All field notes &rarr;</Link>
+        <Link href="/field-notes">All case studies &rarr;</Link>
+        <Link href="/writing">Essays &rarr;</Link>
+        <Link href="/decisions">How I decide &rarr;</Link>
       </p>
     </Section>
   );

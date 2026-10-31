@@ -1,0 +1,349 @@
+@use "../styles/tokens.scss" as *;
+
+// Two live sites in browser windows, standing a little turned toward the
+// middle like monitors on a desk; pointing at one turns it flat and scrolls
+// its page. The window is the object — no panel around it.
+
+.building {
+  @include shell;
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.label {
+  @include mono-label;
+  margin: 0;
+  color: var(--accent);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--type-large);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-12) clamp(2rem, 5vw, 5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  perspective: 1600px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+  }
+}
+
+.item {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.window {
+  --turn: 7deg;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #0b0c0d;
+  box-shadow:
+    0 30px 60px -30px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 0 40px -10px rgba(60, 221, 158, 0.18);
+  transform: rotateY(var(--turn)) rotateX(2deg);
+  transform-origin: center;
+  transition:
+    transform 0.7s var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow 0.7s var(--ease-out);
+
+  .item[data-side="right"] & {
+    --turn: -7deg;
+  }
+
+  @include hover-only {
+    &:hover {
+      transform: none;
+      border-color: var(--accent-line);
+      box-shadow:
+        0 30px 60px -30px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0, 0, 0, 0.6),
+        0 0 60px -10px rgba(60, 221, 158, 0.3);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    transform: none;
+  }
+
+  @media (max-width: 900px) {
+    transform: none;
+  }
+}
+
+// Browser chrome: three lights and the address.
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #17191b, #101213);
+
+  i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #2a2f31;
+  }
+
+  i:first-child {
+    background: rgba(60, 221, 158, 0.75);
+  }
+}
+
+.url {
+  flex: 1;
+  margin-left: 10px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  font-family: var(--font-mono);
+  font-size: max(0.6875rem, var(--micro-floor, 0px));
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// The bar's hint, hover devices only.
+.tag {
+  @include mono-label;
+  flex: none;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  color: var(--text-tertiary);
+
+  @media (hover: none), (max-width: 560px) {
+    display: none;
+  }
+}
+
+// The page, framed at a laptop's aspect; the capture inside it is tall.
+.viewport {
+  display: block;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  container-type: size;
+}
+
+/* The monochrome screen (2026-10-31, "monochromatic mask"): the hologram
+   treatment — luminance multiplied onto emerald — on a MUTED gradient, so
+   a white page reads as a dim green screen rather than a bright slab;
+   scanlines and a vignette make it a monitor. Static: no filter moves. */
+.mono {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  background: linear-gradient(180deg, #3ca880, #1f7558);
+
+  .shot {
+    filter: grayscale(1) contrast(1.2) brightness(0.95);
+    mix-blend-mode: multiply;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.5));
+    pointer-events: none;
+  }
+}
+
+/* True colour, through a lens under the pointer: a circle mask at
+   `--lx`/`--ly` whose radius (`--lens`, registered so it can ease) opens
+   on `data-lens` and closes after. */
+@property --lens {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+.color {
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(circle var(--lens) at var(--lx, 50%) var(--ly, 50%), #000 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle var(--lens) at var(--lx, 50%) var(--ly, 50%), #000 70%, transparent 100%);
+  transition: --lens 0.4s var(--ease-out);
+}
+
+.viewport[data-lens] {
+  --lens: clamp(72px, 22cqw, 130px);
+}
+
+// The lens's rim, riding the pointer.
+.ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--lens) * 2);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(138, 240, 200, 0.7);
+  box-shadow: 0 0 18px rgba(60, 221, 158, 0.35);
+  translate: calc(var(--lx, 50%) - 50%) calc(var(--ly, 50%) - 50%);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+  pointer-events: none;
+
+  .viewport[data-lens] & {
+    opacity: 1;
+  }
+}
+
+// Pointing scrolls the page through the window (translate, so it rides the
+// compositor), slowly down and quickly back — both layers together, so the
+// lens always shows the colour of what is under it.
+.shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: translateY(0);
+  transition: transform 1s var(--ease-out);
+
+  @include hover-only {
+    .window:hover & {
+      transform: translateY(calc(-100% + 100cqh));
+      transition: transform 9s cubic-bezier(0.45, 0, 0.55, 1);
+    }
+  }
+}
+
+/* A phone has no pointer to follow: the window resolves to true colour as
+   it crosses the middle of the screen and back to mono as it leaves
+   (scroll-driven opacity; where that is not supported it simply stays in
+   colour). */
+@media (hover: none) {
+  .color {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .ring {
+    display: none;
+  }
+
+  // A NAMED timeline on the row: `view()` on the layer itself measured it
+  // against the window, whose overflow makes it a scroll container that
+  // never scrolls — the layer sat at mid-range, full colour, everywhere.
+  @supports (animation-timeline: view()) {
+    .item {
+      view-timeline-name: --preview;
+    }
+
+    .color {
+      animation: resolve linear both;
+      animation-timeline: --preview;
+      animation-range: cover 20% cover 80%;
+    }
+  }
+}
+
+@keyframes resolve {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  35%,
+  65% {
+    opacity: 1;
+  }
+}
+
+.meta {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 52ch;
+}
+
+.role {
+  @include mono-label;
+  margin: 0;
+  color: var(--text-tertiary);
+}
+
+.name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.line {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-5);
+  margin: 0;
+
+  a {
+    @include mono-label;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    color: var(--text-primary);
+    text-decoration: none;
+
+    @include hover-only {
+      &:hover {
+        color: var(--accent);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window,
+  .shot {
+    transition: none;
+  }
+
+  .window:hover .shot {
+    transform: none;
+  }
+
+  .color {
+    animation: none;
+  }
+}

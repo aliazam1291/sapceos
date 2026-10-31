@@ -1,0 +1,135 @@
+@use "../styles/tokens.scss" as *;
+
+// The toolkit band: a corner label and title, then the shelf — a canvas of
+// logos over five labelled columns. No panel around the objects; the
+// labels sit on one floor line.
+
+.toolkit {
+  @include shell;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: clamp(2rem, 4vw, 4.5rem);
+  row-gap: var(--space-8);
+  padding-block: var(--space-8) var(--space-12);
+
+  // A phone: the shelf, then the ace under it.
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.main {
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.label {
+  @include mono-label;
+  margin: 0;
+  color: var(--accent);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--type-large);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.shelf {
+  display: grid;
+}
+
+.stage {
+  height: 230px;
+
+  @media (max-width: 640px) {
+    height: 130px;
+  }
+}
+
+.tools {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: var(--space-3) 0 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+
+  li {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: var(--space-2) 4px;
+    text-align: center;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+}
+
+.name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+
+  li[data-on] & {
+    color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    font-size: 0.8125rem;
+  }
+}
+
+.use {
+  @include mono-label;
+  font-size: max(0.625rem, var(--micro-floor, 0px));
+  color: var(--text-tertiary);
+
+  // Five columns of a phone have room for the names only.
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+// Without the canvas (reduced motion, no GPU): a flat mark per tool, in its
+// own colour, so the shelf is never just words.
+.mark {
+  display: none;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+
+  .shelf:not([data-live]) & {
+    display: block;
+  }
+
+  &[data-logo="react"],
+  &[data-logo="react-native"] {
+    border-radius: 50%;
+    border: 2px solid #3cdd9e;
+  }
+
+  &[data-logo="node"] {
+    background: #2fbf8a;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  &[data-logo="figma"] {
+    background: conic-gradient(#8af0c8 0 25%, #3cdd9e 0 50%, #ff3d2e 0 75%, #1a8f68 0);
+    border-radius: 50%;
+  }
+
+  &[data-logo="illustrator"] {
+    background: #1d2224;
+    border: 2px solid #3cdd9e;
+  }
+}
