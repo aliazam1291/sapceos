@@ -9,7 +9,8 @@ import { NextStep, PageHeader, Row, Section, SectionHead, ui } from "@/component
 import { achievements, certifications, education, experience } from "@/content/profile";
 
 export const metadata: Metadata = {
-  title: { absolute: "Resume — Product Manager · Ali Azam Kazmi" },
+  // Was "Resume — Product Manager": a title he does not hold (PROFILE.md).
+  title: { absolute: "Résumé & Experience · Ali Azam Kazmi, Product Engineer" },
   description:
     "Experience: DumbMoney (Founder & CPO), MapMyIndia (Product & Platform), Smaak.ux, Wise Work, Datamatics. B.Tech CSE, SRM. Aha! TPM, Google UX, AWS certified.",
   alternates: { canonical: "/mission-history" },

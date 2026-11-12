@@ -9,6 +9,7 @@ import { ButtonLink, NextStep, PageHeader, Readout, Section, SectionHead, ui } f
 import { plainName } from "@/content/pages";
 import { aiTools, lookingFor, openTo, profile } from "@/content/profile";
 import { identityKeywords, keywordsFor, roleKeywords } from "@/lib/keywords";
+import { siteUrl } from "@/lib/site";
 import styles from "./hire.module.scss";
 
 /*
@@ -57,7 +58,8 @@ export const metadata: Metadata = {
     title: "Hiring a Technical PM? The 30-second brief — Ali Azam Kazmi",
     description,
     url: "/hire",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Ali Azam Kazmi — Space OS" }],
+    // The image is this route's own card (./opengraph-image.tsx): the link a
+    // recruiter is sent should unfurl as the brief, not the site's cover.
   },
 };
 
@@ -103,6 +105,12 @@ const measured = [
   { value: 30000, suffix: "+", label: "Routes injected", note: "IOCL GeoRTD" },
 ];
 
+// The forwarding draft: who he is, what he wants, where the brief and the
+// CV are. Facts from the profile; nothing a recruiter would have to correct.
+const forward = `mailto:?subject=${encodeURIComponent(`Candidate: ${profile.name}, ${lookingFor}`)}&body=${encodeURIComponent(
+  `${profile.name}: ${profile.title}. ${profile.currentRole} at ${profile.currentOrg}. ${openTo}.\n\nThe 30-second brief: ${siteUrl}/hire\nRésumé (PDF): ${siteUrl}/Ali_Azam_Kazmi_.pdf\nEmail: ${profile.email}`,
+)}`;
+
 export default function HirePage() {
   return (
     <>
@@ -111,8 +119,21 @@ export default function HirePage() {
         label="Recruiter brief"
         plain={plainName["/hire"]}
         title="The PM who builds the product"
-        lede={`${lookingFor}. ${openTo}. Here is the whole case in thirty seconds, then the CV.`}
+        lede={`${lookingFor}. ${openTo}. The CV is one click away; the whole case takes thirty seconds.`}
         figure={<PageForm form="probe" label="A slowly turning wireframe probe." size={240} />}
+        actions={
+          <>
+            <ButtonLink href="/Ali_Azam_Kazmi_.pdf" external primary>
+              Résumé (PDF)
+            </ButtonLink>
+            <ButtonLink href={profile.calendly} external>
+              Book a call
+            </ButtonLink>
+            <ButtonLink href={`mailto:${profile.email}`} external>
+              Email
+            </ButtonLink>
+          </>
+        }
       />
       <div className={ui.pageComms}>
         <Comms at="hire" />
@@ -164,6 +185,11 @@ export default function HirePage() {
           </ButtonLink>
           <ButtonLink href={`mailto:${profile.email}`} external>
             {profile.email}
+          </ButtonLink>
+          {/* A recruiter rarely decides alone: one click drafts the email
+              that passes this page to the hiring manager. */}
+          <ButtonLink href={forward} external>
+            Forward this brief
           </ButtonLink>
         </div>
         {/* The same PDF, the fun way: swipe a pass, the relay prints it. The

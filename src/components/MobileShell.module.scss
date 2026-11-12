@@ -22,7 +22,10 @@
     // and over everything the page draws (SectionGuide, the vignette).
     z-index: 9990;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto var(--app-berth);
+    // Five children, five tracks (2026-11-12). The radio button was added
+    // without one: it fell into the berth's column, the berth wrapped to a
+    // second row, and the docked ship sat on the music note.
+    grid-template-columns: auto minmax(0, 1fr) auto auto var(--app-berth);
     align-items: center;
     column-gap: var(--space-3);
     height: calc(var(--app-top) + env(safe-area-inset-top, 0px));
@@ -125,6 +128,18 @@
 .berth {
   display: block;
   height: 100%;
+}
+
+// Search and the radio read as one pair: the second closes the column gap.
+.radio {
+  margin-left: calc(var(--space-3) * -1);
+}
+
+// A 320px phone has no room for "At": the screen's name alone.
+@media (max-width: 359px) {
+  .screenLabel {
+    display: none;
+  }
 }
 
 .tab {

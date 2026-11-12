@@ -287,6 +287,50 @@
     height: min(56svh, 480px);
     min-height: 340px;
   }
+
+  // A phone (2026-11-12): the figure took 455px and pushed "See the work"
+  // and the résumé to y≈1004-1060 on an 812px screen — a full screen below
+  // the fold, for the two things a recruiter came for. A shorter stage, and
+  // the actions ahead of the counts (see `.copy` below), put both on the
+  // first screen at 812 and 667 tall.
+  @media (max-width: 767px) {
+    height: min(36svh, 320px);
+    min-height: 230px;
+  }
+}
+
+@media (max-width: 767px) {
+  .copy {
+    gap: var(--space-4);
+  }
+
+  // Visual order only: counts and the meta line follow the actions. Neither
+  // holds a focusable thing, so the tab order is unchanged.
+  .counts {
+    order: 1;
+  }
+
+  .meta {
+    order: 2;
+  }
+
+  // The two boxed actions share one row; the recruiter link takes the next.
+  .actions {
+    margin-top: 0;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .primary,
+  .action {
+    flex: 1 1 0;
+    justify-content: center;
+    padding: 0 var(--space-2);
+    white-space: nowrap;
+  }
+
+  .textLink {
+    flex-basis: 100%;
+  }
 }
 
 // A soft emerald glow behind the head: the subject is lit, the sky is not.

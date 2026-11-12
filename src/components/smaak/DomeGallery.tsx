@@ -55,7 +55,10 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
         if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(() => setMounted(true), { timeout: 2000 });
         else window.setTimeout(() => setMounted(true), 600);
       },
-      { rootMargin: "200px" },
+      // Mount well before arrival (a viewport and a half below): the
+      // textures take seconds to decode, and the reader should meet a dome,
+      // not a loading line.
+      { rootMargin: "150% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();

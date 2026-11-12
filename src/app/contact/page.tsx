@@ -36,6 +36,22 @@ export default function ContactPage() {
         // title (2026-09-20, Ali: "more elements like the spaceship").
         figure={<Satellite label="A comms relay satellite holding station: gold dish, two solar wings, an emerald beacon." size={340} />}
         figureWidth={340}
+        // Plain buttons, on the first screen (2026-11-12): the email lived in
+        // an 8px label on the signal field's canvas and the first real
+        // button was a screen and a half down.
+        actions={
+          <>
+            <ButtonLink href={`mailto:${profile.email}`} external primary>
+              Email me
+            </ButtonLink>
+            <ButtonLink href={profile.calendly} external>
+              Book a call
+            </ButtonLink>
+            <ButtonLink href="/Ali_Azam_Kazmi_.pdf" external>
+              Résumé (PDF)
+            </ButtonLink>
+          </>
+        }
       />
       <div className={ui.pageComms}>
         <Comms at="contact" />

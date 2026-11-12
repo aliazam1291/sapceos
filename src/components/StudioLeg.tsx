@@ -35,7 +35,11 @@ export default function StudioLeg() {
         * glance. The dome's frames are holograms (2026-09-30), lit in true
         * colour only when pointed at.
         */}
-      <DomeGallery items={gallery.slice(0, 10)} />
+      {/* All of it (2026-11-12). Ten pieces made two rings of five: three
+          frames in the lens at rest, and a stage that read as mostly empty.
+          The full set is two rings of seven, the layout the dome was
+          measured for. */}
+      <DomeGallery items={gallery} />
 
     </Section>
   );

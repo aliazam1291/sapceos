@@ -59,21 +59,30 @@ const HOME_PLAN: Waypoint[] = [
   // waypoint that survived kept its pixel offset from the start of its
   // section (the 2026-09-27 plot); Operator, Hangar, Impact, Rules and
   // Dispatches left the page, and their waypoints with them.
+  // Re-plotted again 2026-11-12 (H 12481): the footer lost 336px (its
+  // navigation runs in two columns) and the dome's index gained 67 (all
+  // fourteen pieces), so every fraction moved; each waypoint kept its pixel
+  // offset from its section. Now: toolkit 0.078, building 0.120, work
+  // 0.182, results 0.473, experience 0.551, design 0.675, case studies
+  // 0.787, contact 0.882, footer 0.999.
   // Intro: he has the frame; the ship holds the sky above his right
   // shoulder, small, above the rail and right of his hair.
   { p: 0.0, x: 0.4, y: 0.39, s: 0.45 },
   // Toolkit and building: full-width objects, so the same high pass, right.
-  { p: 0.076, x: 0.42, y: 0.38, s: 0.4 },
-  { p: 0.143, x: 0.43, y: 0.4, s: 0.38 },
-  { p: 0.177, x: 0.36, y: -0.3, s: 0.7 }, // boarding (the galaxy flight has the frame; the companion yields)
-  { p: 0.38, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large (the lead ship climbs out here)
-  { p: 0.462, x: -0.3, y: 0.3, s: 0.6 }, // results: over the black hole's sky, top left (the hole then captures it)
-  { p: 0.558, x: 0.34, y: 0.06, s: 0.9 }, // experience: the route holds the left; the ship rides the right
+  // x 0.38-0.4, not 0.42-0.43: copy avoidance used to refuse any station
+  // past 0.42 and pull the ship in; now that it honours the plan, the old
+  // values (plus the spline's bulge) put a wing off the right edge.
+  { p: 0.078, x: 0.4, y: 0.38, s: 0.4 },
+  { p: 0.146, x: 0.38, y: 0.4, s: 0.38 },
+  { p: 0.181, x: 0.36, y: -0.3, s: 0.7 }, // boarding (the galaxy flight has the frame; the companion yields)
+  { p: 0.389, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large (the lead ship climbs out here)
+  { p: 0.473, x: -0.3, y: 0.3, s: 0.6 }, // results: over the black hole's sky, top left (the hole then captures it)
+  { p: 0.571, x: 0.34, y: 0.06, s: 0.9 }, // experience: the route holds the left; the ship rides the right
   // Design: the dome fills the width and takes the drag, so the ship keeps
   // well clear of it: high, small, and out at the left margin.
-  { p: 0.687, x: -0.3, y: 0.44, s: 0.45 },
-  { p: 0.773, x: 0.3, y: 0.42, s: 0.5 }, // case studies: high, small, distant; the drones own the frame
-  { p: 0.864, x: 0.0, y: 0.1, s: 1.1 }, // contact: descends toward the pad, then hands off to the landed ship (shipState.landed)
+  { p: 0.703, x: -0.3, y: 0.44, s: 0.45 },
+  { p: 0.797, x: 0.3, y: 0.42, s: 0.5 }, // case studies: high, small, distant; the drones own the frame
+  { p: 0.89, x: 0.0, y: 0.1, s: 1.1 }, // contact: descends toward the pad, then hands off to the landed ship (shipState.landed)
   { p: 1.0, x: 0.0, y: -0.1, s: 1.1 },
 ];
 
@@ -101,7 +110,22 @@ const END: Waypoint = { p: 1.0, x: 0.3, y: 0.12, s: 0.8 };
 const PAGE_PLAN_REPORT: Waypoint[] = [REST, { p: 0.5, x: -0.36, y: -0.32, s: 0.7 }, END];
 const PAGE_PLAN_DECK: Waypoint[] = [REST, { p: 0.5, x: 0.1, y: 0.4, s: 0.5 }, END];
 const PAGE_PLAN_PROSE: Waypoint[] = [REST, { p: 0.5, x: 0.32, y: 0.3, s: 0.62 }, END];
+// /hire (2026-11-12): every band of the page is a full-width panel of facts
+// (the manifest, the readout, the claims), so the deck's "small high pass"
+// crossed whatever panel was at the top of the screen — the ship sat on the
+// manifest's "Looking for" cell — and copy avoidance had nowhere higher to
+// go. It leaves the header for the right margin, outside the shell and
+// above the rail, small, and holds there until the page ends.
+// At x 0.42 and s 0.3 the hull's hit-test box starts just outside a 1240px
+// shell on a 1440px screen, and the spline's bulge between the two holds
+// (up to +0.03) still leaves the whole ship in the frame. (The first
+// attempt, at 0.46, was refused by copy avoidance's own 0.42 limit — see
+// the `inFrame` filter in Pilot; at 0.44 it was too small and too far out
+// to see.)
+const MARGIN = { x: 0.42, y: 0.4, s: 0.3 };
+const PAGE_PLAN_MARGIN: Waypoint[] = [REST, { p: 0.1, ...MARGIN }, { p: 0.9, ...MARGIN }, END];
 function pagePlanFor(pathname: string): Waypoint[] {
+  if (pathname === "/hire") return PAGE_PLAN_MARGIN;
   // The venture page has a report's shape (manifest, sticky rail, rows).
   if (/^\/(missions|field-notes)\/[^/]+/.test(pathname) || pathname === "/dumbmoney") return PAGE_PLAN_REPORT;
   // /flight-data's bar rows run the full width like a deck's object rows,
@@ -506,7 +530,13 @@ function Pilot({
         [side * 0.5, 0.1],
         [-side * 0.14, 0.14],
         [0, 0.3],
-      ].filter(([dx]) => inFrame(dx)) as [number, number][];
+        // The 0.42 limit is for OFFSETS, so a dodge never pushes the ship
+        // out of the frame. The plan's own column (dx 0) is always allowed:
+        // it was filtered too, so a waypoint plotted past 0.42 — /hire's
+        // margin station, and wherever the spline bulges between two
+        // waypoints — was refused even when clear, and the ship was sent
+        // back over the copy it had been plotted away from (2026-11-12).
+      ].filter(([dx]) => dx === 0 || inFrame(dx)) as [number, number][];
       const pick = candidates.find(([dx, dy]) => clear(dx, dy)) ?? candidates[candidates.length - 1] ?? [0, 0.3];
       const [lx, ly] = dodgeLast.current;
       if (pick[0] === lx && pick[1] === ly) {

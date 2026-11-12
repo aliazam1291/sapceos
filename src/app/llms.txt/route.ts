@@ -1,7 +1,10 @@
 import { missions } from "@/content/missions";
 import { fieldNotes } from "@/content/field-notes";
 import { listedWriting } from "@/content/writing";
-import { profile, lookingFor } from "@/content/profile";
+import { aiTools, education, experience, lookingFor, openTo, profile } from "@/content/profile";
+import { results } from "@/content/results";
+import { building } from "@/content/building";
+import { faqs } from "@/content/faq";
 import { siteUrl } from "@/lib/site";
 
 /*
@@ -29,16 +32,51 @@ export function GET() {
 
 ${profile.oneLine}
 
+## Key facts
+
+- Name: ${profile.name}
+- Current role: ${profile.currentRole}, ${profile.currentOrg}
+- Location: ${openTo} (${profile.location})
+- Looking for: ${lookingFor}
+- Education: ${education.degree}, ${education.school} (${education.period}; ${education.detail})
+- Works with AI tools: ${aiTools.join(", ")}
+- Résumé (PDF): ${siteUrl}/Ali_Azam_Kazmi_.pdf
+- Email: ${profile.email}
+
+## Measured results
+
+Every figure is one already published on a page of this site, with its source. Nothing here is an estimate.
+
+${results.map((r) => `- ${r.value} ${r.label} (${r.source})`).join("\n")}
+
+## Experience
+
+${experience.map((e) => `- ${e.role}, ${e.org} (${e.period})`).join("\n")}
+
+## Building now
+
+${building.map((b) => `- [${b.name}](${b.url}): ${b.role}. ${b.line}`).join("\n")}
+
 ## Core pages
 
+- [Recruiter brief](${siteUrl}/hire): the thirty-second case, the measured numbers, the CV and a call link
 - [About](${siteUrl}/about): who Ali is, how he works and what he has shipped
-- [Missions](${siteUrl}/missions): the projects, each with a report on the problem, his role and the stack
-- [Flight rules](${siteUrl}/decisions): the product calls he has made, with the evidence for each
-- [Flight log](${siteUrl}/mission-history): work history
+- [Projects](${siteUrl}/missions): ten product platforms, each with a report on the problem, his role and the stack
+- [How I decide](${siteUrl}/decisions): the product calls he has made, with the evidence for each
+- [Experience](${siteUrl}/mission-history): work history, education and certifications
+- [Case studies](${siteUrl}/field-notes): teardowns of products he does not work on
+- [Writing](${siteUrl}/writing): essays and guides on product management and AI
 - [Studio](${siteUrl}/studio): freelance client work under Smaak.ux
-- [DumbMoney](${siteUrl}/dumbmoney): the venture he founded
-- [FAQ](${siteUrl}/faq): recruiter questions answered
+- [Smaak.ux](${siteUrl}/smaak): the design studio's own page
+- [DumbMoney](${siteUrl}/dumbmoney): the venture he co-founded
+- [Lab](${siteUrl}/lab): independent builds and open source
+- [Portfolio analytics](${siteUrl}/flight-data): the portfolio counted from its own content
+- [Questions](${siteUrl}/faq): recruiter questions answered
 - [Contact](${siteUrl}/contact): ${profile.email}
+
+## Questions and answers
+
+${faqs.map((f) => `### ${f.q}\n\n${f.a.join("\n\n")}`).join("\n\n")}
 
 ## Projects
 

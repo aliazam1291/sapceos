@@ -132,6 +132,12 @@ export default function Landing({
       data-exploded={exploded || undefined}
       aria-label="Touchdown — the ship lands and its parts introduce the operator"
     >
+      {/* The doors come first (2026-11-12). They sat under the loadout,
+          1,100px below the section's top on a desktop and 1,390px on a
+          phone: a reader arriving at "Contact" met a ship and a parts index
+          and no way to get in touch for more than a screen. */}
+      {children ? <div className={styles.doors}>{children}</div> : null}
+
       <div
         className={styles.stage}
         onPointerMove={onMove}
@@ -258,8 +264,6 @@ export default function Landing({
           </div>
         ))}
       </div>
-
-      {children ? <div className={styles.foot}>{children}</div> : null}
     </section>
   );
 }

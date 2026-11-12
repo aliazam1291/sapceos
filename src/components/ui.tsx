@@ -56,7 +56,15 @@ export function PageHeader({
   lede,
   figure,
   figureWidth,
+  actions,
 }: {
+  /**
+   * The page's own doors, on its first screen (2026-11-12). /hire promised
+   * "the whole case in thirty seconds, then the CV" and kept the CV three
+   * screens down (five on a phone); /contact kept the email in a canvas
+   * label. A page whose job is an action shows the action here.
+   */
+  actions?: ReactNode;
   label: string;
   /**
    * What this page is in plain words — "Projects", "Case studies",
@@ -102,6 +110,7 @@ export function PageHeader({
       ) : lede ? (
         <p className={styles.lede}>{lede}</p>
       ) : null}
+      {actions ? <div className={styles.pageActions}>{actions}</div> : null}
     </div>
   );
 }

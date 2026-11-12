@@ -263,6 +263,24 @@
   }
 }
 
+// The page's doors: one row under the title and lede, the full width.
+.pageActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+
+  @media (min-width: 900px) {
+    grid-column: 1 / -1;
+  }
+}
+
+// The transcript sits between a header and its first section on every
+// secondary page, so the rule below never matched and the section opened
+// on a full --space-section (up to 10rem) of nothing (2026-11-12).
+.pageComms + .section {
+  padding-top: clamp(var(--space-8), 4vw, var(--space-12));
+}
+
 /*
  * A page header already ends on a rule and 3rem of padding; the section that
  * follows then added a full --space-section (up to 10rem) on top, opening a
@@ -1365,6 +1383,16 @@
 .footerLinks {
   display: grid;
   gap: var(--space-3);
+
+  // A long list runs in two columns on a desktop (2026-11-12): Navigation's
+  // fifteen links were one column 720px tall, the footer 1,245px — taller
+  // than the screen — and its lower half sat on the horizon's wireframe.
+  @media (min-width: 1000px) {
+    &:has(> :nth-child(8)) {
+      grid-template-columns: repeat(2, minmax(0, max-content));
+      column-gap: var(--space-8);
+    }
+  }
 
   @media (max-width: 640px) {
     display: flex;

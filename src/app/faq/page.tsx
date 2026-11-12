@@ -28,7 +28,9 @@ const description =
   "Straight answers about Ali Azam Kazmi: the roles he is after, why an engineer is moving into product management, what he has shipped, and what was measured.";
 
 export const metadata: Metadata = {
-  title: { absolute: "Questions & Answers · Ali Azam Kazmi, Product Manager" },
+  // No "Product Manager" after the name: he does not hold the title yet
+  // (PROFILE.md), and a tab title is a claim like any other (2026-11-12).
+  title: { absolute: "Questions & Answers for Recruiters · Ali Azam Kazmi" },
   description,
   keywords: keywordsFor(
     ["hire Ali Azam Kazmi", "engineer to product manager", "product manager questions", "what has Ali Azam Kazmi built"],

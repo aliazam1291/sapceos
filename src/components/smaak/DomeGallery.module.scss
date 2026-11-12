@@ -24,8 +24,14 @@
   // not scroll past.
   touch-action: pan-y;
 
+  // The canvas stays invisible until the scene reports its first drawn
+  // frame (`data-ready`). On home it is the seventh canvas and takes 10-15 s
+  // to warm; until then some GPUs and browser panes composite the empty,
+  // never-drawn buffer as white — a glowing box over the page (2026-11-04).
   canvas {
     display: block;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
     -webkit-mask-image:
       linear-gradient(to right, transparent, #000 9%, #000 91%, transparent),
       linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
@@ -34,6 +40,10 @@
       linear-gradient(to right, transparent, #000 9%, #000 91%, transparent),
       linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
     mask-composite: intersect;
+  }
+
+  &[data-ready] canvas {
+    opacity: 1;
   }
 
   // A square-ish stage on a phone: the lens widens for it (DomeGalleryScene

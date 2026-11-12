@@ -1466,6 +1466,87 @@ the open channel; the one joke; keep it the only one).
   were faded to 0.55 on the tertiary grey (under 4.5:1); and the galaxy's
   hidden star-map buttons were sixteen invisible tab stops inside the home
   flight's aria-hidden field (`!flightControlled` now).
+- *The reader's walk* (2026-11-12). Ali: "see the flaws in terms of ui/ux …
+  make sure our website is seo optimised and aeo". Walked the home page
+  section by section at 1440×900 and 375×812 on the production build (a
+  scratch script: scroll to each `main section[id]`, wait, shoot) and
+  measured where each call to action sits. What it found, all fixed:
+  (1) **the dome box** — the dome canvas is `opacity: 0` until the scene's
+  first drawn frame (`data-ready`); a never-drawn masked WebGL canvas was
+  composited white on Ali's machine for the 10-15 s it warms. It mounts a
+  viewport and a half early (`rootMargin: "150% 0px"`). (2) **Phone hero**:
+  the figure took 455px and "See the work" / Résumé sat at y≈1004-1060 on an
+  812px screen. Stage is `min(36svh, 320px)` below 768px and the actions
+  come before the counts (`order`, visual only): both on the first screen
+  at 812 and 667 tall. (3) **Contact had no contact**: the buttons were the
+  last thing in the section, 1,108px below its top on a desktop, 1,389 on a
+  phone. `Landing` renders `children` as `.doors` ABOVE the stage. (4)
+  **Results showed no results on a phone**: `.masses` was `display: none`
+  under 720px and the copy was `max-width: 50vw` (188px; the transcript
+  wrapped a word a line over the disc). The numbers dock as a still
+  two-column strip above the hole, the copy takes the width over a scrim.
+  Rules of equal specificity: the phone overrides for `.mass` must come
+  LAST in the file (the first attempt sat above the orbit rules and lost).
+  (5) **The ship sat on the music note**: the radio button was added to the
+  phone bar without a grid track, fell into the berth's column and pushed
+  the berth to a second row. Five children, five tracks. (6) **Footer**:
+  Navigation's fifteen links were one 720px column, the footer 1,245px;
+  lists of eight or more run two columns from 1000px (909px now). (7) The
+  home dome shows all fourteen pieces (ten made rings of five: three
+  frames in the lens). (8) Copy that had drifted: "four bays lit" (the
+  bays left on 10-31), "Four entries in the log" beside "7 roles" — a
+  voice line must not carry a count. `HOME_PLAN` re-plotted (H 12481).
+  **SEO/AEO**: the crawl was already clean (43 routes, schema on every
+  page: Person+WebSite everywhere, FAQPage, ProfilePage, Article,
+  CreativeWork, CollectionPage, Organization, BreadcrumbList; robots names
+  the AI crawlers). Two tab titles claimed a title he does not hold
+  ("…Ali Azam Kazmi, Product Manager" on /faq, "Resume — Product Manager"
+  on /mission-history) — a title is a claim like any other; grep
+  `"Product Manager"` in `src/app` metadata before shipping one.
+  `/llms.txt` was a link list; it now leads with what an answer engine
+  quotes — key facts, every measured result with its source, the roles,
+  what he is building, plain page names with /hire first, and the FAQ's
+  questions and answers in full — all read from the same content objects.
+  The limit is unchanged from 10-24: discovery and authority (Search
+  Console, Bing, a custom domain, links from his profiles) are Ali's.
+- *The recruiter's path* (2026-11-12, later). Ali: "fix the ui and see how
+  do HRs come more on my profile." First the honest answer, so nobody
+  re-derives it: recruiters do not find a portfolio by browsing. The link
+  reaches them from a LinkedIn profile or message, an application form, the
+  résumé PDF, or a forward — so the site's job is to (a) unfurl well when
+  the link is pasted, (b) put the action on the first screen it lands on,
+  (c) be easy to pass on. Getting the link in front of them (LinkedIn
+  headline / Featured, Naukri, Instahyre, Wellfound, Cutshort, every
+  application) is Ali's. Measured on the production build and fixed:
+  (1) **/hire promised "then the CV" and kept it at y=2997 on a desktop
+  and y=4119 on a phone.** `PageHeader` takes `actions` (a row under the
+  title and lede); /hire shows Résumé · Book a call · Email there, /contact
+  shows Email me · Book a call · Résumé (its email had been an 8px canvas
+  label, its first real button a screen and a half down). A page whose job
+  is an action shows the action in its header. (2) `.pageComms + .section`
+  — the transcript sits between every secondary header and its first
+  section, so `.pageHeader + .section` never matched and each page opened
+  on up to 10rem of nothing. (3) **/hire has its own share card**
+  (`app/hire/opengraph-image.tsx`): name, positioning line, the role
+  wanted, and the four numbers the page's readout counts, read from
+  `results.ts`; the route no longer names the site cover in `openGraph`
+  (a file-based image wins anyway). (4) "Forward this brief" in /hire's
+  Next step: a `mailto:` with no recipient, the subject and body filled
+  from the profile — a recruiter rarely decides alone. (5) The ship sat on
+  the manifest's "Looking for" cell: every band of /hire is a full-width
+  panel, so it flies `PAGE_PLAN_MARGIN` (right margin, above the rail,
+  small). That took three builds, for a reason worth keeping: copy
+  avoidance's `inFrame` filter (|x| ≤ 0.42) was applied to the plan's own
+  station too, so any waypoint plotted past 0.42 — or wherever the
+  Catmull-Rom spline bulges between two waypoints (up to +0.03 between two
+  equal ones with distant neighbours) — was refused even when clear and the
+  ship was sent back over the copy. `dx === 0` is always allowed now; the
+  limit is for offsets. Home's toolkit/building waypoints came in to
+  0.38-0.4 because they had been relying on being refused. (6) **The résumé PDF's contact lines were plain text**; the
+  email, site (→ /hire), LinkedIn, GitHub, Behance and the footer's brief
+  link are real links (`tools/resume/resume.html`, republished, one page).
+  Not possible from here: Vercel Analytics (the MCP token has no team, so
+  no referrer data), and UTM breakdowns need a paid plan.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

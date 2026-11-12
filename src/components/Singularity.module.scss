@@ -96,8 +96,43 @@
   list-style: none;
   pointer-events: none;
 
+  // A phone (2026-11-12). The numbers were `display: none` here: the Results
+  // stop showed no results. They dock as a still two-column strip in the sky
+  // above the hole, over a scrim, and the orbit is left to wider screens.
   @media (max-width: 720px) {
-    display: none;
+    z-index: 1;
+    inset: 13% var(--shell-pad) auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4) var(--space-5);
+
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -5rem calc(var(--shell-pad) * -1) -3rem;
+      background: linear-gradient(180deg, rgba(3, 3, 3, 0.9) 55%, transparent);
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  // The copy had `max-width: 50vw` — 188px on a phone: the lede ran across
+  // the disc's bright ring and the transcript wrapped a word per line. It
+  // takes the width now, low in the frame, over its own scrim.
+  .copy {
+    z-index: 1;
+    right: var(--shell-pad);
+    bottom: clamp(1.25rem, 4vh, 2.5rem);
+    max-width: none;
+
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -4rem calc(var(--shell-pad) * -1) -6rem;
+      background: linear-gradient(180deg, transparent, rgba(3, 3, 3, 0.9) 34%);
+    }
   }
 }
 
@@ -213,5 +248,23 @@ html[data-perf="low"] .mass { animation-play-state: paused; }
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
+  }
+}
+
+// A phone: the bodies hold still in a two-column strip (see `.masses`).
+// Last in the file on purpose — the orbit rules above have the same
+// specificity, and the first attempt at this sat before them and lost.
+@media (max-width: 720px) {
+  .mass {
+    position: static;
+    text-align: left;
+    offset-path: none;
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .massValue {
+    font-size: calc(1rem + var(--w) * 0.45rem);
   }
 }
