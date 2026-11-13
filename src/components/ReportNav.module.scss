@@ -67,6 +67,14 @@
   white-space: nowrap;
   transition: color var(--dur-fast) var(--ease-out);
 
+  // In the phone rail an item keeps its own width (2026-11-13). The
+  // `min-width: 36px` above replaced the flex default of `auto`, so every
+  // item shrank to 36px and the labels ran over one another into a single
+  // unreadable strip.
+  @media (max-width: 900px) {
+    flex: none;
+  }
+
   &::before {
     content: "";
     width: 10px;

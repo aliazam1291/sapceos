@@ -63,6 +63,10 @@ export default function PageForm({
       style={{ maxWidth: `${size}px` }}
       role="img"
       aria-label={label}
+      // The page header lays a wireframe figure beside the lede on a phone
+      // (ui.module.scss `.pageAside`); this is how it knows one from a
+      // hologram or a drone.
+      data-pageform=""
     >
       {mounted ? <FormScene form={form} seed={seed} paused={!visible} /> : null}
     </div>

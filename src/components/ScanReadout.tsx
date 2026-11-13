@@ -41,7 +41,7 @@ export default function ScanReadout({ value, duration = 900 }: { value: string; 
   return (
     <>
       {value.slice(0, i)}
-      {n.toLocaleString("en-IN")}
+      {n.toLocaleString("en-US")}
       {value.slice(i + m[1].length)}
     </>
   );

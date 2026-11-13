@@ -62,12 +62,12 @@ export default function Counter({
     <span ref={ref} style={{ display: "inline-grid", whiteSpace: "nowrap" }}>
       <span aria-hidden="true" style={{ gridArea: "1 / 1", visibility: "hidden" }}>
         {prefix}
-        {value.toLocaleString("en-IN")}
+        {value.toLocaleString("en-US")}
         {suffix}
       </span>
       <span style={{ gridArea: "1 / 1" }}>
         {prefix}
-        {display.toLocaleString("en-IN")}
+        {display.toLocaleString("en-US")}
         {suffix}
       </span>
     </span>

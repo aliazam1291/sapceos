@@ -1547,6 +1547,33 @@ the open channel; the one joke; keep it the only one).
   link are real links (`tools/resume/resume.html`, republished, one page).
   Not possible from here: Vercel Analytics (the MCP token has no team, so
   no referrer data), and UTM breakdowns need a paid plan.
+- *The other pages, walked* (2026-11-13). Ali: "improve the ui". The same
+  walk as 11-12, on ten secondary pages (a scratch script: metrics per
+  route, first screens stitched into contact sheets at 1440 and 375, and
+  the ship's position read 4 s after a wheel scroll stops). Found and fixed:
+  (1) **Phone report rail was one unreadable strip.** `ReportNav` `.item`
+  has `min-width: 36px` (the tap floor), which replaces the flex default of
+  `auto`: in the phone scroller every item shrank to 36px and the labels
+  overlapped ("BRIEFCONTEXTUSERSDISCOV…"). `flex: none` there. A
+  `min-width` on a flex child is a shrink permission; pair it with
+  `flex: none` in any scroller. (2) **A wireframe took a third of the first
+  phone screen** on /hire, /faq, /writing, every essay, /decisions,
+  /mission-history, /flight-data: `PageForm` (marked `data-pageform`) stood
+  220px square between title and lede. Below 900px `.pageAside:has(
+  [data-pageform])` lays it beside the lede at 96px. Holograms, drones, the
+  satellite and the portrait keep the slot. (3) `.pager + .section`: 160px
+  of nothing between a report's pager and its manifest. (4) **Two number
+  formats.** `Counter`, `Bars` and `ScanReadout` grouped as en-IN
+  ("2,00,000+" on /hire, /missions and the flight HUD) while the hero, the
+  results, the share card and `ResultValue` wrote "200,000+". All en-US now;
+  the 10-29 rule ("never en-IN") covers every counter. (5) **The ship
+  settled on copy** on reports (on the sticky rail, "Discovery", for a
+  fifth of the page), /missions (the scoreboard), /about (the loadout) and
+  /faq (an answer): they fly `PAGE_PLAN_MARGIN` with /hire.
+  `PAGE_PLAN_REPORT` is gone. Deck is /field-notes, /lab, /studio, /smaak,
+  /flight-data; prose is the rest. Left alone, measured and fine: the
+  254px before every footer (the footer's own margin; the horizon needs
+  the run-in).
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

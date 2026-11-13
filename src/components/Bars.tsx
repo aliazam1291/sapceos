@@ -75,7 +75,7 @@ export default function Bars({
               <i className={styles.fill} style={{ "--w": width(it.value) } as React.CSSProperties} />
             </span>
             <span className={styles.number}>
-              {it.value.toLocaleString("en-IN")}
+              {it.value.toLocaleString("en-US")}
               {unit ? <span className={styles.unit}> {unit}</span> : null}
             </span>
           </dd>

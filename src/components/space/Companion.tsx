@@ -107,7 +107,6 @@ const HOME_PLAN: Waypoint[] = [
  */
 const REST: Waypoint = { p: 0.0, x: -0.28, y: 0.24, s: 0.72 };
 const END: Waypoint = { p: 1.0, x: 0.3, y: 0.12, s: 0.8 };
-const PAGE_PLAN_REPORT: Waypoint[] = [REST, { p: 0.5, x: -0.36, y: -0.32, s: 0.7 }, END];
 const PAGE_PLAN_DECK: Waypoint[] = [REST, { p: 0.5, x: 0.1, y: 0.4, s: 0.5 }, END];
 const PAGE_PLAN_PROSE: Waypoint[] = [REST, { p: 0.5, x: 0.32, y: 0.3, s: 0.62 }, END];
 // /hire (2026-11-12): every band of the page is a full-width panel of facts
@@ -125,9 +124,15 @@ const PAGE_PLAN_PROSE: Waypoint[] = [REST, { p: 0.5, x: 0.32, y: 0.3, s: 0.62 },
 const MARGIN = { x: 0.42, y: 0.4, s: 0.3 };
 const PAGE_PLAN_MARGIN: Waypoint[] = [REST, { p: 0.1, ...MARGIN }, { p: 0.9, ...MARGIN }, END];
 function pagePlanFor(pathname: string): Waypoint[] {
-  if (pathname === "/hire") return PAGE_PLAN_MARGIN;
-  // The venture page has a report's shape (manifest, sticky rail, rows).
-  if (/^\/(missions|field-notes)\/[^/]+/.test(pathname) || pathname === "/dumbmoney") return PAGE_PLAN_REPORT;
+  // Measured 2026-11-13 (a wheel scroll, the ship read 4 s after it stops):
+  // the report plan's low-left sweep settled ON the sticky rail ("Discovery")
+  // for a fifth of the page; the deck pass sat on the scoreboard on
+  // /missions and the loadout on /about; the prose plan on an answer on
+  // /faq, whose two columns run the full width. All of them take the margin.
+  if (/^\/(hire|faq|missions|about)\/?$/.test(pathname)) return PAGE_PLAN_MARGIN;
+  // Reports (and the venture page, which has a report's shape): the rail
+  // holds the left column and the rows the rest.
+  if (/^\/(missions|field-notes)\/[^/]+/.test(pathname) || pathname === "/dumbmoney") return PAGE_PLAN_MARGIN;
   // /flight-data's bar rows run the full width like a deck's object rows,
   // and the numbers at their right end are text the ship would sit on.
   // /smaak is a deck too: a full-width dome, full-width client rows with
@@ -135,7 +140,7 @@ function pagePlanFor(pathname: string): Waypoint[] {
   // prose plan parked the ship on those notes (2026-09-30).
   // /hire opens on /about's full-width recruiter manifest, so it flies the
   // same high pass (2026-10-24: the prose plan parked the ship on it).
-  if (/^\/(missions|field-notes|lab|studio|smaak|about|flight-data|hire)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
+  if (/^\/(field-notes|lab|studio|smaak|flight-data)\/?$/.test(pathname)) return PAGE_PLAN_DECK;
   return PAGE_PLAN_PROSE;
 }
 // Phones (2026-09-18): the same low-right station is a fixed SCREEN

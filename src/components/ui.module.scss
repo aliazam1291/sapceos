@@ -277,8 +277,31 @@
 // The transcript sits between a header and its first section on every
 // secondary page, so the rule below never matched and the section opened
 // on a full --space-section (up to 10rem) of nothing (2026-11-12).
-.pageComms + .section {
+.pageComms + .section,
+// A report's pager is followed by its manifest: the same full
+// --space-section opened 160px of nothing between them and pushed the
+// manifest's second row off the first screen (2026-11-13).
+.pager + .section {
   padding-top: clamp(var(--space-8), 4vw, var(--space-12));
+}
+
+// A phone, and the figure is a wireframe (PageForm, `data-pageform`): it
+// stood between the title and the lede at 220px square — a third of the
+// first screen for a faint decoration, with the page's first content pushed
+// to the second. It sits beside the lede instead, small. Holograms, drones
+// and the satellite keep the full slot: they are the page's object.
+@media (max-width: 899px) {
+  .pageAside:has([data-pageform]) {
+    grid-template-columns: minmax(0, 1fr) 96px;
+    align-items: center;
+    column-gap: var(--space-4);
+
+    .pageFigure {
+      order: 2;
+      width: 96px;
+      margin: 0;
+    }
+  }
 }
 
 /*
