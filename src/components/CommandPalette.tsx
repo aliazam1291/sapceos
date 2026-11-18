@@ -308,7 +308,7 @@ export default function CommandPalette() {
           </kbd>
         </div>
 
-        <ul ref={list} id="palette-listbox" role="listbox" aria-label="Destinations" className={styles.list}>
+        <ul ref={list} id="palette-listbox" role="listbox" aria-label="Destinations" className={styles.list} data-lenis-prevent="">
           {flat.length === 0 ? (
             <li className={styles.empty} role="presentation">
               <span className={styles.callsign}>CAPCOM</span> {voice.nothing}

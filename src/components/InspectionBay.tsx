@@ -369,7 +369,7 @@ export default function InspectionBay({ items }: { items: InspectItem[] }) {
           </button>
         </div>
 
-        <aside className={styles.info} aria-live="polite">
+        <aside className={styles.info} aria-live="polite" data-lenis-prevent="">
           <p className={styles.meta}>
             <span>{item.kind}</span>
             <span>{item.status}</span>

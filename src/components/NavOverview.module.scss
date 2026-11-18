@@ -33,6 +33,14 @@
   // and star field is the one effect the performance budget names.
   background: rgba(3, 4, 5, 0.9);
   animation: backdropIn var(--dur-base) var(--ease-out) both;
+
+  // A phone (2026-11-18): the app shell's bars stay on top of this layer, so
+  // the panel sits between them — its foot row (and close control) used to
+  // run half under the tab bar.
+  @media (max-width: 767px) {
+    padding-top: calc(var(--app-top) + env(safe-area-inset-top, 0px) + 0.5rem);
+    padding-bottom: calc(var(--app-bottom) + env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
 }
 
 /*

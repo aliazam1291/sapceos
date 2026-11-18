@@ -116,7 +116,12 @@ export default function NavOverview({
         aria-label="System overview"
         ref={panel}
       >
-      <div className={styles.grid}>
+      {/* data-lenis-prevent (2026-11-18, Ali: "in phone the navbar is not
+          scrolling"): Nav stops Lenis while the overview is open, and a
+          stopped Lenis still cancels every wheel and touchmove on the page —
+          this list's own scroll included. 2,314px of links in a 559px panel
+          on a 375px phone, and a swipe moved nothing. */}
+      <div className={styles.grid} data-lenis-prevent="">
         {/* ── Left: identity + pages ───────────────────────────────────── */}
         <div className={styles.pages}>
           <div className={styles.identity}>
