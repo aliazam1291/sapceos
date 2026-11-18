@@ -59,7 +59,7 @@ export function personJsonLd() {
     image: `${siteUrl}/images/ali.jpg`,
     jobTitle: profile.currentRole,
     description:
-      "Product engineer and de-facto product manager on enterprise fleet and telematics platforms at MapMyIndia; founder and CPO of DumbMoney. Seeking Product Manager and Technical PM roles.",
+      "Associate Project Owner at MapMyIndia: owns Mappls Shop, Mappls Intouch and Indane Yatra Mitra as their associate product manager, on enterprise fleet and telematics platforms; founder and CPO of DumbMoney. Seeking Product Manager and Technical PM roles.",
     worksFor: {
       "@type": "Organization",
       name: "MapMyIndia",
@@ -75,7 +75,7 @@ export function personJsonLd() {
     hasOccupation: [
       {
         "@type": "Occupation",
-        name: "Product Engineer",
+        name: "Associate Project Owner",
         occupationLocation: { "@type": "City", name: "New Delhi" },
         skills: "PRD writing, user story mapping, roadmapping, prioritisation, A/B testing, stakeholder management, UX research, React, Next.js, Angular, TypeScript",
       },
@@ -98,7 +98,7 @@ export function websiteJsonLd() {
     "@id": siteId,
     url: siteUrl,
     name: `${profile.name} — Space OS`,
-    description: "Product engineering, UX strategy and product case studies by Ali Azam Kazmi.",
+    description: "Product management portfolio of Ali Azam Kazmi: products owned, designed, built and shipped, with case studies.",
     keywords: [...domainKeywords, ...contentKeywords].join(", "),
     inLanguage: "en",
     author: { "@id": personId },

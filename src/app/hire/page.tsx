@@ -7,7 +7,7 @@ import RecruiterManifest from "@/components/RecruiterManifest";
 import PageForm from "@/components/space/PageForm";
 import { ButtonLink, NextStep, PageHeader, Readout, Section, SectionHead, ui } from "@/components/ui";
 import { plainName } from "@/content/pages";
-import { aiTools, lookingFor, openTo, profile } from "@/content/profile";
+import { aiTools, lookingFor, openTo, ownedProducts, profile } from "@/content/profile";
 import { identityKeywords, keywordsFor, roleKeywords } from "@/lib/keywords";
 import { siteUrl } from "@/lib/site";
 import styles from "./hire.module.scss";
@@ -24,8 +24,8 @@ import styles from "./hire.module.scss";
  * manager who can code"), so the site has one URL that answers it, rather
  * than the query landing on the galaxy.
  *
- * What it does not say, on purpose: he is not a Product Manager by title yet
- * (PROFILE.md, "The job search": "Not yet, keep as is"), so the copy says
+ * What it does not say, on purpose: he is not a Product Manager by title
+ * (Associate Project Owner since Jul 2026, PROFILE.md), so the copy says
  * what he does — the PRDs, the product decisions, the builds — and what he is
  * looking for, never a title he does not hold. Notice period and salary are
  * still not on file and are not guessed.
@@ -33,7 +33,7 @@ import styles from "./hire.module.scss";
 
 const title = "Hiring a Technical PM in New Delhi? · Ali Azam Kazmi";
 const description =
-  "The 30-second brief on Ali Azam Kazmi for recruiters: product engineer and de-facto PM at MapMyIndia, Founder & CPO of DumbMoney, open to PM roles anywhere.";
+  "The 30-second brief on Ali Azam Kazmi: owns three products at MapMyIndia, designs and builds them, 4× collections on Mappls Shop. Open to PM roles anywhere.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -63,36 +63,39 @@ export const metadata: Metadata = {
   },
 };
 
-// The case, in four claims a recruiter screens for, each with its proof.
+// The case, in the order a PM screen asks it (2026-11-17, Ali: "a PM-focused
+// portfolio … someone who's a PM and knows design and tech and UX and can
+// ship products"): owns the product, designs it, builds it, ships and
+// measures it. Every line a PROFILE.md fact.
 const brief = [
   {
-    claim: "Writes the PRD",
+    claim: "Owns the product",
     evidence: [
-      "On every MapMyIndia project the product half has been his: problem statements, user stories, acceptance criteria, the edge cases nobody wants to think about. Vehicle status logic, the alarm, geofence and ticketing workflows were decided before they were built.",
+      `As ${profile.currentRole} at MapMyIndia he owns three products: ${ownedProducts.join(", ")}. He writes the PRDs (Mappls Shop, the Admin Platform, Driver Safety for VinFast and SM Green): problem, user stories, acceptance criteria, the edge cases nobody wants to think about.`,
+      "Outside work, Founder & CPO of DumbMoney: what it is for, what ships, and the quality bar every code passes.",
     ],
     more: { label: "How he decides", href: "/decisions" },
   },
   {
-    claim: "Builds what it says",
+    claim: "Designs the experience",
     evidence: [
-      "Frontend and UI/UX on enterprise fleet and telematics platforms: Vahan Shakti (200,000+ users), Locate (20,000+ vehicles), Intouch (10,000+ active vehicles), and Mappls Shop, the subscription billing system that replaced a manual process: 4× the collections, with 80% less manual operations work.",
+      "User flows and wireframes come first, before a line of code: vehicle states, map behaviour, the alarm, geofence and ticket workflow were designed before they were built. Founder of Smaak.ux, a product and design studio with 10+ clients since 2023; Google UX Design certified.",
+    ],
+    more: { label: "The design work", href: "/studio" },
+  },
+  {
+    claim: "Builds it himself",
+    evidence: [
+      `Leads the React and Angular frontend on enterprise fleet platforms, and builds the Technician App in React Native. AI-native: prototypes with AI coding assistants and uses ${aiTools.join(", ")} for research. This site is the exhibit, specified and designed by him, built with Claude as the coding pair.`,
+    ],
+    more: { label: "The lab", href: "/lab" },
+  },
+  {
+    claim: "Ships, and measures it",
+    evidence: [
+      "Mappls Shop replaced a manual billing process: 4× the collections, 80% less manual operations work, revenue-generating since its October 2026 launch. Mappls Intouch and Indane Yatra Mitra are live on Google Play; Vahan Shakti serves 200,000+ users.",
     ],
     more: { label: "Ten mission reports", href: "/missions" },
-  },
-  {
-    claim: "Runs a product of his own",
-    evidence: [
-      "Founder & CPO of DumbMoney, a coupon platform for Indian shoppers, and founder of Smaak.ux, a product and design studio with 10+ clients since 2023.",
-    ],
-    more: { label: "The venture", href: "/dumbmoney" },
-  },
-  {
-    claim: "AI-native",
-    evidence: [
-      `He prototypes and ships with AI coding assistants (vibe coding) and uses ${aiTools.join(", ")} for research and generative AI work.`,
-      "This site is the exhibit: specified and designed by him, built with Claude as the coding pair.",
-    ],
-    more: { label: "Why the bottleneck moved", href: "/writing/the-bottleneck-moved" },
   },
 ];
 
@@ -154,7 +157,7 @@ export default function HirePage() {
       </Section>
 
       <Section id="case" data-section="The case">
-        <SectionHead label="03 / The case" title="Four claims, with the evidence" />
+        <SectionHead label="03 / The case" title="Product, design, engineering, shipped" />
         <dl className={styles.list}>
           {brief.map((b) => (
             <div key={b.claim} className={styles.row} data-reveal>

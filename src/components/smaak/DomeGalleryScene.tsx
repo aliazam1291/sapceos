@@ -150,6 +150,7 @@ export default function DomeGalleryScene({
   onActive,
   onPick,
   onReady,
+  onLost,
   tone = "emerald",
 }: {
   items: GalleryItem[];
@@ -161,14 +162,42 @@ export default function DomeGalleryScene({
   onPick: (i: number | null, touch: boolean) => void;
   /** Fired on the first drawn frame — see the note in DomeGallery. */
   onReady?: () => void;
+  /** Fired when the GL context is lost, before a fresh canvas is mounted. */
+  onLost?: () => void;
   tone?: DomeTone;
 }) {
   const [warm, setWarm] = useState(false);
+  /*
+   * A lost context (2026-11-18). A lost WebGL canvas under the dome's CSS
+   * mask composites as a solid WHITE slab. Seen under `next dev`: React's
+   * double mount tore down the first renderer (forceContextLoss) after the
+   * second had taken the same canvas, and the dome went white the moment it
+   * reported ready. A real GPU reset can do the same in production, so: on
+   * loss, tell the parent (it hides the canvas again) and mount a new
+   * canvas element with a fresh context. Twice at most, then stay hidden —
+   * the index under the dome still lists every piece.
+   */
+  const [gen, setGen] = useState(0);
   const low = perf.level === "low";
+
+  if (gen > 2) return null;
 
   return (
     <Canvas
-      onCreated={quietGL}
+      key={gen}
+      onCreated={(state) => {
+        quietGL(state);
+        state.gl.domElement.addEventListener(
+          "webglcontextlost",
+          (e) => {
+            e.preventDefault();
+            onLost?.();
+            setWarm(false);
+            setGen((g) => g + 1);
+          },
+          { once: true },
+        );
+      }}
       frameloop={!warm || paused ? "never" : "always"}
       dpr={low ? 1 : [1, 1.5]}
       gl={{ antialias: !low, alpha: true, powerPreference: "low-power", outputColorSpace: THREE.SRGBColorSpace }}

@@ -4,172 +4,132 @@
 <meta charset="utf-8" />
 <title>Ali Azam Kazmi — Résumé</title>
 <style>
-  /* One page, A4, printable. White paper, near-black type, one emerald accent —
-     the site's signal colour, used only for rules and labels. Every fact below
-     is transcribed from PROFILE.md; nothing is estimated. */
+  /* One page, A4, written for applicant-tracking scores and product-company
+     PM screens (2026-11-16): one column, standard section names (Summary,
+     Experience, Skills, Education, Certifications), every bullet opening on
+     an action verb with a number where one is on file, PM keywords in
+     context, no tables, no graphics, no colour. Every fact is from
+     PROFILE.md; Mappls Shop's revenue amount appears nowhere. */
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    width: 210mm; height: 297mm; padding: 12mm 14mm 14mm;
-    font-family: "Inter", "Segoe UI", -apple-system, Helvetica, Arial, sans-serif;
-    font-size: 9pt; line-height: 1.3; color: #15181c; background: #fff;
+    width: 210mm; height: 297mm; padding: 11mm 15mm 11mm;
+    font-family: "Segoe UI", "Inter", -apple-system, Helvetica, Arial, sans-serif;
+    font-size: 9pt; line-height: 1.38; color: #111; background: #fff;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   a { color: inherit; text-decoration: none; }
-  a.n { color: #1f9d6e; font-weight: 600; }
-  .mono { font-family: "JetBrains Mono", "SF Mono", Consolas, "Courier New", monospace; letter-spacing: 0.08em; text-transform: uppercase; font-size: 6.6pt; }
-  .accent { color: #1f9d6e; }
+  b { font-weight: 600; }
 
-  header { display: grid; grid-template-columns: 1fr auto; column-gap: 8mm; align-items: end; padding-bottom: 3mm; border-bottom: 1.5px solid #15181c; }
-  h1 { margin: 0; font-size: 21pt; letter-spacing: -0.02em; line-height: 1; font-weight: 700; }
-  .title { margin: 1.6mm 0 0; font-size: 10pt; color: #3b4048; }
-  .title b { color: #15181c; font-weight: 600; }
-  .contact { text-align: right; font-size: 8.2pt; line-height: 1.5; color: #3b4048; }
-  .contact .mono { display: block; color: #1f9d6e; margin-bottom: 0.6mm; }
+  header { text-align: center; }
+  h1 { margin: 0; font-size: 19pt; line-height: 1.05; font-weight: 700; }
+  .tag { margin: 1.1mm 0 0; font-size: 9.6pt; color: #222; }
+  .contact { margin: 1.1mm 0 0; font-size: 8.2pt; color: #333; }
+  .contact > * { white-space: nowrap; }
+  .contact > * + *::before { content: "|"; margin: 0 1.4mm; color: #999; }
 
-  .summary { margin: 2.6mm 0 2.8mm; font-size: 9.2pt; color: #2a2f36; max-width: 175mm; }
+  h2 { margin: 3.3mm 0 1.3mm; padding-bottom: 0.6mm; border-bottom: 0.8px solid #111; font-size: 9pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  p { margin: 0; }
 
-  .cols { display: grid; grid-template-columns: 1fr 58mm; column-gap: 7mm; }
-  h2 { margin: 3.2mm 0 1.6mm; padding-bottom: 0.9mm; border-bottom: 1px solid #d5d9de; font-size: 6.8pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #1f9d6e; font-family: "JetBrains Mono", Consolas, monospace; }
-  h2:first-child { margin-top: 0; }
-
-  .role { margin-top: 2mm; }
-  .role:first-of-type { margin-top: 0; }
-  .roleHead { display: grid; grid-template-columns: 1fr auto; column-gap: 4mm; align-items: baseline; }
-  .roleHead h3 { margin: 0; font-size: 9.6pt; font-weight: 600; }
-  .roleHead h3 span { font-weight: 400; color: #3b4048; }
-  .when { font-size: 7.6pt; color: #5b6674; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  ul { margin: 0.9mm 0 0; padding-left: 3.4mm; }
-  li { margin: 0 0 0.55mm; padding-left: 0.4mm; }
-  li::marker { color: #1f9d6e; }
-  .tight li { margin-bottom: 0.3mm; }
-  .compact { margin-top: 1.6mm; font-size: 8.4pt; color: #2a2f36; }
-  .compact b { font-weight: 600; color: #15181c; }
-
-  .work { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9mm 4mm; font-size: 8.4pt; }
-  .work div b { font-weight: 600; }
-  .work .n { color: #1f9d6e; font-weight: 600; }
-
-  .side p { margin: 0 0 1.2mm; font-size: 8.3pt; color: #2a2f36; }
-  .side p b { display: block; font-size: 6.6pt; letter-spacing: 0.1em; text-transform: uppercase; color: #5b6674; margin-bottom: 0.4mm; font-family: "JetBrains Mono", Consolas, monospace; font-weight: 500; }
-  .edu h3 { margin: 0; font-size: 9pt; font-weight: 600; }
-  .edu .when { display: block; margin-top: 0.3mm; }
-  .certs { font-size: 7.9pt; color: #2a2f36; line-height: 1.4; }
-  .certs div { display: flex; justify-content: space-between; gap: 3mm; }
-  .certs span:last-child { color: #5b6674; white-space: nowrap; }
-
-  footer { position: absolute; left: 14mm; right: 14mm; bottom: 7mm; display: flex; justify-content: space-between; font-size: 6.6pt; color: #8e969f; font-family: "JetBrains Mono", Consolas, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 4mm; }
+  .org { font-size: 9.6pt; font-weight: 700; }
+  .org span { font-weight: 400; }
+  .when { font-size: 8.6pt; color: #222; white-space: nowrap; }
+  .title { font-style: italic; color: #222; }
+  .note { margin-top: 0.5mm; font-size: 8.6pt; color: #333; }
+  .group { margin: 1.9mm 0 0.2mm; font-size: 8.2pt; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #333; }
+  ul { margin: 0.6mm 0 0; padding-left: 4mm; }
+  li { margin: 0 0 0.85mm; padding-left: 0.4mm; }
+  li:last-child { margin-bottom: 0; }
+  .job + .job { margin-top: 2.6mm; }
+  .lines p + p { margin-top: 0.7mm; }
 </style>
 </head>
 <body>
+
 <header>
-  <div>
-    <h1>Ali Azam Kazmi</h1>
-    <p class="title"><b>Product Engineer &amp; UX Strategist</b> · Founder &amp; CPO, DumbMoney · targeting Product Manager / Technical PM roles</p>
-  </div>
-  <div class="contact">
-    <span class="mono">Open channel</span>
-    <a href="mailto:aliazamkazmi1291@gmail.com" style="color:inherit;text-decoration:none">aliazamkazmi1291@gmail.com</a><br />
-    <a href="https://aliazamkazmi.vercel.app/hire" style="color:inherit;text-decoration:none">aliazamkazmi.vercel.app</a> · <a href="https://www.linkedin.com/in/ali-azam-kazmi" style="color:inherit;text-decoration:none">linkedin.com/in/ali-azam-kazmi</a><br />
-    <a href="https://github.com/aliazam1291" style="color:inherit;text-decoration:none">github.com/aliazam1291</a> · <a href="https://www.behance.net/aliak8" style="color:inherit;text-decoration:none">behance.net/aliak8</a><br />
-    New Delhi, India · open to roles anywhere
-  </div>
+  <h1>Ali Azam Kazmi</h1>
+  <p class="tag">Associate Project Owner, MapMyIndia · B2B SaaS, Fleet &amp; Geospatial Products</p>
+  <p class="contact">
+    <span>New Delhi, India</span><a href="tel:+919648077773">+91 96480 77773</a><a href="mailto:aliazamkazmi1291@gmail.com">aliazamkazmi1291@gmail.com</a><a href="https://www.linkedin.com/in/ali-azam-kazmi">linkedin.com/in/ali-azam-kazmi</a><a href="https://aliazamkazmi.vercel.app/hire">aliazamkazmi.vercel.app</a>
+  </p>
 </header>
 
-<p class="summary">
-  Product-minded generalist who writes the PRD and then builds what it says. At MapMyIndia I own frontend, UI/UX and de-facto product management on enterprise fleet and telematics platforms used by 200,000+ people; on the side I founded DumbMoney, a coupon platform for Indian shoppers, and run Smaak.ux, a product and design studio with 10+ clients. AI-native: I prototype and ship with AI coding assistants and use Claude, Gemini and ChatGPT for research.
-</p>
+<h2>Summary</h2>
+<p>Associate Project Owner at MapMyIndia, owning three products (Mappls Shop, Mappls Intouch, Indane Yatra Mitra) as associate product manager on B2B SaaS fleet platforms (200,000+ users), in a 10-person team: designs user flows and wireframes, writes the PRD, then leads the React and Angular frontend to launch. Mappls Shop delivered 4× collections; Intouch and Indane Yatra Mitra are live on Google Play. Seeking Product Manager and Technical PM roles.</p>
 
-<div class="cols">
-  <main>
-    <h2>Experience</h2>
+<h2>Experience</h2>
 
-    <div class="role">
-      <div class="roleHead">
-        <h3>MapMyIndia [Gtropy] <span>— Associate Software Developer, Product &amp; Platform</span></h3>
-        <span class="when">Sep 2024 – present · New Delhi</span>
-      </div>
-      <ul>
-        <li>Built and scaled enterprise fleet &amp; telematics platforms: <b>Vahan Shakti</b> (government, <b>200,000+ users</b>), OEM platforms (20,000+ users), fleet operators (10,000+ vehicles). 5+ live production projects.</li>
-        <li><b>Mappls Shop</b> (live, shop.mappls.com): replaced a fully manual billing process with automated billing; owned the PRD, UI/UX and cross-functional delivery. Live and generating revenue: <b>4× the collections</b> of the manual process, <b>80% less manual ops work</b>, <b>30+ users</b>.</li>
-        <li>Authored full PRDs (problem statements, user stories, acceptance criteria, edge cases); de-facto product/project manager across teams.</li>
-        <li>Client deliveries: a dashboard for <b>Toyota</b> covering non-communicating devices; the DMS, ADAS and driver sections of Intouch for <b>VinFast</b> and <b>SM Green</b>.</li>
-        <li>Defined vehicle status logic (moving/stopped/idle/delayed/offline), map UX (rotation, fit-to-route, playback) and the alarm, geofence and ticketing workflows.</li>
-        <li>~40% performance improvement on data-heavy dashboards via caching, RxJS state management and API optimisation; owned operational &amp; analytics dashboards (vehicle health, trips, delays, alerts, compliance).</li>
-        <li>Active: Technician App (field operations), IOCL GeoRTD (30,000+ routes into S3).</li>
-      </ul>
-    </div>
+<div class="job">
+  <div class="row">
+    <span class="org">MapMyIndia (Gtropy) <span>· New Delhi</span></span>
+    <span class="when">Sep 2024 – Present</span>
+  </div>
+  <div class="row"><p class="title"><b>Associate Project Owner</b> · owns Mappls Shop, Mappls Intouch and Indane Yatra Mitra</p><span class="when">Jul 2026 – Present</span></div>
+  <div class="row"><p class="title">Associate Software Developer, Product &amp; Platform</p><span class="when">Sep 2024 – Jul 2026</span></div>
+  <p class="note"><b>Enterprise customers:</b> Indian Oil, VinFast, Tata Power, Toyota Logistics, Telangana Government (TGSRTC)</p>
 
-    <div class="role">
-      <div class="roleHead">
-        <h3>DumbMoney <span>— Founder &amp; Chief Product Officer · <a class="n" href="https://www.dumbmoney.in/">dumbmoney.in ↗</a></span></h3>
-        <span class="when">Live · with co-founder Akshat Somani</span>
-      </div>
-      <ul>
-        <li>Coupon and deals platform for Indian online shoppers: verified codes across beauty, fashion, electronics, travel and food, browsable by store or category, no signup.</li>
-        <li>Own the product standard — a code that works, not the longest list: automated expiry and duplicate checks, then human review, before any code goes live.</li>
-      </ul>
-    </div>
+  <p class="group">Product management</p>
+  <ul>
+    <li><b>Mappls Shop (owned product):</b> Led the self-serve subscription billing product from PRD to launch (Oct 2026), replacing a manual process; drove cross-functional delivery with engineering, finance and ops. Increased collections <b>4×</b>, cut manual operations work <b>80%</b>; now revenue-generating with 30+ daily users.</li>
+    <li><b>Admin Platform:</b> Wrote the next-phase PRD and roadmap unifying Billing, Gadgets Catalog and Operations in one console with role-based access, one payments layer and an audit log.</li>
+    <li><b>Driver Safety (Mappls Intouch, for VinFast and SM Green):</b> Owned the PRD for driver monitoring (7 in-cab alarms), ADAS (4 alarms) and per-driver scorecards scored per distance; validated it with a prototype and OpenAPI contract, then built it.</li>
+    <li><b>Fleet product model:</b> Defined vehicle states, map behaviour (rotation, fit-to-route, playback) and the alarm → geofence → ticket workflow, standardised across Vahan Shakti, Mappls Intouch and Control Tower.</li>
+  </ul>
 
-    <div class="role">
-      <div class="roleHead">
-        <h3>Smaak.ux <span>— Founder &amp; Product Designer (freelance)</span></h3>
-        <span class="when">2023 – present · Remote</span>
-      </div>
-      <ul>
-        <li>Product and design studio, 10+ clients across SaaS, FMCG, creator brands, e-commerce, home décor and services. Website UI, content, branding and market strategy for <b>Sunder Masala</b> and <b>Wolf Casa</b>; also Atmos, Mintair, Ravenouxs, Lean Multiverse, Ekal, Urban Livin, Sorted Blinds (Australia), Posh Dikur.</li>
-      </ul>
-    </div>
-
-    <p class="compact"><b>Earlier:</b> Wise Work — Full Stack Intern (Feb–Dec 2023; React, REST integration) · Datamatics — R&amp;D Project Intern (Jun–Aug 2023; AI-driven OCR, +30% extraction accuracy; UX research, +15% task completion) · Green Monk Energy — Chennai Lead, Student Brand Ambassador (2022–23) · Tech Analogy — Graphic Design Intern (2023).</p>
-
-    <h2>Selected shipped work</h2>
-    <div class="work">
-      <div><b>Vahan Shakti</b> — live vehicle tracking &amp; analytics; map components, clustering, heatmaps. <span class="n">200,000+ users</span>, Play Store.</div>
-      <div><b>Intouch</b> — cross-platform logistics app, optimised for <span class="n">10,000+</span> active vehicles, scaling to 50,000. <a class="n" href="https://play.google.com/store/apps/details?id=intouch.mappls.app">Google Play ↗</a></div>
-      <div><b>Locate</b> — independently led frontend; real-time monitoring of <span class="n">20,000+</span> vehicles across Maharashtra.</div>
-      <div><b>Indane Yatra Mitra (IOCL)</b> — LPG tanker fleet tracking: safety alarms, geofencing, route playback, role-based access. <a class="n" href="https://play.google.com/store/apps/details?id=iocl.cvtms.mappls">Google Play ↗</a></div>
-    </div>
-
-    <h2>Independent case studies &amp; writing</h2>
-    <p class="compact">Product/UX analyses of products I don't work on: Linear vs Jira · the AI code-assistant adoption paradox · Apple ecosystem fragmentation · Flipkart product discovery · Uber driver retention · the logistics visibility gap. Essays on Medium and dumbmoney.in.</p>
-  </main>
-
-  <aside class="side">
-    <h2>Education</h2>
-    <div class="edu">
-      <h3>B.Tech, Computer Science Engineering</h3>
-      <p>SRM Institute of Science and Technology, Chennai · CGPA 8.76/10 <span class="when">Aug 2020 – Jun 2024</span></p>
-    </div>
-
-    <h2>Leadership</h2>
-    <ul class="tight">
-      <li><b>Technical Convener</b>, Directorate of Student Affairs, SRMIST (2022–24) — directed <i>Milan</i>, a national cultural festival with 20,000+ attendees; led a 50+ member cross-functional team.</li>
-      <li><b>Vice President</b>, Alexa Developers SRM (2020–24) — 10+ technical events and hackathons; flagship UI/UX workshop drew 300+ participants.</li>
-      <li>Won the GitHub SRM Ideathon for a product concept.</li>
-    </ul>
-
-    <h2>Skills</h2>
-    <p><b>Product</b>PRD writing, user story mapping, roadmapping, prioritisation, A/B testing, competitive analysis, Agile/Scrum, stakeholder management, SEO &amp; growth</p>
-    <p><b>AI</b>Claude, Gemini, ChatGPT — research, generative AI, AI-assisted prototyping (vibe coding)</p>
-    <p><b>Design</b>Figma, Spline, Adobe Suite — wireframing, prototyping, UX research, user flows, interaction design, usability testing</p>
-    <p><b>Engineering</b>TypeScript, JavaScript, React, Next.js, Angular, Ionic, Node.js, Nest.js, Spring Boot, Java, Python, RxJS, D3.js, Three.js, Mappls SDK, REST APIs, MongoDB, MySQL, AWS S3, Git</p>
-
-    <h2>Certifications</h2>
-    <div class="certs">
-      <div><span>Technical Product Management — Aha!</span></div>
-      <div><span>AWS Academy ML Foundations</span><span>Jun 2023</span></div>
-      <div><span>AWS Academy Cloud Foundations</span><span>May 2023</span></div>
-      <div><span>Google UX Design — 4 courses (foundations → research)</span><span>Jan–Mar 2023</span></div>
-      <div><span>Blockchain Basics — University at Buffalo</span><span>Nov 2022</span></div>
-    </div>
-  </aside>
+  <p class="group">Products shipped</p>
+  <ul>
+    <li><b><a href="https://play.google.com/store/apps/details?id=intouch.mappls.app">Mappls Intouch</a> (owned · Google Play, 1K+ installs):</b> Led frontend for the fleet-operator app managing <b>10,000+</b> active vehicles, architected to scale to 50,000.</li>
+    <li><b><a href="https://play.google.com/store/apps/details?id=iocl.cvtms.mappls">Indane Yatra Mitra</a> for Indian Oil (owned · Google Play, 1K+ installs, 4.5★):</b> Built LPG-tanker fleet tracking with safety alarms, geofencing, route playback and role-based access; delivered the GeoRTD pipeline loading <b>30,000+</b> routes into AWS S3.</li>
+    <li><b>Vahan Shakti (government):</b> Built live tracking, clustering and heatmaps for a fleet platform serving <b>200,000+ users</b>.</li>
+    <li><b>Toyota Logistics and TGSRTC:</b> Built a device-health dashboard that surfaces silent trackers; delivered data work for TGSRTC.</li>
+    <li><b>Performance:</b> Improved dashboard load time <b>~40%</b> (caching, RxJS); building the Technician App (React Native).</li>
+  </ul>
 </div>
 
-<footer>
-  <span>Ali Azam Kazmi · Résumé · 2026</span>
-  <span>The 30-second brief: <a href="https://aliazamkazmi.vercel.app/hire" style="color:inherit;text-decoration:none">aliazamkazmi.vercel.app/hire</a></span>
-</footer>
+<div class="job">
+  <div class="row">
+    <span class="org">DumbMoney <span>· <i>Co-founder &amp; Chief Product Officer</i> · dumbmoney.in</span></span>
+    <span class="when">Present</span>
+  </div>
+  <ul>
+    <li>Own product strategy and roadmap for a coupon platform; defined the quality bar every code passes (automated checks, then human review).</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="row">
+    <span class="org">Smaak.ux <span>· <i>Founder, Product &amp; Design Studio</i> · Remote</span></span>
+    <span class="when">2023 – Present</span>
+  </div>
+  <ul>
+    <li>Delivered website UI, branding and go-to-market strategy for 10+ clients, including Sunder Masala and Lean Multiverse.</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="row">
+    <span><b>Internships:</b> Datamatics R&amp;D: improved OCR accuracy <b>30%</b> and task completion <b>15%</b> · Wise Work, full-stack · Tech Analogy, design</span>
+    <span class="when">2023</span>
+  </div>
+</div>
+
+<h2>Skills</h2>
+<div class="lines">
+  <p><b>Product:</b> Product strategy, roadmapping, PRDs, user stories, acceptance criteria, prioritisation, KPIs, user research, stakeholder management, Agile/Scrum, go-to-market</p>
+  <p><b>Technical:</b> SQL, REST APIs, TypeScript, React, React Native, Angular, Node.js, Java / Spring Boot, AWS S3, Git · <b>AI:</b> Claude, Gemini, ChatGPT, AI prototyping · <b>Design:</b> Figma, user flows, wireframing, prototyping</p>
+</div>
+
+<h2>Education</h2>
+<div class="row">
+  <span><b>B.Tech, Computer Science Engineering</b> · SRM Institute of Science and Technology · CGPA 8.76/10</span>
+  <span class="when">2020 – 2024</span>
+</div>
+<p class="note"><b>Leadership:</b> Technical Convener, SRMIST: directed Milan, a national festival of 20,000+ attendees, leading a 50+ person team · Vice President, Alexa Developers SRM</p>
+
+<h2>Certifications</h2>
+<p>Technical Product Management (Aha!) · Google UX Design · AWS Cloud Foundations · AWS ML Foundations</p>
+
 </body>
 </html>

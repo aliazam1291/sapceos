@@ -38,13 +38,13 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Space OS" },
   title: {
-    default: `${profile.name} — Product Engineer moving into PM · New Delhi`,
+    default: `${profile.name} — Product Owner · Design · Engineering`,
     template: `%s — ${profile.name}`,
   },
   description:
     // Leads with the substance, not the job search (external SEO audit,
     // 2026-09-20): what was built, for whom, and the venture.
-    "Product engineer for fleet and geospatial products, moving into product management: PRDs, roadmaps and shipped platforms for 200,000+ users.",
+    "Product owner who designs, builds and ships: owns three fleet products at MapMyIndia, 4× collections on Mappls Shop, 200,000+ users. Seeking PM roles.",
   applicationName: "Space OS",
   authors: [{ name: profile.name, url: siteUrl }],
   creator: profile.name,
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     "geo.placename": "New Delhi",
     "geo.position": "28.6139;77.2090",
     ICBM: "28.6139, 77.2090",
-    subject: "Product management, UX strategy and product engineering portfolio",
+    subject: "Product management portfolio: product ownership, design, UX and engineering",
     audience: "Recruiters, hiring managers, product leaders",
     rating: "general",
     "revisit-after": "7 days",

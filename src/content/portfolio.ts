@@ -2,7 +2,7 @@ import { missions } from "./missions";
 import { labEntries } from "./lab";
 import { studio, studioKindLabel, studioPieces, type StudioKind } from "./studio";
 import { venture } from "./venture";
-import { education, profile } from "./profile";
+import { education, ownedProducts, profile } from "./profile";
 import { ownershipColumns, results } from "./results";
 
 /*
@@ -43,6 +43,10 @@ export type Dossier = {
     ventures: number;
   };
   proof: { value: string; label: string } | null;
+  /** Products he owns now (Associate Project Owner). */
+  owned: string[];
+  /** The lead measured outcome of a product he owns (results.ts, never typed in). */
+  outcome: { value: string; label: string } | null;
   skills: SkillGroup[];
   education: { degree: string; degreeShort: string; school: string; short: string; detail: string; period: string };
 };
@@ -80,6 +84,7 @@ export function dossier(): Dossier {
   const ventures = venture ? 1 : 0;
 
   const largest = results.find((r) => r.kind === "scale" && r.source === "Vahan Shakti");
+  const lead = results.find((r) => ownedProducts.includes(r.source) && r.kind === "delta");
 
   return {
     name: profile.name,
@@ -97,6 +102,8 @@ export function dossier(): Dossier {
       ventures,
     },
     proof: largest ? { value: largest.value, label: "users on the largest platform" } : null,
+    owned: [...ownedProducts],
+    outcome: lead ? { value: lead.value, label: `${lead.label.split(",")[0].toLowerCase()}, ${lead.source}` } : null,
     skills: [
       { group: "Engineering", items: engineering.slice(0, ENGINEERING_SHOWN), more: Math.max(0, engineering.length - ENGINEERING_SHOWN) },
       { group: "Product", items: product, more: 0 },

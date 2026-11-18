@@ -31,12 +31,15 @@ import styles from "./PortfolioHero.module.scss";
  */
 
 export default function PortfolioHero({ data }: { data: Dossier }) {
-  const { counts, skills, education, proof } = data;
+  const { counts, skills, education, proof, owned, outcome } = data;
+  // The four things he does, each with its proof (2026-11-17, Ali: "a PM
+  // who knows design and tech and UX and can ship products"). Every value
+  // is counted from content or read from results.ts.
   const cells = [
-    { value: String(counts.total), label: "Projects" },
-    { value: String(counts.products), label: "Products built" },
-    { value: String(counts.design), label: "Design projects" },
-    ...(proof ? [{ value: proof.value, label: "Users, largest platform" }] : []),
+    { discipline: "Product", value: String(owned.length), label: "products owned" },
+    { discipline: "Design · UX", value: String(counts.design), label: "design projects" },
+    { discipline: "Engineering", value: String(counts.products), label: "products built" },
+    ...(outcome ? [{ discipline: "Shipped", value: outcome.value, label: outcome.label }] : []),
   ];
 
   // What orbits him (2026-10-31, "too clustered": five, not seven): the
@@ -54,23 +57,24 @@ export default function PortfolioHero({ data }: { data: Dossier }) {
       <div className={styles.copy}>
         <p className={styles.kicker}>
           <span className={styles.dot} aria-hidden="true" />
-          Portfolio · Space OS
+          Product portfolio · Space OS
         </p>
         <h1 id="portfolio-name" className={styles.name}>
           {data.name}
         </h1>
         <p className={styles.role}>
-          {data.role} — targeting Technical PM roles · {data.location}
+          {data.role}{proof ? <> · fleet products for {proof.value} users</> : null} · {data.location}
         </p>
         <p className={styles.pitch}>Give me a problem. I&rsquo;ll figure out what to do next.</p>
 
         <dl className={styles.counts}>
           {cells.map((c) => (
-            <div key={c.label} className={styles.cell}>
+            <div key={c.discipline} className={styles.cell}>
+              <dt className={styles.discipline}>{c.discipline}</dt>
               <dd className={styles.value}>
                 <ResultValue value={c.value} />
               </dd>
-              <dt className={styles.label}>{c.label}</dt>
+              <dd className={styles.label}>{c.label}</dd>
             </div>
           ))}
         </dl>
@@ -83,7 +87,10 @@ export default function PortfolioHero({ data }: { data: Dossier }) {
           <span>
             {education.degreeShort}, {education.short}
           </span>
-          <span>Now at {data.org}</span>
+          <span>{data.now}</span>
+        </p>
+        <p className={styles.owns}>
+          Owns <strong>{owned.join(" · ")}</strong>
         </p>
 
         <div className={styles.actions}>

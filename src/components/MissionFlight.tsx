@@ -115,7 +115,7 @@ export default function MissionFlight({ missions }: { missions: Mission[] }) {
         <div className={styles.chrome}>
           <p className={styles.label}>
             <Status>
-              <Decode delay={200}>Product engineer</Decode>
+              <Decode delay={200}>Product owner</Decode>
             </Status>
             <Decode delay={500}>{profile.name}</Decode>
             <Decode delay={800}>{profile.location}</Decode>

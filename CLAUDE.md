@@ -1574,6 +1574,112 @@ the open channel; the one joke; keep it the only one).
   /flight-data; prose is the rest. Left alone, measured and fine: the
   254px before every footer (the footer's own margin; the horizon needs
   the run-in).
+- *The résumé, for a Technical PM screen* (2026-11-16). Ali: "my resume
+  looks clustered, make it better towards PM who knows tech."
+  `tools/resume/resume.html` is ONE column now (applicant-tracking parsers
+  scramble two-column layouts; the old page ran a 58mm sidebar beside 9pt
+  text), in this order: name; the positioning line "Product Engineer
+  moving into Technical PM · fleet, telematics & geospatial platforms" (a
+  transition, never a title he holds); one contact row whose separators
+  belong to the item after them, location on its own line; a three-line
+  summary; a four-cell numbers strip (200,000+ users, 4× collections, 80%
+  less manual ops work, ~40% faster dashboards, all from results.ts);
+  then MapMyIndia as four PM-first bullets (Mappls Shop billing + the
+  Admin Platform PRD, the Driver Safety PRD for InTouch with its prototype
+  and per-distance scoring, the fleet-tracking product model, and
+  engineering depth last as the proof); DumbMoney and Smaak.ux one bullet
+  each; "Earlier" as one line; a two-column foot of short blocks (skills
+  cut to what a PM screen reads, education, leadership, certifications,
+  writing). Cut: "Selected shipped work" (it repeated the experience),
+  the full client list, Play Store links, the Blockchain certificate,
+  twenty-odd technologies. The Driver Safety and Admin Platform PRDs are
+  PROFILE.md facts (product-level only; no prices, device counts or API
+  contents). Check with `node tools/resume-build.mjs`, and look at
+  `tools/shots/resume.png`: its overflow test passes even when the last
+  block runs into the footer, so measure the gap above the footer too.
+  Same day, later: Ali named his clients (Indian Oil, VinFast, Tata Power,
+  Toyota Logistics, Telangana Government; "worked on data for TGSRTC") and
+  Mappls Shop's **₹30 lakh+ collected since its 5 Oct 2026 launch**. Then:
+  "don't add the exact number but play it with suspense". The amount
+  appears NOWHERE, the PDF included (the site's Résumé button serves the
+  same file, so a résumé-only figure would have been public anyway). The
+  numbers strip shows a redaction bar, "₹ [redacted] · Mappls Shop revenue
+  since launch. Ask me on the call." (the word "redacted" is real text,
+  ink on ink, so a parser reads it); the bullet says the revenue "is better
+  said out loud". The site still shows 4× and 80%.
+  **SUPERSEDED the same day** (Ali, of the redaction bar: "this looks
+  cheap … I need a résumé MAANG level with my projects in MMI"). The
+  résumé is now in the big-tech format: centred name, positioning line,
+  one contact row, a three-line summary, then MapMyIndia split into
+  "Product ownership" (Mappls Shop, Admin Platform PRD, Driver Safety PRD,
+  the fleet product model) and "Platforms shipped" (Vahan Shakti, Intouch
+  and Locate, Indian Oil's Indane Yatra Mitra and GeoRTD, Toyota Logistics
+  and TGSRTC, performance), each bullet led by the project in bold and the
+  result first; an enterprise-clients line; DumbMoney and Smaak.ux with
+  the title on the company line; internships in one line; education;
+  skills, leadership and certifications as four lines. Black on white,
+  rules under section headings, no colour, no numbers strip, no bar. The
+  revenue is "now revenue-generating", never an amount and never a tease.
+  Do not bring back a redaction bar or any graphic device.
+  Then (Ali: "remove Locate … apply in product-based companies … what
+  about Mappls Intouch and Indane Yatra Mitra … make the score 95 plus"):
+  Locate is off the résumé (still on the site); the summary says B2B SaaS
+  and "at product companies"; "customers", not "clients"; the sections are
+  the five standard names an ATS looks for (Summary, Experience, Skills,
+  Education, Certifications); MapMyIndia is "Product management" and
+  "Products shipped", with Mappls Intouch and Indane Yatra Mitra named and
+  linked to Google Play with their public listing figures (re-read
+  2026-11-16: both 1K+ installs, Indane Yatra Mitra 4.5★ from 12 reviews;
+  re-read before reusing). A scratch audit of the PDF text checks the
+  sections, contact fields, an action verb on every bullet, a number on
+  most, 18 PM keywords, no first person and the space above the page edge.
+  The phone number (Ali gave it the same day) is on the résumé's contact
+  line only, not on any site page; GitHub came off that line so it stays
+  one row, and each item is `nowrap` (the LinkedIn URL had broken
+  mid-word). No score is promised: each checker scores
+  differently, most against a specific job description. The clients are one line under the MapMyIndia role.
+- *Promoted: Associate Project Owner* (2026-11-17). Ali: "i was just
+  promoted to associate project owner" and "I function as an associate
+  product manager too, Mappls Shop is my owned product." The title is
+  written exactly as he typed it, PROJECT Owner: asked whether his letter
+  says Project or Product he did not answer, and claiming Product when the
+  letter says Project fails a background check while the reverse only
+  undersells. If he confirms "Product", it is one word in
+  `profile.currentRole` and the résumé. Effective July 2026 (confirmed).
+  `currentRole` drives every page (manifest, /contact, FAQ, author bio,
+  llms.txt, JSON-LD jobTitle); tab titles say "Associate Project Owner,
+  MapMyIndia"; the positioning line is "Product owner & engineer, fleet &
+  geospatial products". "Associate Product Manager" describes the work
+  ("functioning as"), never stands as the title. The résumé stacks the two
+  titles under MapMyIndia with their dates, and "de facto" is gone. Same
+  day: he owns THREE products — Mappls Shop, Mappls Intouch, Indane Yatra
+  Mitra ("owned" on their résumé bullets, the experience entry, JSON-LD);
+  the per-mission ownership matrix was left as the record of the work.
+- *A PM-focused portfolio* (2026-11-17). Ali: "make the portfolio someone
+  who's a PM and knows design and tech and UX and can ship products", then
+  "now i want a pm focused portfolio". Product leads, and design, UX and
+  engineering are its evidence. `profile.title` (the positioning line, every
+  page) is "Product owner who designs, builds and ships"; tab titles "Ali
+  Azam Kazmi — Product Owner · Design · Engineering" (a description of the
+  work: he owns three products; the JOB title stays `currentRole`, exactly
+  as his letter says). The landing's counts row is four disciplines, Product
+  first — Product (products owned, `ownedProducts`), Design · UX (studio
+  pieces), Engineering (products built), Shipped (the lead measured delta of
+  an owned product, read from results.ts: 4×) — with "Owns Mappls Shop ·
+  Mappls Intouch · Indane Yatra Mitra" under it; the 200,000+ moved into the
+  role line. /hire's case is the same four, in that order. The galaxy
+  opener's chip says "Product owner".
+- *The white dome, again — a lost context* (2026-11-18). Ali, on `npm run
+  dev`: the Design dome a solid white slab. Not the 11-12 bug (that canvas
+  had never drawn): this one drew, then its WebGL context was LOST — a lost
+  canvas under the dome's CSS mask composites white. Only under `next dev`
+  (two renderers registered on one canvas: React's double mount tore down
+  the first with forceContextLoss after the second took the same element);
+  the production build keeps one healthy context. `DomeGalleryScene` now
+  listens for `webglcontextlost`, tells the parent (`onLost` → `ready`
+  false, so the canvas hides again) and remounts a NEW canvas (`key={gen}`),
+  twice at most. A real GPU reset in production gets the same recovery.
+  Checked in real Chrome on the dev server: context lost, dome redrawn.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

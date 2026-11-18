@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   description: "An interactive WebGL galaxy where every star system is one of Ali Azam Kazmi's products. Fly between missions, open their reports.",
   keywords: keywordsFor(genreKeywords, identityKeywords),
   alternates: { canonical: "/galaxy" },
+  // Thin by nature (2026-11-18, SEO audit: 12 words of text): an interactive
+  // map of the same projects /missions lists in full. Kept for visitors, out
+  // of the index and the sitemap; its links are still followed.
+  robots: { index: false, follow: true },
 };
 
 export default function GalaxyPage() {

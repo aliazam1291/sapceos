@@ -96,6 +96,7 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
             onActive={setActive}
             onPick={pick}
             onReady={() => setReady(true)}
+            onLost={() => setReady(false)}
             tone={tone}
           />
         ) : null}

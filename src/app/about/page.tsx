@@ -17,10 +17,10 @@ import { jsonLd, personId } from "@/lib/seo";
 import Comms from "@/components/Comms";
 
 export const metadata: Metadata = {
-  title: { absolute: "About Ali Azam Kazmi — Product Engineer moving into PM, Delhi" },
+  title: { absolute: "About Ali Azam Kazmi — Associate Project Owner, Delhi" },
   description:
     "Writes the PRD, then builds it. Product & platform at MapMyIndia (fleet telematics, 200,000+ users), founder & CPO of DumbMoney, Smaak.ux. B.Tech CSE, SRM.",
-  keywords: keywordsFor(identityKeywords, roleKeywords, placeKeywords, ["about Ali Azam Kazmi", "product engineer bio", "Smaak.ux founder"]),
+  keywords: keywordsFor(identityKeywords, roleKeywords, placeKeywords, ["about Ali Azam Kazmi", "product owner bio", "Smaak.ux founder"]),
   alternates: { canonical: "/about" },
 };
 

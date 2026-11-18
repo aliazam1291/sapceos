@@ -11,7 +11,7 @@ import { plainName } from "@/content/pages";
 export const metadata: Metadata = {
   title: { absolute: "Field Notes — Product Teardowns · Ali Azam Kazmi" },
   description:
-    "Six PM-style product teardowns by Ali Azam Kazmi — Linear vs Jira, AI coding assistants, Apple, Flipkart, Uber retention, logistics — each ending in what to measure.",
+    "Six product teardowns by Ali Azam Kazmi: Linear vs Jira, AI coding assistants, Apple, Flipkart, Uber retention, logistics. Each ends in what to measure.",
   keywords: keywordsFor(identityKeywords, contentKeywords, roleKeywords),
   alternates: { canonical: "/field-notes" },
 };

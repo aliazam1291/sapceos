@@ -1034,6 +1034,9 @@
 .rowLabel {
   @include mono-label;
   padding-top: 0.35em;
+  // A report's labels are h2s (Row `heading`): keep the label's own look.
+  margin: 0;
+  font-weight: inherit;
 }
 
 .rowBody {

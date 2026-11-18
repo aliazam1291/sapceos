@@ -32,11 +32,19 @@ import styles from "./ui.module.scss";
  */
 export default function Row({
   label,
+  heading,
   children,
 }: {
   label: string;
+  /**
+   * Render the label as a real heading (2026-11-18, SEO audit): on a report
+   * the labels ARE the outline (Brief, Context, Discovery…), and as divs the
+   * page went from its h1 straight to the body's h3 subheads. Same look.
+   */
+  heading?: "h2" | "h3";
   children: ReactNode;
 }) {
+  const Label = heading ?? "div";
   const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
@@ -45,7 +53,7 @@ export default function Row({
 
   return (
     <div className={styles.row} onPointerMove={onMove} data-reveal>
-      <div className={styles.rowLabel}>{label}</div>
+      <Label className={styles.rowLabel}>{label}</Label>
       {children}
     </div>
   );

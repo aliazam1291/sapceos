@@ -3,9 +3,13 @@
 export const profile = {
   name: "Ali Azam Kazmi",
   // One positioning line everywhere (2026-10-28 review: "too many identities").
-  // Not a job title: the PM title is not official yet (PROFILE.md).
-  title: "Product Engineer, fleet & geospatial products",
-  currentRole: "Associate Software Developer, Product & Platform",
+  // Not a job title. The job title is currentRole: Associate Project Owner
+  // (promoted Jul 2026, exactly as Ali wrote it; PROFILE.md "Current title").
+  // 2026-11-17, Ali: "make the portfolio someone who's a PM and knows design
+  // and tech and UX and can ship products". A description of the work (he
+  // owns three products, designs and builds them), not a job title.
+  title: "Product owner who designs, builds and ships",
+  currentRole: "Associate Project Owner",
   currentOrg: "MapMyIndia [Gtropy]",
   location: "New Delhi, India",
   email: "aliazamkazmi1291@gmail.com",
@@ -15,6 +19,9 @@ export const profile = {
 };
 
 /** What the site is for (PROFILE.md "The job search", 2026-10-24). Shown on the channel and the nav signal. */
+/** The products he owns as Associate Project Owner (PROFILE.md "Current title", 2026-11-17). */
+export const ownedProducts = ["Mappls Shop", "Mappls Intouch", "Indane Yatra Mitra"];
+
 export const lookingFor = "Product Manager and Technical PM roles";
 
 /** Where (PROFILE.md "The job search": "anywhere"). */
@@ -155,11 +162,12 @@ export const experience = [
   },
   {
     org: "MapMyIndia [Gtropy]",
-    role: "Associate Software Developer — Product & Platform",
+    role: "Associate Project Owner · owns Mappls Shop, Mappls Intouch and Indane Yatra Mitra",
     period: "Sep 2024 — present",
     place: "New Delhi",
     href: "/missions",
     points: [
+      "Promoted in Jul 2026 from Associate Software Developer (Product & Platform) to Associate Project Owner. Owns three products as their associate product manager: Mappls Shop (subscription billing: 4× collections and 80% less manual ops work against the manual process), Mappls Intouch and Indane Yatra Mitra (both live on Google Play).",
       "Built and scaled enterprise fleet and telematics platforms: Vahan Shakti (government, 200,000+ users), OEM platforms (20,000+ users), fleet operators (10,000+ vehicles).",
       "Wrote the Driver Safety PRD for Intouch and created its DMS, ADAS and driver sections for the clients VinFast and SM Green: driver scorecard, per-driver reports, video and map evidence, customer-weighted scoring.",
       "Built a device health dashboard for Toyota Logistics that classifies every vehicle by time since its last GPRS data, so silent trackers are found before they are missed.",

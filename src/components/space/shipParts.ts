@@ -39,7 +39,7 @@ export const shipParts: ShipPart[] = [
     side: "right",
     system: "Canopy · operator",
     title: "Ali Azam Kazmi",
-    line: "Associate Software Developer, Product & Platform at MapMyIndia [Gtropy], New Delhi. Founder of Smaak.ux on the side.",
+    line: "Associate Project Owner at MapMyIndia [Gtropy], New Delhi, owning Mappls Shop, Mappls Intouch and Indane Yatra Mitra. Founder of Smaak.ux on the side.",
   },
   {
     id: "canards",

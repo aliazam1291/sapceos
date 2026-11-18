@@ -17,7 +17,7 @@ import { boardRows } from "@/lib/success";
 export const metadata: Metadata = {
   title: { absolute: "Missions — Product Case Studies · Ali Azam Kazmi" },
   description:
-    "Ten product case studies — Vahan Shakti (200,000+ users), Intouch, Locate, FASTag: the problem, the PRD, the prioritisation calls, what shipped, what it measured.",
+    "Ten product case studies: Vahan Shakti (200,000+ users), Mappls Shop, Intouch. The problem, the PRD, the prioritisation calls, what shipped, what it measured.",
   keywords: keywordsFor(identityKeywords, roleKeywords, domainKeywords, skillKeywords),
   alternates: { canonical: "/missions" },
 };

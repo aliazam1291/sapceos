@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   // The title carries what a recruiter types (product manager portfolio,
   // New Delhi); the H1 carries who he is; the description proves the first
   // with the second (2026-09-21 meta strategy).
-  title: { absolute: `${profile.name} — Product Engineer moving into PM · New Delhi` },
+  title: { absolute: `${profile.name} — Product Owner · Design · Engineering` },
   description:
-    "Product engineer for fleet and geospatial products, moving into product management: PRDs, roadmaps and shipped platforms for 200,000+ users.",
+    "Product owner who designs, builds and ships: owns three fleet products at MapMyIndia, 4× collections on Mappls Shop, 200,000+ users. Seeking PM roles.",
   keywords: allKeywords,
   alternates: { canonical: "/" },
 };

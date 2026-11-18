@@ -29,7 +29,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // reachable by URL, it just is not advertised anywhere while it is empty.
     ...(orbitHasContent ? [{ path: "/orbit", priority: 0.5 }] : []),
     { path: "/field-notes", priority: 0.8 },
-    { path: "/galaxy", priority: 0.5 },
     { path: "/decisions", priority: 0.8 },
     { path: "/flight-data", priority: 0.7 },
     { path: "/faq", priority: 0.7 },

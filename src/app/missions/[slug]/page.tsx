@@ -234,7 +234,7 @@ export default async function MissionReport({ params }: Params) {
         <div className={ui.rows}>
           {mission.report.map((section) => (
             <div key={section.label} id={sectionSlug(section.label)} data-section={section.label}>
-              <Row label={section.label}>
+              <Row label={section.label} heading="h2">
                 <Body value={section.body} />
               </Row>
             </div>

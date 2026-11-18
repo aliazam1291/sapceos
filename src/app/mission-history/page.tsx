@@ -10,7 +10,7 @@ import { achievements, certifications, education, experience } from "@/content/p
 
 export const metadata: Metadata = {
   // Was "Resume — Product Manager": a title he does not hold (PROFILE.md).
-  title: { absolute: "Résumé & Experience · Ali Azam Kazmi, Product Engineer" },
+  title: { absolute: "Résumé & Experience · Ali Azam Kazmi, Associate Project Owner" },
   description:
     "Experience: DumbMoney (Founder & CPO), MapMyIndia (Product & Platform), Smaak.ux, Wise Work, Datamatics. B.Tech CSE, SRM. Aha! TPM, Google UX, AWS certified.",
   alternates: { canonical: "/mission-history" },
