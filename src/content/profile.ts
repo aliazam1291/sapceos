@@ -139,6 +139,9 @@ export const links = [
   { label: "LinkedIn", href: "https://linkedin.com/in/ali-azam-kazmi" },
   { label: "Behance", href: "https://www.behance.net/aliak8" },
   { label: "Figma", href: "https://www.figma.com/@aliak" },
+  // This site's design, published to Figma Community 2026-11-18. A work, not
+  // a profile: `work` keeps it out of the Person's `sameAs` (seo.ts).
+  { label: "Figma Community", href: "https://www.figma.com/community/file/1704871615577781966", work: true },
   { label: "Medium", href: "https://medium.com/@aliazamkazmi1291" },
   { label: "HackerRank", href: "https://www.hackerrank.com/profile/aliazamkazmi1291" },
   { label: "Coursera", href: "https://www.coursera.org/user/765f7d46ad857abfa027105fd0f33e4e" },

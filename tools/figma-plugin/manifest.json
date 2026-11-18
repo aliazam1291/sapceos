@@ -1,0 +1,8 @@
+{
+  "name": "Space OS — build portfolio screens",
+  "id": "space-os-portfolio-builder",
+  "api": "1.0.0",
+  "main": "plugin.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page"
+}

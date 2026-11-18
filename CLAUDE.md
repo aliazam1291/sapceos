@@ -1680,6 +1680,21 @@ the open channel; the one joke; keep it the only one).
   false, so the canvas hides again) and remounts a NEW canvas (`key={gen}`),
   twice at most. A real GPU reset in production gets the same recovery.
   Checked in real Chrome on the dev server: context lost, dome redrawn.
+- *The design, in Figma and on Community* (2026-11-18). Ali: "i want my
+  portfolio design in figma", then "push the design to my community with
+  proper seo". The file is "Ali Azam Kazmi — Portfolio (Space OS)" (key
+  `Wm3CYNUnOqRc10z2Mgxmbj`, team "my personal work", Starter: 3 pages max),
+  published at figma.com/community/file/1704871615577781966 (Portfolio
+  templates; linked in `links` as "Figma Community", `work: true` keeps it
+  out of the Person's sameAs). The Figma MCP hit the Starter call cap after
+  the design system was built, so the screens come from a local plugin:
+  `tools/figma-plugin/` — `code.js` builds 12 screens + cover + read-me +
+  a "Live site" board from the file's own components/variables/styles (by
+  name) and is re-runnable; `capture-shots.mjs` shoots production into
+  `shots/` and bundles them into `plugin.js` (the manifest's main;
+  `--bundle` re-bundles after editing code.js). Run it in the Figma
+  DESKTOP app (Plugins → Development). Variable-bound paints drop an opacity
+  set after binding — alpha lives in the variables.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

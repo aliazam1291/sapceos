@@ -87,7 +87,7 @@ export function personJsonLd() {
     ],
     alumniOf: { "@type": "CollegeOrUniversity", name: "SRM Institute of Science and Technology" },
     nationality: "IN",
-    sameAs: links.map((l) => l.href),
+    sameAs: links.filter((l) => !("work" in l && l.work)).map((l) => l.href),
   };
 }
 

@@ -20,6 +20,7 @@ If a fact is not here, do not put it on the site. Mark it `[DRAFT — needs inpu
 - LinkedIn: https://linkedin.com/in/ali-azam-kazmi
 - Behance: https://www.behance.net/aliak8
 - Figma: https://www.figma.com/@aliak
+- Figma Community — this site's design system and screens, published 2026-11-18: https://www.figma.com/community/file/1704871615577781966
 - Medium: https://medium.com/@aliazamkazmi1291
 - HackerRank: https://www.hackerrank.com/profile/aliazamkazmi1291
 - Coursera: https://www.coursera.org/user/765f7d46ad857abfa027105fd0f33e4e

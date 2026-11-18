@@ -1,0 +1,114 @@
+[
+ {
+  "key": "home-hero",
+  "url": "https://aliazamkazmi.vercel.app/",
+  "caption": "Home · the landing",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "home-work",
+  "url": "https://aliazamkazmi.vercel.app/",
+  "caption": "Home · selected work, the galaxy flight",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "home-results",
+  "url": "https://aliazamkazmi.vercel.app/",
+  "caption": "Home · results, every result has mass",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "home-contact",
+  "url": "https://aliazamkazmi.vercel.app/",
+  "caption": "Home · contact, the landing pad",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "hire",
+  "url": "https://aliazamkazmi.vercel.app/hire",
+  "caption": "For recruiters",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "missions",
+  "url": "https://aliazamkazmi.vercel.app/missions",
+  "caption": "Projects",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "report",
+  "url": "https://aliazamkazmi.vercel.app/missions/mappls-shop-admin",
+  "caption": "Project report · Mappls Shop",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "about",
+  "url": "https://aliazamkazmi.vercel.app/about",
+  "caption": "About",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "studio",
+  "url": "https://aliazamkazmi.vercel.app/studio",
+  "caption": "Design work · Smaak.ux",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "contact",
+  "url": "https://aliazamkazmi.vercel.app/contact",
+  "caption": "Contact",
+  "w": 1440,
+  "h": 900,
+  "mobile": false
+ },
+ {
+  "key": "m-home",
+  "url": "https://aliazamkazmi.vercel.app/",
+  "caption": "Home",
+  "w": 390,
+  "h": 844,
+  "mobile": true
+ },
+ {
+  "key": "m-hire",
+  "url": "https://aliazamkazmi.vercel.app/hire",
+  "caption": "For recruiters",
+  "w": 390,
+  "h": 844,
+  "mobile": true
+ },
+ {
+  "key": "m-missions",
+  "url": "https://aliazamkazmi.vercel.app/missions",
+  "caption": "Projects",
+  "w": 390,
+  "h": 844,
+  "mobile": true
+ },
+ {
+  "key": "m-contact",
+  "url": "https://aliazamkazmi.vercel.app/contact",
+  "caption": "Contact",
+  "w": 390,
+  "h": 844,
+  "mobile": true
+ }
+]
