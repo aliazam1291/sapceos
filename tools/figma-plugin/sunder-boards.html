@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sunder Masala boards</title>
+<!-- Behance case study for Sunder Masala (Sunder Spices, Indore), in the
+     client's own brand language: Anton + Anek, green / saffron / chilli /
+     ink / cream. Credit is exactly as Ali gave it (PROFILE.md, 2026-11-19):
+     Creative & brand strategy lead (agency not named, at Ali's request). No outcome numbers:
+     none are on file. The 1975 story is the client's history.
+     Rendered by: node behance-boards-render.mjs sunder-boards.html shots/sunder/boards -->
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Anek+Latin:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --green:#054d37; --saffron:#f2a51c; --chilli:#e5392d; --pink:#d6336c; --ink:#2b2321; --cream:#fbf6ee; --cream2:#f4ecdf; }
+  body { width:1920px; background:#000; font-family:"Anek Latin",system-ui,sans-serif; color:var(--ink); }
+  .b { position:relative; width:1920px; overflow:hidden; }
+  .d { font-family:"Anton",Impact,sans-serif; text-transform:uppercase; letter-spacing:.005em; line-height:.92; font-weight:400; }
+  .kick { font-size:22px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; display:flex; align-items:center; gap:14px; }
+  .kick i { width:12px; height:12px; border-radius:50%; background:currentColor; }
+  .lede { font-size:32px; line-height:1.45; }
+  .rays { position:absolute; inset:-40%; background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.055) 0 6deg, transparent 6deg 15deg); }
+  .win { border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 50px 120px rgba(43,35,33,.35); }
+  .win .bar { height:40px; background:#efe7da; display:flex; align-items:center; gap:9px; padding:0 18px; }
+  .win .bar i { width:12px; height:12px; border-radius:50%; background:#d8cdbd; }
+  .win .bar span { margin-left:14px; font-size:15px; color:#7a6f63; background:#fbf6ee; padding:5px 16px; border-radius:6px; }
+  .win img { display:block; width:101.2%; max-width:none; }
+  .phone { border-radius:48px; padding:12px; background:#1d1816; box-shadow:0 50px 110px rgba(0,0,0,.4); }
+  .phone img { display:block; width:100%; border-radius:37px; aspect-ratio:390/780; object-fit:cover; object-position:top; }
+  .chip { display:inline-block; font-size:20px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; padding:12px 20px; border:2px solid currentColor; border-radius:999px; }
+
+  /* 1 hero */
+  #s1 { height:1300px; background:var(--green); color:var(--cream); }
+  #s1 .top { position:absolute; left:110px; right:110px; top:96px; display:flex; justify-content:space-between; color:var(--saffron); }
+  #s1 .word { position:absolute; left:0; right:0; bottom:-40px; text-align:center; font-size:560px; color:var(--saffron); line-height:.8; }
+  #s1 .fam { position:absolute; left:50%; bottom:-10px; transform:translateX(-50%); display:flex; align-items:flex-end; gap:0; z-index:2; }
+  #s1 .fam img { display:block; filter:drop-shadow(0 30px 40px rgba(0,0,0,.35)); }
+  #s1 h1 { position:absolute; left:110px; top:170px; font-size:120px; color:var(--cream); }
+  #s1 h1 em { font-style:normal; color:var(--saffron); }
+  #s1 .sub { position:absolute; right:110px; top:190px; width:560px; font-size:28px; line-height:1.4; text-align:right; color:#d9e6df; }
+
+  /* 2 overview */
+  #s2 { height:960px; background:var(--cream); padding:150px 110px; }
+  #s2 .g { display:grid; grid-template-columns:1.2fr 1fr; gap:130px; }
+  #s2 h2 { font-size:110px; color:var(--green); margin:30px 0 40px; }
+  #s2 h2 em { font-style:normal; color:var(--chilli); }
+  #s2 dl { display:grid; grid-template-columns:1fr; border-top:3px solid var(--ink); margin-top:20px; }
+  #s2 dl div { display:grid; grid-template-columns:220px 1fr; padding:26px 0; border-bottom:1.5px solid rgba(43,35,33,.18); }
+  #s2 dt { font-size:19px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:#8a7d6f; padding-top:5px; }
+  #s2 dd { font-size:28px; font-weight:500; }
+  #s2 .note { margin-top:26px; font-size:19px; color:#8a7d6f; line-height:1.5; }
+
+  /* 3 idea */
+  #s3 { height:1050px; background:var(--green); color:var(--cream); padding:150px 110px; }
+  #s3 .big { font-size:196px; line-height:.86; }
+  #s3 .big span { display:block; color:var(--saffron); }
+  #s3 .side { position:absolute; right:110px; top:220px; width:580px; }
+  #s3 .side p { font-size:30px; line-height:1.5; color:#d9e6df; margin-top:30px; }
+  #s3 .side b { color:var(--saffron); font-weight:600; }
+
+  /* 4 family */
+  #s4 { height:1420px; background:var(--cream); padding:140px 110px; }
+  #s4 h2 { font-size:150px; color:var(--ink); margin-top:28px; }
+  #s4 h2 em { font-style:normal; color:var(--chilli); }
+  #s4 .cards { position:absolute; left:110px; right:110px; top:440px; display:grid; grid-template-columns:repeat(4,1fr); gap:28px; }
+  #s4 .card { position:relative; height:860px; background:var(--c); border-radius:28px; overflow:hidden; color:var(--cream); }
+  #s4 .card img { position:absolute; left:50%; bottom:0; transform:translateX(-50%); height:700px; filter:drop-shadow(0 24px 30px rgba(0,0,0,.25)); }
+  #s4 .card .n { position:absolute; left:0; right:0; bottom:0; padding:140px 34px 40px; background:linear-gradient(180deg,transparent,var(--c) 55%); }
+  #s4 .card .n b { display:block; font-family:"Anton",sans-serif; font-weight:400; font-size:72px; text-transform:uppercase; line-height:1; }
+  #s4 .card .n span { display:block; margin-top:10px; font-size:22px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; opacity:.85; }
+  #s4 .card .num { position:absolute; left:34px; top:30px; font-family:"Anton",sans-serif; font-size:30px; opacity:.7; }
+  #s4 .foot { position:absolute; left:110px; right:110px; bottom:50px; font-size:19px; color:#8a7d6f; letter-spacing:.04em; }
+
+  /* 5 characters at work */
+  #s5 { height:1150px; display:grid; grid-template-columns:1fr 1fr; }
+  #s5 .p { position:relative; padding:120px 90px; overflow:hidden; }
+  #s5 .p .d { font-size:88px; line-height:.92; margin-top:28px; position:relative; z-index:1; width:auto; }
+  #s5 .p p { position:relative; z-index:1; font-size:26px; line-height:1.5; margin-top:30px; width:440px; }
+  #s5 .p img { position:absolute; right:-40px; bottom:-30px; height:600px; filter:drop-shadow(0 30px 40px rgba(0,0,0,.25)); }
+
+  /* 6 palette & type */
+  #s6 { height:1450px; background:var(--cream); padding:140px 110px; }
+  #s6 h2 { font-size:130px; color:var(--green); margin-top:28px; }
+  #s6 .sw { display:grid; grid-template-columns:repeat(5,1fr); gap:22px; margin-top:80px; height:380px; }
+  #s6 .sw div { border-radius:24px; padding:28px; display:flex; flex-direction:column; justify-content:flex-end; }
+  #s6 .sw b { font-size:30px; font-weight:600; }
+  #s6 .sw code { font-family:"Anek Latin",sans-serif; font-size:20px; margin-top:6px; opacity:.8; letter-spacing:.06em; }
+  #s6 .type { margin-top:80px; display:grid; grid-template-columns:1.25fr 1fr; gap:80px; border-top:3px solid var(--ink); padding-top:60px; }
+  #s6 .aa { font-family:"Anton",sans-serif; font-size:260px; line-height:.8; color:var(--ink); }
+  #s6 .aa2 { font-size:200px; font-weight:600; line-height:.8; color:var(--chilli); }
+  #s6 small { display:block; margin-top:28px; font-size:20px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:#8a7d6f; }
+  #s6 .type p { font-size:24px; color:#5d5248; margin-top:10px; line-height:1.5; }
+
+  /* 7 house of heroes */
+  #s7 { height:1300px; background:var(--ink); color:var(--cream); padding:140px 110px; }
+  #s7 h2 { font-size:130px; margin-top:28px; }
+  #s7 h2 em { font-style:normal; color:var(--saffron); }
+  #s7 .rows { margin-top:70px; display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+  #s7 .r { border-top:4px solid var(--saffron); padding-top:30px; }
+  #s7 .r small { font-size:19px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--saffron); }
+  #s7 .r b { display:block; font-family:"Anton",sans-serif; font-weight:400; font-size:58px; text-transform:uppercase; margin:12px 0 8px; line-height:1; }
+  #s7 .r p { font-size:23px; line-height:1.45; color:#cfc4b7; }
+  #s7 .packs { position:absolute; left:110px; right:110px; bottom:90px; height:460px; display:flex; justify-content:center; gap:14px; align-items:flex-end; }
+  #s7 .packs img { height:290px; filter:drop-shadow(0 30px 30px rgba(0,0,0,.5)); }
+  #s7 .packs img:nth-child(even) { height:320px; }
+
+  /* 8 website hero */
+  #s8 { height:1450px; background:var(--saffron); padding:130px 110px; }
+  #s8 h2 { font-size:130px; color:var(--ink); margin-top:28px; }
+  #s8 .win { position:absolute; left:240px; right:240px; top:470px; }
+
+  /* 9 screens grid */
+  #s9 { height:2420px; background:var(--cream2); padding:140px 110px; }
+  #s9 h2 { font-size:130px; color:var(--green); margin-top:28px; }
+  #s9 .g { margin-top:80px; align-items:start; display:grid; grid-template-columns:1fr 1fr; gap:56px; }
+  #s9 figcaption { margin-top:18px; font-size:22px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#6e6257; }
+  #s9 figcaption b { color:var(--chilli); margin-right:12px; }
+
+  /* 10 content platforms */
+  #s10 { height:1350px; background:var(--chilli); color:var(--cream); padding:140px 110px; }
+  #s10 h2 { font-size:130px; margin-top:28px; width:1300px; }
+  #s10 .win { position:absolute; left:110px; right:110px; top:470px; height:780px; }
+
+  /* 11 mobile */
+  #s11 { height:1450px; background:var(--green); color:var(--cream); padding:140px 110px; }
+  #s11 h2 { font-size:130px; margin-top:28px; }
+  #s11 h2 em { font-style:normal; color:var(--saffron); }
+  #s11 .row { position:absolute; left:0; right:0; top:480px; display:flex; justify-content:center; align-items:flex-start; gap:40px; }
+  #s11 .phone { width:300px; }
+  #s11 .phone:nth-child(even) { margin-top:100px; }
+
+  /* 12 outro */
+  #s12 { height:1150px; background:var(--green); color:var(--cream); text-align:center; }
+  #s12 .c { position:absolute; left:0; right:0; top:150px; }
+  #s12 .d.big { font-size:190px; color:var(--saffron); margin-top:30px; }
+  #s12 .credit { margin-top:40px; font-size:28px; color:#d9e6df; line-height:1.5; }
+  #s12 .credit b { color:var(--cream); }
+  #s12 .fam { position:absolute; left:50%; bottom:0; transform:translateX(-50%); display:flex; align-items:flex-end; }
+  #s12 .fam img { display:block; }
+</style>
+</head>
+<body>
+
+<!-- 1 · HERO -->
+<section class="b" id="s1">
+  <div class="rays"></div>
+  <div class="top"><p class="kick"><i></i>Brand strategy · Characters · Website</p><p class="kick">Sunder Spices · Indore</p></div>
+  <h1 class="d">Kam masala,<br /><em>poora swaad.</em></h1>
+  <p class="sub">A heritage spice house, retold for the next generation through a family of four.</p>
+  <div class="d word">SUNDER</div>
+  <div class="fam">
+    <img src="shots/sunder/assets/cut-sudha.webp" style="height:730px" />
+    <img src="shots/sunder/assets/cut-ramesh.webp" style="height:760px;margin-left:-80px" />
+    <img src="shots/sunder/assets/cut-bunty.webp" style="height:610px;margin-left:-70px" />
+    <img src="shots/sunder/assets/cut-pihu.webp" style="height:580px;margin-left:-50px" />
+  </div>
+</section>
+
+<!-- 2 · OVERVIEW -->
+<section class="b" id="s2">
+  <div class="g">
+    <div>
+      <p class="kick" style="color:var(--chilli)"><i></i>The brief</p>
+      <h2 class="d">Fifty years of masala.<br /><em>One new voice.</em></h2>
+      <p class="lede">Sunder began in 1975 with masala made at home and sold from a bicycle in Indore. Three generations on, the brand needed to speak to a new kitchen without losing the elders who built it. The work: a brand strategy, a family of characters to carry it, the content, and a website that tells it.</p>
+    </div>
+    <div>
+      <dl>
+        <div><dt>Client</dt><dd>Sunder Spices Pvt. Ltd., Indore</dd></div>
+        <div><dt>Industry</dt><dd>FMCG · spices &amp; food</dd></div>
+        <div><dt>My role</dt><dd>Creative &amp; brand strategy lead</dd></div>
+        <div><dt>Scope</dt><dd>Brand strategy · Characters · Content · Website UI</dd></div>
+        <div><dt>Live</dt><dd style="color:var(--chilli)">sundermasala.com</dd></div>
+      </dl>
+      <p class="note">Brand history and product facts are the client's. Characters created by our team.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · THE IDEA -->
+<section class="b" id="s3">
+  <p class="kick" style="color:var(--saffron)"><i></i>The idea</p>
+  <p class="d big" style="margin-top:40px">Peedhi<br />badalti hai.<span>Swaad nahi.</span></p>
+  <div class="side">
+    <p style="margin-top:0;font-size:24px;letter-spacing:.2em;text-transform:uppercase;color:var(--saffron);font-weight:600">Generations change. Taste doesn't.</p>
+    <p>The brand's strength was never novelty. It was <b>restraint</b>, the elders' rule for the spice box: add less, keep the body happy.</p>
+    <p>So the strategy keeps the recipe and changes the storyteller. A family the reader already knows hands the brand down, one pinch at a time: <b>ek chutki, full fire.</b></p>
+  </div>
+</section>
+
+<!-- 4 · THE FAMILY -->
+<section class="b" id="s4">
+  <p class="kick" style="color:var(--chilli)"><i></i>Brand IP · four characters</p>
+  <h2 class="d">Meet the <em>family</em></h2>
+  <div class="cards">
+    <div class="card" style="--c:#7b2a8f"><span class="num">01</span><img src="shots/sunder/assets/cut-sudha.webp" /><div class="n"><b>Sudha Ji</b><span>Maa · the taste-keeper</span></div></div>
+    <div class="card" style="--c:var(--green)"><span class="num">02</span><img src="shots/sunder/assets/cut-ramesh.webp" /><div class="n"><b>Ramesh Ji</b><span>The dhaba truth</span></div></div>
+    <div class="card" style="--c:var(--chilli)"><span class="num">03</span><img src="shots/sunder/assets/cut-bunty.webp" style="height:740px" /><div class="n"><b>Bunty</b><span>Khana OK please</span></div></div>
+    <div class="card" style="--c:var(--saffron);color:var(--ink)"><span class="num">04</span><img src="shots/sunder/assets/cut-pihu.webp" /><div class="n"><b>Pihu</b><span>The masala memory</span></div></div>
+  </div>
+  <p class="foot">Characters created by our team. Sunder, Sudha Ji, Ramesh Ji, Bunty and Pihu are trademarks of Sunder Spices Pvt. Ltd.</p>
+</section>
+
+<!-- 5 · CHARACTERS AT WORK -->
+<section class="b" id="s5">
+  <div class="p" style="background:var(--chilli);color:var(--cream)">
+    <p class="kick"><i></i>The dhaba truth</p>
+    <p class="d">Region may change.<br />The dhaba stays<br />constant.</p>
+    <p>Ramesh Ji speaks for the highway kitchens where truckers decide what is real.</p>
+    <img src="shots/sunder/assets/cut-ramesh.webp" />
+  </div>
+  <div class="p" style="background:var(--saffron);color:var(--ink)">
+    <p class="kick"><i></i>The masala memory</p>
+    <p class="d">It was never<br />a fistful.<br /><span style="color:var(--chilli)">It was one chutki.</span></p>
+    <p>Pihu carries the school-gate thela: a paper cone of poha and one pinch of the right masala.</p>
+    <img src="shots/sunder/assets/cut-pihu.webp" />
+  </div>
+</section>
+
+<!-- 6 · PALETTE & TYPE -->
+<section class="b" id="s6">
+  <p class="kick" style="color:var(--chilli)"><i></i>Visual system</p>
+  <h2 class="d">Colours from the spice box</h2>
+  <div class="sw">
+    <div style="background:#054d37;color:#fbf6ee"><b>Elaichi green</b><code>#054D37</code></div>
+    <div style="background:#f2a51c;color:#2b2321"><b>Haldi</b><code>#F2A51C</code></div>
+    <div style="background:#e5392d;color:#fbf6ee"><b>Laal mirch</b><code>#E5392D</code></div>
+    <div style="background:#2b2321;color:#fbf6ee"><b>Kali mirch</b><code>#2B2321</code></div>
+    <div style="background:#f4ecdf;color:#2b2321;border:2px solid #e2d6c3"><b>Atta</b><code>#F4ECDF</code></div>
+  </div>
+  <div class="type">
+    <div><div class="aa">EK CHUTKI</div><small>Anton · display</small><p>Loud, condensed, hand-painted-sign energy. Headlines only, always uppercase.</p></div>
+    <div><div class="aa2">Aa</div><small>Anek Latin · text</small><p>Warm and readable for the story, with a Devanagari sibling for Hindi lines.</p></div>
+  </div>
+</section>
+
+<!-- 7 · HOUSE OF HEROES -->
+<section class="b" id="s7">
+  <p class="kick" style="color:var(--saffron)"><i></i>Brand architecture</p>
+  <h2 class="d">Not another masala brand.<br /><em>A house of local heroes.</em></h2>
+  <div class="rows">
+    <div class="r"><small>Habit</small><b>Sunder Essentials</b><p>The everyday heroes. The test: is it used every day?</p></div>
+    <div class="r"><small>Memory</small><b>Sunder Regions</b><p>India's street legends. The test: does one place own it?</p></div>
+    <div class="r"><small>Reverence</small><b>Sunder Heritage</b><p>The royal recipes. The test: is it for a khaas dawat?</p></div>
+    <div class="r"><small>Performance</small><b>Sunder Pro</b><p>For professional kitchens. The test: does it perform at scale?</p></div>
+  </div>
+  <div class="packs">
+    <img src="shots/sunder/assets/pack-red-chilli-v4.webp" />
+    <img src="shots/sunder/assets/pack-turmeric.webp" />
+    <img src="shots/sunder/assets/pack-jeeravan.webp" />
+    <img src="shots/sunder/assets/pack-garam-box-v2.webp" />
+    <img src="shots/sunder/assets/pack-kuti-teja.webp" />
+    <img src="shots/sunder/assets/pack-garam-pouch-v2.webp" />
+  </div>
+</section>
+
+<!-- 8 · WEBSITE -->
+<section class="b" id="s8">
+  <p class="kick" style="color:var(--ink)"><i></i>The website</p>
+  <h2 class="d">From a bicycle in Indore<br />to the browser</h2>
+  <div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com</span></div><img src="shots/sunder/d/d-02.jpg" /></div>
+</section>
+
+<!-- 9 · SCREENS -->
+<section class="b" id="s9">
+  <p class="kick" style="color:var(--chilli)"><i></i>Inside the site</p>
+  <h2 class="d">Every scroll, a story</h2>
+  <div class="g">
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com</span></div><img src="shots/sunder/d/d-00.jpg" /></div><figcaption><b>A</b>Opening · where it began</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com</span></div><img src="shots/sunder/d/d-01.jpg" /></div><figcaption><b>B</b>What we believe</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com</span></div><img src="shots/sunder/d/d-03.jpg" /></div><figcaption><b>C</b>Four pillars</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com</span></div><img src="shots/sunder/d/d-04.jpg" /></div><figcaption><b>D</b>A house of local heroes</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com</span></div><img src="shots/sunder/d/d-05.jpg" /></div><figcaption><b>E</b>Characters in the story</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com</span></div><img src="shots/sunder/d/d-08.jpg" /></div><figcaption><b>F</b>The family sign-off</figcaption></figure>
+  </div>
+</section>
+
+<!-- 10 · CONTENT PLATFORMS -->
+<section class="b" id="s10">
+  <p class="kick"><i></i>Content platforms</p>
+  <h2 class="d">We don't wait for the event. We are the event.</h2>
+  <div class="win"><div class="bar"><i></i><i></i><i></i><span>sundermasala.com · platforms</span></div><img src="shots/sunder/d/d-06.jpg" /></div>
+</section>
+
+<!-- 11 · MOBILE -->
+<section class="b" id="s11">
+  <p class="kick" style="color:var(--saffron)"><i></i>Mobile</p>
+  <h2 class="d">Built for the <em>phone in the kitchen</em></h2>
+  <div class="row">
+    <div class="phone"><img src="shots/sunder/m/m-01.jpg" /></div>
+    <div class="phone"><img src="shots/sunder/m/m-03.jpg" /></div>
+    <div class="phone"><img src="shots/sunder/m/m-05.jpg" /></div>
+    <div class="phone"><img src="shots/sunder/m/m-07.jpg" /></div>
+    <div class="phone"><img src="shots/sunder/m/m-09.jpg" /></div>
+  </div>
+</section>
+
+<!-- 12 · OUTRO -->
+<section class="b" id="s12">
+  <div class="rays"></div>
+  <div class="c">
+    <p class="kick" style="color:var(--saffron);justify-content:center"><i></i>Sunder ka masala, har niwala nirala</p>
+    <p class="d big">Ek chutki, full fire.</p>
+    <p class="credit"><b>Creative &amp; brand strategy lead:</b> Ali Azam Kazmi<br />Live at sundermasala.com · Thanks for watching</p>
+  </div>
+  <div class="fam">
+    <img src="shots/sunder/assets/cut-sudha.webp" style="height:560px" />
+    <img src="shots/sunder/assets/cut-ramesh.webp" style="height:585px;margin-left:-50px" />
+    <img src="shots/sunder/assets/cut-bunty.webp" style="height:480px;margin-left:-46px" />
+    <img src="shots/sunder/assets/cut-pihu.webp" style="height:455px;margin-left:-38px" />
+  </div>
+</section>
+
+<!-- COVER · 1616×1264 for the Behance grid -->
+<section class="b" id="cover" style="width:1616px;height:1264px;background:var(--green);color:var(--cream)">
+  <div class="rays"></div>
+  <p class="kick" style="position:absolute;left:84px;top:80px;color:var(--saffron);font-size:26px"><i></i>Brand · Characters · Website</p>
+  <h1 class="d" style="position:absolute;left:80px;top:140px;font-size:150px;color:var(--cream)">Sunder<br /><span style="color:var(--saffron)">Masala</span></h1>
+  <p style="position:absolute;left:84px;top:470px;width:520px;font-size:30px;line-height:1.4;color:#d9e6df">A 1975 spice house, retold through a family of four.</p>
+  <div style="position:absolute;right:-30px;bottom:-10px;display:flex;align-items:flex-end;z-index:2">
+    <img src="shots/sunder/assets/cut-sudha.webp" style="height:640px;display:block" />
+    <img src="shots/sunder/assets/cut-ramesh.webp" style="height:690px;margin-left:-80px;display:block" />
+    <img src="shots/sunder/assets/cut-bunty.webp" style="height:540px;margin-left:-70px;display:block" />
+    <img src="shots/sunder/assets/cut-pihu.webp" style="height:510px;margin-left:-50px;display:block" />
+  </div>
+</section>
+
+</body>
+</html>

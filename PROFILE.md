@@ -21,6 +21,7 @@ If a fact is not here, do not put it on the site. Mark it `[DRAFT — needs inpu
 - Behance: https://www.behance.net/aliak8
 - Figma: https://www.figma.com/@aliak
 - Figma Community — this site's design system and screens, published 2026-11-18: https://www.figma.com/community/file/1704871615577781966
+- Behance case study, Sunder Masala (brand characters & website), published 2026-11-19: https://www.behance.net/gallery/258717171/Sunder-Masala-Brand-Characters-Website
 - Medium: https://medium.com/@aliazamkazmi1291
 - HackerRank: https://www.hackerrank.com/profile/aliazamkazmi1291
 - Coursera: https://www.coursera.org/user/765f7d46ad857abfa027105fd0f33e4e
@@ -128,6 +129,7 @@ market strategy … also same for casa, wolfcasa.in". Scope on both is his
 words: **website UI, content, branding and market strategy.** No outcome is
 claimed for either; none is on file.
 - **Sunder Masala** (sundermasala.com, read 2026-09-26) — **spice brand, FMCG / food.** A heritage masala house from Indore, Madhya Pradesh: founded 1975 by Bharat Kumar Jain, three generations, cold-milled under 40°C, single-origin, "100% pure, no artificial colour". Range: 13 blended spices, 9 pure, 8 whole, 2 hing, plus a recipe section ("Rasoi"). Taglines on the site: "Kam masala, poora swaad" and "Ek chutki, full fire". ⚠️ The 1975 founding and the family story are the CLIENT's history, not Ali's — never present them as his.
+  - **Hue Cycle Labs (2026-11-19, Ali):** the live sundermasala.com footer credits "Branding by Hue Cycle Labs · huecycle.in". Ali: "I was heading the creative and brands there as a strategist", and "the 4 characters are the intellectual property we created" (the family mascots: Sudhaji/Maa, Rameshji, Bunty, Pihu). Credit line for public use: **Creative & brand strategy lead** — Ali, later the same day: "dont credit hue cycle", so the agency is never named on the site, Behance or elsewhere. Never write "Branding by Ali/Smaak.ux" either; the role is the claim. The site was redesigned after the 2026-09-26 capture; the characters carried over.
 - **Wolf Casa** (wolfcasa.in, read 2026-09-26) — **interiors / premium home furnishing.** An interior showroom and curation service positioned as "The Interio Mall for Curated Living", selling composed rooms rather than single pieces — "A sofa alone is inventory. A curated room is desire." 18 categories, 11 room curations, a 100,000 sq ft showroom, plus a sourcing service and franchise model. ⚠️ Showroom size and category counts are the client's figures about their business, not results of Ali's work.
 
 **Wise Work** — Full Stack Intern · Feb–Dec 2023 · Remote — React.js, scalable UI components, REST API integration

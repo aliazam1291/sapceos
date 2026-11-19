@@ -225,6 +225,11 @@ export default function SmaakPage() {
                 <p className={styles.clientBrief}>{c.brief}</p>
                 {c.note ? <p className={styles.clientNote}>{c.note}</p> : null}
                 {c.industry ? <span className={styles.industry}>{c.industry}</span> : null}
+                {c.behance ? (
+                  <a href={c.behance} target="_blank" rel="noreferrer noopener" className={styles.clientLink}>
+                    Read the case study on Behance <span aria-hidden="true">↗</span>
+                  </a>
+                ) : null}
               </div>
             </li>
           ))}

@@ -1695,6 +1695,19 @@ the open channel; the one joke; keep it the only one).
   `--bundle` re-bundles after editing code.js). Run it in the Figma
   DESKTOP app (Plugins → Development). Variable-bound paints drop an opacity
   set after binding — alpha lives in the variables.
+- *Sunder Masala, credited properly* (2026-11-19). The live
+  sundermasala.com footer says "Branding by Hue Cycle Labs"; Ali led
+  creative and brand strategy there, and the team created the four
+  characters (Sudha Ji, Ramesh Ji, Bunty, Pihu — trademarks of Sunder
+  Spices). `studio.ts` now says exactly that (note: "Creative & brand
+  strategy lead" — Ali asked, the same day, that the agency not be named:
+  never write "Hue Cycle" anywhere public), kind is `brand`, the cover is the
+  Behance case-study cover (`/studio/sunder-masala-case.webp`, dome texture
+  baked alongside), and `behance` points at the case study — /studio's
+  "Open on Behance", /smaak's bay ("Read the case study on Behance"), the
+  inspection bay and the home dome all link it. The case-study boards are
+  built from `tools/figma-plugin/sunder-boards.html`. Never credit the
+  Sunder branding to Smaak.ux alone.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

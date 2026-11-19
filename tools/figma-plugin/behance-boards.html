@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Behance boards</title>
+<!-- The Behance case study as designed boards (1920 wide each), rendered one
+     PNG per <section> by behance-boards-render.mjs. Modelled on what top
+     Behance web projects do: hero, overview + credits, structure, system,
+     key screens in frames with annotations, a mobile set, details, outro.
+     Screens are 2× captures of the live site (capture-hd.mjs → shots/hd). -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --ink:#060606; --panel:#0d0d0d; --raised:#151515; --em:#3cdd9e; --mint:#8af0c8; --green:#2fbf8a; --deep:#0f3b2e; --amber:#e8a34a; --red:#ff4b3e; --t1:#f2f5f8; --t2:#9a9a9a; --t3:#7f7f7f; --line:rgba(190,230,215,.14); }
+  body { background:#000; color:var(--t1); font-family:"Geist",system-ui,sans-serif; width:1920px; }
+  .b { position:relative; width:1920px; overflow:hidden; background:var(--ink); }
+  .mono { font-family:"Geist Mono",monospace; letter-spacing:.16em; text-transform:uppercase; }
+  .kick { font-family:"Geist Mono",monospace; font-size:22px; letter-spacing:.2em; text-transform:uppercase; color:var(--em); display:flex; align-items:center; gap:14px; }
+  .kick i { width:12px; height:12px; border-radius:50%; background:var(--em); box-shadow:0 0 18px var(--em); }
+  .num { font-family:"Geist Mono",monospace; font-size:20px; letter-spacing:.2em; color:var(--t3); }
+  h2 { font-size:92px; line-height:.95; font-weight:700; letter-spacing:-.045em; }
+  h2 em { font-style:normal; color:var(--em); }
+  p.lede { font-size:30px; line-height:1.45; color:#c9cfd4; }
+  .stars { position:absolute; inset:0; background:url(shots/galaxy-cover-2.png) center/cover; opacity:.35; }
+  .win { border-radius:14px; overflow:hidden; background:#0d0d0d; border:1.5px solid rgba(190,230,215,.25); box-shadow:0 60px 140px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.6); }
+  .win .bar { height:38px; background:#141414; display:flex; align-items:center; gap:9px; padding:0 16px; border-bottom:1px solid rgba(190,230,215,.1); }
+  .win .bar i { width:11px; height:11px; border-radius:50%; background:#333; }
+  .win .bar span { margin-left:12px; font-family:"Geist Mono",monospace; font-size:14px; color:#8a8a8a; background:#0a0a0a; padding:4px 14px; border-radius:6px; }
+  .win img { display:block; width:101.2%; max-width:none; }
+  .phone { border-radius:46px; padding:11px; background:#111; border:1.5px solid rgba(190,230,215,.3); box-shadow:0 60px 120px rgba(0,0,0,.85); }
+  .phone img { display:block; width:100%; border-radius:36px; }
+  .note { position:absolute; display:flex; align-items:center; gap:14px; font-family:"Geist Mono",monospace; font-size:19px; letter-spacing:.12em; text-transform:uppercase; color:var(--mint); }
+  .note b { display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:var(--em); color:#04130d; font-size:17px; letter-spacing:0; }
+  .note span { background:rgba(6,6,6,.82); border:1px solid rgba(60,221,158,.35); padding:10px 16px; }
+
+  /* 1 hero */
+  #b1 { height:1280px; }
+  #b1 .bg { position:absolute; inset:0; background:url(shots/galaxy-cover-1.png) 25% 60%/cover; filter:saturate(1.15) brightness(1.1); }
+  #b1 .shade { position:absolute; inset:0; background:radial-gradient(760px 300px at 26% 50%,rgba(6,6,6,.9),rgba(6,6,6,0) 100%),linear-gradient(180deg,rgba(6,6,6,.85) 0%,rgba(6,6,6,0) 35%,rgba(6,6,6,0) 65%,rgba(6,6,6,.9) 100%); }
+  #b1 .top { position:absolute; left:120px; right:120px; top:110px; display:flex; justify-content:space-between; }
+  #b1 h1 { position:absolute; left:112px; top:190px; font-size:200px; line-height:.88; font-weight:800; letter-spacing:-.055em; }
+  #b1 h1 em { font-style:normal; color:var(--em); }
+  #b1 .sub { position:absolute; left:120px; top:580px; width:760px; font-size:32px; line-height:1.4; color:#d2d7db; }
+  #b1 .meta { position:absolute; left:120px; right:120px; bottom:100px; display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); }
+  #b1 .meta div { padding-top:28px; }
+  #b1 .meta small { display:block; font-family:"Geist Mono",monospace; font-size:17px; letter-spacing:.2em; text-transform:uppercase; color:var(--t3); margin-bottom:12px; }
+  #b1 .meta strong { font-size:28px; font-weight:500; }
+
+  /* 2 overview */
+  #b2 { height:1100px; padding:150px 120px; }
+  #b2 .grid { display:grid; grid-template-columns:1.1fr 1fr; gap:140px; }
+  #b2 h2 { margin:34px 0 46px; }
+  #b2 .stats { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:110px; }
+  #b2 .stats div { background:var(--ink); padding:40px 36px; }
+  #b2 .stats strong { display:block; font-size:96px; font-weight:700; letter-spacing:-.04em; color:var(--em); line-height:1; }
+  #b2 .stats span { display:block; margin-top:14px; font-size:22px; color:var(--t2); }
+  #b2 .credits { margin-top:70px; display:grid; grid-template-columns:auto 1fr; gap:18px 40px; font-size:24px; }
+  #b2 .credits dt { font-family:"Geist Mono",monospace; font-size:17px; letter-spacing:.2em; text-transform:uppercase; color:var(--t3); padding-top:6px; }
+
+  /* 3 journey */
+  #b3 { height:1220px; padding:140px 120px; }
+  #b3 .route { position:relative; margin-top:110px; display:grid; grid-template-columns:repeat(7,1fr); gap:22px; }
+  #b3 .route::before { content:""; position:absolute; left:24px; right:24px; top:24px; border-top:2px dashed rgba(60,221,158,.45); }
+  #b3 .stop .dot { position:relative; width:48px; height:48px; transform:rotate(45deg); border:2px solid var(--em); background:var(--ink); margin-bottom:34px; }
+  #b3 .stop:first-child .dot { background:var(--em); box-shadow:0 0 30px var(--em); }
+  #b3 .stop small { font-family:"Geist Mono",monospace; font-size:16px; letter-spacing:.2em; color:var(--t3); }
+  #b3 .stop h3 { font-size:32px; font-weight:600; letter-spacing:-.02em; margin:8px 0 10px; }
+  #b3 .stop p { font-size:19px; line-height:1.4; color:var(--t2); height:80px; }
+  #b3 .stop .thumb { margin-top:24px; aspect-ratio:9/12; border-radius:10px; border:1px solid var(--line); background-size:cover; background-position:center; }
+
+  /* 4 hero screen annotated */
+  #b4 { height:1400px; background:radial-gradient(1100px 800px at 50% 60%, rgba(60,221,158,.16), transparent 70%), var(--ink); padding:130px 0 0; }
+  #b4 .head { padding:0 120px; display:flex; justify-content:space-between; align-items:flex-end; }
+  #b4 .win { position:absolute; left:240px; top:400px; width:1440px; }
+
+  /* 5 full-bleed screen */
+  .bleed { height:1200px; }
+  .bleed img.full { position:absolute; left:0; top:0; width:101.2%; height:100%; object-fit:cover; object-position:left center; }
+  .bleed .tag { position:absolute; left:0; right:0; top:0; padding:70px 120px 120px; background:linear-gradient(180deg,rgba(6,6,6,.92),rgba(6,6,6,0)); }
+  .bleed .tag .num { color:var(--em); }
+  .bleed .cap { position:absolute; left:120px; bottom:110px; width:620px; padding:40px 44px; background:rgba(6,6,6,.86); border:1px solid rgba(60,221,158,.3); }
+  .bleed .cap h3 { font-size:54px; font-weight:700; letter-spacing:-.035em; margin:16px 0 14px; line-height:1; }
+  .bleed .cap p { font-size:24px; line-height:1.45; color:#c9cfd4; }
+  .bleed.right .cap { left:auto; right:120px; }
+  #b5 .cap { left:auto; right:120px; bottom:90px; }
+
+  /* 6 system */
+  #b6 { height:1440px; padding:140px 120px; }
+  #b6 .sw { margin-top:90px; display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr 1fr; gap:18px; height:420px; }
+  #b6 .sw div { border:1px solid var(--line); display:flex; flex-direction:column; justify-content:flex-end; padding:24px; }
+  #b6 .sw b { font-size:24px; font-weight:600; }
+  #b6 .sw code { font-family:"Geist Mono",monospace; font-size:17px; margin-top:6px; opacity:.75; }
+  #b6 .type { margin-top:90px; display:grid; grid-template-columns:1.3fr 1fr; gap:80px; border-top:1px solid var(--line); padding-top:70px; }
+  #b6 .type .aa { font-size:250px; font-weight:700; letter-spacing:-.06em; line-height:.8; }
+  #b6 .type .mono-aa { font-family:"Geist Mono",monospace; font-size:150px; line-height:.9; color:var(--em); }
+  #b6 .type small { display:block; margin-top:30px; font-family:"Geist Mono",monospace; font-size:18px; letter-spacing:.2em; text-transform:uppercase; color:var(--t3); }
+  #b6 .type p { font-size:22px; color:var(--t2); margin-top:12px; line-height:1.5; }
+
+  /* 8 screens grid */
+  #b8 { height:2330px; padding:140px 120px; }
+  #b8 .g { margin-top:90px; display:grid; grid-template-columns:1fr 1fr; gap:60px 60px; }
+  #b8 figcaption { margin-top:20px; font-family:"Geist Mono",monospace; font-size:18px; letter-spacing:.18em; text-transform:uppercase; color:var(--t2); }
+  #b8 figcaption b { color:var(--em); font-weight:500; margin-right:14px; }
+
+  /* 9 mobile */
+  #b9 { height:1340px; background:linear-gradient(180deg,#071f18 0%,#060606 85%); padding:140px 120px; }
+  #b9 .row { position:absolute; left:0; right:0; top:470px; display:flex; justify-content:center; gap:44px; }
+  #b9 .phone { width:300px; }
+  #b9 .phone img { aspect-ratio:390/730; object-fit:cover; object-position:top; }
+  #b9 .phone:nth-child(even) { margin-top:110px; }
+
+  /* 11 outro */
+  #b11 { height:1100px; }
+  #b11 .bg { position:absolute; inset:0; background:url(shots/scene-blackhole.png) center 55%/cover; filter:brightness(.75); }
+  #b11 .shade { position:absolute; inset:0; background:radial-gradient(1000px 520px at 50% 52%, rgba(6,6,6,.78), rgba(6,6,6,.95)); }
+  #b11 .c { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  #b11 h2 { font-size:130px; margin:30px 0 30px; }
+  #b11 .btn { margin-top:46px; display:inline-flex; gap:18px; }
+  #b11 .btn span { font-family:"Geist Mono",monospace; font-size:24px; letter-spacing:.14em; padding:22px 34px; border:1.5px solid rgba(190,230,215,.4); }
+  #b11 .btn span.p { background:var(--em); color:#04130d; border-color:var(--em); }
+</style>
+</head>
+<body>
+
+<!-- 1 · HERO -->
+<section class="b" id="b1">
+  <div class="bg"></div><div class="shade"></div>
+  <div class="top"><p class="kick"><i></i>Website · UI/UX · 3D</p><p class="kick" style="color:var(--t2)">Free Figma template</p></div>
+  <h1>Dark space<br /><em>portfolio</em></h1>
+  <p class="sub">A personal website you fly through. A ship travels with you from page to page, projects are holograms, and every result has mass.</p>
+  <div class="meta">
+    <div><small>Role</small><strong>Design, UX &amp; build</strong></div>
+    <div><small>Tools</small><strong>Figma · Next.js · Three.js</strong></div>
+    <div><small>Includes</small><strong>12 screens · design system</strong></div>
+    <div><small>Live</small><strong style="color:var(--em)">aliazamkazmi.vercel.app</strong></div>
+  </div>
+</section>
+
+<!-- 2 · OVERVIEW -->
+<section class="b" id="b2">
+  <div class="stars" style="opacity:.18"></div>
+  <div class="grid" style="position:relative">
+    <div>
+      <p class="num">01 — Overview</p>
+      <h2>A portfolio is a <em>place</em>,<br />not a page.</h2>
+      <p class="lede">Most portfolios are a grid of cards. This one is a flight: you board at a galaxy, a ship flies beside you as you scroll, and each section is a place with its own object. Projects arrive as holograms, case studies are carried in by drones, and the tour ends with the ship landing on a pad.</p>
+      <dl class="credits">
+        <dt>Design</dt><dd>Ali Azam Kazmi</dd>
+        <dt>Build</dt><dd>Next.js, React Three Fiber, GSAP</dd>
+        <dt>Figma</dt><dd>Design system + 12 desktop &amp; mobile screens</dd>
+      </dl>
+    </div>
+    <div class="stats">
+      <div><strong>7</strong><span>stops on the home page</span></div>
+      <div><strong>12</strong><span>screens in the Figma file</span></div>
+      <div><strong>2</strong><span>breakpoints: desktop &amp; mobile</span></div>
+      <div><strong>Free</strong><span>on Figma Community</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · JOURNEY -->
+<section class="b" id="b3">
+  <p class="num">02 — Structure</p>
+  <h2 style="margin-top:34px">One flight, <em>seven stops</em></h2>
+  <p class="lede" style="margin-top:30px;width:980px">The home page answers a visitor's questions in the order they ask them. Every stop is a summary with one door to the full page.</p>
+  <div class="route">
+    <div class="stop"><div class="dot"></div><small>00</small><h3>Intro</h3><p>Who, what, and the résumé on the first screen</p><div class="thumb" style="background-image:url(shots/hd/d-hero.jpg)"></div></div>
+    <div class="stop"><div class="dot"></div><small>01</small><h3>Work</h3><p>Five projects as worlds on a galaxy flight</p><div class="thumb" style="background-image:url(shots/hd/d-work.jpg)"></div></div>
+    <div class="stop"><div class="dot"></div><small>02</small><h3>Results</h3><p>Measured numbers orbiting a black hole</p><div class="thumb" style="background-image:url(shots/hd/d-results.jpg)"></div></div>
+    <div class="stop"><div class="dot"></div><small>03</small><h3>Experience</h3><p>The roles on a dashed route</p><div class="thumb" style="background-image:url(shots/hd/d-log.jpg)"></div></div>
+    <div class="stop"><div class="dot"></div><small>04</small><h3>Design</h3><p>Design work hung in a dome gallery</p><div class="thumb" style="background-image:url(shots/hd/d-design.jpg)"></div></div>
+    <div class="stop"><div class="dot"></div><small>05</small><h3>Case studies</h3><p>Carried in by drones</p><div class="thumb" style="background-image:url(shots/hd/d-notes.jpg)"></div></div>
+    <div class="stop"><div class="dot"></div><small>06</small><h3>Contact</h3><p>The ship lands; its parts introduce you</p><div class="thumb" style="background-image:url(shots/hd/d-landing.jpg)"></div></div>
+  </div>
+</section>
+
+<!-- 4 · HERO SCREEN, ANNOTATED -->
+<section class="b" id="b4">
+  <div class="head"><div><p class="num">03 — The landing</p><h2 style="margin-top:30px">First screen, <em>whole story</em></h2></div>
+  <p class="lede" style="width:620px">Name, role, four proof points and the résumé, before anything moves. The figure unmasks where you point.</p></div>
+  <div class="win"><div class="bar"><i></i><i></i><i></i><span>aliazamkazmi.vercel.app</span></div><img src="shots/hd/d-hero.jpg" /></div>
+  <div class="note" style="left:120px;top:700px"><b>1</b><span>Name + role</span></div>
+  <div class="note" style="left:120px;top:900px"><b>2</b><span>Proof points</span></div>
+  <div class="note" style="right:110px;top:600px"><span>Hover to unmask</span><b>3</b></div>
+  <div class="note" style="right:110px;top:1060px"><span>Skills orbit the figure</span><b>4</b></div>
+</section>
+
+<!-- 5 · GALAXY FLIGHT -->
+<section class="b bleed" id="b5">
+  <img class="full" src="shots/hd/d-work.jpg" />
+  <div class="cap"><p class="num">04 — The work</p><h3>Projects are <em style="font-style:normal;color:var(--em)">worlds</em></h3><p>Scroll and the camera flies from one planet to the next, the ship leading the way. Each stop holds a readout and a door to the full report.</p></div>
+</section>
+
+<!-- 6 · DESIGN SYSTEM -->
+<section class="b" id="b6">
+  <p class="num">05 — Design system</p>
+  <h2 style="margin-top:34px">Black, <em>emerald</em>, and heat</h2>
+  <p class="lede" style="margin-top:28px;width:1100px">Emerald is the interface. Amber belongs to the field: planets, engines, the core. Red is heat, and appears exactly once in the chrome.</p>
+  <div class="sw">
+    <div style="background:#060606"><b>Ground</b><code>#060606</code></div>
+    <div style="background:#151515"><b>Raised</b><code>#151515</code></div>
+    <div style="background:#3cdd9e;color:#04130d"><b>Signal</b><code>#3CDD9E</code></div>
+    <div style="background:#8af0c8;color:#04130d"><b>Mint</b><code>#8AF0C8</code></div>
+    <div style="background:#0f3b2e"><b>Deep</b><code>#0F3B2E</code></div>
+    <div style="background:#e8a34a;color:#1a0f02"><b>Amber</b><code>#E8A34A</code></div>
+    <div style="background:#ff4b3e;color:#1a0302"><b>Heat</b><code>#FF4B3E</code></div>
+  </div>
+  <div class="type">
+    <div><div class="aa">Aa</div><small>Geist · 400 – 800</small><p>Display, titles and body. Tight tracking on display sizes, calm and large.</p></div>
+    <div><div class="mono-aa">T+0.0s</div><small>Geist Mono · 400 – 500</small><p>Instruments, labels and the mission-control voice. Always uppercase, always tracked.</p></div>
+  </div>
+</section>
+
+<!-- 7 · RESULTS -->
+<section class="b bleed right" id="b7">
+  <img class="full" src="shots/hd/d-results.jpg" />
+  <div class="tag"><p class="num">06 — Results · drag to orbit, hold to dive</p></div>
+</section>
+
+<!-- 8 · SCREENS GRID -->
+<section class="b" id="b8">
+  <p class="num">07 — Inside pages</p>
+  <h2 style="margin-top:34px">Every page, <em>one language</em></h2>
+  <div class="g">
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>/hire</span></div><img src="shots/hd/d-hire.jpg" /></div><figcaption><b>A</b>Recruiter brief</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>/missions</span></div><img src="shots/hd/d-missions.jpg" /></div><figcaption><b>B</b>Projects as holograms</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>/missions/mappls-shop-admin</span></div><img src="shots/hd/d-report.jpg" /></div><figcaption><b>C</b>Project report</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>/studio</span></div><img src="shots/hd/d-studio.jpg" /></div><figcaption><b>D</b>Design studio</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>/about</span></div><img src="shots/hd/d-about.jpg" /></div><figcaption><b>E</b>About</figcaption></figure>
+    <figure><div class="win"><div class="bar"><i></i><i></i><i></i><span>/#log</span></div><img src="shots/hd/d-log.jpg" /></div><figcaption><b>F</b>Experience route</figcaption></figure>
+  </div>
+</section>
+
+<!-- 9 · MOBILE -->
+<section class="b" id="b9">
+  <p class="num">08 — Mobile</p>
+  <h2 style="margin-top:34px">Feels like an <em>app</em></h2>
+  <p class="lede" style="margin-top:28px;width:1000px">Below 768px the chrome becomes a top bar and a five-tab bar, and the ship docks in the corner like a status icon.</p>
+  <div class="row">
+    <div class="phone"><img src="shots/hd/m-hero.jpg" /></div>
+    <div class="phone"><img src="shots/hd/m-work.jpg" /></div>
+    <div class="phone"><img src="shots/hd/m-results.jpg" /></div>
+    <div class="phone"><img src="shots/hd/m-missions.jpg" /></div>
+    <div class="phone"><img src="shots/hd/m-report.jpg" /></div>
+  </div>
+</section>
+
+<!-- 10 · TOUCHDOWN -->
+<section class="b bleed" id="b10">
+  <img class="full" src="shots/hd/d-landing.jpg" />
+  <div class="tag"><p class="num">09 — Touchdown · each part of the ship introduces something</p></div>
+</section>
+
+<!-- 11 · OUTRO -->
+<section class="b" id="b11">
+  <div class="bg"></div><div class="shade"></div>
+  <div class="c">
+    <p class="kick"><i></i>Free on Figma Community</p>
+    <h2>Take it for a <em>flight</em></h2>
+    <p class="lede" style="width:900px">The design system and all 12 screens, free to duplicate and make your own.</p>
+    <div class="btn"><span class="p">FIGMA COMMUNITY ↗</span><span>LIVE SITE ↗</span></div>
+    <p class="num" style="margin-top:60px">Thanks for watching · Ali Azam Kazmi</p>
+  </div>
+</section>
+
+</body>
+</html>

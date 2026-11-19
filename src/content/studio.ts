@@ -63,16 +63,20 @@ export const studioPieces: StudioPiece[] = [
   // Sunder Masala and Wolf Casa confirmed by Ali 2026-09-26 — the first of
   // them had sat in PROFILE.md's "DO NOT USE" list since the project began.
   // Scope on both is his: website UI, content, branding and market strategy.
+  // 2026-11-19: Ali led creative and brand strategy on Sunder, and his team
+  // created the four characters (PROFILE.md). The credit line is his role
+  // only; Ali asked that the agency not be named. The case study is on Behance.
   {
     slug: "sunder-masala",
     title: "Sunder Masala",
     client: "Sunder Masala",
-    kind: "web",
-    brief: "Website UI, content, branding and market strategy.",
-    note: "Heritage spice house, Indore · est. 1975",
+    kind: "brand",
+    brief: "Brand strategy, a family of four characters, content and website UI.",
+    note: "Creative & brand strategy lead · heritage spice house, Indore, est. 1975",
     industry: "FMCG · spices & food",
     site: "https://www.sundermasala.com/",
-    cover: "/studio/sunder-masala-site.png",
+    cover: "/studio/sunder-masala-case.webp",
+    behance: "https://www.behance.net/gallery/258717171/Sunder-Masala-Brand-Characters-Website",
     status: "client",
   },
   {

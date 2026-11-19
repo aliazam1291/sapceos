@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Behance cover — hero</title>
+<!-- Two hero-led Behance covers (1616×1264), ?v=a or ?v=b.
+     A: the black hole (a real render) is the hero; the site floats in front
+        of it in a browser frame, a phone beside it.
+     B: the astronaut avatar is the hero over a lit planet limb; the screens
+        stack beside him.
+     Both: one focal image, very little text, high contrast — a Behance grid
+     is scrolled past in a fraction of a second. -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1616px; height: 1264px; overflow: hidden; background: #050505; }
+  body { position: relative; color: #f5f5f5; font-family: "Geist", system-ui, sans-serif; }
+  .kicker { font-family: "Geist Mono", monospace; font-size: 30px; letter-spacing: 0.18em; text-transform: uppercase; color: #3cdd9e; display: flex; align-items: center; gap: 16px; }
+  .kicker i { width: 16px; height: 16px; border-radius: 50%; background: #3cdd9e; box-shadow: 0 0 22px #3cdd9e; }
+  .free { font-family: "Geist Mono", monospace; font-weight: 500; font-size: 32px; letter-spacing: 0.14em; background: #3cdd9e; color: #04130d; padding: 16px 28px; display: inline-block; }
+  .browser { position: absolute; border-radius: 14px; overflow: hidden; background: #0d0d0d; border: 2px solid rgba(190, 230, 215, 0.28); box-shadow: 0 60px 140px rgba(0,0,0,0.85), 0 0 80px rgba(60,221,158,0.15); }
+  .browser .bar { height: 40px; background: #141414; display: flex; align-items: center; gap: 10px; padding: 0 18px; border-bottom: 1px solid rgba(190,230,215,0.12); }
+  .browser .bar i { width: 12px; height: 12px; border-radius: 50%; background: #333; }
+  .browser .bar span { margin-left: 14px; font-family: "Geist Mono", monospace; font-size: 16px; color: #8a8a8a; background: #0a0a0a; padding: 5px 16px; border-radius: 6px; }
+  .browser .shot { background-size: cover; background-position: top center; }
+  .phone { position: absolute; border-radius: 40px; border: 10px solid #121212; outline: 2px solid rgba(190,230,215,0.3); background-size: cover; background-position: top center; box-shadow: 0 50px 120px rgba(0,0,0,0.9); }
+
+  /* ── A: black hole ───────────────────────────────────────────── */
+  .a .bg { position: absolute; inset: 0; background: url(shots/scene-blackhole.png) 50% 58% / 150% auto no-repeat; filter: saturate(1.2) brightness(1.1); }
+  .a .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.35) 34%, rgba(5,5,5,0) 55%, rgba(5,5,5,0.55) 100%); }
+  .a .top { position: absolute; left: 90px; right: 90px; top: 80px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .a h1 { position: absolute; left: 86px; top: 150px; font-size: 150px; line-height: 0.92; font-weight: 800; letter-spacing: -0.05em; text-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+  .a h1 em { font-style: normal; color: #3cdd9e; }
+  .a .browser { left: 300px; top: 560px; width: 1020px; transform: perspective(2400px) rotateX(10deg) rotateY(-8deg); }
+  .a .browser .shot { height: 600px; background-image: url(shots/home-hero.jpg); }
+  .a .phone { left: 1210px; top: 640px; width: 290px; height: 600px; background-image: url(shots/m-home.jpg); transform: rotate(4deg); }
+
+  /* ── B: astronaut ────────────────────────────────────────────── */
+  .b .bg { position: absolute; inset: 0; background: radial-gradient(900px 700px at 70% 55%, rgba(60,221,158,0.22), transparent 70%), url(shots/scene-galaxy.png) 50% 40% / cover no-repeat; filter: brightness(0.55) saturate(1.1); }
+  .b .planet { position: absolute; left: -400px; right: -400px; top: 1060px; height: 2400px; border-radius: 50%; background: #070707; box-shadow: 0 -2px 0 3px rgba(60,221,158,0.95), 0 -30px 120px rgba(60,221,158,0.35), inset 0 40px 120px rgba(232,163,74,0.25); }
+  .b .planet::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 18px -6px 0 0 rgba(255,75,62,0.75); }
+  .b .avatar { position: absolute; right: 30px; bottom: 120px; width: 900px; height: 985px; background: url(shots/ali-masked.webp) center bottom / contain no-repeat; filter: drop-shadow(0 0 60px rgba(60,221,158,0.35)); -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 97%); mask-image: linear-gradient(180deg, #000 72%, transparent 97%); }
+  .b .top { position: absolute; left: 90px; top: 90px; }
+  .b h1 { position: absolute; left: 86px; top: 170px; width: 820px; font-size: 140px; line-height: 0.92; font-weight: 800; letter-spacing: -0.05em; text-shadow: 0 8px 40px rgba(0,0,0,0.7); }
+  .b h1 em { font-style: normal; color: #3cdd9e; }
+  .b .free { position: absolute; left: 90px; top: 640px; }
+  .b .browser { left: 90px; top: 760px; z-index: 2; width: 620px; transform: perspective(2000px) rotateY(14deg); }
+  .b .browser .shot { height: 360px; background-image: url(shots/home-results.jpg); }
+</style>
+</head>
+<body>
+  <div id="a" class="a" hidden>
+    <div class="bg"></div><div class="shade"></div>
+    <div class="top"><p class="kicker"><i></i>Space OS · Figma</p><span class="free">FREE</span></div>
+    <h1>Portfolio<br /><em>template</em></h1>
+    <div class="browser"><div class="bar"><i></i><i></i><i></i><span>aliazamkazmi.vercel.app</span></div><div class="shot"></div></div>
+    <div class="phone"></div>
+  </div>
+  <div id="b" class="b" hidden>
+    <div class="bg"></div>
+    <div class="avatar"></div>
+    <div class="planet"></div>
+    <div class="top"><p class="kicker"><i></i>Space OS · Figma</p></div>
+    <h1>Dark portfolio <em>template</em></h1>
+    <span class="free">FREE</span>
+    <div class="browser"><div class="bar"><i></i><i></i><i></i><span>aliazamkazmi.vercel.app</span></div><div class="shot"></div></div>
+  </div>
+  <script>
+    const v = new URLSearchParams(location.search).get("v") || "a";
+    document.getElementById(v).hidden = false;
+  </script>
+</body>
+</html>

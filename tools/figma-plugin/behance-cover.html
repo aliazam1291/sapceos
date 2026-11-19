@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Behance cover</title>
+<!-- Behance project cover, 1616×1264 (Behance's 808×632 at 2×, 1.28:1).
+     Designed for the shape instead of cropped from the 16:9 Figma
+     thumbnail: the title owns the top, the real screens fill the middle,
+     and the bottom ~18% stays quiet because Behance lays the project name
+     and stats over it in the grid. -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1616px; height: 1264px; overflow: hidden; }
+  body {
+    position: relative; color: #f5f5f5; font-family: "Geist", system-ui, sans-serif;
+    background:
+      radial-gradient(1000px 700px at 70% 62%, rgba(60, 221, 158, 0.20), transparent 70%),
+      radial-gradient(800px 500px at 10% 100%, rgba(232, 163, 74, 0.14), transparent 70%),
+      #060606;
+  }
+  .stars { position: absolute; inset: 0; background-image:
+      radial-gradient(2px 2px at 140px 90px, #fff9, transparent),
+      radial-gradient(1.5px 1.5px at 1380px 140px, #fff8, transparent),
+      radial-gradient(1.5px 1.5px at 980px 60px, #fff7, transparent),
+      radial-gradient(2px 2px at 1530px 520px, #fff8, transparent),
+      radial-gradient(1.5px 1.5px at 60px 640px, #fff6, transparent),
+      radial-gradient(1.5px 1.5px at 760px 1180px, #fff6, transparent); }
+  .head { position: absolute; left: 96px; top: 90px; right: 96px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .kicker { font-family: "Geist Mono", monospace; font-size: 30px; letter-spacing: 0.16em; text-transform: uppercase; color: #3cdd9e; display: flex; align-items: center; gap: 16px; }
+  .kicker i { width: 16px; height: 16px; border-radius: 50%; background: #3cdd9e; box-shadow: 0 0 22px #3cdd9e; }
+  .free { font-family: "Geist Mono", monospace; font-weight: 500; font-size: 34px; letter-spacing: 0.14em; background: #3cdd9e; color: #04130d; padding: 18px 30px; }
+  h1 { position: absolute; left: 92px; top: 170px; font-size: 168px; line-height: 0.92; font-weight: 700; letter-spacing: -0.05em; }
+  h1 em { font-style: normal; color: #3cdd9e; }
+  .sub { position: absolute; left: 96px; top: 520px; font-size: 38px; color: #cfcfcf; font-weight: 500; }
+  .stage { position: absolute; left: 0; right: 0; top: 600px; height: 560px; perspective: 2600px; }
+  .shot { position: absolute; border: 2px solid rgba(190, 230, 215, 0.3); box-shadow: 0 40px 110px rgba(0,0,0,0.8); background-size: cover; background-position: top center; }
+  .s1 { width: 640px; height: 400px; left: 70px;  top: 70px;  background-image: url(shots/home-results.jpg); transform: rotateY(18deg) rotateX(6deg); }
+  .s2 { width: 760px; height: 475px; left: 430px; top: 20px;  background-image: url(shots/home-hero.jpg); transform: rotateX(6deg); z-index: 2; }
+  .s3 { width: 640px; height: 400px; left: 910px; top: 70px;  background-image: url(shots/hire.jpg); transform: rotateY(-18deg) rotateX(6deg); }
+  .p1 { width: 210px; height: 455px; left: 1330px; top: 30px; border-radius: 26px; border-width: 3px; background-image: url(shots/m-home.jpg); z-index: 3; }
+  .chips { position: absolute; left: 96px; bottom: 70px; display: flex; gap: 16px; opacity: 0.9; }
+  .chip { font-family: "Geist Mono", monospace; font-size: 26px; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 20px; border: 1.5px solid rgba(190, 230, 215, 0.35); }
+</style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="head">
+    <p class="kicker"><i></i>Figma template · Space OS</p>
+    <span class="free">FREE</span>
+  </div>
+  <h1>Dark <em>portfolio</em><br />template</h1>
+  <p class="sub">For product managers &amp; designers · 12 screens · design system</p>
+  <div class="stage">
+    <div class="shot s1"></div>
+    <div class="shot s3"></div>
+    <div class="shot s2"></div>
+    <div class="shot p1"></div>
+  </div>
+  <div class="chips"><span class="chip">Desktop + mobile</span><span class="chip">Dark UI</span><span class="chip">Geist</span></div>
+</body>
+</html>

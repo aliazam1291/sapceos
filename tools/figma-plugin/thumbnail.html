@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Community thumbnail</title>
+<!-- The Figma Community thumbnail (1920×1080). Built 2026-11-19 after a
+     day at zero likes: the first cover sold the person (name + avatar); a
+     Community grid is browsed for things to USE, at ~300px wide. So: the
+     real screens, and a label that says "template" and "free" in type big
+     enough to read at that size. Rendered by thumbnail-render.mjs. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; }
+  body {
+    background:
+      radial-gradient(900px 600px at 78% 40%, rgba(60, 221, 158, 0.16), transparent 70%),
+      radial-gradient(700px 500px at 95% 100%, rgba(232, 163, 74, 0.12), transparent 70%),
+      #060606;
+    font-family: "Geist", system-ui, sans-serif; color: #f5f5f5; position: relative;
+  }
+  .stars { position: absolute; inset: 0; background-image:
+      radial-gradient(1.5px 1.5px at 120px 140px, #fff8, transparent),
+      radial-gradient(1px 1px at 430px 820px, #fff6, transparent),
+      radial-gradient(1.5px 1.5px at 860px 90px, #fff7, transparent),
+      radial-gradient(1px 1px at 1500px 70px, #fff6, transparent),
+      radial-gradient(1.5px 1.5px at 1780px 980px, #fff7, transparent),
+      radial-gradient(1px 1px at 300px 1000px, #fff5, transparent),
+      radial-gradient(1px 1px at 1100px 1020px, #fff5, transparent); }
+  .copy { position: absolute; left: 110px; top: 150px; width: 760px; }
+  .kicker { font-family: "Geist Mono", monospace; font-size: 26px; letter-spacing: 0.16em; text-transform: uppercase; color: #3cdd9e; display: flex; align-items: center; gap: 16px; }
+  .kicker i { width: 14px; height: 14px; border-radius: 50%; background: #3cdd9e; box-shadow: 0 0 18px #3cdd9e; }
+  h1 { margin-top: 34px; font-size: 128px; line-height: 0.95; font-weight: 700; letter-spacing: -0.045em; }
+  h1 em { font-style: normal; color: #3cdd9e; }
+  .sub { margin-top: 40px; font-size: 36px; line-height: 1.35; color: #c9c9c9; font-weight: 500; }
+  .chips { margin-top: 48px; display: flex; flex-wrap: wrap; gap: 16px; }
+  .chip { font-family: "Geist Mono", monospace; font-size: 24px; letter-spacing: 0.08em; text-transform: uppercase; padding: 14px 22px; border: 1.5px solid rgba(190, 230, 215, 0.35); color: #f5f5f5; }
+  .chip.free { background: #3cdd9e; color: #04130d; border-color: #3cdd9e; font-weight: 500; }
+  .stage { position: absolute; right: -40px; top: 90px; width: 1060px; height: 900px; perspective: 2400px; }
+  .shot { position: absolute; border: 1.5px solid rgba(190, 230, 215, 0.28); box-shadow: 0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,0,0,0.6); background-size: cover; background-position: top center; }
+  .d1 { width: 820px; height: 512px; left: 40px; top: 40px; background-image: url(shots/home-hero.jpg); transform: rotateY(-14deg) rotateX(4deg); }
+  .d2 { width: 640px; height: 400px; left: 330px; top: 470px; background-image: url(shots/home-results.jpg); transform: rotateY(-14deg) rotateX(4deg); }
+  .d3 { width: 560px; height: 350px; left: -10px; top: 520px; background-image: url(shots/hire.jpg); transform: rotateY(-14deg) rotateX(4deg); opacity: 0.95; }
+  .p1 { width: 230px; height: 498px; left: 820px; top: 120px; border-radius: 26px; background-image: url(shots/m-home.jpg); border-width: 3px; }
+  .p2 { width: 200px; height: 433px; left: 860px; top: 470px; border-radius: 24px; background-image: url(shots/m-missions.jpg); border-width: 3px; }
+  .foot { position: absolute; left: 110px; bottom: 80px; font-family: "Geist Mono", monospace; font-size: 24px; letter-spacing: 0.06em; color: #8a8a8a; }
+  .foot b { color: #3cdd9e; font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="copy">
+    <p class="kicker"><i></i>Free Figma template</p>
+    <h1>Dark <em>space</em> portfolio</h1>
+    <p class="sub">For product managers and designers. Design system, 12 screens, desktop + mobile.</p>
+    <div class="chips">
+      <span class="chip free">Free</span>
+      <span class="chip">12 screens</span>
+      <span class="chip">Design system</span>
+      <span class="chip">Mobile ready</span>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="shot d3"></div>
+    <div class="shot d1"></div>
+    <div class="shot d2"></div>
+    <div class="shot p1"></div>
+    <div class="shot p2"></div>
+  </div>
+  <p class="foot">Live site · <b>aliazamkazmi.vercel.app</b></p>
+</body>
+</html>

@@ -33,11 +33,11 @@ export type GalleryItem = {
 
 export const gallery: GalleryItem[] = [
   {
-    texture: "/studio/dome/sunder-masala-site.webp",
+    texture: "/studio/dome/sunder-masala-case.webp",
     title: "Sunder Masala",
-    kind: "Website, content & branding",
+    kind: "Brand characters & website",
     client: "Sunder Masala",
-    href: "https://www.sundermasala.com/",
+    href: behanceOf("sunder-masala"),
   },
   {
     texture: "/studio/dome/wolf-casa-site.webp",

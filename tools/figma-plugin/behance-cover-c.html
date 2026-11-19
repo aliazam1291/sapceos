@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Behance cover — C</title>
+<!-- Behance cover C (1616×1264). Ali: "the one that gets more views …
+     ship and space and multiple screens". The galaxy render as the ground,
+     the ship large in the lower-left foreground, four screens fanned in
+     depth over the open sky to its right, minimal type top-left. -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@600;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1616px; height: 1264px; overflow: hidden; background: #040404; }
+  body { position: relative; color: #f5f5f5; font-family: "Geist", system-ui, sans-serif; }
+  .bg { position: absolute; inset: 0; background: url(shots/galaxy-cover-1.png) 30% 60% / cover no-repeat; filter: saturate(1.2) brightness(1.15); }
+  .glow { position: absolute; inset: 0; background:
+      radial-gradient(760px 600px at 78% 62%, rgba(60, 221, 158, 0.20), transparent 70%),
+      linear-gradient(180deg, rgba(4,4,4,0.85) 0%, rgba(4,4,4,0.2) 30%, rgba(4,4,4,0) 60%, rgba(4,4,4,0.5) 100%); }
+  .kicker { position: absolute; left: 86px; top: 78px; font-family: "Geist Mono", monospace; font-size: 28px; letter-spacing: 0.18em; text-transform: uppercase; color: #3cdd9e; display: flex; align-items: center; gap: 14px; }
+  .kicker i { width: 15px; height: 15px; border-radius: 50%; background: #3cdd9e; box-shadow: 0 0 22px #3cdd9e; }
+  h1 { position: absolute; left: 82px; top: 128px; font-size: 128px; line-height: 0.92; font-weight: 800; letter-spacing: -0.05em; text-shadow: 0 10px 50px rgba(0,0,0,0.8); }
+  h1 em { font-style: normal; color: #3cdd9e; }
+  .free { position: absolute; right: 86px; top: 72px; font-family: "Geist Mono", monospace; font-weight: 500; font-size: 30px; letter-spacing: 0.14em; background: #3cdd9e; color: #04130d; padding: 15px 26px; }
+  .fan { position: absolute; inset: 0; perspective: 2600px; }
+  .win { position: absolute; border-radius: 12px; overflow: hidden; background: #0d0d0d; border: 2px solid rgba(190,230,215,0.3);
+         box-shadow: 0 50px 120px rgba(0,0,0,0.85), 0 0 60px rgba(60,221,158,0.12); transform-style: preserve-3d; }
+  .win .bar { height: 32px; background: #141414; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-bottom: 1px solid rgba(190,230,215,0.12); }
+  .win .bar i { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+  .win .shot { background-size: cover; background-position: top center; }
+  .w1 { left: 1010px; top: 330px; width: 540px; transform: rotateY(-20deg) rotateX(5deg); }
+  .w1 .shot { height: 338px; background-image: url(shots/home-results.jpg); }
+  .w2 { left: 880px; top: 560px; width: 560px; transform: rotateY(-20deg) rotateX(5deg); }
+  .w2 .shot { height: 350px; background-image: url(shots/hire.jpg); }
+  .w3 { left: 700px; top: 790px; width: 600px; transform: rotateY(-20deg) rotateX(5deg); }
+  .w3 .shot { height: 375px; background-image: url(shots/home-hero.jpg); }
+  .phone { position: absolute; left: 1350px; top: 800px; width: 200px; height: 420px; border-radius: 36px; border: 9px solid #121212;
+           outline: 2px solid rgba(190,230,215,0.35); background: url(shots/m-home.jpg) top center / cover; box-shadow: 0 50px 120px rgba(0,0,0,0.9); transform: rotate(6deg); }
+  .url { position: absolute; left: 86px; top: 400px; font-family: "Geist Mono", monospace; font-size: 26px; letter-spacing: 0.06em; color: #cfcfcf; text-shadow: 0 4px 20px #000; }
+  .url b { color: #3cdd9e; font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="bg"></div><div class="glow"></div>
+  <p class="kicker"><i></i>Website template · Figma</p>
+  <h1>Dark space<br /><em>portfolio</em></h1>
+  <span class="free">FREE</span>
+  <div class="fan">
+    <div class="win w1"><div class="bar"><i></i><i></i><i></i></div><div class="shot"></div></div>
+    <div class="win w2"><div class="bar"><i></i><i></i><i></i></div><div class="shot"></div></div>
+    <div class="win w3"><div class="bar"><i></i><i></i><i></i></div><div class="shot"></div></div>
+  </div>
+  <div class="phone"></div>
+  <p class="url">12 screens · design system · <b>free on Figma</b></p>
+</body>
+</html>
