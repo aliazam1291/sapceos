@@ -9,6 +9,7 @@ import {
   Pager,
   Row,
   Section,
+  SectionHead,
   Status,
   TagRow,
   ui,
@@ -21,6 +22,7 @@ import RelatedWriting from "@/components/RelatedWriting";
 import ScaleRail from "@/components/charts/ScaleRail";
 import { results as ledger } from "@/content/results";
 import MissionSignature from "@/components/MissionSignature";
+import Blueprint from "@/components/Blueprint";
 import Hologram from "@/components/Hologram";
 import { sectionSlug } from "@/lib/slug";
 import { getMission, missions } from "@/content/missions";
@@ -228,6 +230,15 @@ export default async function MissionReport({ params }: Params) {
           </section>
         ) : null}
       </Section>
+
+      {/* How it works: the modules and the product's logic, drawn. For the
+          client builds that can't be screenshotted (Blueprint.tsx). */}
+      {mission.blueprint ? (
+        <Section id="how-it-works" data-section="How it works">
+          <SectionHead label="How it works" title="What it does, feature by feature" />
+          <Blueprint blueprint={mission.blueprint} />
+        </Section>
+      ) : null}
 
       <ReportLayout>
         <ReportNav labels={mission.report.map((s) => s.label)} />

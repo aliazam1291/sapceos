@@ -1708,6 +1708,22 @@ the open channel; the one joke; keep it the only one).
   inspection bay and the home dome all link it. The case-study boards are
   built from `tools/figma-plugin/sunder-boards.html`. Never credit the
   Sunder branding to Smaak.ux alone.
+- *Drawn, not screenshotted* (2026-11-19). Ali: "tell the features, add
+  graphs of features, what it's doing — we can't add images", and Intouch
+  and Indane Yatra Mitra "not in the navbar". Three new missions from his
+  files and two claude.ai chats he linked (PROFILE.md, "From Ali's claude.ai
+  chats"): **Driver Safety** (VinFast, SM Green), **Contract Management
+  Dashboard** (Tata Power) and **Device Communication Health** (Toyota
+  Logistics), all `group: "client"`. `Mission.blueprint` renders a "How it
+  works" section on the report (`Blueprint.tsx`): a feature grid, then
+  diagrams of the product's LOGIC — `flow`, `bands`, `curve`, `matrix` —
+  HTML, not SVG text, so it reflows on a phone; every caption says it is a
+  model, never real data; amber for "over", no red. Mappls Intouch and
+  Indane Yatra Mitra (owned) got blueprints too, and their listings were
+  re-read 2026-11-16. `Mission.group` (owned · client · platform) drives
+  `ProjectsMenu`: a "Projects 13" disclosure in the dock listing every
+  mission. Never publish the internal API names, base URLs or vehicle
+  numbers that are in those chats.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).

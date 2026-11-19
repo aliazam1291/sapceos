@@ -10,6 +10,7 @@ import type { Mission } from "./types";
 export const missions: Mission[] = [
   {
     slug: "technician-app",
+    group: "platform",
     measure: ["Time per job, installation to close", "Error rate on job state changes", "Technician adoption across regions"],
     title: "Technician App",
     org: "MapMyIndia [Gtropy]",
@@ -75,6 +76,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "mappls-shop-admin",
+    group: "owned",
     links: [{ label: "shop.mappls.com", href: "https://shop.mappls.com" }],
     updated: "2026-10-24",
     measure: [
@@ -173,6 +175,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "iocl-geortd",
+    group: "client",
     results: [{ value: "30,000+", label: "Routes injected", source: "Amazon S3 pipeline" }],
     measure: ["Route accuracy against ground truth", "Pipeline throughput per run"],
     title: "IOCL GeoRTD Pipeline",
@@ -239,6 +242,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "vahan-shakti",
+    group: "platform",
     results: [
       { value: "200,000+", label: "Users", source: "Government fleet programme" },
       { value: "Live", label: "On the Play Store" },
@@ -313,13 +317,59 @@ export const missions: Mission[] = [
   },
   {
     slug: "intouch",
+    group: "owned",
+    blueprint: {
+      features: [
+        { name: "Live fleet map", does: "Every vehicle's position and status in real time, rendered to stay smooth under high-frequency updates at fleet scale.", tag: "Core" },
+        { name: "Quick filters", does: "Segment the fleet instantly by status, region, customer or vehicle type, the way operators actually slice it.", tag: "Core" },
+        { name: "Trip playback", does: "Replay any journey as an animated trip with media-player controls, to see what happened instead of asking someone.", tag: "Investigation" },
+        { name: "Operational dashboards", does: "The operational read first, the chart second: what needs attention across the fleet today.", tag: "Overview" },
+        { name: "Driver Safety", does: "DMS, ADAS and trip alerts rolled into one Safety score and a ranked driver list, for VinFast and SM Green.", tag: "Client module" },
+        { name: "Device Communication Health", does: "Which trackers have gone quiet, for how long and in which vehicle groups, for Toyota Logistics.", tag: "Client module" },
+      ],
+      diagrams: [
+        {
+          kind: "bands",
+          title: "Built for the fleet that arrives next",
+          caption: "The measured scale: 10,000+ active vehicles in production, on an architecture designed for 50,000. Widths are to scale.",
+          unit: "Active vehicles",
+          max: 50000,
+          bands: [
+            { from: 0, to: 10000, label: "In production", range: "10,000+ vehicles", tone: "ok" },
+            { from: 10000, to: 50000, label: "Headroom built in", range: "up to 50,000", tone: "low" },
+          ],
+          ticks: [{ at: 0, label: "0" }, { at: 10000, label: "10,000" }, { at: 50000, label: "50,000" }],
+        },
+        {
+          kind: "flow",
+          title: "One app between the vehicles and the people who run them",
+          caption: "What InTouch does with the data a fleet produces. A model of the product, not live data.",
+          columns: [
+            { label: "Vehicles", nodes: [{ name: "GPS trackers", note: "position, speed, ignition" }, { name: "Video telematics", note: "in-cab and road cameras" }, { name: "Device heartbeat", note: "last data received" }] },
+            { label: "InTouch", nodes: [{ name: "Live map + quick filters" }, { name: "Trip playback" }, { name: "Dashboards" }, { name: "Client modules", note: "Driver Safety · Device health" }] },
+            { label: "Teams", nodes: [{ name: "Fleet operators", note: "Android and iOS" }, { name: "Fleet and safety managers", note: "web portal" }, { name: "Enterprise clients", note: "VinFast · SM Green · Toyota Logistics" }] },
+          ],
+        },
+        {
+          kind: "flow",
+          title: "The order it was built in",
+          caption: "Each stage had to stay smooth at 10,000 active vehicles before the next one started.",
+          columns: [
+            { label: "First", nodes: [{ name: "Real-time tracking" }] },
+            { label: "Then", nodes: [{ name: "Quick filters" }] },
+            { label: "Then", nodes: [{ name: "Animated trip playback" }] },
+            { label: "Then", nodes: [{ name: "Dashboards" }, { name: "Client modules" }] },
+          ],
+        },
+      ],
+    },
     links: [{ label: "Google Play", href: "https://play.google.com/store/apps/details?id=intouch.mappls.app" }],
     listing: {
       where: "Google Play",
       href: "https://play.google.com/store/apps/details?id=intouch.mappls.app",
       installs: "1K+",
       updated: "12 May 2026",
-      read: "2026-10-29",
+      read: "2026-11-16",
     },
     results: [
       { value: "10,000+", label: "Active vehicles" },
@@ -327,10 +377,10 @@ export const missions: Mission[] = [
       { value: "Live", label: "On the Play Store" },
     ],
     cover: "/missions/intouch.jpg",
-    title: "Intouch",
+    title: "Mappls Intouch",
     org: "MapMyIndia [Gtropy]",
-    role: "Frontend · performance · UI/UX · Driver Safety PRD",
-    updated: "2026-10-24",
+    role: "Product owner · Frontend · UI/UX · Driver Safety PRD",
+    updated: "2026-11-19",
     measure: [
       "Time for a new user to find the driver who most needs attention",
       "Weekly accounts opening the Driver Scorecard",
@@ -351,6 +401,7 @@ export const missions: Mission[] = [
     ],
     ownership: {
       decided: [
+        "Product owner of Mappls Intouch since the July 2026 promotion",
         "The Driver Safety PRD (v1.0, October 2026): scope, scoring rules, API contract, success measures",
         "The locked product calls: driver-first, data only, no coaching or review workflow",
       ],
@@ -420,6 +471,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "locate",
+    group: "platform",
     results: [{ value: "20,000+", label: "Vehicles monitored", source: "Across Maharashtra" }],
     cover: "/missions/locate.jpg",
     title: "Locate — Manufacturer Backend",
@@ -487,6 +539,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "control-tower",
+    group: "platform",
     measure: ["Time from alert to ticket", "Tickets resolved per operator"],
     cover: "/missions/control-tower.jpg",
     title: "Control Tower",
@@ -550,20 +603,59 @@ export const missions: Mission[] = [
   },
   {
     slug: "indane-yatra-mitra",
+    group: "owned",
+    blueprint: {
+      features: [
+        { name: "Live tanker tracking", does: "Where every LPG tanker is, with its alarm state visible on the map without a tap.", tag: "Core" },
+        { name: "Safety alarms", does: "Alerts that fire when a tanker does something it shouldn't, designed so the safe action is the obvious one.", tag: "Safety" },
+        { name: "Geofencing", does: "Zones and routes a tanker is meant to keep to, with an alarm when it leaves them.", tag: "Safety" },
+        { name: "Route playback", does: "Replay any journey after the fact, for investigating an alarm or a complaint.", tag: "Investigation" },
+        { name: "Role-based access", does: "Each person sees the slice of the fleet they are accountable for, no more and no less.", tag: "Access" },
+        { name: "Fleet and role admin", does: "The surfaces for managing who sees which fleet, configured against the same roles the alarms use.", tag: "Admin" },
+      ],
+      diagrams: [
+        {
+          kind: "flow",
+          title: "From a tanker on the road to the person accountable for it",
+          caption: "How a position becomes an alarm in the right hands. A model of the product's logic, not live data.",
+          columns: [
+            { label: "On the road", nodes: [{ name: "Tanker tracker", note: "live position" }, { name: "Journey history", note: "for playback" }] },
+            { label: "Rules", nodes: [{ name: "Geofences and routes" }, { name: "Safety alarm rules" }, { name: "Role scope", note: "who answers for which tankers" }] },
+            { label: "Who sees it", nodes: [{ name: "Field and depot staff", note: "their tankers, live" }, { name: "Regional supervisors", note: "their region" }, { name: "Safety officers", note: "alarms and playback" }] },
+          ],
+        },
+        {
+          kind: "flow",
+          title: "The order it was built in",
+          caption: "Safety before convenience: the alarm path shipped first, the admin last.",
+          columns: [
+            { label: "First", nodes: [{ name: "Live tracking" }, { name: "Safety alarms" }] },
+            { label: "Next", nodes: [{ name: "Geofencing" }] },
+            { label: "Then", nodes: [{ name: "Route playback" }] },
+            { label: "Last", nodes: [{ name: "Role and fleet admin" }] },
+          ],
+        },
+      ],
+    },
     links: [{ label: "Google Play", href: "https://play.google.com/store/apps/details?id=iocl.cvtms.mappls" }],
     listing: {
       where: "Google Play",
       href: "https://play.google.com/store/apps/details?id=iocl.cvtms.mappls",
       installs: "1K+",
-      rating: "4.4",
-      reviews: 10,
+      rating: "4.5",
+      reviews: 12,
       updated: "19 Mar 2026",
-      read: "2026-10-29",
+      read: "2026-11-16",
     },
     results: [{ value: "Live", label: "On the Play Store", source: "IOCL LPG tanker operations" }],
     title: "Indane Yatra Mitra",
     org: "MapMyIndia [Gtropy] · for IOCL",
-    role: "Frontend · UI/UX",
+    role: "Product owner · Frontend · UI/UX",
+    updated: "2026-11-19",
+    ownership: {
+      decided: ["Product owner of Indane Yatra Mitra since the July 2026 promotion", "Role-based access as a first-class concept, not bolted on"],
+      built: ["The frontend: live tracking, alarms, geofencing, playback and role-based access", "Map-first screens with the alarm state visible without a tap"],
+    },
     period: "Shipped",
     status: "shipped",
     premise:
@@ -622,6 +714,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "fastag-platform",
+    group: "platform",
     measure: ["Registration completion rate", "OTP failure rate"],
     cover: "/missions/fastag-platform.jpg",
     title: "FASTag Platform",
@@ -688,6 +781,7 @@ export const missions: Mission[] = [
   },
   {
     slug: "hermes",
+    group: "platform",
     measure: ["Time per data task", "Errors per batch"],
     cover: "/missions/hermes.jpg",
     title: "Hermes",
@@ -744,6 +838,245 @@ export const missions: Mission[] = [
         label: "Learnings",
         body: "Internal tools are where a design system pays for itself fastest: the audience is small, the screens are many, and nobody forgives inconsistency they have to live in every day.",
       },
+    ],
+  },
+  // ── Client builds drawn, not screenshotted (2026-11-19) ─────────────────
+  // Facts from PROFILE.md ("From Ali's own working files" and "From Ali's
+  // claude.ai chats"). Product-level only: no internal API names, URLs,
+  // vehicle numbers or client rates. The blueprints are models of each
+  // product's logic, never charts of real data.
+  {
+    slug: "driver-safety",
+    group: "client",
+    title: "Driver Safety",
+    org: "MapMyIndia [Gtropy] · InTouch, for VinFast & SM Green",
+    role: "PRD owner · UX · DMS, ADAS & driver sections",
+    period: "In build",
+    updated: "2026-11-19",
+    status: "active",
+    premise: "A fleet manager doesn't need three sensor dashboards. They need to know which driver to look at first, and why.",
+    stack: ["PRD v1.0", "Clickable prototype", "OpenAPI contract", "InTouch"],
+    signals: [
+      { label: "Clients", value: "VinFast · SM Green" },
+      { label: "Camera alarms", value: "7 in-cab · 4 road" },
+    ],
+    measure: [
+      "Time to find the riskiest driver",
+      "Scorecard adoption",
+      "Alert settings customised per customer",
+      "“Score looks wrong” support tickets",
+      "Alarm-naming support tickets",
+    ],
+    ownership: {
+      decided: [
+        "Driver-first: who needs attention, on one screen",
+        "One Safety score; alerts grouped by risk, not by sensor",
+        "Data only: no coaching programme, no review workflow",
+        "Scores per distance or hours, never raw counts",
+      ],
+      built: ["PRD v1.0 (13 Oct 2026)", "The clickable prototype, 11 design iterations", "The DMS, ADAS and driver sections in InTouch"],
+      withTeam: ["The OpenAPI contract with backend", "Delivery with frontend and QA"],
+    },
+    blueprint: {
+      features: [
+        { name: "Safety overview", does: "One Safety score with its trend, the risk themes, and the drivers who need attention first.", tag: "All sources" },
+        { name: "DMS", does: "What the driver does: 7 in-cab camera alarms, from phone use and smoking to drowsiness and a missing seat belt.", tag: "In-cab camera" },
+        { name: "ADAS", does: "What is happening on the road: 4 road-facing alarms for collision, pedestrians, headway and lane departure.", tag: "Road camera" },
+        { name: "Trip alerts", does: "What the vehicle did: overspeeding, harsh acceleration, braking and cornering, night and non-stop driving.", tag: "GPS & motion" },
+        { name: "Driver scorecard", does: "Every driver ranked on the same scale, with a per-driver report behind each score.", tag: "All sources" },
+        { name: "On-demand video", does: "Request the clip behind an alert, so a score can be checked against what actually happened.", tag: "Cameras" },
+        { name: "Alert settings", does: "Each customer hides alarms and sets their weights; weights must total 100, and hidden alarms never leak into exports.", tag: "Per customer" },
+      ],
+      diagrams: [
+        {
+          kind: "flow",
+          title: "From three sensors to one decision",
+          caption: "How an alarm becomes a ranked driver. A model of the product's logic, not live data.",
+          columns: [
+            { label: "Sources", nodes: [{ name: "In-cab camera", note: "DMS" }, { name: "Road camera", note: "ADAS" }, { name: "GPS & motion", note: "Trip alerts" }] },
+            { label: "Scoring", nodes: [{ name: "Count per distance or hours", note: "never raw totals" }, { name: "Weight by the customer's settings", note: "weights total 100" }, { name: "Drop hidden alarms", note: "enforced server-side" }] },
+            { label: "The manager sees", nodes: [{ name: "One Safety score" }, { name: "Risk themes" }, { name: "Drivers ranked, with video" }] },
+          ],
+        },
+        {
+          kind: "matrix",
+          title: "Risk themes, not sensors",
+          caption: "Each alert type belongs to one risk theme; the source is a tag. A theme with no alert types for a customer is hidden, so a GPS-only fleet still sees Speeding, Harsh driving and Fatigue.",
+          cols: ["DMS · in-cab", "ADAS · road", "GPS · motion"],
+          rows: [
+            { label: "Speeding", cells: [[], [], ["Overspeeding"]] },
+            { label: "Harsh driving", cells: [[], [], ["Harsh acceleration", "Harsh braking", "Harsh cornering"]] },
+            { label: "Distraction", cells: [["Mobile phone use", "Distraction", "Smoking"], [], []] },
+            { label: "Fatigue", cells: [["Drowsiness", "Yawning"], [], ["Night driving", "Continuous driving"]] },
+            { label: "Collision risk", cells: [[], ["Forward collision", "Pedestrian collision", "Headway", "Lane departure"], []] },
+            { label: "Compliance", cells: [["No seat belt", "Driver absent"], [], []] },
+          ],
+        },
+      ],
+    },
+    report: [
+      { label: "Brief", body: "A Driver Safety module inside InTouch for VinFast and SM Green: driver monitoring (DMS), driver assistance (ADAS) and trip alerts, rolled into one score and one ranked list of drivers." },
+      { label: "Context", body: "Video telematics produces a flood of alarms from two cameras and the vehicle's own sensors. Sold by sensor, the product had a page per source and three separate gauges, and none of them said who to talk to." },
+      { label: "Users", body: "Fleet managers and safety leads at enterprise customers, who have minutes, not hours, to decide which drivers need attention this week." },
+      { label: "Discovery", body: "The sensor split is how the product is sold and entitled, not how a manager thinks. Alerts that all look equally important stop getting opened; the useful grouping is by risk (speeding, harsh driving, distraction, fatigue, collision risk, compliance), with the source shown as a small tag." },
+      { label: "Problem", body: "Three modules with similar-sounding scores (driving score, fleet safety score, driver scores) and a third page called Driving Behaviour that read like the parent of the other two." },
+      { label: "Strategy", body: "Name each source by what it sees (the driver, the road, the vehicle), keep exactly one Safety score, and make the overview answer three questions in order: are we improving, who needs attention, and what happened." },
+      { label: "Prioritization", body: "Overview and the driver scorecard first, then the DMS, ADAS and trip-alert pages as the places to check the detail, then on-demand video and alert settings. Coaching and a review workflow were cut: the product reports, the customer decides." },
+      { label: "UX", body: "Driver-first: the riskiest drivers are on the first screen. Scores compare per distance or per hour, never raw counts, and a driver isn't scored until they have driven enough to be compared fairly." },
+      { label: "Design", body: "A clickable prototype through 11 design iterations by 1 October 2026, each page hidden for a customer who hasn't bought that source." },
+      { label: "Technology", body: "A PRD (v1.0, 13 October 2026) and an OpenAPI contract for backend, frontend and QA. The scores, bands and risk themes are computed from event counts and the customer's own alert weights, and hidden alarms are enforced on the server so they never leak through an export." },
+      { label: "Outcome", body: "In build. The PRD names what will be measured, listed above as targets, not results." },
+      { label: "Learnings", body: "A name is a product decision. Three scores that sound alike cost more support tickets than any missing feature." },
+    ],
+  },
+  {
+    slug: "tata-power-contracts",
+    group: "client",
+    title: "Contract Management Dashboard",
+    org: "MapMyIndia [Gtropy] · Mappls Insight, for Tata Power",
+    role: "Product design · UX · Working prototype",
+    period: "Prototype, in client review",
+    updated: "2026-11-19",
+    status: "active",
+    premise: "Vehicle contracts are billed on kilometres. A dashboard that compares month-to-date kilometres with a full month's limit calls every vehicle under-used for most of the month.",
+    stack: ["HTML prototype", "JavaScript", "Charts", "Mappls Insight"],
+    signals: [
+      { label: "Pages", value: "2" },
+      { label: "Status bands", value: "90% · 110%" },
+    ],
+    measure: [
+      "Client sign-off on the pro-rating and variable-cost logic",
+      "Whether the 90% and 110% bands match how the business judges a vehicle",
+      "Cards and charts the client keeps or drops",
+    ],
+    ownership: {
+      decided: [
+        "Two pages, with billing as a separate deliverable",
+        "Utilization charts in place of pricing charts",
+        "Compare kilometres to date with the limit to date",
+        "Status colours kept apart from the brand orange",
+      ],
+      built: ["The working prototype, one HTML file that opens offline", "Each round of client changes and the walkthrough"],
+    },
+    blueprint: {
+      features: [
+        { name: "Contract overview", does: "Cost, kilometres, utilization and vehicle counts as cards, with KM driven against the allowance and the status split.", tag: "Contract management" },
+        { name: "Vehicle details", does: "Every vehicle's limit, extra kilometres, variable rate and cost; a click opens the full calculation and its month-end projection.", tag: "Contract management" },
+        { name: "Vendor summary", does: "Vendors compared by utilization, with a status that comes from the vendor's combined kilometres.", tag: "Vendors" },
+        { name: "Timelines", does: "Daily, weekly (last 7 days or Mon–Sun), monthly and custom ranges, with fixed cost and limits pro-rated to the days chosen.", tag: "Period" },
+        { name: "To-date handling", does: "Running periods are marked to date, compared with the same days last period, and projected to month end.", tag: "Period" },
+        { name: "Filters", does: "Region, vertical, business, project, vendor and utilization band, applied to every card and chart.", tag: "All views" },
+        { name: "Editable bands", does: "The under and over thresholds (90% and 110% by default) change every status on every page.", tag: "Rules" },
+      ],
+      diagrams: [
+        {
+          kind: "curve",
+          title: "What a vehicle costs",
+          caption: "The contract model: a fixed charge covers the contractual kilometres, and every kilometre beyond them is billed at the vehicle's variable rate. Illustrative units, not a client's rates.",
+          xLabel: "Kilometres driven in the period",
+          yLabel: "Actual cost",
+          points: [[0, 60], [100, 60], [150, 88]],
+          marks: [{ x: 100, label: "KM limit" }],
+          spans: [
+            { from: 0, to: 100, label: "Fixed charge" },
+            { from: 100, to: 150, label: "Extra KM × variable rate" },
+          ],
+        },
+        {
+          kind: "bands",
+          title: "When a vehicle is under- or over-used",
+          caption: "Utilization is kilometres driven ÷ the limit for the same days. Comparing to date with to date is the fix: against the full month's limit, a vehicle on track reads as under-used until the last day.",
+          unit: "Utilization, % of the limit to date",
+          max: 150,
+          bands: [
+            { from: 0, to: 90, label: "Under utilised", range: "below 90%", tone: "low" },
+            { from: 90, to: 110, label: "Optimal", range: "90–110%", tone: "ok" },
+            { from: 110, to: 150, label: "Over utilised", range: "above 110%", tone: "high" },
+          ],
+          ticks: [{ at: 0, label: "0%" }, { at: 90, label: "90%" }, { at: 110, label: "110%" }, { at: 150, label: "150%+" }],
+        },
+        {
+          kind: "flow",
+          title: "From kilometres to a contract view",
+          caption: "What the dashboard computes for any period the user picks. A model of the logic, not live data.",
+          columns: [
+            { label: "Inputs", nodes: [{ name: "Daily kilometres", note: "per vehicle" }, { name: "Contract", note: "fixed charge + KM limit" }, { name: "Variable rate" }, { name: "Period chosen" }] },
+            { label: "Calculation", nodes: [{ name: "Pro-rate limit and fixed cost", note: "to the days covered" }, { name: "Extra KM × rate", note: "variable cost" }, { name: "Utilization to date", note: "against 90% / 110%" }, { name: "Month-end projection", note: "at the current pace" }] },
+            { label: "Views", nodes: [{ name: "Overview cards and charts" }, { name: "Vehicle table + cost drawer" }, { name: "Vendor summary" }] },
+          ],
+        },
+      ],
+    },
+    report: [
+      { label: "Brief", body: "A contract management dashboard for Tata Power's vehicle contracts on Mappls Insight: what each vehicle and vendor costs, and whether it is under-used, on track or over-used." },
+      { label: "Context", body: "Each vehicle is hired on a contract: a fixed charge that covers a set number of kilometres, and a variable rate for every kilometre beyond it. The client manages vehicles across regions, verticals (Solar and Wind) and businesses (O&M and EPC), from many vendors." },
+      { label: "Users", body: "Contract and fleet managers who approve vendor bills and need to see, on any day of the month, which vehicles and vendors are drifting from their contracts." },
+      { label: "Discovery", body: "The live dashboard compared kilometres driven so far with the whole month's limit, so a vehicle on pace looked under-used for most of every month, and so did the fleet average." },
+      { label: "Problem", body: "Make cost and utilization correct on any day, for any period, without the user having to know which figures are still running." },
+      { label: "Strategy", body: "Pro-rate everything to the days the user is looking at, compare running periods with the same days of the previous one, and say plainly when a figure is to date." },
+      { label: "Prioritization", body: "Two pages: Contract management (overview and vehicle details) and Vendor summary. Billing became a separate deliverable rather than a third tab that would have crowded the two jobs the client actually asked for." },
+      { label: "UX", body: "Data stops at the last full day, future dates can't be picked, and Weekly defaults to the last seven days instead of a half-finished calendar week. A running period carries a to-date tag and a month-end projection." },
+      { label: "Design", body: "Uniform KPI cards with a small visual each, utilization charts instead of pricing charts (by business, by vertical, by region, a histogram and a KM-against-limit scatter), and status colours (under, optimal, over) kept apart from the brand orange." },
+      { label: "Build", body: "A working prototype in a single HTML file that opens offline, with sample data, the client's filters and the new cost columns, revised round by round with the client." },
+      { label: "Outcome", body: "In client review. Nothing measured yet, so nothing is claimed." },
+      { label: "Learnings", body: "A wrong denominator is a UX bug. Every chart was correct arithmetic on the wrong comparison until the period was made explicit." },
+    ],
+  },
+  {
+    slug: "toyota-device-health",
+    group: "client",
+    title: "Device Communication Health",
+    org: "MapMyIndia [Gtropy] · InTouch, for Toyota Logistics",
+    role: "Dashboard design · Build",
+    period: "Delivered",
+    updated: "2026-11-19",
+    status: "shipped",
+    premise: "A tracker that has stopped reporting looks exactly like a parked truck, until someone asks how long it has been quiet.",
+    stack: ["InTouch portal", "JavaScript", "CSV export"],
+    signals: [{ label: "Status bands", value: "4" }],
+    blueprint: {
+      features: [
+        { name: "Status classification", does: "Every vehicle placed in one of four states by the time since its last GPRS data.", tag: "Core" },
+        { name: "Status split", does: "How much of the fleet is online, offline, inactive or not working, at a glance.", tag: "Overview" },
+        { name: "Groups ranked", does: "Vehicle groups sorted by their share of non-communicating devices; a click on a row filters everything to that group.", tag: "Overview" },
+        { name: "Vehicle table", does: "Every vehicle with its last data time and state, filterable by status and group.", tag: "Detail" },
+        { name: "CSV export", does: "The filtered list out to the team that fixes the devices.", tag: "Action" },
+      ],
+      diagrams: [
+        {
+          kind: "bands",
+          title: "How long since it last spoke",
+          caption: "The four states, by time since a vehicle's last GPRS data. The bands are the product's rules; no fleet data is shown.",
+          unit: "Time since last data",
+          max: 40,
+          bands: [
+            { from: 0, to: 1, label: "Online", range: "within 24 h", tone: "ok" },
+            { from: 1, to: 7, label: "Offline", range: "1–7 days", tone: "low" },
+            { from: 7, to: 30, label: "Inactive", range: "8–30 days", tone: "high" },
+            { from: 30, to: 40, label: "Not working", range: "31+ days", tone: "idle" },
+          ],
+          ticks: [{ at: 0, label: "0" }, { at: 7, label: "7 d" }, { at: 30, label: "30 d" }, { at: 40, label: "31 d+" }],
+        },
+        {
+          kind: "flow",
+          title: "From a timestamp to a repair list",
+          caption: "What the page does with each vehicle's last data time. A model of the logic, not live data.",
+          columns: [
+            { label: "Input", nodes: [{ name: "Last GPRS data", note: "per vehicle" }] },
+            { label: "Rule", nodes: [{ name: "Age since last data" }, { name: "Four states", note: "online · offline · inactive · not working" }] },
+            { label: "Out", nodes: [{ name: "Groups ranked by non-communicating share" }, { name: "Filtered vehicle table" }, { name: "CSV for the repair team" }] },
+          ],
+        },
+      ],
+    },
+    report: [
+      { label: "Brief", body: "A Device Communication Health page in the InTouch portal for Toyota Logistics: which tracking devices have stopped reporting, for how long, and in which vehicle groups." },
+      { label: "Context", body: "A silent device breaks everything downstream of it: tracking, alerts and reports all go quiet without saying why. On a map, a vehicle with a dead tracker and a vehicle parked for the night look the same." },
+      { label: "Problem", body: "Turn the time since each vehicle's last data into a status a fleet team can act on, and show where the problem is concentrated." },
+      { label: "UX", body: "Four states by age (online within 24 hours, offline up to 7 days, inactive up to 30, not working beyond that), the status split first, then vehicle groups ranked by their share of non-communicating devices. A click on a group filters the table." },
+      { label: "Build", body: "The page, its classification rules, the group ranking, the filterable vehicle table and CSV export, inside the InTouch portal." },
+      { label: "Outcome", body: "Delivered. No public number is attached, and none is invented." },
+      { label: "Learnings", body: "Absence of data is data. The most useful view of a tracking fleet can be the vehicles that are not reporting." },
     ],
   },
 ];

@@ -1,0 +1,462 @@
+@use "../styles/tokens.scss" as *;
+
+/* "How it works": panels for text (features, matrix), wireframe instruments
+   for the diagrams. Hairline grids, square corners, no fills over the sky
+   beyond the panel tint. */
+
+.blueprint {
+  display: grid;
+  gap: var(--space-12);
+}
+
+/* ── Features: a hairline grid of modules ─────────────────────────────── */
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  /* Hairlines drawn by the cells, not a filled gap: an unfilled last row
+     showed the container's seam colour as a lit blank panel (the ClientGrid
+     lesson of 2026-09-19). */
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.feature {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  background: var(--bg-primary);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  :where(&) { contain-intrinsic-size: none auto 180px; }
+}
+
+.featureIndex {
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.featureName {
+  margin: 0;
+  font-size: var(--type-medium);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: var(--leading-snug);
+}
+
+.featureDoes {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--type-small);
+  line-height: 1.55;
+}
+
+.featureTag {
+  justify-self: start;
+  margin-top: var(--space-2);
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* ── Diagram frame ────────────────────────────────────────────────────── */
+.diagram {
+  margin: 0;
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(60, 221, 158, 0.03), transparent 60%);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.kind {
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--accent-line);
+}
+
+.title {
+  font-size: var(--type-medium);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.caption {
+  margin: 0;
+  max-width: var(--measure);
+  color: var(--text-tertiary);
+  font-size: var(--type-small);
+  line-height: 1.55;
+}
+
+/* ── Flow: columns joined by arrows ───────────────────────────────────── */
+.flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--space-8);
+}
+
+.flowCol {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+
+  /* The arrow to the next column. */
+  &:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(var(--space-8) * -1 + 0.35rem);
+    width: calc(var(--space-8) - 0.7rem);
+    height: 1px;
+    background: var(--accent-line);
+  }
+  &:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: calc(50% - 4px);
+    right: calc(var(--space-8) * -1 + 0.35rem);
+    border: 4px solid transparent;
+    border-left: 6px solid var(--accent);
+    border-right: 0;
+  }
+}
+
+.flowLabel {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+
+  span { color: var(--accent); }
+}
+
+.flowNodes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.node {
+  display: grid;
+  gap: 0.15rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-left: 2px solid var(--accent-line);
+  background: var(--bg-secondary);
+}
+
+.nodeName {
+  font-size: var(--type-small);
+  line-height: 1.35;
+}
+
+.nodeNote {
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 760px) {
+  .flow {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  .flowCol:not(:last-child)::after {
+    top: auto;
+    bottom: calc(var(--space-8) * -1 + 0.35rem);
+    right: auto;
+    left: 1.25rem;
+    width: 1px;
+    height: calc(var(--space-8) - 0.7rem);
+  }
+  .flowCol:not(:last-child)::before {
+    top: auto;
+    bottom: calc(var(--space-8) * -1 + 0.2rem);
+    right: auto;
+    left: calc(1.25rem - 4px);
+    border: 4px solid transparent;
+    border-top: 6px solid var(--accent);
+    border-bottom: 0;
+  }
+}
+
+/* ── Bands: a status axis ─────────────────────────────────────────────── */
+.bands {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.unit {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.bandTrack {
+  display: flex;
+  gap: 2px;
+  min-height: 4.5rem;
+}
+
+.band {
+  flex-basis: 0;
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-2) var(--space-3);
+  border-top: 2px solid currentColor;
+  color: var(--text-secondary);
+  background: rgba(190, 230, 215, 0.04);
+
+  &[data-tone="ok"] { color: var(--accent); background: rgba(60, 221, 158, 0.12); }
+  &[data-tone="low"] { color: #8af0c8; background: rgba(138, 240, 200, 0.05); }
+  &[data-tone="high"] { color: #e8a34a; background: rgba(232, 163, 74, 0.1); }
+  &[data-tone="idle"] { color: var(--text-tertiary); background: rgba(127, 127, 127, 0.08); }
+}
+
+.bandLabel {
+  font-size: var(--type-small);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.bandRange { display: none; }
+
+.ticks {
+  display: flex;
+  gap: 2px;
+}
+
+/* A phone: a vertical band list. Proportional widths on 340px broke
+   "Online" into one letter per line. */
+@media (max-width: 640px) {
+  .bandTrack {
+    flex-direction: column;
+    min-height: 0;
+  }
+  .band {
+    flex: none !important;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0;
+    border-left: 2px solid currentColor;
+    padding: var(--space-3);
+  }
+  .bandRange {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: max(0.6875rem, var(--micro-floor));
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+  }
+  .ticks { display: none; }
+}
+
+.tickSlot {
+  flex-basis: 0;
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
+.tickStart,
+.tickEnd {
+  white-space: nowrap;
+}
+
+.srList {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Curve: the cost model ────────────────────────────────────────────── */
+.curve {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.axisY,
+.axisX {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.axisX { justify-self: end; }
+
+.plot {
+  position: relative;
+  border-left: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.curveSvg {
+  display: block;
+  width: 100%;
+  height: clamp(9rem, 22vw, 14rem);
+}
+
+.curveArea { fill: rgba(60, 221, 158, 0.07); }
+.curveLine { fill: none; stroke: var(--accent); stroke-width: 2px; }
+.curveMark { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; }
+
+.markLabel {
+  position: absolute;
+  top: var(--space-2);
+  transform: translateX(-50%);
+  padding: 0.1rem 0.4rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.spans {
+  display: flex;
+  border-top: 1px solid var(--line);
+}
+
+.span {
+  flex-basis: 0;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--type-small);
+  color: var(--text-secondary);
+  line-height: 1.3;
+
+  & + & {
+    border-left: 1px dashed var(--line-strong);
+    color: #e8a34a;
+  }
+}
+
+/* ── Matrix: themes × sources ─────────────────────────────────────────── */
+.matrix {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.mRow {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.8fr) repeat(var(--cols), minmax(0, 1fr));
+  gap: 1px;
+}
+
+.mCorner,
+.mHead,
+.mLabel,
+.mCell {
+  background: var(--bg-primary);
+  padding: var(--space-3) var(--space-4);
+}
+
+.mCorner,
+.mHead {
+  font-family: var(--font-mono);
+  font-size: max(0.625rem, var(--micro-floor));
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.mHead { color: var(--accent); }
+
+.mLabel {
+  font-size: var(--type-small);
+  font-weight: 500;
+}
+
+.mCell {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.35rem;
+
+  &[data-empty] {
+    background:
+      repeating-linear-gradient(135deg, transparent 0 6px, rgba(190, 230, 215, 0.03) 6px 7px),
+      var(--bg-primary);
+  }
+}
+
+.mSource { display: none; }
+
+.chip {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--accent-line);
+  background: rgba(60, 221, 158, 0.06);
+  font-size: max(0.75rem, var(--micro-floor));
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+/* A phone: one theme per block, each cell naming its own source. */
+@media (max-width: 640px) {
+  .mRow {
+    grid-template-columns: 1fr;
+  }
+  .mRow[data-head] { display: none; }
+  .mCell[data-empty] { display: none; }
+  .mSource {
+    display: block;
+    flex-basis: 100%;
+    font-family: var(--font-mono);
+    font-size: max(0.625rem, var(--micro-floor));
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .diagram { padding: var(--space-4); }
+}

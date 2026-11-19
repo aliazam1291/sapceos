@@ -10,6 +10,7 @@ import { scrollMax } from "@/lib/scroll-signal";
 import NavOverview from "./NavOverview";
 import SoundToggle from "./SoundToggle";
 import RadioButton from "./RadioButton";
+import ProjectsMenu from "./ProjectsMenu";
 import { plainName } from "@/content/pages";
 import styles from "./Nav.module.scss";
 
@@ -204,6 +205,9 @@ export default function Nav() {
             <span className={styles.hereLabel}>At</span>
             <span className={styles.hereValue}>{here}</span>
           </span>
+
+          {/* Every project by name, one click away (ProjectsMenu.tsx). */}
+          <ProjectsMenu className={styles.toggle} />
 
           {/* Mission control: the ⌘K palette. Every destination from one
               field; the key legend is the label, so a keyboard reader sees

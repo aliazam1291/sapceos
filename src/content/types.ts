@@ -8,9 +8,69 @@ export type ReportSection = {
   body: string | string[];
 };
 
+/**
+ * How a product works, drawn instead of screenshotted (2026-11-19). Ali:
+ * "tell the features, add graphs of features, what it's doing — we can't
+ * add images." Client products can't be shown, so their mechanics are:
+ * every diagram is a MODEL of the product's logic (its flow, its bands,
+ * its cost curve), never a chart of real data, and says so in its caption.
+ */
+export type BlueprintDiagram =
+  | {
+      kind: "flow";
+      title: string;
+      caption: string;
+      /** Left to right: inputs → what the product does → what the user gets. */
+      columns: { label: string; nodes: { name: string; note?: string }[] }[];
+    }
+  | {
+      kind: "bands";
+      title: string;
+      caption: string;
+      unit: string;
+      /** Axis end; the last band runs to it. */
+      max: number;
+      /** `range` is the band in words ("90–110%"), shown where bands stack. */
+      bands: { from: number; to: number; label: string; range: string; tone: "ok" | "low" | "high" | "idle" }[];
+      ticks: { at: number; label: string }[];
+    }
+  | {
+      kind: "curve";
+      title: string;
+      caption: string;
+      xLabel: string;
+      yLabel: string;
+      /** Piecewise-linear model, in illustrative units. */
+      points: [number, number][];
+      marks: { x: number; label: string }[];
+      /** Labelled spans along the curve. */
+      spans: { from: number; to: number; label: string }[];
+    }
+  | {
+      kind: "matrix";
+      title: string;
+      caption: string;
+      cols: string[];
+      /** Each row: a label and, per column, the items that fall in it. */
+      rows: { label: string; cells: string[][] }[];
+    };
+
+export type Blueprint = {
+  /** The product's modules: what each one does, in a sentence. */
+  features: { name: string; does: string; tag?: string }[];
+  diagrams: BlueprintDiagram[];
+};
+
+/** How the nav groups projects: products he owns, client builds, platforms shipped. */
+export type MissionGroup = "owned" | "client" | "platform";
+
 export type Mission = {
   slug: string;
   title: string;
+  /** Nav grouping. */
+  group?: MissionGroup;
+  /** Mechanics drawn on the report page (see Blueprint). */
+  blueprint?: Blueprint;
   org: string;
   role: string;
   period: string;
