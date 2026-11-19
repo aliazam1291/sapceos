@@ -161,7 +161,12 @@ export default function HoloFigure({ src, total, className }: { src: string; tot
 
   return (
     <div ref={host} className={className} data-holo={phase === "idle" ? undefined : phase} aria-hidden="true">
-      {mounted ? (
+      {/* Not while the launch screen is up (2026-11-19): mounting under it
+          loaded three.js and compiled the hologram's shaders behind an opaque
+          overlay, on the same main thread that had to paint the hero — mobile
+          LCP waited 1.1 s on render delay. The still avatar is the first
+          paint either way. */}
+      {mounted && !booting ? (
         <HoloPortraitScene
           src={src}
           go={visible && !booting}

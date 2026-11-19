@@ -128,7 +128,8 @@ export default function PortfolioHero({ data }: { data: Dossier }) {
             width={1199}
             height={1312}
             priority
-            sizes="(max-width: 768px) 86vw, 36vw"
+            fetchPriority="high"
+            sizes="(max-width: 768px) 260px, (max-width: 1440px) 36vw, 520px"
             className={styles.still}
           />
           {/* Under the helmet (2026-10-31, Ali: "when someone hovers show the
@@ -142,7 +143,7 @@ export default function PortfolioHero({ data }: { data: Dossier }) {
             aria-hidden="true"
             width={1199}
             height={1312}
-            sizes="(max-width: 768px) 86vw, 36vw"
+            sizes="(max-width: 768px) 260px, (max-width: 1440px) 36vw, 520px"
             className={styles.reveal}
           />
           {/* The download: a hologram of the avatar materialises over it

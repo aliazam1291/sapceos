@@ -17,6 +17,14 @@ html {
   // Lenis already owns smooth scrolling. Reduced-motion users get instant
   // jumps, which is the correct fallback anyway.
 
+  // The launch screen hides the page's overflow (`html.booting`), so on a
+  // desktop the scrollbar vanished and came back when the launch ended: the
+  // page narrowed by the scrollbar's width and every fixed full-viewport
+  // layer (DeepSpace's nebula above all) moved. Lighthouse read that as CLS
+  // 0.168 on `/` (2026-11-19). The gutter is reserved whether or not the
+  // scrollbar is showing, so nothing moves.
+  scrollbar-gutter: stable;
+
   /*
    * The horizontal-scroll guard has to be HERE, not only on body.
    *
