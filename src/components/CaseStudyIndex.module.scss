@@ -1,0 +1,125 @@
+@use "../styles/tokens.scss" as *;
+
+/* A text index: hairline rows, square, no cards. */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row:first-child {
+  padding-top: var(--space-4);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) minmax(12rem, 16rem);
+  gap: var(--space-6);
+  align-items: start;
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid var(--line);
+  :where(&) { contain-intrinsic-size: none auto 190px; }
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: max(0.6875rem, var(--micro-floor));
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  padding-top: 0.35rem;
+}
+
+.body {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: max(0.6875rem, var(--micro-floor));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.kind {
+  color: var(--accent);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--type-large);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    &:hover,
+    &:focus-visible {
+      color: var(--accent);
+    }
+  }
+}
+
+.premise {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--text-secondary);
+  font-size: var(--type-small);
+  line-height: 1.55;
+}
+
+.proof {
+  display: grid;
+  gap: var(--space-1);
+  justify-items: start;
+
+  strong {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  span {
+    font-size: var(--type-small);
+    color: var(--text-tertiary);
+  }
+}
+
+.pending {
+  font-family: var(--font-mono);
+  font-size: max(0.6875rem, var(--micro-floor)) !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.read {
+  margin-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  font-family: var(--font-mono);
+  font-size: max(0.75rem, var(--micro-floor));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+  .proof {
+    grid-column: 2;
+  }
+}

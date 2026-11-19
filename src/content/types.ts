@@ -71,6 +71,14 @@ export type Mission = {
   group?: MissionGroup;
   /** Mechanics drawn on the report page (see Blueprint). */
   blueprint?: Blueprint;
+  /**
+   * Search copy written for the query a recruiter or hiring manager types
+   * (2026-11-19). `description` replaces the generated meta description;
+   * `keywords` lead the page's keywords and the CreativeWork JSON-LD.
+   */
+  seo?: { description: string; keywords: string[] };
+  /** The same case study on Behance; shown on the report, sameAs in JSON-LD. Not a store link, so it never counts as proof. */
+  behance?: string;
   org: string;
   role: string;
   period: string;

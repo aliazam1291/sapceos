@@ -61,10 +61,10 @@ ${building.map((b) => `- [${b.name}](${b.url}): ${b.role}. ${b.line}`).join("\n"
 
 - [Recruiter brief](${siteUrl}/hire): the thirty-second case, the measured numbers, the CV and a call link
 - [About](${siteUrl}/about): who Ali is, how he works and what he has shipped
-- [Projects](${siteUrl}/missions): ten product platforms, each with a report on the problem, his role and the stack
+- [Projects](${siteUrl}/missions): ${missions.length} products and platforms, each with a report on the problem, his role and the stack
 - [How I decide](${siteUrl}/decisions): the product calls he has made, with the evidence for each
 - [Experience](${siteUrl}/mission-history): work history, education and certifications
-- [Case studies](${siteUrl}/field-notes): teardowns of products he does not work on
+- [Case studies](${siteUrl}/field-notes): product case studies of his own work (products he owns and client builds), then teardowns of products he does not work on
 - [Writing](${siteUrl}/writing): essays and guides on product management and AI
 - [Studio](${siteUrl}/studio): freelance client work under Smaak.ux
 - [Smaak.ux](${siteUrl}/smaak): the design studio's own page
@@ -82,7 +82,11 @@ ${faqs.map((f) => `### ${f.q}\n\n${f.a.join("\n\n")}`).join("\n\n")}
 
 ${missions.map(mission).join("\n")}
 
-## Case studies
+## Product case studies (his own work)
+
+${missions.filter((m) => m.group === "owned" || m.group === "client").map((m) => `- [${m.title}](${siteUrl}/missions/${m.slug}): ${m.seo?.description ?? m.premise}${m.behance ? ` Also on Behance: ${m.behance}` : ""}`).join("\n")}
+
+## Teardowns (products he does not work on)
 
 ${fieldNotes.map(note).join("\n")}
 

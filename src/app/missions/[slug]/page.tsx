@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const mission = getMission(slug);
   if (!mission) return {};
   const facts = mission.signals.map((sig) => `${sig.value} ${sig.label.toLowerCase()}`).join(", ");
-  const description = clipDescription(`${mission.premise}${facts ? ` ${facts}.` : ""} ${mission.title} at ${mission.org} — role: ${mission.role}.`);
+  const description = mission.seo?.description ?? clipDescription(`${mission.premise}${facts ? ` ${facts}.` : ""} ${mission.title} at ${mission.org} — role: ${mission.role}.`);
   // Absolute: the layout's "— Ali Azam Kazmi" template pushed long mission
   // titles past 75 characters; Google truncates at ~60.
   // Long product names drop the byline rather than truncate mid-name.
@@ -49,11 +49,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: { absolute: title },
     description,
-    keywords: keywordsFor([mission.title, `${mission.title} case study`, mission.org, ...mission.stack], identityKeywords, domainKeywords, ["mission report", "product engineering case study"]),
+    keywords: keywordsFor(mission.seo?.keywords ?? [], [mission.title, `${mission.title} case study`, mission.org, ...mission.stack], identityKeywords, domainKeywords, ["product case study", "product engineering case study"]),
     alternates: { canonical: `/missions/${mission.slug}` },
     openGraph: {
       type: "article",
-      title: `${mission.title} — Mission Report`,
+      title: `${mission.title} — Case Study`,
       description,
       url: `/missions/${mission.slug}`,
       // Only when there is a cover: an explicit `images: undefined` removed
@@ -140,6 +140,17 @@ export default async function MissionReport({ params }: Params) {
                     <span aria-hidden="true"> ↗</span>
                   </a>
                 ))}
+              </dd>
+            </div>
+          ) : null}
+          {mission.behance ? (
+            <div className={ui.manifestCell}>
+              <dt>Case study</dt>
+              <dd>
+                <a href={mission.behance} target="_blank" rel="noopener" className={ui.manifestLink}>
+                  Read it on Behance
+                  <span aria-hidden="true"> ↗</span>
+                </a>
               </dd>
             </div>
           ) : null}

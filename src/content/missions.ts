@@ -77,6 +77,10 @@ export const missions: Mission[] = [
   {
     slug: "mappls-shop-admin",
     group: "owned",
+    seo: {
+      description: "Mappls Shop case study: subscription billing that cut manual ops work 80% and grew collections 4×. Product owner Ali Azam Kazmi, MapMyIndia.",
+      keywords: ["subscription billing case study", "B2B SaaS billing admin", "product owner case study", "Mappls Shop", "billing automation product"],
+    },
     links: [{ label: "shop.mappls.com", href: "https://shop.mappls.com" }],
     updated: "2026-10-24",
     measure: [
@@ -318,6 +322,11 @@ export const missions: Mission[] = [
   {
     slug: "intouch",
     group: "owned",
+    seo: {
+      description: "Mappls Intouch case study: a fleet management app at MapMyIndia, live with 10,000+ vehicles and built for 50,000. Product owner Ali Azam Kazmi.",
+      keywords: ["fleet management app case study", "fleet tracking app", "logistics app product case study", "Mappls Intouch", "MapMyIndia fleet app", "product owner case study"],
+    },
+    behance: "https://www.behance.net/gallery/258729405/Mappls-Intouch-Fleet-App-Product-Case-Study",
     blueprint: {
       features: [
         { name: "Live fleet map", does: "Every vehicle's position and status in real time, rendered to stay smooth under high-frequency updates at fleet scale.", tag: "Core" },
@@ -604,6 +613,11 @@ export const missions: Mission[] = [
   {
     slug: "indane-yatra-mitra",
     group: "owned",
+    seo: {
+      description: "Indane Yatra Mitra case study: LPG tanker tracking for Indian Oil, built at MapMyIndia. Rated 4.5 on Google Play. Product owner Ali Azam Kazmi.",
+      keywords: ["LPG tanker tracking app", "Indian Oil fleet app", "Indane Yatra Mitra", "fleet safety app case study", "role-based access UX"],
+    },
+    behance: "https://www.behance.net/gallery/258729813/Indane-Yatra-Mitra-LPG-Fleet-Safety-App-Case-Study",
     blueprint: {
       features: [
         { name: "Live tanker tracking", does: "Where every LPG tanker is, with its alarm state visible on the map without a tap.", tag: "Core" },
@@ -848,6 +862,11 @@ export const missions: Mission[] = [
   {
     slug: "driver-safety",
     group: "client",
+    seo: {
+      description: "Driver Safety PRD case study: turning fleet telematics alerts into one decision for VinFast and SM Green managers. Written and built by Ali Azam Kazmi.",
+      keywords: ["driver safety PRD", "PRD example", "fleet safety product case study", "video telematics UX", "product manager PRD case study"],
+    },
+    behance: "https://www.behance.net/gallery/258729693/Driver-Safety-Fleet-Telematics-PRD-Case-Study",
     title: "Driver Safety",
     org: "MapMyIndia [Gtropy] · InTouch, for VinFast & SM Green",
     role: "PRD owner · UX · DMS, ADAS & driver sections",
@@ -932,6 +951,11 @@ export const missions: Mission[] = [
   {
     slug: "tata-power-contracts",
     group: "client",
+    seo: {
+      description: "Contract dashboard case study for Tata Power: fixing utilization so a vehicle on pace never looks under-used mid-month. Product design by Ali Azam Kazmi.",
+      keywords: ["fleet contract dashboard", "B2B dashboard UX case study", "vehicle utilization dashboard", "Tata Power dashboard", "product design case study"],
+    },
+    behance: "https://www.behance.net/gallery/258729925/Contract-Dashboard-B2B-Product-Design-Case-Study",
     title: "Contract Management Dashboard",
     org: "MapMyIndia [Gtropy] · Mappls Insight, for Tata Power",
     role: "Product design · UX · Working prototype",
@@ -1025,6 +1049,10 @@ export const missions: Mission[] = [
   {
     slug: "toyota-device-health",
     group: "client",
+    seo: {
+      description: "Device health dashboard case study for Toyota Logistics: finding fleet trackers that have gone quiet before the data does. Built by Ali Azam Kazmi.",
+      keywords: ["telematics device health dashboard", "fleet tracker monitoring", "Toyota Logistics", "IoT dashboard UX case study"],
+    },
     title: "Device Communication Health",
     org: "MapMyIndia [Gtropy] · InTouch, for Toyota Logistics",
     role: "Dashboard design · Build",

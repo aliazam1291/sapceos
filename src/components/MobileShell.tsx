@@ -41,7 +41,7 @@ const SCREEN: [RegExp, string][] = [
   [/^\/missions\/./, "Mission report"],
   [/^\/missions/, "Missions"],
   [/^\/field-notes\/./, "Field note"],
-  [/^\/field-notes/, "Field notes"],
+  [/^\/field-notes/, "Case studies"],
   [/^\/writing\/./, "Essay"],
   [/^\/writing/, "Writing"],
   [/^\/lab/, "Lab"],
