@@ -5,7 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import ShipModel, { type ShipHandle } from "./ShipModel";
 import Pad from "./Pad";
-import { decidePerfLevel } from "@/lib/perf";
+import { decidePerfLevel, perf } from "@/lib/perf";
 import { WarmShaders } from "./useWarmShaders";
 import { quietGL } from "@/lib/gl";
 
@@ -49,11 +49,22 @@ function Scene({ drive }: { drive: React.RefObject<Drive> }) {
     let raf = 0;
     let last = 0;
     const level = decidePerfLevel();
+    /*
+     * No GPU (2026-11-19). On a software rasteriser — SwiftShader on
+     * PageSpeed's servers — one frame of this scene is ~200 ms of blocked
+     * main thread, so "24 fps idle" was really ~5 fps and every frame a long
+     * task: 46 frames in the first ten seconds, the whole of the home page's
+     * 8.5 s Total Blocking Time there. Idle on the pad nothing travels (a
+     * camera sway of a few centimetres, an engine flicker), so without a GPU
+     * it is drawn twice a second. The hold and the lift-off still draw every
+     * frame, and with a GPU nothing here changes.
+     */
+    const idleEvery = perf.software ? 500 : level === "high" ? 33 : 42;
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
       const d = drive.current;
       const busy = (d?.fill ?? 0) > 0 || d?.leaving;
-      const interval = busy ? 0 : level === "high" ? 33 : 42;
+      const interval = busy ? 0 : idleEvery;
       if (now - last >= interval) {
         last = now;
         invalidate();
@@ -117,13 +128,24 @@ export default function BootShip({ fill, leaving, ready }: Drive) {
   const drive = useRef<Drive>({ fill, leaving, ready });
   // Nothing draws until the shaders have compiled in parallel (WarmShaders).
   const [warm, setWarm] = useState(false);
+  const level = decidePerfLevel();
   drive.current.fill = fill;
   drive.current.leaving = leaving;
   drive.current.ready = ready;
 
   return (
     <Canvas
-      onCreated={quietGL}
+      onCreated={(state) => {
+        quietGL(state);
+        /*
+         * R3F calls forceContextLoss() when this canvas unmounts at the end
+         * of the launch. On a software rasteriser that single call blocked
+         * the main thread for 3.8 s (CPU profile, SwiftShader, 2026-11-19).
+         * Without a GPU the context is left for the browser to collect with
+         * the canvas; with a GPU the call is instant and stays.
+         */
+        if (perf.software) state.gl.forceContextLoss = () => {};
+      }}
       dpr={1}
       frameloop={warm ? "demand" : "never"}
       // A shadow pass doubles the draw; only where the frame is cheap.
@@ -132,8 +154,9 @@ export default function BootShip({ fill, leaving, ready }: Drive) {
       // for PCF on the first shadow pass — and the swap changes every lit
       // program's cache key, so the whole scene compiled again, synchronously,
       // one frame after the warm-up (tools/progkeys-uat.mjs).
-      shadows={decidePerfLevel() === "high" ? "percentage" : false}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance", toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.1 }}
+      shadows={level === "high" ? "percentage" : false}
+      // MSAA on a software rasteriser multiplies the per-frame cost; a GPU keeps it.
+      gl={{ antialias: !perf.software, alpha: true, powerPreference: "high-performance", toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.1 }}
       camera={{ fov: 32, near: 0.1, far: 30, position: [3.0, 1.35, 3.4] }}
       style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
     >

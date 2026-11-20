@@ -31,7 +31,9 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const chrome = await launch({
   chromePath: process.env.CHROME ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-  chromeFlags: ['--headless=new', '--no-first-run'],
+  // SWGL=1 forces the software rasteriser PageSpeed's servers use
+  // (SwiftShader) — local headless Chrome otherwise gets the real GPU.
+  chromeFlags: ['--headless=new', '--no-first-run', ...(process.env.SWGL ? ['--use-angle=swiftshader', '--use-gl=angle', '--enable-unsafe-swiftshader'] : [])],
 });
 
 const rows = [];

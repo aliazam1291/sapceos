@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { decidePerfLevel, perf } from "@/lib/perf";
 
 /*
  * Keeps three.js out of the first-paint bundle.
@@ -36,15 +37,38 @@ export default function CompanionLoader() {
     // The launch screen covers the page and has its own ship on the pad; a
     // second one behind it is a canvas nobody can see. Wait for the pad to
     // clear, then arrive — the entrance flight starts as the overlay lifts.
+    /*
+     * No GPU (2026-11-19). On a software rasteriser the ship's shaders
+     * compile synchronously — measured as one 5.2 s freeze the moment it
+     * mounted, most of the home page's 8.5 s Total Blocking Time on
+     * PageSpeed (whose servers run SwiftShader). There it waits for the
+     * reader's first gesture and then makes its usual entrance; with a GPU
+     * it arrives exactly as before.
+     */
+    decidePerfLevel();
+    const EVENTS = ["pointermove", "pointerdown", "touchstart", "wheel", "scroll", "keydown"] as const;
+    let gestured = !perf.software;
+    const onGesture = () => {
+      gestured = true;
+      for (const t of EVENTS) window.removeEventListener(t, onGesture, true);
+      arrive();
+    };
+    if (!gestured) for (const t of EVENTS) window.addEventListener(t, onGesture, { capture: true, passive: true });
+    let cleared = false;
+    const arrive = () => {
+      if (cleared && gestured) setReady(true);
+    };
     const go = () => {
       if (!html.hasAttribute("data-booting")) {
-        setReady(true);
+        cleared = true;
+        arrive();
         return;
       }
       mo = new MutationObserver(() => {
         if (!html.hasAttribute("data-booting")) {
           mo?.disconnect();
-          setReady(true);
+          cleared = true;
+          arrive();
         }
       });
       mo.observe(html, { attributes: true, attributeFilter: ["data-booting"] });
@@ -55,6 +79,7 @@ export default function CompanionLoader() {
       if (idle) w.cancelIdleCallback?.(idle);
       if (timer) window.clearTimeout(timer);
       mo?.disconnect();
+      for (const t of EVENTS) window.removeEventListener(t, onGesture, true);
     };
   }, []);
 
