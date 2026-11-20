@@ -21,6 +21,8 @@ const nextConfig: NextConfig = {
   // Lets a production build run to its own directory while `next dev` keeps
   // serving from .next, so verifying a build never interrupts the dev server.
   distDir: process.env.BUILD_DIR || ".next",
+  // SOURCEMAPS=1 for profiling builds only (tools/startup-profile.mjs).
+  productionBrowserSourceMaps: process.env.SOURCEMAPS === "1",
 
   // This repo's CLAUDE.md is hand-written; Next must not regenerate over it.
   agentRules: false,
