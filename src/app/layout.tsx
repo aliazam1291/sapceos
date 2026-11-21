@@ -14,7 +14,7 @@ import CompanionLoader from "@/components/space/CompanionLoader";
 import BootScreen from "@/components/BootScreen";
 import { dossier } from "@/content/portfolio";
 import Transition from "@/components/Transition";
-import CommandPalette from "@/components/CommandPalette";
+import CommandPaletteLoader from "@/components/CommandPaletteLoader";
 import SoundSystem from "@/components/SoundSystem";
 import Radio from "@/components/Radio";
 import { profile } from "@/content/profile";
@@ -143,7 +143,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Nav />
         <MobileShell />
         {/* Mission control: ⌘K, every destination from one field. */}
-        <CommandPalette />
+        <CommandPaletteLoader />
         <SectionGuide />
         <main id="main">{children}</main>
         <Footer />

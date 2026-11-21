@@ -145,9 +145,11 @@ function score(entry: Entry, q: string): number {
   return 0;
 }
 
-export default function CommandPalette() {
+export default function CommandPalette({ initialOpen = false }: { initialOpen?: boolean }) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  // Mounted on demand by CommandPaletteLoader; `initialOpen` carries the
+  // keystroke or click that caused the load.
+  const [open, setOpen] = useState(initialOpen);
   const [q, setQ] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
