@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
   // SOURCEMAPS=1 for profiling builds only (tools/startup-profile.mjs).
   productionBrowserSourceMaps: process.env.SOURCEMAPS === "1",
 
+  // A 512 step (2026-11-20): the hero avatar and the Building previews draw
+  // at ~500 px on a desktop, and the next size up was 640 — PageSpeed's
+  // "improve image delivery" counted 75 KiB of extra pixels.
+  images: { imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512] },
+
   // This repo's CLAUDE.md is hand-written; Next must not regenerate over it.
   agentRules: false,
 
