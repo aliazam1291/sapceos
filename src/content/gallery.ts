@@ -22,6 +22,8 @@ const behanceOf = (slug: string) => studioPieces.find((p) => p.slug === slug)?.b
 export type GalleryItem = {
   /** 640px WebP under public/studio/dome. */
   texture: string;
+  /** The full-size image, for the inspection bay (the texture is a 640px bake). */
+  full: string;
   title: string;
   /** What it is, in three or four words. */
   kind: string;
@@ -34,6 +36,7 @@ export type GalleryItem = {
 export const gallery: GalleryItem[] = [
   {
     texture: "/studio/dome/sunder-masala-case.webp",
+    full: "/studio/sunder-masala-case.webp",
     title: "Sunder Masala",
     kind: "Brand characters & website",
     client: "Sunder Masala",
@@ -41,6 +44,7 @@ export const gallery: GalleryItem[] = [
   },
   {
     texture: "/studio/dome/wolf-casa-site.webp",
+    full: "/studio/wolf-casa-site.png",
     title: "Wolf Casa",
     kind: "Website, content & branding",
     client: "Wolf Casa",
@@ -48,6 +52,7 @@ export const gallery: GalleryItem[] = [
   },
   {
     texture: "/studio/dome/leanmultiverse-logo-and-branding.webp",
+    full: "/studio/leanmultiverse-logo-and-branding.png",
     title: "Lean Multiverse",
     kind: "Logo & branding",
     client: "Lean Multiverse",
@@ -55,66 +60,77 @@ export const gallery: GalleryItem[] = [
   },
   {
     texture: "/studio/dome/web3-nft-marketplace-ui-multi-page-figma.webp",
+    full: "/studio/web3-nft-marketplace-ui-multi-page-figma.png",
     title: "Web3 NFT marketplace",
     kind: "Multi-page UI · Figma",
     href: behanceOf("web3-nft-marketplace"),
   },
   {
     texture: "/studio/dome/dark-health-dashboard-ui.webp",
+    full: "/studio/dark-health-dashboard-ui.png",
     title: "Health dashboard",
     kind: "Dark product UI",
     href: behanceOf("health-dashboard"),
   },
   {
     texture: "/studio/dome/tedx-srmist-web-design-app-design.webp",
+    full: "/studio/tedx-srmist-web-design-app-design.png",
     title: "TEDxSRMIST",
     kind: "Web & app design",
     href: behanceOf("tedx-srmist"),
   },
   {
     texture: "/studio/dome/talent-connect-logo-brand-identity-visua.webp",
+    full: "/studio/talent-connect-logo-brand-identity-visua.png",
     title: "Talent Connect",
     kind: "Logo & visual identity",
     href: behanceOf("talent-connect"),
   },
   {
     texture: "/studio/dome/ar-vr-web-design-map-ar-vr.webp",
+    full: "/studio/ar-vr-web-design-map-ar-vr.png",
     title: "AR/VR map",
     kind: "Spatial web design",
     href: behanceOf("ar-vr-map"),
   },
   {
     texture: "/studio/dome/rois-logo-clothing-brand.webp",
+    full: "/studio/rois-logo-clothing-brand.png",
     title: "Rois",
     kind: "Clothing brand identity",
     href: behanceOf("rois"),
   },
   {
     texture: "/studio/dome/dumb-money.webp",
+    full: "/studio/dumb-money.png",
     title: "DumbMoney",
     kind: "Brand concept",
     href: "https://www.behance.net/gallery/217772229/Dumb-Money",
   },
   {
     texture: "/studio/dome/vivo-mood-board-ui-inspiration-design-mo.webp",
+    full: "/studio/vivo-mood-board-ui-inspiration-design-mo.png",
     title: "Vivo mood board",
     kind: "UI inspiration board",
     href: "https://www.behance.net/gallery/223882033/Vivo-Mood-Board-UI-Inspiration-Design-Mood-Board",
   },
   {
     texture: "/studio/dome/poster-illustration.webp",
+    full: "/studio/poster-illustration.png",
     title: "Poster illustration",
     kind: "Print",
     href: "https://www.behance.net/gallery/219730511/Poster-illustration",
   },
   {
     texture: "/studio/dome/a3-poster.webp",
+    full: "/studio/a3-poster.png",
     title: "A3 poster",
     kind: "Print",
     href: "https://www.behance.net/gallery/217777301/A3-Poster",
   },
   {
     texture: "/studio/dome/independence-day-template.webp",
+    full: "/studio/independence-day-template.png",
     title: "Independence Day",
     kind: "Campaign template",
     href: "https://www.behance.net/gallery/228917555/Independence-Day-Template",

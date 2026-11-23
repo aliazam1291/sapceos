@@ -59,9 +59,9 @@ const IDLE = 0.07;
  */
 export type DomeTone = "emerald";
 
-type Tone = { line: string; lit: string; low: string; high: string; glow: string; band: string; grid: string };
+export type Tone = { line: string; lit: string; low: string; high: string; glow: string; band: string; grid: string };
 
-const TONES: Record<DomeTone, Tone> = {
+export const TONES: Record<DomeTone, Tone> = {
   // low/high are Hologram.module.scss's plate gradient (#1a8f68 → #4de3aa).
   emerald: { line: "#2a6b55", lit: "#8af0c8", low: "#1a8f68", high: "#4de3aa", glow: "#3cdd9e", band: "#bff5df", grid: "#3cdd9e" },
 };
@@ -105,9 +105,12 @@ uniform vec3 uLow;
 uniform vec3 uHigh;
 uniform vec3 uGlow;
 uniform vec3 uBand;
+uniform float uFade;
 varying vec2 vUv;
 
 void main() {
+  // A plate fading in from the far end of the vortex, or out as it passes.
+  if (uFade <= 0.003) discard;
   // The plate's cut corners, top-right and bottom-left, at 45 degrees.
   if ((1.0 - vUv.x) * uAspect + (1.0 - vUv.y) < uChamfer) discard;
   if (vUv.x * uAspect + vUv.y < uChamfer) discard;
@@ -138,7 +141,7 @@ void main() {
   // A hologram has no black: the dark of the projection is mostly sky.
   float a = clamp(l * 0.8 + 0.26 + edge * 0.18 + inner * 0.15 + band * 0.12, 0.0, 1.0);
 
-  gl_FragColor = vec4(mix(holo, tex.rgb, uLit), mix(a, 1.0, uLit));
+  gl_FragColor = vec4(mix(holo, tex.rgb, uLit), mix(a, 1.0, uLit) * uFade);
   #include <colorspace_fragment>
 }
 `;
@@ -228,8 +231,8 @@ function Lens() {
  * started on a frame used to open a new tab on release. `e.delta` is the
  * distance since pointer-down, in pixels.
  */
-const TAP = 6;
-const isTouch = (e: ThreeEvent<MouseEvent>) => (e.nativeEvent as PointerEvent).pointerType === "touch";
+export const TAP = 6;
+export const isTouch = (e: ThreeEvent<MouseEvent>) => (e.nativeEvent as PointerEvent).pointerType === "touch";
 
 function Dome({
   items,
@@ -369,7 +372,14 @@ function Dome({
   );
 }
 
-function Frame({
+/*
+ * One hologram plate. On the dome it places itself (phi/theta on the sphere,
+ * facing the centre). The vortex (VortexGalleryScene, 2026-11-23) moves a
+ * parent group instead and passes no phi/theta: the plate then sits at its
+ * parent's origin facing +Z, and `fade` is a uniform the parent writes as the
+ * plate travels toward the lens.
+ */
+export function Frame({
   texture,
   phi,
   theta,
@@ -381,10 +391,12 @@ function Frame({
   onPick,
   linked,
   tone,
+  height = FRAME_H,
+  fade,
 }: {
   texture: THREE.Texture;
-  phi: number;
-  theta: number;
+  phi?: number;
+  theta?: number;
   seed: number;
   time: { value: number };
   lit: boolean;
@@ -393,11 +405,19 @@ function Frame({
   onPick: (touch: boolean) => void;
   linked: boolean;
   tone: Tone;
+  height?: number;
+  fade?: { value: number };
 }) {
   const ref = useRef<THREE.Group>(null);
   const line = useRef<THREE.LineBasicMaterial>(null);
+  const fadeU = useMemo(() => fade ?? { value: 1 }, [fade]);
 
   const { position, quaternion, aspect } = useMemo(() => {
+    const img = texture.image as { width?: number; height?: number } | undefined;
+    const ratio = img?.width && img?.height ? img.width / img.height : 1.6;
+    if (phi === undefined || theta === undefined) {
+      return { position: new THREE.Vector3(), quaternion: new THREE.Quaternion(), aspect: ratio };
+    }
     const p = new THREE.Vector3().setFromSphericalCoords(RADIUS, phi, theta);
     /*
      * Face the centre, upright. +Z (the plane's face) points inward; X is
@@ -411,12 +431,10 @@ function Frame({
     const x = new THREE.Vector3(0, 1, 0).cross(z).normalize();
     const y = new THREE.Vector3().crossVectors(z, x);
     const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z));
-    const img = texture.image as { width?: number; height?: number } | undefined;
-    const a = img?.width && img?.height ? img.width / img.height : 1.6;
-    return { position: p, quaternion: q, aspect: a };
+    return { position: p, quaternion: q, aspect: ratio };
   }, [phi, theta, texture]);
 
-  const h = FRAME_H;
+  const h = height;
   const w = h * aspect;
 
   const material = useMemo(
@@ -437,9 +455,10 @@ function Frame({
           uHigh: { value: new THREE.Color(tone.high) },
           uGlow: { value: new THREE.Color(tone.glow) },
           uBand: { value: new THREE.Color(tone.band) },
+          uFade: fadeU,
         },
       }),
-    [texture, time, seed, aspect, tone],
+    [texture, time, seed, aspect, tone, fadeU],
   );
   useEffect(() => () => material.dispose(), [material]);
 
@@ -468,7 +487,7 @@ function Frame({
     u.value += ((lit ? 1 : 0) - u.value) * Math.min(delta * (lit ? 5 : 3), 1);
     if (line.current) {
       line.current.color.lerpColors(restColor, litColor, u.value);
-      line.current.opacity = 0.45 + u.value * 0.45;
+      line.current.opacity = (0.45 + u.value * 0.45) * fadeU.value;
     }
     if (ref.current) {
       const s = ref.current.scale.x + ((lit ? 1.08 : 1) - ref.current.scale.x) * Math.min(delta * 8, 1);

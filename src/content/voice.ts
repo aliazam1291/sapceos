@@ -94,9 +94,9 @@ export const comms = {
   log: [
     { who: "CAPCOM", line: "The log, short form. The PDF version is the same log with worse typography." },
   ],
-  // Home — Design (the dome).
+  // Home — Design (the vortex, 2026-11-23).
   studioLeg: [
-    { who: "PAD", line: "The work, hung in the dome. The rest of the studio is one door down." },
+    { who: "PAD", line: "The work, spinning down the vortex. The rest of the studio is one door down." },
   ],
 } as const satisfies Record<string, readonly CommsLine[]>;
 

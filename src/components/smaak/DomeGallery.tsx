@@ -2,11 +2,36 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { gallery } from "@/content/gallery";
+import { gallery, type GalleryItem } from "@/content/gallery";
 import type { DomeTone } from "./DomeGalleryScene";
+import InspectionBay, { inspect, type InspectItem } from "@/components/InspectionBay";
 import styles from "./DomeGallery.module.scss";
 
-const DomeGalleryScene = dynamic(() => import("./DomeGalleryScene"), { ssr: false, loading: () => null });
+/*
+ * The vortex replaced the dome as the scene (2026-11-23, Ali: "like a vortex
+ * — going through a circle, things rotating, and once the user clicks he can
+ * see the design"). DomeGalleryScene stays: its hologram plate (Frame) is
+ * what the vortex draws. A click now opens the piece full size in the
+ * inspection bay rather than in a new tab; the bay links out to Behance or
+ * the live site from there.
+ */
+const VortexGalleryScene = dynamic(() => import("./VortexGalleryScene"), { ssr: false, loading: () => null });
+
+/** Gallery slugs are prefixed so they never collide with a studio bay's. */
+const slugOf = (g: GalleryItem) => "g-" + g.texture.split("/").pop()!.replace(/\.\w+$/, "");
+
+function inspectItem(g: GalleryItem): InspectItem {
+  return {
+    slug: slugOf(g),
+    title: g.title,
+    src: g.full,
+    fit: /logo|template|poster/i.test(g.kind) ? "contain" : "cover",
+    kind: g.kind,
+    status: g.client ? "Client work" : "Independent",
+    brief: g.client ? `${g.kind} for ${g.client}.` : `${g.kind}.`,
+    links: g.href ? [{ label: g.href.includes("behance.net") ? "Open on Behance" : "Visit the live site", href: g.href }] : [],
+  };
+}
 
 /*
  * The dome, and its index.
@@ -81,15 +106,15 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
       setFocus(i);
       return;
     }
-    const href = items[i].href;
-    if (href) window.open(href, "_blank", "noopener,noreferrer");
+    inspect(slugOf(items[i]));
   };
+  const bay = items.map(inspectItem);
 
   return (
     <div className={styles.wrap}>
       <div ref={host} className={styles.dome} data-live={mounted || undefined} data-ready={ready || undefined} data-tone={tone}>
         {mounted ? (
-          <DomeGalleryScene
+          <VortexGalleryScene
             items={items}
             paused={!visible}
             focus={focus}
@@ -125,8 +150,8 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
           ring's frames. Its line is reserved from the first paint and only
           shown once the dome draws, so nothing below it moves. */}
       <p className={styles.hint} data-on={ready || undefined} aria-hidden="true">
-        <span className={styles.hintFine}>Drag to look around · point at a piece to see it in colour</span>
-        <span className={styles.hintTouch}>Swipe to turn · tap a piece for colour, again to open</span>
+        <span className={styles.hintFine}>Drag to spin and fly · point at a piece for colour · click to open it</span>
+        <span className={styles.hintTouch}>Swipe to spin and fly · tap a piece for colour, again to open it</span>
       </p>
 
       <ol className={styles.index} aria-label="Every piece in the gallery">
@@ -164,6 +189,10 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
           );
         })}
       </ol>
+
+      {/* Where a click in the vortex lands: the piece, full size, in its
+          true colours, with its link out. */}
+      <InspectionBay items={bay} />
     </div>
   );
 }

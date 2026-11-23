@@ -169,16 +169,16 @@ export default function SmaakPage() {
         </div>
       </Section>
 
-      {/* ── The work, hung in a dome. ────────────────────────────────────── */}
+      {/* ── The work, spinning down a vortex (2026-11-23). ───────────────── */}
       <Section id="work" data-section="The work">
         <SectionHead
           label={`Gallery · ${gallery.length}`}
-          title="Stand in the middle of it"
+          title="Fall into the work"
           action={
             <p className={ui.sectionNote}>
-              Drag to look around. Point at a piece and it drops the hologram act and shows you its real colours; click
-              to open it where it lives. All {gallery.length} are listed underneath too — no work is hiding behind the
-              WebGL.
+              Drag to spin the vortex and fly through it. Point at a piece and it drops the hologram act and shows you
+              its real colours; click and it opens full size. All {gallery.length} are listed underneath too — no work
+              is hiding behind the WebGL.
             </p>
           }
         />

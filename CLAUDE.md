@@ -1724,6 +1724,18 @@ the open channel; the one joke; keep it the only one).
   `ProjectsMenu`: a "Projects 13" disclosure in the dock listing every
   mission. Never publish the internal API names, base URLs or vehicle
   numbers that are in those chats.
+- *The vortex* (2026-11-23). Ali: "like a vortex — going through a circle,
+  things rotating, and once the user clicks he can see the design." The
+  dome's scene is replaced on home (Design) and /smaak by
+  `VortexGalleryScene`: the same hologram plates (`Frame`, exported from
+  DomeGalleryScene with an optional `fade` uniform) on a spiral down a
+  looping tunnel of wireframe rings; the reader drifts forward, the spiral
+  turns; drag spins and flies; hover or an index row lights a piece in true
+  colour and brings it to the top. A click opens it full size in the
+  inspection bay (`DomeGallery` renders its own bay; gallery slugs are
+  `g-` prefixed; `GalleryItem.full` is the full-size image). The text index
+  and every other contract (quietGL, WarmShaders, lost-context remount,
+  pause off screen) are unchanged.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
