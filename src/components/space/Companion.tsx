@@ -65,6 +65,10 @@ const HOME_PLAN: Waypoint[] = [
   // offset from its section. Now: toolkit 0.078, building 0.120, work
   // 0.182, results 0.473, experience 0.551, design 0.675, case studies
   // 0.787, contact 0.882, footer 0.999.
+  // 2026-11-23 (H 13573): the Design vortex became a scroll pin, +1991px.
+  // Waypoints before it kept their pixels; after it, their offset from
+  // their section. Work 0.155, results 0.404, experience 0.470, design
+  // 0.576, case studies 0.818, contact 0.899, footer 0.999.
   // Intro: he has the frame; the ship holds the sky above his right
   // shoulder, small, above the rail and right of his hair.
   { p: 0.0, x: 0.4, y: 0.39, s: 0.45 },
@@ -72,17 +76,21 @@ const HOME_PLAN: Waypoint[] = [
   // x 0.38-0.4, not 0.42-0.43: copy avoidance used to refuse any station
   // past 0.42 and pull the ship in; now that it honours the plan, the old
   // values (plus the spline's bulge) put a wing off the right edge.
-  { p: 0.078, x: 0.4, y: 0.38, s: 0.4 },
-  { p: 0.146, x: 0.38, y: 0.4, s: 0.38 },
-  { p: 0.181, x: 0.36, y: -0.3, s: 0.7 }, // boarding (the galaxy flight has the frame; the companion yields)
-  { p: 0.389, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large (the lead ship climbs out here)
-  { p: 0.473, x: -0.3, y: 0.3, s: 0.6 }, // results: over the black hole's sky, top left (the hole then captures it)
-  { p: 0.571, x: 0.34, y: 0.06, s: 0.9 }, // experience: the route holds the left; the ship rides the right
+  { p: 0.0665, x: 0.4, y: 0.38, s: 0.4 },
+  { p: 0.1246, x: 0.38, y: 0.4, s: 0.38 },
+  { p: 0.1544, x: 0.36, y: -0.3, s: 0.7 }, // boarding (the galaxy flight has the frame; the companion yields)
+  { p: 0.3319, x: 0.34, y: 0.3, s: 1.0 }, // out of the flight: top right, large (the lead ship climbs out here)
+  { p: 0.4036, x: -0.3, y: 0.3, s: 0.6 }, // results: over the black hole's sky, top left (the hole then captures it)
+  { p: 0.4872, x: 0.34, y: 0.06, s: 0.9 }, // experience: the route holds the left; the ship rides the right
   // Design: the dome fills the width and takes the drag, so the ship keeps
   // well clear of it: high, small, and out at the left margin.
-  { p: 0.703, x: -0.3, y: 0.44, s: 0.45 },
-  { p: 0.797, x: 0.3, y: 0.42, s: 0.5 }, // case studies: high, small, distant; the drones own the frame
-  { p: 0.89, x: 0.0, y: 0.1, s: 1.1 }, // contact: descends toward the pad, then hands off to the landed ship (shipState.landed)
+  // The vortex is PINNED (2026-11-23): the stage holds the screen for
+  // 210vh while the scroll flies the tunnel, so the ship holds the same
+  // high-left station from arrival to the pin's end, then moves on.
+  { p: 0.5998, x: -0.3, y: 0.36, s: 0.45 },
+  { p: 0.739, x: -0.3, y: 0.36, s: 0.45 },
+  { p: 0.8267, x: 0.3, y: 0.42, s: 0.5 }, // case studies: high, small, distant; the drones own the frame
+  { p: 0.906, x: 0.0, y: 0.1, s: 1.1 }, // contact: descends toward the pad, then hands off to the landed ship (shipState.landed)
   { p: 1.0, x: 0.0, y: -0.1, s: 1.1 },
 ];
 

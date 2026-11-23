@@ -68,6 +68,8 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
    * drawn frame.
    */
   const [ready, setReady] = useState(false);
+  /** The piece the flight is about to pass — the readout's line. */
+  const [passing, setPassing] = useState(0);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -87,6 +89,42 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
     );
     io.observe(el);
     return () => io.disconnect();
+  }, []);
+
+  /*
+   * How far through the pin the reader has scrolled, 0..1 (see `.pin` in
+   * the module). Read on scroll and resize only, written to a ref the scene
+   * reads each frame — no React state per scroll event.
+   */
+  const pin = useRef<HTMLDivElement>(null);
+  const progress = useRef(0);
+  useEffect(() => {
+    const wrap = pin.current;
+    const stage = host.current;
+    if (!wrap || !stage) return;
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const r = wrap.getBoundingClientRect();
+      const stickTop = parseFloat(getComputedStyle(stage).top) || 0;
+      const run = r.height - stage.offsetHeight;
+      // Below zero on the approach (down to -0.3), so the flight is already
+      // moving as the stage rises into place and arrives on piece 01.
+      progress.current = run > 0 ? Math.min(1, Math.max(-0.3, (stickTop - r.top) / run)) : 0;
+      // The readout's track: a compositor scaleX, no layout.
+      stage.style.setProperty("--p", Math.max(0, progress.current).toFixed(4));
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(read);
+    };
+    read();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
   }, []);
 
   const shown = active ?? focus;
@@ -112,14 +150,17 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
 
   return (
     <div className={styles.wrap}>
+      <div ref={pin} className={styles.pin}>
       <div ref={host} className={styles.dome} data-live={mounted || undefined} data-ready={ready || undefined} data-tone={tone}>
         {mounted ? (
           <VortexGalleryScene
             items={items}
+            progress={progress}
             paused={!visible}
             focus={focus}
             onActive={setActive}
             onPick={pick}
+            onPassing={setPassing}
             onReady={() => setReady(true)}
             onLost={() => setReady(false)}
             tone={tone}
@@ -144,15 +185,28 @@ export default function DomeGallery({ tone = "emerald", items = gallery }: { ton
             ) : null}
           </p>
         ) : null}
-      </div>
 
-      {/* Under the dome, not on it: laid over the stage it sat on the lower
-          ring's frames. Its line is reserved from the first paint and only
-          shown once the dome draws, so nothing below it moves. */}
-      <p className={styles.hint} data-on={ready || undefined} aria-hidden="true">
-        <span className={styles.hintFine}>Drag to spin and fly · point at a piece for colour · click to open it</span>
-        <span className={styles.hintTouch}>Swipe to spin and fly · tap a piece for colour, again to open it</span>
-      </p>
+        {/* The flight's instrument: what is coming up, and how far through
+            the run the reader is. It says when the pin will let go. */}
+        {ready ? (
+          <div className={styles.flight} aria-hidden="true">
+            <span className={styles.flightLabel}>
+              Passing <b>{String(passing + 1).padStart(2, "0")}</b> / {String(items.length).padStart(2, "0")}
+            </span>
+            <span className={styles.flightTitle}>{items[passing]?.title}</span>
+            <span className={styles.track}>
+              <span className={styles.fill} />
+            </span>
+          </div>
+        ) : null}
+
+        {/* On the pinned stage, so it travels with it through the run. */}
+        <p className={styles.hint} data-on={ready || undefined} aria-hidden="true">
+          <span className={styles.hintFine}>Scroll to fly through · drag to spin · point at a piece for colour, click to open it</span>
+          <span className={styles.hintTouch}>Scroll to fly through · tap a piece for colour, again to open it</span>
+        </p>
+      </div>
+      </div>
 
       <ol className={styles.index} aria-label="Every piece in the gallery">
         {items.map((g, i) => {

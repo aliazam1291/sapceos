@@ -1735,7 +1735,33 @@ the open channel; the one joke; keep it the only one).
   inspection bay (`DomeGallery` renders its own bay; gallery slugs are
   `g-` prefixed; `GalleryItem.full` is the full-size image). The text index
   and every other contract (quietGL, WarmShaders, lost-context remount,
-  pause off screen) are unchanged.
+  pause off screen) are unchanged. Second pass the same day ("make it
+  better"): a warm core glow at the tunnel's end (alpha follows the glow —
+  an opaque alpha painted black squares over the page's sky), soft round
+  light streaks (one Points draw, 160/360 by perf level), dashed rings that
+  counter-rotate, plates that bank toward the axis and straighten when lit,
+  a lens lean toward the mouse, and page scroll pushing the flight
+  (scroll-signal velocity). 60 fps desktop and phone.
+  Third pass ("let it finish — on scroll the vortex moves, once it's over
+  then normal scrolling"): the stage is a scroll PIN. `.pin` is the stage
+  height + 210vh (170svh on a phone), `.dome` is sticky and centred, and
+  `DomeGallery` writes the reader's progress through the run (0..1) to a ref
+  the scene reads each frame: one full pass down the tunnel from the pin's
+  top to its end, damped, with a slow drift and any drag riding on top. No
+  wheel hijack; the index follows as normal page. Reduced motion: no pin
+  (the canvas never mounts). The hint sits on the stage and says "Scroll to
+  fly through". `HOME_PLAN` re-plotted (H 13573): the ship holds high-left
+  for the whole pin (two waypoints, 0.600 → 0.739).
+  Fourth pass ("make it better"): a flight readout top-right of the stage
+  ("Passing 07 / 14", the piece's title, a hairline track filled by `--p`
+  as a compositor scaleX) — the scene reports the next piece ahead
+  (`onPassing`, only on change). The run is tuned so the count reads 01 at
+  the pin's top and 14 at its end: progress runs from -0.3 on the approach
+  (the flight is already moving as the stage rises in), there is no drift
+  until the pin holds, and the run is a loop minus 1.6 steps. Speed is felt:
+  the flight's own velocity widens the lens up to +9°, swells and
+  brightens the streaks; the light at the end opens over the last quarter
+  of the run.
 - *Analytics.* `@vercel/analytics` + `@vercel/speed-insights` in the root
   layout (no-ops off Vercel, no cookies). `main` is the deployment branch
   (fast-forwarded from `redesign/interactive` 2026-09-20).
