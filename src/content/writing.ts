@@ -26,6 +26,102 @@ export type Piece = {
 
 export const writing: Piece[] = [
   /*
+   * AI prototyping (2026-11-24). Ali: "write a good blog about some product
+   * with SEO trending", then picked this topic over "product builder" and
+   * added "it shouldn't sound AI". Product facts are from each vendor's own
+   * pages, read on the day: Figma's blog (Make kits 2 Apr, local code beta
+   * 28 May, properties panel 30 Jul), Lovable's blog and changelog (Drafts
+   * 16 Nov, the publish-time security review 12 Nov), v0.app and Vercel's
+   * blog (the v0 API, 5 Aug), bolt.new/blog, and Anthropic's artifacts help
+   * pages. Stitch is described only at the level every source agrees on.
+   * No prices: they changed twice this year. The client prototype is told at
+   * the level its mission report already tells it, with no feature list.
+   * Then made general (Ali: "make it general and not vehicle based"): the
+   * same case told as a usage-against-allowance dashboard, no vehicles,
+   * kilometres, fleet or client name, and no link to the mission.
+   * Retold as a story the same day (Ali: "make it better like a story
+   * telling"): it opens on that dashboard and Ali's own question ("all these
+   * things are till date or what", PROFILE.md) and closes on the fix. No
+   * outcome is claimed for the fix, because none is on file.
+   * Made general, then relatable (Ali: "many people might not be able to
+   * relate"): it opens on an idea dying in a meeting, the bug is shown first
+   * on a phone's data-usage screen, the dashboard is the second example, and
+   * pull requests, databases and going live are said in plain words.
+   * Then PM-led (Ali: "more PM relatable … HRs reading this want me to
+   * join"): first person as a product owner, the PRD-with-prototype fact
+   * (11 design rounds before v1.0, PROFILE.md) as evidence; no outcome
+   * claimed that is not on file.
+   */
+  {
+    title: "AI prototyping tools for product managers, by job",
+    outlet: "Space OS",
+    date: "2026-11-24",
+    slug: "ai-prototyping-tools-for-product-managers",
+    href: "/writing/ai-prototyping-tools-for-product-managers",
+    status: "published",
+    kind: "guide",
+    line: "Figma Make, Lovable, v0, Bolt, Stitch and Claude artifacts, sorted by what the prototype has to prove, and the costly mistakes.",
+    related: { label: "What the prototype cannot say: a PRD for a feature that can be wrong", href: "/writing/prd-for-an-ai-feature" },
+    keywords: [
+      "AI prototyping tools",
+      "AI prototyping for product managers",
+      "best AI prototyping tools 2026",
+      "Figma Make vs Lovable",
+      "Lovable vs v0 vs Bolt",
+      "vibe coding for product managers",
+      "AI tools for product managers",
+      "prototype without a developer",
+      "Claude artifacts prototype",
+      "how to prototype a product idea with AI",
+    ],
+    body: [
+      "Every product manager knows the meeting where a good idea dies politely. You walk the room through it, everyone nods, and two sprints later nobody can remember agreeing to anything, because each person pictured something slightly different and none of them could see yours.",
+      "Not long ago the fix was a designer's week or an engineer's favour. Now it is an afternoon. AI prototyping tools take a description in plain English and give back something that clicks, runs and has a link you can share. For a PM that moves the whole conversation. The question stops being \"can we build this?\" and becomes \"should we?\", and that second question is the one a product manager is paid to answer.",
+      "It is how I work as a product owner. When I wrote the PRD for a new module in one of the products I own, a clickable prototype went with it, and that prototype had been through eleven rounds of design before version 1.0 of the document went out. Engineering, design and QA could read what the module had to do and try how it felt in the same sitting. The prototype did not replace the PRD. It made the PRD hard to misread.",
+      "But a prototype can mislead you as easily as it can align a room, and the cheapest way to see how is on your own phone.",
+      "## The phone that says you are fine",
+      "Open the data usage screen on the tenth of the month. It says 10 GB of your 30 GB allowance, and the bar is two-thirds empty. It feels like you have barely touched it. But a third of the month has already gone, so you are exactly on pace. The screen is not wrong. It is answering “how much of this month's allowance have I used?”, while you read it as “am I on track?”. On your phone that costs nothing. On a dashboard a business makes decisions from, it can cost a great deal.",
+      "I met that version this month, prototyping a usage dashboard for a client. Most of what they were paying for looked barely used, the same two-thirds-empty bar on almost every row. Under-use on that scale is the kind of finding a client acts on, so before it reached anyone I asked the plainest question I could think of: are all of these numbers till date? They were not. The live dashboard compared usage so far this month with the allowance for the whole month, so almost everything looked idle for most of every month.",
+      "A polished mock-up would never have caught it, because a mock-up has no dates in it. What caught it was a rough working prototype: one HTML file with sample data and the client's own filters, rebuilt round by round as their answers came back. The sum had to run, so the calendar had to be real, and once the calendar was real the mistake had nowhere to hide. That question was not a tooling skill. It is the habit I would want in any PM I worked with: before a number goes in front of a customer, find out exactly what it is counting.",
+      "## Every prototype answers one question",
+      "This is the judgement the tools cannot supply. Making the prototype is no longer the hard part. Knowing what it is for is.",
+      "So before I open any tool, I finish one sentence: after people see this, we will know whether... In product work the endings fall into four groups. Will stakeholders understand the idea at a glance, so the roadmap conversation is about the right thing? Can users actually finish the task? Is one piece of business logic right, a formula or a rule or a date? Or will engineering build the real feature on top of it? Each question suits a different kind of tool, and most prototypes that mislead were built for one question and judged on another. A beautiful flow with made-up data gets approved, and the hard part turns up in sprint three.",
+      "What follows is the shelf as it stands in late November 2026, sorted by those four questions rather than by brand. It changes most months. Prices are left out on purpose, because several of these tools have changed how they charge at least once this year.",
+      "## When it has to look right",
+      "### Figma Make",
+      "If your designers already work in Figma, start here, because the prototype can be built from what they have already made. In April Figma added Make kits and attachments, which let a prototype start from the team's real components, data and constraints rather than a generic style. In July it gained a properties panel and annotations, so you can select an element and adjust it directly, or pin a note to it describing the change you want.",
+      "The bigger shift is still in beta. On 28 May Figma announced that Make can work on a team's real code from its desktop app: you change something visually, Make finds and edits the code behind it, and it can open a pull request, which is the proposed change engineers review before it joins the product. [Figma's announcement of Make on local code](https://www.figma.com/blog/figma-make-now-on-your-local-code/) is clear about the limits: Mac only at launch, a waitlist, and no credits charged while it is in beta. Worth watching. Not something to plan a roadmap around yet.",
+      "### Google Stitch",
+      "Google's experiment from Labs turns a prompt, or a sketch, into interface screens, and it is the quickest way I know to get several visual directions on the table for a first conversation. Treat its output as a mood board that happens to be clickable. The detail you will need later still has to come from somewhere else.",
+      "## When it has to work",
+      "This is the shelf that changed what a PM can do alone. From a conversation, these tools build a web app that actually runs: a database behind it, a way to sign in, and a real address you can send to people.",
+      "### Lovable",
+      "Lovable builds full apps from a chat and hosts them, and it has been adding the features that matter once real people use what you made. Its Drafts, written up on 16 November, let a team try different versions of a project in parallel while the live app stays as it is; a draft that uses Lovable's own database gets a separate copy, filled with example data, so nothing real is touched. And since 12 November, if Lovable has found a serious security problem in a project like that, it asks you to look at it before you publish. [Lovable's changelog](https://docs.lovable.dev/changelog) moves almost daily, so check it before you rely on any one feature.",
+      "### Bolt.new",
+      "Bolt, from StackBlitz, keeps everything in one browser tab: where the app is built, where it runs and where it goes live. Its own guides walk through taking a prototype to a live URL with real data and sign-in, which is exactly the step where a demo becomes something you can put in front of ten users and watch.",
+      "### v0",
+      "Vercel's v0 began as a generator for interface components and is now an agent that builds full-stack apps. It can put what it builds straight live, or hand it to engineers as a pull request to review first. If your engineering team already builds on Next.js and hosts on Vercel, [v0's own documentation](https://v0.app/docs/introduction) describes a path from prototype to a reviewed change that they will recognise.",
+      "## When one piece of logic is the risk",
+      "This is the dashboard's question, and it is the one the tool lists tend to skip. The screens are not the problem at all. The problem is a formula, a status rule or an edge case in the dates, and a full app builder buries it under login pages.",
+      "For this job, the chat assistant you already pay for is often enough. Anthropic's help pages describe [Claude artifacts that work as small interactive tools](https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them), able to call Claude themselves, private by default and shareable by link. Or do what I did and keep it to a single file. A page with the calculation, a few controls and data that looks like the real thing is a quicker route to the truth than a polished flow, and nobody mistakes it for the finished product.",
+      "## When it has to survive into the product",
+      "This is where the tools are moving fastest and where I would be most careful. v0 and Figma Make can now open pull requests, and Lovable lets a team work in drafts. So a prototype made by someone who does not write code can become the first piece of the real feature.",
+      "Possible is not the same as wise. Generated code still has to be read by someone who will maintain it, and [that review is now where the time goes](/writing/the-bottleneck-moved). Before I hand a prototype to engineering as code, I ask whether they want the code or just the decisions. Usually they want the decisions, written down in the PRD, with the prototype as the illustration. Respecting that is part of how a product owner keeps engineering's trust.",
+      "## The mistakes that cost the most",
+      "A prototype that looks finished gets treated as finished. If the stakeholders cannot tell a two-day prototype from a shipped feature, label it on the screen, not in the meeting.",
+      "Fake data flatters every design. Long names, empty states, the customer with four thousand records: put them in before anyone sees it. And put in the month that has not ended yet, because that is the one that fooled a live dashboard.",
+      "A public link is a published product. Once it holds real customer data or sits behind a real sign-in, it needs the same care as anything else you ship, and Lovable's own security guide says as much: the platform handles a lot, and there is still one thing it needs you to do. Keep client data out of prototypes unless you have been told you may use it.",
+      "And a prototype is not a specification. It shows one path through the product. The [PRD for a feature that can be wrong](/writing/prd-for-an-ai-feature) still has to say what happens on every other path.",
+      "## How I decide",
+      "I start from that one sentence about what the prototype has to prove. If the question is whether stakeholders get it, I use the tool closest to the design system, which for most teams is Figma Make. If it is whether users can do it, an app builder such as Lovable or Bolt, with real users in front of it within the week. If the risk is in the logic, the smallest thing that runs the logic, in a chat artifact or a single file, and I check it against the real calendar and the ugliest real data I can get. If engineering will carry it on, the tool that delivers a pull request into the stack they already use, agreed with them before I start. The tool is the easy choice. Being clear about the question is the part that is actually the job.",
+      "## How the dashboard story ended",
+      "The fix was not clever. Compare usage to date with the allowance to date. Say plainly on the screen when a figure is to date. Compare a running month with the same days of the month before, and project where it will land by the end. I have no result to report from it yet, and I will not guess one. What changed is that the screen now answers the question people thought it was answering.",
+      "None of that came from a better tool. It came from building the one thing that had to be right and running it against a real calendar. The tools on this shelf make that cheaper than it has ever been, and the question you start with still decides whether you find the bug or ship it.",
+      "## What I would measure",
+      "Not how many prototypes the team made. How many decisions changed because of one, and which. How long it took from an idea to the first reaction from a real user, before and after. How many rounds of review a feature needed once a working prototype came with the spec. How much of the prototype's code engineering kept, and whether keeping it saved time or cost it. And the honest one: how many questions engineering asked in planning that the prototype had already answered.",
+    ],
+  },
+  /*
    * AI search (2026-10-11). Ali: "write a blog and post it, trending topic
    * about tech and SEO keywords." GEO is the topic this month, and the site
    * had just been through it (robots.txt crawler rules and llms.txt, 10-04;
