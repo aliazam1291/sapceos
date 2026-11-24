@@ -919,6 +919,12 @@ the open channel; the one joke; keep it the only one).
   `metalness`, `transmission`, `sheen`, or anything else that reads the
   environment, and the scene has no `<Environment>`, check what it looks
   like with an unlit material before assuming the colours are wrong.
+  SUPERSEDED 2026-11-23 (Ali: "make the studio look better"): the
+  CyberPlanet is gone. `SmaakPlanetScene` draws a ringed ochre gas giant
+  with the galaxy’s own `planetShader.ts` (KIND 0, terminator, ring shadow,
+  scattering limb; the sun at the scene origin, the world offset at `AT`)
+  plus one thin emerald orbit as the instrument. No emissive body, no green
+  shell, no wireframe layer: a world is photoreal, an instrument is a line.
 
 - *Smaak speaks Space OS* (2026-09-30). Ali: "the smaak section on the
   entire website looks off, not going with the theme." Measured first —

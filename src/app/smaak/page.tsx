@@ -131,10 +131,10 @@ export default function SmaakPage() {
         lede="Usually because, by the end, they do. Logos, websites, product UI and the deck you raise on — for a seventy-year-old spice house, an interiors showroom, a web3 node platform and whoever emails next."
         figure={
           <SmaakPlanet
-            label="An ochre world inside a faint emerald shell, circled by a thin data ring with points of light orbiting it. It tips and spins as the page scrolls."
+            label="A ringed ochre gas giant, lit from the upper left, with a thin emerald orbit and points of light riding it. It tips toward you as the page scrolls."
           />
         }
-        figureWidth={320}
+        figureWidth={360}
       />
       <div className={ui.pageComms}>
         <Comms at="studio" />
