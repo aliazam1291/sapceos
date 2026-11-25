@@ -26,6 +26,82 @@ export type Piece = {
 
 export const writing: Piece[] = [
   /*
+   * AI for product managers, part 2 (2026-11-25). Ali: "wrt the last blog
+   * write another one which looks like a series and is informatic and I get
+   * reach." Part 1 is the prototyping guide; this is the PRD. A workflow
+   * with copyable prompts, because a how-to is what gets searched and
+   * shared. Deliberately NO tool prices, limits or rankings: the sources
+   * found on the day were vendor listicles that disagreed with each other
+   * (ChatPRD's own site is the only product claim, templates). Ali's own
+   * facts are PROFILE.md only: PRD shipped with a clickable prototype that
+   * went through 11 design rounds; he uses Claude, Gemini and ChatGPT. No
+   * outcome claimed. Series name: "AI for product managers".
+   */
+  {
+    title: "How to write a PRD with AI: a PM's step-by-step workflow",
+    outlet: "Space OS",
+    date: "2026-11-25",
+    slug: "write-a-prd-with-ai",
+    href: "/writing/write-a-prd-with-ai",
+    status: "published",
+    kind: "guide",
+    line: "Part 2 of AI for product managers: a six-step way to write a PRD with an AI assistant, the prompts to copy, and what I never hand over.",
+    related: { label: "Part 1: AI prototyping tools for product managers, by job", href: "/writing/ai-prototyping-tools-for-product-managers" },
+    keywords: [
+      "how to write a PRD with AI",
+      "AI PRD generator",
+      "PRD template AI prompt",
+      "ChatGPT PRD prompt",
+      "Claude PRD prompt",
+      "AI for product managers",
+      "product requirements document AI",
+      "write a PRD faster",
+      "AI tools for product managers",
+      "PRD best practices",
+    ],
+    body: [
+      "This is part 2 of a short series on AI for product managers. [Part 1 covered prototyping tools](/writing/ai-prototyping-tools-for-product-managers). This one is about the document that prototype travels with: the PRD.",
+      "Nobody enjoys writing a product requirements document, and everybody complains when one is thin. An AI assistant will give you a tidy first draft in about a minute, which is exactly the danger. The draft reads well, it has all the headings, and it contains almost nothing you actually decided. A PRD is a record of decisions. A model can format a decision, challenge it and tighten it. It cannot make it for you.",
+      "So the workflow below is built around one rule: you bring the decisions, the assistant does the typing, the questioning and the nagging. Six steps, with the prompts I would copy.",
+      "## Where AI helps and where it quietly hurts",
+      "It is good at turning rough notes into a clean structure, at asking the questions you forgot to ask yourself, at writing the fifteenth user story in the same shape as the first, and at reading a draft as a sceptical engineer would. It is bad at knowing your customers, your constraints and your politics, and it is bad at saying “I do not know”. Left alone it fills every gap with something plausible, and a plausible gap in a PRD is how a team builds the wrong thing carefully.",
+      "## Step 1: Write the decision yourself, in five sentences",
+      "Before you open any tool, write these by hand: what the problem is, who has it, what will change for them, what you are deliberately not doing, and how you will know it worked. If you cannot fill one of the five, you have found the real work, and no prompt will do it for you.",
+      "Everything after this is easier because the assistant is now working from your thinking instead of inventing its own.",
+      "## Step 2: Give it evidence, not just the idea",
+      "Paste in what you really have: support tickets, call notes, the constraint the engineering lead mentioned in passing, the date a partner needs something by. Label each source, so you can check where a claim came from later.",
+      "One caution that matters more than any prompt. Do not paste customer data or confidential material into a tool your company has not approved. Strip names, and use the assistant your organisation has cleared. A good PRD is not worth a data leak.",
+      "## Step 3: Ask for questions before text",
+      "This is the step most people skip, and it is where the value is. Use something like:",
+      "“Here is my problem statement and the evidence. Before you write anything, ask me the ten questions that an engineer, a designer and a tester would each ask. Do not answer them yourself.”",
+      "Answer the questions in your own words. Several will be ones you had not thought about, and a couple will show that the idea is not ready. That is a good outcome. It is cheaper to learn it in a chat than in sprint three.",
+      "## Step 4: Draft one section at a time",
+      "Do not ask for “the PRD”. Ask for the goals and non-goals, then the user stories, then the acceptance criteria, then the edge cases, each one built from your answers. A short prompt works well:",
+      "“Using only what I have told you, write the user stories for this feature in the format: as a [who], I want [what], so that [why]. If something is missing, write a question instead of guessing.”",
+      "That last sentence does a lot of work. It gives the model permission to say it does not know, which it will not do on its own.",
+      "## Step 5: Make it attack the draft",
+      "Now turn the assistant into the reviewer you wish you had. Try:",
+      "“Act as the engineer who has to build this. List everything that is ambiguous, everything missing, and the three cases most likely to break it in production.”",
+      "Then again as the tester, then as a customer who has never heard of the feature. Each pass finds something different. This is the best use of the whole tool, and it costs minutes.",
+      "## Step 6: Check every number and every claim by hand",
+      "Read the document aloud, slowly. Every metric, date, name and limit is yours to verify. Models invent figures with total confidence: “reduces churn by 23%” is the kind of sentence that arrives without you asking. If a target is a target, call it a target and say who set it. If you have no number, write that, and write how you will get one.",
+      "Attach what the words cannot carry. A clickable prototype shows the flow, and a short list of what changed since the last version saves your readers from rereading everything.",
+      "## Which tool should you use?",
+      "Honestly, the tool matters less than the steps. Any general assistant that lets you keep your evidence and your draft in one place will do: I use Claude, Gemini and ChatGPT for different jobs. If you want something built for the task, there are dedicated PRD assistants, and [ChatPRD](https://www.chatprd.ai/) is the best known, with ready-made templates for PRDs, user stories and specs. A template saves time and does not remove the need for Step 1.",
+      "Tools in this area change monthly, and most comparison pages are written by the vendors, so try your own real feature in two of them before you commit to either.",
+      "## The mistakes that cost the most",
+      "Treating the first draft as finished. It is a starting position, and it will read better than it deserves to.",
+      "Losing your own voice and judgement. If every section sounds the same, the team will skim it, and a PRD nobody reads is just a file.",
+      "Hiding that you used AI, or hiding that you did not check it. Say who owns the document. The owner is a person.",
+      "And writing for the model instead of the reader. The audience is the engineer deciding what to build on Monday. Show the draft to one of them before you call it done.",
+      "## How I work",
+      "The PRDs I own go out with a clickable prototype, and the prototype for one of them went through eleven rounds of design before version 1.0 of the document was issued. That is the habit I would keep with or without AI: the document and the thing you can click should agree, and the people who build it should be able to question both. What AI changed for me is the speed of the dull parts and the number of awkward questions I hear before the meeting instead of during it. The decisions are still mine, and so is the checking.",
+      "## What I would measure",
+      "Not how long the first draft took. How many questions engineering asked in planning that the PRD should have answered. How many rounds the document needed before sign-off. How often something shipped that the PRD did not describe. And the honest one: how many claims in a draft turned out to be invented, so you know how hard to check next time.",
+      "Next in the series: turning a pile of customer feedback into decisions without letting the model flatter you.",
+    ],
+  },
+  /*
    * AI prototyping (2026-11-24). Ali: "write a good blog about some product
    * with SEO trending", then picked this topic over "product builder" and
    * added "it shouldn't sound AI". Product facts are from each vendor's own
@@ -119,6 +195,7 @@ export const writing: Piece[] = [
       "None of that came from a better tool. It came from building the one thing that had to be right and running it against a real calendar. The tools on this shelf make that cheaper than it has ever been, and the question you start with still decides whether you find the bug or ship it.",
       "## What I would measure",
       "Not how many prototypes the team made. How many decisions changed because of one, and which. How long it took from an idea to the first reaction from a real user, before and after. How many rounds of review a feature needed once a working prototype came with the spec. How much of the prototype's code engineering kept, and whether keeping it saved time or cost it. And the honest one: how many questions engineering asked in planning that the prototype had already answered.",
+      "This is part 1 of a short series on AI for product managers. [Part 2: how to write a PRD with AI](/writing/write-a-prd-with-ai), with the prompts I would copy.",
     ],
   },
   /*
