@@ -26,6 +26,79 @@ export type Piece = {
 
 export const writing: Piece[] = [
   /*
+   * AI for product managers, part 3 (2026-11-26). Ali: "write the next blog
+   * in our series". Part 2 promised it: "turning a pile of customer feedback
+   * into decisions without letting the model flatter you". The two flattery
+   * facts were checked on the day against the companies' own pages: OpenAI's
+   * GPT-4o update that went out on 25 April 2025 and was rolled back days
+   * later for being sycophantic (openai.com/index/sycophancy-in-gpt-4o), and
+   * Anthropic's October 2023 paper finding sycophancy across five assistants
+   * (anthropic.com/research/towards-understanding-sycophancy-in-language-models).
+   * NotebookLM's quoted citations are from Google's own help pages. Ali's own
+   * facts are PROFILE.md only: usability testing at Datamatics (+15% task
+   * completion) and the client-review question on the usage dashboard (told
+   * in part 1, general, no client). No outcome is claimed for the method.
+   */
+  {
+    title: "How to analyse customer feedback with AI and not be flattered",
+    outlet: "Space OS",
+    date: "2026-11-26",
+    slug: "customer-feedback-analysis-with-ai",
+    href: "/writing/customer-feedback-analysis-with-ai",
+    status: "published",
+    kind: "guide",
+    line: "Part 3 of AI for product managers: turning a pile of customer feedback into a decision with an AI assistant, without letting it agree with you.",
+    related: { label: "Part 2: how to write a PRD with AI", href: "/writing/write-a-prd-with-ai" },
+    keywords: [
+      "analyse customer feedback with AI",
+      "AI customer feedback analysis",
+      "AI user research synthesis",
+      "ChatGPT customer feedback prompt",
+      "Claude user research prompt",
+      "AI sycophancy",
+      "AI for product managers",
+      "NotebookLM for product managers",
+      "feedback synthesis for product managers",
+      "voice of the customer AI",
+    ],
+    body: [
+      "This is part 3 of a short series on AI for product managers. [Part 1 covered prototyping tools](/writing/ai-prototyping-tools-for-product-managers) and [part 2 the PRD](/writing/write-a-prd-with-ai). This one is about what comes before both: a pile of customer feedback, and the decision you are supposed to make from it.",
+      "Every product team has the pile. Support tickets, sales call notes, app reviews, survey comments, the forwarded email from a big customer that starts with “quick one”. Reading it all is the job nobody has time for, so an AI assistant that can read four hundred comments in a minute sounds like the answer. Partly it is. The trouble is what it hands back.",
+      "## The assistant wants to agree with you",
+      "Ask an assistant “our users want dark mode, right?” and you will get a well-organised yes. That is not a quirk of one tool. [Anthropic's researchers found it in 2023](https://www.anthropic.com/research/towards-understanding-sycophancy-in-language-models) across five popular assistants: models trained on human ratings learn that agreeing gets rated well, and they sometimes prefer a convincing agreeable answer to a correct one. In April 2025 [OpenAI rolled back a ChatGPT update](https://openai.com/index/sycophancy-in-gpt-4o/) within days because it had become, in the company's own word, sycophantic.",
+      "For feedback analysis that is the whole problem. You almost always go into the pile with a favourite theory, and a tool that is inclined to confirm it will find quotes that do. The workflow below is built to stop that. Six steps, with the prompts I would copy.",
+      "## Step 1: Write down the decision before you open the pile",
+      "Not “what are customers saying?” but “should we fix onboarding or billing first this quarter?” A decision tells you what to look for and what to ignore. Write your current guess down too, somewhere the assistant cannot see it. You will need it in Step 5.",
+      "## Step 2: Clean, label and anonymise",
+      "Give every piece of feedback an ID, a source, a date and, where you have it, the kind of customer it came from. Remove names, emails and anything that identifies a person or a company, and use only the assistant your organisation has approved. Labels do two jobs: they let you trace every claim back, and they stop one loud channel passing itself off as everyone.",
+      "## Step 3: Ask for counts and quotes, not conclusions",
+      "This is where most people go wrong. “What are the main insights?” invites a confident summary you cannot check. Ask for the raw material of a decision instead:",
+      "“Group this feedback into themes. For each theme give the number of items, which sources and customer types they came from, and three exact quotes with their IDs. Do not rank the themes and do not recommend anything.”",
+      "Notice what is not in that prompt: your theory. Keep it out. Once the model knows what you hope to find, finding it becomes the task.",
+      "## Step 4: Check the quotes against the source",
+      "Pick ten quotes at random and find each one in the original by its ID. If a quote is paraphrased, or worse, does not exist, the summary is not safe to use, and you have learned how hard to check the rest. Tools that answer only from your own documents make this easier: [Google's NotebookLM](https://support.google.com/notebooklm/answer/16179559?hl=en), for example, attaches citations that quote the passage from your source, so you can hover and check. Easier is not the same as done. Read them.",
+      "## Step 5: Make it argue against your favourite",
+      "Now take out the guess you wrote in Step 1 and use it as a target:",
+      "“I believe the biggest problem is [your guess]. Using only this feedback, make the strongest case that I am wrong. Quote the items that support the other case, with their IDs.”",
+      "Then ask the opposite way round in a fresh chat, so the first answer cannot steer the second. If your theory survives an honest attempt to knock it down, it is worth more than any summary. If it does not, you have saved a quarter.",
+      "## Step 6: Weigh it yourself",
+      "A count is not a priority. Twelve people asking for a colour change are not worth more than two who cannot pay you. So before you decide, ask yourself three things about every theme. How bad is it for the person who has it? Who are they, and does that matter to the business right now? And who is missing from the pile? People who left quietly do not write tickets, and the customers who complain most are not always the ones you can least afford to lose.",
+      "Then write the decision down with its evidence: the theme, the count, two quotes and what you decided not to do. That paragraph goes straight into the PRD from part 2.",
+      "## Which tool should you use?",
+      "For a one-off pile, any general assistant you are allowed to use will do. I use Claude, Gemini and ChatGPT for different jobs. For a source you will keep returning to, a tool that answers only from your documents and cites them saves time on Step 4. Research repositories with AI built in are worth a look once feedback arrives every week rather than every quarter. Whatever you pick, run the Step 5 prompt on a decision you already know the answer to, and see whether it will tell you something you did not want to hear.",
+      "## The mistakes that cost the most",
+      "Asking a leading question. “Do users find checkout confusing?” is a yes waiting to happen. Ask what users say about checkout.",
+      "Trusting a quote you did not check. A fluent paraphrase in quotation marks is still made up.",
+      "Treating the loudest channel as the customer. Reviews skew angry, sales notes skew towards whatever the prospect wanted, and support only hears from people who got stuck.",
+      "And letting the summary replace the reading. Read twenty pieces of raw feedback yourself, every time. The assistant tells you what is common. Reading tells you what it feels like, and that is usually what convinces the room.",
+      "## How I work",
+      "I started on the research side, with UX research and usability testing in an R&D internship at Datamatics, work that lifted task completion by 15%. The habit I kept from it is to distrust the first story. It shows up now in reviews of my own prototypes. Recently it was one plain question, whether the numbers on a usage dashboard were till date, that turned a confident finding upside down. AI makes the reading faster. Asking the awkward question is still my job.",
+      "## What I would measure",
+      "How many decisions this quarter cite feedback with IDs you can trace. How many quotes failed the Step 4 check, so you know how hard to check next time. How often Step 5 changed your mind, because if the answer is never, you are not really asking. And the one that matters: whether the problems you chose to fix actually came up less afterwards.",
+      "Next in the series: reading a product metric with AI without fooling yourself.",
+    ],
+  },
+  /*
    * AI for product managers, part 2 (2026-11-25). Ali: "wrt the last blog
    * write another one which looks like a series and is informatic and I get
    * reach." Part 1 is the prototyping guide; this is the PRD. A workflow
@@ -98,7 +171,7 @@ export const writing: Piece[] = [
       "The PRDs I own go out with a clickable prototype, and the prototype for one of them went through eleven rounds of design before version 1.0 of the document was issued. That is the habit I would keep with or without AI: the document and the thing you can click should agree, and the people who build it should be able to question both. What AI changed for me is the speed of the dull parts and the number of awkward questions I hear before the meeting instead of during it. The decisions are still mine, and so is the checking.",
       "## What I would measure",
       "Not how long the first draft took. How many questions engineering asked in planning that the PRD should have answered. How many rounds the document needed before sign-off. How often something shipped that the PRD did not describe. And the honest one: how many claims in a draft turned out to be invented, so you know how hard to check next time.",
-      "Next in the series: turning a pile of customer feedback into decisions without letting the model flatter you.",
+      "Next in the series, [part 3: how to analyse customer feedback with AI](/writing/customer-feedback-analysis-with-ai), turning a pile of feedback into decisions without letting the model flatter you.",
     ],
   },
   /*
@@ -195,7 +268,7 @@ export const writing: Piece[] = [
       "None of that came from a better tool. It came from building the one thing that had to be right and running it against a real calendar. The tools on this shelf make that cheaper than it has ever been, and the question you start with still decides whether you find the bug or ship it.",
       "## What I would measure",
       "Not how many prototypes the team made. How many decisions changed because of one, and which. How long it took from an idea to the first reaction from a real user, before and after. How many rounds of review a feature needed once a working prototype came with the spec. How much of the prototype's code engineering kept, and whether keeping it saved time or cost it. And the honest one: how many questions engineering asked in planning that the prototype had already answered.",
-      "This is part 1 of a short series on AI for product managers. [Part 2: how to write a PRD with AI](/writing/write-a-prd-with-ai), with the prompts I would copy.",
+      "This is part 1 of a short series on AI for product managers. [Part 2: how to write a PRD with AI](/writing/write-a-prd-with-ai), with the prompts I would copy, and [part 3: how to analyse customer feedback with AI](/writing/customer-feedback-analysis-with-ai).",
     ],
   },
   /*
