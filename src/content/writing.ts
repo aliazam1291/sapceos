@@ -26,6 +26,84 @@ export type Piece = {
 
 export const writing: Piece[] = [
   /*
+   * AI for product managers, part 4 (2026-11-27). Ali: "the last blog wasn't
+   * a hit … write a really attractive and useful blog". Part 3 promised it:
+   * "reading a product metric with AI without fooling yourself". Built to be
+   * skimmed and saved: seven numbered traps, each with the prompt that
+   * catches it, and one prompt that combines them. Tool facts checked on the
+   * day: OpenAI's help page (help.openai.com/en/articles/8437071) says
+   * ChatGPT writes and runs Python on an uploaded file, and to review the
+   * code, outputs and assumptions before relying on the result; Anthropic's
+   * support page (support.claude.com/en/articles/10008684) covers Claude's
+   * analysis tool on uploaded CSVs. Ali's facts are PROFILE.md only: Mappls
+   * Shop, which he owns, 4× collections vs the manual process (a multiple,
+   * never the amount), the till-date dashboard question told in part 1, and
+   * that he uses Claude, Gemini and ChatGPT. No outcome claimed for the method.
+   */
+  {
+    title: "Seven ways AI misreads your product metrics, and the fixes",
+    outlet: "Space OS",
+    date: "2026-11-27",
+    slug: "product-metrics-with-ai",
+    href: "/writing/product-metrics-with-ai",
+    status: "published",
+    kind: "guide",
+    line: "Part 4 of AI for product managers: seven ways an AI assistant misreads a product metric, the prompt that catches each one, and one prompt to start every analysis with.",
+    related: { label: "Part 3: customer feedback with AI", href: "/writing/customer-feedback-analysis-with-ai" },
+    keywords: [
+      "analyse product metrics with AI",
+      "AI for product analytics",
+      "ChatGPT data analysis for product managers",
+      "Claude data analysis",
+      "why did my metric drop",
+      "product metrics mistakes",
+      "Simpson's paradox product metrics",
+      "metric analysis prompt",
+      "AI for product managers",
+      "product manager analytics",
+    ],
+    body: [
+      "This is part 4 of a short series on AI for product managers. [Part 1 covered prototyping tools](/writing/ai-prototyping-tools-for-product-managers), [part 2 the PRD](/writing/write-a-prd-with-ai) and [part 3 customer feedback](/writing/customer-feedback-analysis-with-ai). This one is about the number on the dashboard, and the question every PM is asked about it: why did it move?",
+      "Paste a chart into an AI assistant and ask why the number dropped. You will get a fluent, confident reason in a few seconds. It might even be right. The trouble is that it sounds exactly the same when it is wrong, and a wrong reason for a metric is expensive. It sends a team off to fix something that was never broken, while the real cause carries on.",
+      "## Why assistants are bad at numbers, and how to make them good",
+      "A language model writes the most likely next words. Ask it to add up a column in its head and it produces something that looks like a sum. Ask it why a line went down and it produces something that looks like an explanation. Both are guesses wearing the clothes of an answer.",
+      "The fix is to make it calculate instead of guess. ChatGPT and Claude can both run code on a file you upload, so the arithmetic is done by a program rather than by prediction. Ask for that explicitly, and ask to see the code. [OpenAI's own help page](https://help.openai.com/en/articles/8437071-data-analysis-with-chatgpt) tells you to review the generated code, outputs and assumptions before you rely on the result. That is this whole guide in one sentence. What follows is where the assumptions usually hide.",
+      "## The seven traps",
+      "### 1. The denominator covers a different period",
+      "The most common way a metric lies is a comparison between two things measured over different stretches of time. Usage so far this month against the allowance for the whole month. This week's sign-ups against last month's. In [part 1](/writing/ai-prototyping-tools-for-product-managers) I told the story of a dashboard that made almost everything look idle for most of every month, for exactly this reason. An assistant will happily explain the idleness.",
+      "“For every ratio in this analysis, state the numerator, the denominator and the period each one covers. Flag any pair that does not cover the same period.”",
+      "### 2. The maths was done in its head",
+      "If the assistant did not run code, do not trust a number it wrote. A rounding slip, a missed row, a total that quietly drops the blanks: these are the errors a fluent answer hides best.",
+      "“Calculate this with code, not in your head. Show me the code, how many rows you used, how many you dropped and why.”",
+      "### 3. The average hides the segments",
+      "A number can fall overall while rising in every segment, if the mix of customers shifts towards a group that converts less. Statisticians call it Simpson's paradox. Product teams usually call it a bad week. An assistant shown only the total cannot see it.",
+      "“Break this metric down by platform, region, customer type and new versus returning. Tell me whether the change comes from the segments moving or from the mix between them shifting.”",
+      "### 4. The calendar did it",
+      "Weekends, month-end, salary day, a festival week, exam season. A Monday compared with a Sunday is not a trend. Compare like with like: the same weekdays, the same days of the previous period, the same weeks last year where you have them.",
+      "“Compare against the same days of the previous period and the same period last year. List any holidays or seasonal events inside either window.”",
+      "### 5. The tracking changed, not the users",
+      "Before you explain a jump, ask whether the measurement changed. A renamed event, a new app version that fires it twice, a filter someone edited, a bot that found the sign-up page. The assistant cannot know about last Tuesday's release unless you tell it, so give it the release notes and any tracking changes for the period.",
+      "“Could any of these changes explain the movement on their own? What would the data look like if they did?”",
+      "### 6. Too few to call",
+      "Thirty users is a story, not a trend. Small numbers swing on their own, and an unusually good week tends to be followed by a more ordinary one whatever you did. That is regression to the mean, and plenty of features have been celebrated for a week that was simply going to be good.",
+      "“How many users or events is each number based on? With numbers this size, how big a change could happen by chance alone?”",
+      "### 7. The story arrived first",
+      "Part 3 was about this. Assistants lean towards agreeing with you, so “did the new onboarding cause the drop in activation?” gets you a tidy account of how it did. Ask for rivals instead, and make at least one of them boring.",
+      "“Give me three different explanations for this change, including at least one that has nothing to do with the product. For each, tell me what data would prove it wrong.”",
+      "## The prompt to start every analysis with",
+      "The seven checks fit in one prompt. Paste it before your question, every time:",
+      "“You are checking my analysis, not telling me a story. Calculate with code and show the code. For every ratio, state the numerator, denominator and period. Break the change down by segment and say whether it is the segments or the mix. Compare against the same days of the previous period. Tell me the sample size behind each number. Give three explanations, one unrelated to the product, and the data that would rule each out. If something cannot be answered from this data, say so instead of guessing.”",
+      "The last sentence matters most. An assistant that is allowed to say “I can't tell from this” gives you fewer answers and far fewer wrong ones.",
+      "## What to give it, and what to keep back",
+      "Give it a clean export: one row per record, clear column names, a definition for every metric, the date range and the timezone. Give it the context a new analyst would need on their first day: what launched, what broke, what marketing ran. Keep back customer names, phone numbers and anything your organisation has not approved for that tool. A metric rarely needs to know who the customer was, only what kind.",
+      "## How I work",
+      "The number I report for Mappls Shop, the billing product I own at MapMyIndia, is 4× the collections of the manual process it replaced. I never write the 4× without what it is compared with, because a number without its comparison is not a result yet. The same habit caught the usage dashboard in part 1, where one plain question, whether the numbers were till date, turned a confident finding upside down. I use Claude, Gemini and ChatGPT for different jobs, and with all three the first question is the same: compared with what?",
+      "## What I would measure",
+      "How many metric explanations in your reviews arrive with the comparison named. Which of the seven checks changes the answer most often, because that tells you where your data is weakest. How many “why did it drop?” investigations end in a calendar or tracking cause rather than a product one. And the one that matters: whether the fixes you made because of a metric actually moved it afterwards.",
+      "Next in the series: handing a PM's weekly busywork to an AI agent, and what to keep for yourself.",
+    ],
+  },
+  /*
    * AI for product managers, part 3 (2026-11-26). Ali: "write the next blog
    * in our series". Part 2 promised it: "turning a pile of customer feedback
    * into decisions without letting the model flatter you". The two flattery
@@ -95,7 +173,7 @@ export const writing: Piece[] = [
       "I started on the research side, with UX research and usability testing in an R&D internship at Datamatics, work that lifted task completion by 15%. The habit I kept from it is to distrust the first story. It shows up now in reviews of my own prototypes. Recently it was one plain question, whether the numbers on a usage dashboard were till date, that turned a confident finding upside down. AI makes the reading faster. Asking the awkward question is still my job.",
       "## What I would measure",
       "How many decisions this quarter cite feedback with IDs you can trace. How many quotes failed the Step 4 check, so you know how hard to check next time. How often Step 5 changed your mind, because if the answer is never, you are not really asking. And the one that matters: whether the problems you chose to fix actually came up less afterwards.",
-      "Next in the series: reading a product metric with AI without fooling yourself.",
+      "Next in the series, [part 4: seven ways AI misreads your product metrics](/writing/product-metrics-with-ai), with the prompt that catches each one.",
     ],
   },
   /*
@@ -268,7 +346,7 @@ export const writing: Piece[] = [
       "None of that came from a better tool. It came from building the one thing that had to be right and running it against a real calendar. The tools on this shelf make that cheaper than it has ever been, and the question you start with still decides whether you find the bug or ship it.",
       "## What I would measure",
       "Not how many prototypes the team made. How many decisions changed because of one, and which. How long it took from an idea to the first reaction from a real user, before and after. How many rounds of review a feature needed once a working prototype came with the spec. How much of the prototype's code engineering kept, and whether keeping it saved time or cost it. And the honest one: how many questions engineering asked in planning that the prototype had already answered.",
-      "This is part 1 of a short series on AI for product managers. [Part 2: how to write a PRD with AI](/writing/write-a-prd-with-ai), with the prompts I would copy, and [part 3: how to analyse customer feedback with AI](/writing/customer-feedback-analysis-with-ai).",
+      "This is part 1 of a short series on AI for product managers. [Part 2: how to write a PRD with AI](/writing/write-a-prd-with-ai), with the prompts I would copy, [part 3: how to analyse customer feedback with AI](/writing/customer-feedback-analysis-with-ai), and [part 4: seven ways AI misreads your product metrics](/writing/product-metrics-with-ai).",
     ],
   },
   /*
